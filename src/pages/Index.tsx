@@ -6,7 +6,7 @@ import ContentSection from '@/components/ContentSection';
 import TextSection from '@/components/TextSection';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShoppingCart, Zap, Cpu, Network } from 'lucide-react';
+import { ShoppingCart, Zap, Cpu, Network, Bitcoin, Shield, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
@@ -17,21 +17,21 @@ const Index = () => {
     id: 1,
     name: 'WIRED Base Game',
     price: 29.99,
-    description: 'The complete IT card game experience with computers, wires, and switches.',
+    description: 'Build your network, mine bitcoins, and dominate the competition. Includes PCs, switches, and mining cards.',
     image: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&h=300&fit=crop',
     stock: 15
   }, {
     id: 2,
     name: 'Network Expansion Pack',
     price: 19.99,
-    description: 'Expand your grid with routers, servers, and advanced networking cards.',
+    description: 'Expand your infrastructure with routers, servers, and advanced networking components for faster mining.',
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop',
     stock: 8
   }, {
     id: 3,
     name: 'Security Protocol Pack',
     price: 24.99,
-    description: 'Add firewalls, encryption, and cybersecurity elements to your game.',
+    description: 'Defend your network with firewalls and attack other players with hacking tools and cyber warfare cards.',
     image: 'https://images.unsplash.com/photo-1563206767-5b18f218e8de?w=400&h=300&fit=crop',
     stock: 12
   }];
@@ -50,7 +50,7 @@ const Index = () => {
     navigate('/extras');
     toast({
       title: "Learn to Play",
-      description: "Check out our tutorials and game rules!",
+      description: "Master the art of network building and bitcoin mining!",
     });
   };
 
@@ -73,10 +73,11 @@ const Index = () => {
             <div className="flex justify-center items-center space-x-4 mb-6">
               <Cpu className="h-12 w-12 text-primary animate-pulse" />
               <h1 className="text-5xl font-bold text-primary tracking-wider">WIRED</h1>
-              <Network className="h-12 w-12 text-secondary animate-pulse" />
+              <Bitcoin className="h-12 w-12 text-secondary animate-pulse" />
             </div>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Ready to get Wired? 
-Experience the ultimate IT strategy game where every move counts and every connection matters. Build your network, outsmart your opponents, make shady one sided deals, and become the master of the digital currency.</p>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Build your network, connect to the switch, and start mining bitcoins! Race against other players to reach the goal score first through strategic network building, cyber attacks, and cunning deals. Will you dominate through superior infrastructure or sabotage your opponents?
+            </p>
             <div className="flex justify-center space-x-4">
               <Button 
                 onClick={handleShopNow}
@@ -93,6 +94,33 @@ Experience the ultimate IT strategy game where every move counts and every conne
                 <Zap className="h-5 w-5 mr-2" />
                 Learn to Play
               </Button>
+            </div>
+          </div>
+        </ContentSection>
+
+        {/* Game Mechanics */}
+        <ContentSection title="How to Win">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="neon-border bg-card/50 p-6 rounded-lg text-center space-y-4">
+              <Network className="h-12 w-12 text-primary mx-auto" />
+              <h3 className="text-xl font-semibold text-primary">Build Your Network</h3>
+              <p className="text-muted-foreground">
+                Connect your PC to the switch using network cards and cables. The faster your connection, the more bitcoins you mine per turn.
+              </p>
+            </div>
+            <div className="neon-border bg-card/50 p-6 rounded-lg text-center space-y-4">
+              <Bitcoin className="h-12 w-12 text-secondary mx-auto" />
+              <h3 className="text-xl font-semibold text-secondary">Mine Bitcoins</h3>
+              <p className="text-muted-foreground">
+                Once connected, start mining digital currency. Upgrade your hardware for better mining rates and race to the target score.
+              </p>
+            </div>
+            <div className="neon-border bg-card/50 p-6 rounded-lg text-center space-y-4">
+              <Shield className="h-12 w-12 text-destructive mx-auto" />
+              <h3 className="text-xl font-semibold text-destructive">Attack & Defend</h3>
+              <p className="text-muted-foreground">
+                Use hacking tools to disrupt opponents' networks or negotiate deals. Protect your setup with firewalls and security protocols.
+              </p>
             </div>
           </div>
         </ContentSection>
@@ -126,6 +154,18 @@ Experience the ultimate IT strategy game where every move counts and every conne
                 </CardFooter>
               </Card>
             ))}
+          </div>
+        </ContentSection>
+
+        {/* Strategy Section */}
+        <ContentSection title="Master the Game">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <TextSection title="Strategic Depth" accent>
+              <p>Every decision matters in WIRED. Choose between investing in powerful mining rigs for steady income or cheap components to get online fast. Form temporary alliances with other players, then betray them when the time is right.</p>
+            </TextSection>
+            <TextSection title="Multiple Paths to Victory">
+              <p>Build the ultimate mining operation, sabotage your competitors' networks, or become the dealmaker who controls the flow of resources. Each game offers different strategies for reaching the target score first.</p>
+            </TextSection>
           </div>
         </ContentSection>
       </main>
