@@ -1,5 +1,4 @@
 
-
 interface LogoProps {
   className?: string;
   size?: number;
@@ -7,49 +6,25 @@ interface LogoProps {
 
 const Logo = ({ className = "", size = 32 }: LogoProps) => {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 100 100"
-      className={`${className}`}
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      {/* Glow effect filter */}
-      <defs>
-        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-          <feMerge> 
-            <feMergeNode in="coloredBlur"/>
-            <feMergeNode in="SourceGraphic"/>
-          </feMerge>
-        </filter>
-      </defs>
-      
-      {/* W shape made of connected lines and dots */}
-      {/* Left vertical line */}
-      <line x1="20" y1="25" x2="20" y2="75" stroke="hsl(var(--primary))" strokeWidth="3" filter="url(#glow)" />
-      {/* Left diagonal down */}
-      <line x1="20" y1="75" x2="35" y2="50" stroke="hsl(var(--primary))" strokeWidth="3" filter="url(#glow)" />
-      {/* Center vertical down */}
-      <line x1="35" y1="50" x2="50" y2="75" stroke="hsl(var(--primary))" strokeWidth="3" filter="url(#glow)" />
-      {/* Right diagonal up */}
-      <line x1="50" y1="75" x2="65" y2="50" stroke="hsl(var(--primary))" strokeWidth="3" filter="url(#glow)" />
-      {/* Right vertical line */}
-      <line x1="65" y1="50" x2="80" y2="75" stroke="hsl(var(--primary))" strokeWidth="3" filter="url(#glow)" />
-      {/* Right top line */}
-      <line x1="80" y1="75" x2="80" y2="25" stroke="hsl(var(--primary))" strokeWidth="3" filter="url(#glow)" />
-      
-      {/* Connection dots */}
-      <circle cx="20" cy="25" r="3" fill="hsl(var(--primary))" filter="url(#glow)" />
-      <circle cx="20" cy="75" r="3" fill="hsl(var(--primary))" filter="url(#glow)" />
-      <circle cx="35" cy="50" r="3" fill="hsl(var(--primary))" filter="url(#glow)" />
-      <circle cx="50" cy="75" r="3" fill="hsl(var(--primary))" filter="url(#glow)" />
-      <circle cx="65" cy="50" r="3" fill="hsl(var(--primary))" filter="url(#glow)" />
-      <circle cx="80" cy="25" r="3" fill="hsl(var(--primary))" filter="url(#glow)" />
-      <circle cx="80" cy="75" r="3" fill="hsl(var(--primary))" filter="url(#glow)" />
-    </svg>
+    <div className={`relative ${className}`} style={{ width: size, height: size }}>
+      <img
+        src="/lovable-uploads/a91d57a1-9b5b-41b7-9e64-7fdd219c8127.png"
+        alt="WIRED Logo"
+        width={size}
+        height={size}
+        className="drop-shadow-[0_0_8px_rgba(0,255,255,0.6)] hover:drop-shadow-[0_0_16px_rgba(0,255,255,0.8)] transition-all duration-300"
+        style={{
+          filter: 'drop-shadow(0 0 4px rgba(255,165,0,0.4)) drop-shadow(0 0 8px rgba(0,255,255,0.6))'
+        }}
+      />
+      <div 
+        className="absolute inset-0 opacity-30 mix-blend-screen animate-pulse"
+        style={{
+          background: 'radial-gradient(circle, rgba(255,165,0,0.3) 0%, rgba(0,255,255,0.2) 50%, transparent 70%)'
+        }}
+      />
+    </div>
   );
 };
 
 export default Logo;
-
