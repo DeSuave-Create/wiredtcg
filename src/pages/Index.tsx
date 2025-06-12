@@ -1,4 +1,3 @@
-
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -17,22 +16,22 @@ const Index = () => {
     id: 1,
     name: 'WIRED Base Game',
     price: 29.99,
-    description: 'Build your network, mine bitcoins, and dominate the competition. Includes PCs, switches, and mining cards.',
-    image: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&h=300&fit=crop',
+    description: 'Build your network, mine bitcoins, and dominate the competition. Contains PC cards, network cables, switch cards, and bitcoin mining cards.',
+    image: 'https://images.unsplash.com/photo-1606092195730-5d7b9af1efc5?w=400&h=300&fit=crop',
     stock: 15
   }, {
     id: 2,
     name: 'Network Expansion Pack',
     price: 19.99,
-    description: 'Expand your infrastructure with routers, servers, and advanced networking components for faster mining.',
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop',
+    description: 'Expand your infrastructure with router cards, server cards, and advanced networking components for faster mining operations.',
+    image: 'https://images.unsplash.com/photo-1541944743827-9e7369f4ac6a?w=400&h=300&fit=crop',
     stock: 8
   }, {
     id: 3,
     name: 'Security Protocol Pack',
     price: 24.99,
-    description: 'Defend your network with firewalls and attack other players with hacking tools and cyber warfare cards.',
-    image: 'https://images.unsplash.com/photo-1563206767-5b18f218e8de?w=400&h=300&fit=crop',
+    description: 'Defend your network with firewall cards and attack other players with virus cards, DDoS attack cards, and cyber warfare tactics.',
+    image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop',
     stock: 12
   }];
 
