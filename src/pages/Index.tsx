@@ -2,7 +2,6 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
-import ImageSection from '@/components/ImageSection';
 import TextSection from '@/components/TextSection';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -88,16 +87,6 @@ const Index = () => {
               </TextSection>
             </div>
           </div>
-        </ContentSection>
-
-        {/* Featured Image */}
-        <ContentSection>
-          <ImageSection
-            src="/lovable-uploads/33ee499d-295d-4afb-b0e7-c7e79aef7545.png"
-            alt="Tron-inspired cyberpunk battle scene"
-            title="Enter the Digital Arena"
-            description="Experience the thrill of digital combat in a world where every connection matters."
-          />
         </ContentSection>
 
         {/* Products */}
