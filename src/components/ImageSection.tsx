@@ -12,11 +12,7 @@ const ImageSection = ({ src, alt, title, description, className = "" }: ImageSec
     <div className={`space-y-4 ${className}`}>
       {title && <h3 className="text-xl font-semibold text-primary">{title}</h3>}
       <div className="neon-border rounded-lg overflow-hidden">
-        <img 
-          src={src} 
-          alt={alt} 
-          className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300"
-        />
+        {/* Image removed */}
       </div>
       {description && <p className="text-muted-foreground">{description}</p>}
     </div>
