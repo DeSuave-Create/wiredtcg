@@ -49,8 +49,9 @@ const Index = () => {
               <Network className="h-12 w-12 text-secondary animate-pulse" />
             </div>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Enter the digital grid where IT professionals battle for network supremacy. 
-              Connect systems, deploy strategies, and dominate the cyber battlefield.
+              Ready to get Wired?
+              Experience the ultimate IT strategy game where every move counts and every connection matters. 
+              Build your network, outsmart your opponents, make shady one sided deals, and become the master of the digital currency.
             </p>
             <div className="flex justify-center space-x-4">
               <Button className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow px-8 py-3">
