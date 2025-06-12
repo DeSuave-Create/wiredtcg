@@ -7,8 +7,46 @@ import VideoSection from '@/components/VideoSection';
 import TextSection from '@/components/TextSection';
 import { Button } from '@/components/ui/button';
 import { Download, Play, BookOpen, FileText } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const Extras = () => {
+  const { toast } = useToast();
+
+  const handleWatchTutorial = () => {
+    toast({
+      title: "Tutorial Video",
+      description: "Loading the complete gameplay tutorial...",
+    });
+  };
+
+  const handleDownload = (item: string) => {
+    toast({
+      title: `Downloading ${item}`,
+      description: "Your download will begin shortly.",
+    });
+  };
+
+  const handleViewOnline = () => {
+    toast({
+      title: "Online Rulebook",
+      description: "Opening the interactive rulebook...",
+    });
+  };
+
+  const handleJoinDiscord = () => {
+    toast({
+      title: "Join Our Community",
+      description: "Connect with other WIRED players on Discord!",
+    });
+  };
+
+  const handleFollowTwitter = () => {
+    toast({
+      title: "Follow Us",
+      description: "Stay updated with the latest WIRED news!",
+    });
+  };
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -44,7 +82,10 @@ const Extras = () => {
                   <li>First player to complete a full network loop wins!</li>
                 </ol>
               </TextSection>
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow">
+              <Button 
+                onClick={handleWatchTutorial}
+                className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow"
+              >
                 <Play className="h-4 w-4 mr-2" />
                 Watch Full Tutorial
               </Button>
@@ -75,11 +116,18 @@ const Extras = () => {
                 </ul>
               </TextSection>
               <div className="flex space-x-4">
-                <Button className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow">
+                <Button 
+                  onClick={() => handleDownload('Rulebook PDF')}
+                  className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow"
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Download PDF
                 </Button>
-                <Button variant="outline" className="neon-border">
+                <Button 
+                  onClick={handleViewOnline}
+                  variant="outline" 
+                  className="neon-border"
+                >
                   <BookOpen className="h-4 w-4 mr-2" />
                   View Online
                 </Button>
@@ -96,7 +144,11 @@ const Extras = () => {
               <FileText className="h-12 w-12 text-primary mx-auto" />
               <h3 className="text-lg font-semibold text-primary">Official Rulebook</h3>
               <p className="text-sm text-muted-foreground">Complete game rules and strategies (PDF, 2.4MB)</p>
-              <Button variant="outline" className="neon-border w-full">
+              <Button 
+                onClick={() => handleDownload('Official Rulebook')}
+                variant="outline" 
+                className="neon-border w-full"
+              >
                 <Download className="h-4 w-4 mr-2" />
                 Download
               </Button>
@@ -107,7 +159,11 @@ const Extras = () => {
               <FileText className="h-12 w-12 text-secondary mx-auto" />
               <h3 className="text-lg font-semibold text-primary">Score Sheets</h3>
               <p className="text-sm text-muted-foreground">Printable score tracking sheets (PDF, 0.5MB)</p>
-              <Button variant="outline" className="neon-border w-full">
+              <Button 
+                onClick={() => handleDownload('Score Sheets')}
+                variant="outline" 
+                className="neon-border w-full"
+              >
                 <Download className="h-4 w-4 mr-2" />
                 Download
               </Button>
@@ -118,7 +174,11 @@ const Extras = () => {
               <FileText className="h-12 w-12 text-primary mx-auto" />
               <h3 className="text-lg font-semibold text-primary">Card Reference</h3>
               <p className="text-sm text-muted-foreground">Quick reference for all cards (PDF, 1.1MB)</p>
-              <Button variant="outline" className="neon-border w-full">
+              <Button 
+                onClick={() => handleDownload('Card Reference')}
+                variant="outline" 
+                className="neon-border w-full"
+              >
                 <Download className="h-4 w-4 mr-2" />
                 Download
               </Button>
@@ -134,10 +194,17 @@ const Extras = () => {
                 Connect with other WIRED players, share strategies, and stay updated on tournaments and new releases.
               </p>
               <div className="flex justify-center space-x-4">
-                <Button className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow">
+                <Button 
+                  onClick={handleJoinDiscord}
+                  className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow"
+                >
                   Join Discord
                 </Button>
-                <Button variant="outline" className="neon-border">
+                <Button 
+                  onClick={handleFollowTwitter}
+                  variant="outline" 
+                  className="neon-border"
+                >
                   Follow on Twitter
                 </Button>
               </div>

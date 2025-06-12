@@ -1,11 +1,27 @@
-
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { HelpCircle } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const FAQs = () => {
+  const { toast } = useToast();
+
+  const handleContactSupport = () => {
+    toast({
+      title: "Support Contact",
+      description: "Our support team will get back to you within 24 hours!",
+    });
+  };
+
+  const handleJoinDiscord = () => {
+    toast({
+      title: "Discord Community",
+      description: "Join our growing community for tips, tournaments, and more!",
+    });
+  };
+
   const faqs = [
     {
       question: "How many players can play WIRED?",
@@ -99,10 +115,16 @@ const FAQs = () => {
               Can't find what you're looking for? Our support team is here to help.
             </p>
             <div className="flex justify-center space-x-4">
-              <button className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow px-6 py-2 rounded font-medium">
+              <button 
+                onClick={handleContactSupport}
+                className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow px-6 py-2 rounded font-medium"
+              >
                 Contact Support
               </button>
-              <button className="border border-primary/50 text-primary hover:bg-primary/10 px-6 py-2 rounded font-medium neon-border">
+              <button 
+                onClick={handleJoinDiscord}
+                className="border border-primary/50 text-primary hover:bg-primary/10 px-6 py-2 rounded font-medium neon-border"
+              >
                 Join Discord
               </button>
             </div>

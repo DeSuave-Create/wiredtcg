@@ -1,4 +1,5 @@
 
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
@@ -6,8 +7,12 @@ import TextSection from '@/components/TextSection';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShoppingCart, Zap, Cpu, Network } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
   const products = [{
     id: 1,
     name: 'WIRED Base Game',
@@ -31,6 +36,32 @@ const Index = () => {
     stock: 12
   }];
 
+  const handleShopNow = () => {
+    toast({
+      title: "Welcome to the Shop!",
+      description: "Browse our complete collection of WIRED products below.",
+    });
+    // Scroll to products section
+    const productsSection = document.querySelector('[data-products]');
+    productsSection?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleLearnToPlay = () => {
+    navigate('/extras');
+    toast({
+      title: "Learn to Play",
+      description: "Check out our tutorials and game rules!",
+    });
+  };
+
+  const handleAddToCart = (product: typeof products[0]) => {
+    navigate('/cart');
+    toast({
+      title: "Added to Cart!",
+      description: `${product.name} has been added to your cart.`,
+    });
+  };
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -47,11 +78,18 @@ const Index = () => {
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Ready to get Wired? 
 Experience the ultimate IT strategy game where every move counts and every connection matters. Build your network, outsmart your opponents, make shady one sided deals, and become the master of the digital currency.</p>
             <div className="flex justify-center space-x-4">
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow px-8 py-3">
+              <Button 
+                onClick={handleShopNow}
+                className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow px-8 py-3"
+              >
                 <ShoppingCart className="h-5 w-5 mr-2" />
                 Shop Now
               </Button>
-              <Button variant="outline" className="neon-border px-8 py-3">
+              <Button 
+                onClick={handleLearnToPlay}
+                variant="outline" 
+                className="neon-border px-8 py-3"
+              >
                 <Zap className="h-5 w-5 mr-2" />
                 Learn to Play
               </Button>
@@ -60,7 +98,7 @@ Experience the ultimate IT strategy game where every move counts and every conne
         </ContentSection>
 
         {/* Products */}
-        <ContentSection title="Available Products">
+        <ContentSection title="Available Products" data-products>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map(product => (
               <Card key={product.id} className="neon-border bg-card/50 hover:bg-card/70 transition-all duration-300">
@@ -78,7 +116,10 @@ Experience the ultimate IT strategy game where every move counts and every conne
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/80 neon-glow">
+                  <Button 
+                    onClick={() => handleAddToCart(product)}
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/80 neon-glow"
+                  >
                     <ShoppingCart className="h-4 w-4 mr-2" />
                     Add to Cart
                   </Button>
