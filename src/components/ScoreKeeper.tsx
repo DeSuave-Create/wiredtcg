@@ -1,9 +1,9 @@
-
 import { useState } from 'react';
 import { Plus, Minus, Users, Trash2, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
 
 interface Player {
   id: string;
@@ -21,6 +21,7 @@ const characters = [
 ];
 
 const ScoreKeeper = () => {
+  const { toast } = useToast();
   const [players, setPlayers] = useState<Player[]>([
     { id: '1', name: 'Player 1', score: 0, character: 'dev' },
     { id: '2', name: 'Player 2', score: 0, character: 'admin' }
@@ -63,7 +64,16 @@ const ScoreKeeper = () => {
   };
 
   const resetAllScores = () => {
-    setPlayers(players.map(p => ({ ...p, score: 0 })));
+    console.log('Reset button clicked');
+    setPlayers(prevPlayers => {
+      const resetPlayers = prevPlayers.map(p => ({ ...p, score: 0 }));
+      console.log('Players reset:', resetPlayers);
+      return resetPlayers;
+    });
+    toast({
+      title: "Scores Reset!",
+      description: "All player scores have been reset to 0.",
+    });
   };
 
   const getCharacter = (characterId: string) => {
@@ -84,6 +94,7 @@ const ScoreKeeper = () => {
             variant="outline"
             size="sm"
             className="neon-border text-secondary hover:bg-secondary/10"
+            type="button"
           >
             <RotateCcw className="h-4 w-4 mr-2" />
             Reset All
@@ -92,6 +103,7 @@ const ScoreKeeper = () => {
             <Button
               onClick={addPlayer}
               className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow"
+              type="button"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Player
@@ -143,6 +155,7 @@ const ScoreKeeper = () => {
                     variant="outline"
                     size="sm"
                     className="neon-border text-destructive hover:bg-destructive/10"
+                    type="button"
                   >
                     <Minus className="h-4 w-4" />
                   </Button>
@@ -151,6 +164,7 @@ const ScoreKeeper = () => {
                     variant="outline"
                     size="sm"
                     className="neon-border text-primary hover:bg-primary/10"
+                    type="button"
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
@@ -164,6 +178,7 @@ const ScoreKeeper = () => {
                   variant="outline"
                   size="sm"
                   className="w-full neon-border text-destructive hover:bg-destructive/10"
+                  type="button"
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
                   Remove Player
