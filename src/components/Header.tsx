@@ -1,7 +1,8 @@
 
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Zap } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import Logo from './Logo';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,7 +24,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
-            <Zap className="h-8 w-8 text-primary group-hover:animate-glow-pulse" />
+            <Logo className="group-hover:animate-glow-pulse" size={32} />
             <span className="text-2xl font-bold text-primary tracking-wider">WIRED</span>
           </Link>
 
