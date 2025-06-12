@@ -104,21 +104,21 @@ const Index = () => {
               <Network className="h-12 w-12 text-primary mx-auto" />
               <h3 className="text-xl font-semibold text-primary">Build Your Network</h3>
               <p className="text-muted-foreground">
-                Connect your PC to the switch using network cards and cables. The faster your connection, the more bitcoins you mine per turn.
+                Connect your PC to the switch by using your equipment cards. The faster you make your connections, the more bitcoins you mine per turn.
               </p>
             </div>
             <div className="neon-border bg-card/50 p-6 rounded-lg text-center space-y-4">
               <Bitcoin className="h-12 w-12 text-secondary mx-auto" />
               <h3 className="text-xl font-semibold text-secondary">Mine Bitcoins</h3>
               <p className="text-muted-foreground">
-                Once connected, start mining digital currency. Upgrade your hardware for better mining rates and race to the target score.
+                Once connected, start mining digital currency. Upgrade your network to mine more bitcoins per turn and protect it from outsiders using your specialization cards.
               </p>
             </div>
             <div className="neon-border bg-card/50 p-6 rounded-lg text-center space-y-4">
               <Shield className="h-12 w-12 text-destructive mx-auto" />
               <h3 className="text-xl font-semibold text-destructive">Attack & Defend</h3>
               <p className="text-muted-foreground">
-                Use hacking tools to disrupt opponents' networks or negotiate deals. Protect your setup with firewalls and security protocols.
+                Use your debuff cards to disrupt opponents' networks or negotiate deals. Protect your setup with buff cards and specialization cards.
               </p>
             </div>
           </div>
