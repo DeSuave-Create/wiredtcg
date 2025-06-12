@@ -5,7 +5,7 @@ import ContentSection from '@/components/ContentSection';
 import TextSection from '@/components/TextSection';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShoppingCart, Zap, Cpu, Cable, Network } from 'lucide-react';
+import { ShoppingCart, Zap, Cpu, Network } from 'lucide-react';
 
 const Index = () => {
   const products = [
@@ -61,30 +61,6 @@ const Index = () => {
                 <Zap className="h-5 w-5 mr-2" />
                 Learn to Play
               </Button>
-            </div>
-          </div>
-        </ContentSection>
-
-        {/* Game Overview */}
-        <ContentSection title="The Network Awaits">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center space-y-4">
-              <Cpu className="h-16 w-16 text-primary mx-auto animate-glow-pulse" />
-              <TextSection title="Computers">
-                <p>Deploy powerful systems to process data and execute commands across the network.</p>
-              </TextSection>
-            </div>
-            <div className="text-center space-y-4">
-              <Cable className="h-16 w-16 text-secondary mx-auto animate-glow-pulse" />
-              <TextSection title="Wires" accent>
-                <p>Establish connections between systems to create powerful data pathways.</p>
-              </TextSection>
-            </div>
-            <div className="text-center space-y-4">
-              <Network className="h-16 w-16 text-primary mx-auto animate-glow-pulse" />
-              <TextSection title="Switches">
-                <p>Control network traffic and redirect data flow to outmaneuver opponents.</p>
-              </TextSection>
             </div>
           </div>
         </ContentSection>
