@@ -201,7 +201,9 @@ const Index = () => {
         <ContentSection title="Master the Game">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <TextSection title="Strategic Depth" accent>
-              <p>Every decision matters in WIRED. Choose between investing in powerful mining rigs for steady income or cheap components to get online fast. Form temporary alliances with other players, then betray them when the time is right.</p>
+              <p>Every decision matters in WIRED. Choose your strategy wisely.</p>
+              <p>Do you want to focus on expanding or attacking?</p>
+              <p>Form temporary alliances with other players and come up with your own strategy.</p>
             </TextSection>
             <TextSection title="Multiple Paths to Victory">
               <p>Build the ultimate mining operation, sabotage your competitors' networks, or become the dealmaker who controls the flow of resources. Each game offers different strategies for reaching the target score first.</p>
@@ -216,4 +218,3 @@ const Index = () => {
 };
 
 export default Index;
-
