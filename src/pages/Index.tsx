@@ -1,4 +1,5 @@
 
+
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -6,7 +7,7 @@ import ContentSection from '@/components/ContentSection';
 import TextSection from '@/components/TextSection';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShoppingCart, Zap, Cpu, Network, Bitcoin, Shield, Users } from 'lucide-react';
+import { ShoppingCart, Zap, Cpu, Network, Bitcoin, Shield, Users, Server, Router, HardDrive } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
@@ -18,21 +19,24 @@ const Index = () => {
     name: 'WIRED Base Game',
     price: 29.99,
     description: 'Build your network, mine bitcoins, and dominate the competition. Contains PC cards, network cables, switch cards, and bitcoin mining cards.',
-    image: 'https://images.unsplash.com/photo-1606092195730-5d7b9af1efc5?w=400&h=300&fit=crop',
+    cardIcon: Cpu,
+    cardColor: 'primary',
     stock: 15
   }, {
     id: 2,
     name: 'Network Expansion Pack',
     price: 19.99,
     description: 'Expand your infrastructure with router cards, server cards, and advanced networking components for faster mining operations.',
-    image: 'https://images.unsplash.com/photo-1541944743827-9e7369f4ac6a?w=400&h=300&fit=crop',
+    cardIcon: Router,
+    cardColor: 'secondary',
     stock: 8
   }, {
     id: 3,
     name: 'Security Protocol Pack',
     price: 24.99,
     description: 'Defend your network with firewall cards and attack other players with virus cards, DDoS attack cards, and cyber warfare tactics.',
-    image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop',
+    cardIcon: Shield,
+    cardColor: 'destructive',
     stock: 12
   }];
 
@@ -128,32 +132,68 @@ const Index = () => {
         {/* Products */}
         <ContentSection title="Available Products" data-products>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map(product => (
-              <Card key={product.id} className="neon-border bg-card/50 hover:bg-card/70 transition-all duration-300">
-                <CardHeader>
-                  <img src={product.image} alt={product.name} className="w-full h-48 object-cover rounded-lg mb-4" />
-                  <CardTitle className="text-primary">{product.name}</CardTitle>
-                  <CardDescription className="text-muted-foreground">
-                    {product.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between items-center">
-                    <span className="text-2xl font-bold text-secondary">${product.price}</span>
-                    <span className="text-sm text-muted-foreground">Stock: {product.stock}</span>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button 
-                    onClick={() => handleAddToCart(product)}
-                    className="w-full bg-primary text-primary-foreground hover:bg-primary/80 neon-glow"
-                  >
-                    <ShoppingCart className="h-4 w-4 mr-2" />
-                    Add to Cart
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
+            {products.map(product => {
+              const IconComponent = product.cardIcon;
+              const borderColor = product.cardColor === 'primary' ? 'border-primary/50 shadow-[0_0_10px_rgba(0,255,255,0.3)]' :
+                                  product.cardColor === 'secondary' ? 'border-secondary/50 shadow-[0_0_10px_rgba(255,165,0,0.3)]' :
+                                  'border-destructive/50 shadow-[0_0_10px_rgba(239,68,68,0.3)]';
+              const iconColor = product.cardColor === 'primary' ? 'text-primary' :
+                               product.cardColor === 'secondary' ? 'text-secondary' :
+                               'text-destructive';
+              
+              return (
+                <Card key={product.id} className="neon-border bg-card/50 hover:bg-card/70 transition-all duration-300">
+                  <CardHeader>
+                    {/* Playing Card Style Design */}
+                    <div className={`w-full h-48 ${borderColor} border-2 rounded-lg mb-4 bg-card/80 flex flex-col justify-between p-4 relative overflow-hidden`}>
+                      {/* Grid pattern background */}
+                      <div className="absolute inset-0 opacity-10 grid-pattern"></div>
+                      
+                      {/* Top left corner */}
+                      <div className="flex flex-col items-start">
+                        <IconComponent className={`h-8 w-8 ${iconColor}`} />
+                        <span className={`text-xs font-mono ${iconColor} mt-1`}>WIRED</span>
+                      </div>
+                      
+                      {/* Center icon */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <IconComponent className={`h-16 w-16 ${iconColor} opacity-80`} />
+                      </div>
+                      
+                      {/* Bottom right corner (rotated) */}
+                      <div className="flex flex-col items-end rotate-180">
+                        <IconComponent className={`h-8 w-8 ${iconColor}`} />
+                        <span className={`text-xs font-mono ${iconColor} mt-1`}>WIRED</span>
+                      </div>
+                      
+                      {/* Circuit lines decoration */}
+                      <div className={`absolute top-2 right-2 w-12 h-12 border ${iconColor.replace('text-', 'border-')} opacity-30 rounded`}></div>
+                      <div className={`absolute bottom-2 left-2 w-8 h-8 border ${iconColor.replace('text-', 'border-')} opacity-20 rounded`}></div>
+                    </div>
+                    
+                    <CardTitle className="text-primary">{product.name}</CardTitle>
+                    <CardDescription className="text-muted-foreground">
+                      {product.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex justify-between items-center">
+                      <span className="text-2xl font-bold text-secondary">${product.price}</span>
+                      <span className="text-sm text-muted-foreground">Stock: {product.stock}</span>
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Button 
+                      onClick={() => handleAddToCart(product)}
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary/80 neon-glow"
+                    >
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      Add to Cart
+                    </Button>
+                  </CardFooter>
+                </Card>
+              );
+            })}
           </div>
         </ContentSection>
 
@@ -176,3 +216,4 @@ const Index = () => {
 };
 
 export default Index;
+
