@@ -53,6 +53,10 @@ const GameCard: React.FC<GameCardProps> = ({
 
   const cardStyles = getCardStyles();
 
+  // Get the card background from the parent section
+  const parentSection = document.querySelector('[data-card-bg]');
+  const cardBg = parentSection?.getAttribute('data-card-bg');
+
   return (
     <div className={cn(
       "relative w-64 h-96 overflow-hidden transition-all duration-300 hover:scale-105",
@@ -63,20 +67,32 @@ const GameCard: React.FC<GameCardProps> = ({
       "hover:shadow-2xl",
       className
     )}>
-      {/* Circuit board background pattern */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `
-            radial-gradient(circle at 20% 20%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
-            radial-gradient(circle at 80% 20%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
-            radial-gradient(circle at 20% 80%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
-            radial-gradient(circle at 80% 80%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
-            radial-gradient(circle at 50% 50%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
-            linear-gradient(rgba(200, 200, 200, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(200, 200, 200, 0.1) 1px, transparent 1px)
-          `,
-          backgroundSize: '40px 40px, 40px 40px, 40px 40px, 40px 40px, 40px 40px, 20px 20px, 20px 20px'
-        }}></div>
+      {/* Custom background or circuit board pattern */}
+      <div className="absolute inset-0">
+        {cardBg ? (
+          <div 
+            className="absolute inset-0 opacity-30"
+            style={{
+              backgroundImage: `url(${cardBg})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat'
+            }}
+          />
+        ) : (
+          <div className="absolute inset-0 opacity-20" style={{
+            backgroundImage: `
+              radial-gradient(circle at 20% 20%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
+              radial-gradient(circle at 80% 20%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
+              radial-gradient(circle at 20% 80%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
+              radial-gradient(circle at 80% 80%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
+              radial-gradient(circle at 50% 50%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
+              linear-gradient(rgba(200, 200, 200, 0.1) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(200, 200, 200, 0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: '40px 40px, 40px 40px, 40px 40px, 40px 40px, 40px 40px, 20px 20px, 20px 20px'
+          }}></div>
+        )}
       </div>
       
       {/* Card content */}

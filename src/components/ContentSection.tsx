@@ -7,9 +7,10 @@ interface ContentSectionProps {
   className?: string;
   glowEffect?: boolean;
   backgroundImage?: string;
+  cardBackgroundImage?: string;
 }
 
-const ContentSection = ({ title, children, className = "", glowEffect = false, backgroundImage }: ContentSectionProps) => {
+const ContentSection = ({ title, children, className = "", glowEffect = false, backgroundImage, cardBackgroundImage }: ContentSectionProps) => {
   const backgroundStyle = backgroundImage ? {
     backgroundImage: `url(${backgroundImage})`,
     backgroundSize: 'cover',
@@ -18,7 +19,7 @@ const ContentSection = ({ title, children, className = "", glowEffect = false, b
   } : {};
 
   return (
-    <section className={`py-8 ${className}`}>
+    <section className={`py-8 ${className}`} data-card-bg={cardBackgroundImage}>
       <div 
         className={`neon-border bg-card/30 backdrop-blur-sm p-6 rounded-lg ${glowEffect ? 'animate-pulse-neon' : ''} ${backgroundImage ? 'relative' : ''}`}
         style={backgroundStyle}

@@ -22,6 +22,7 @@ const Index = () => {
         <ContentSection 
           title="How to Win" 
           backgroundImage="/lovable-uploads/a55043cc-ebea-42ff-813b-9a70488507db.png"
+          cardBackgroundImage="/lovable-uploads/63928df8-c1b1-4e1d-8fa4-5c14c990cce7.png"
         >
           <GameMechanicsSection />
         </ContentSection>
