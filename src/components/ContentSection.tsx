@@ -6,18 +6,34 @@ interface ContentSectionProps {
   children: ReactNode;
   className?: string;
   glowEffect?: boolean;
+  backgroundImage?: string;
 }
 
-const ContentSection = ({ title, children, className = "", glowEffect = false }: ContentSectionProps) => {
+const ContentSection = ({ title, children, className = "", glowEffect = false, backgroundImage }: ContentSectionProps) => {
+  const backgroundStyle = backgroundImage ? {
+    backgroundImage: `url(${backgroundImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat'
+  } : {};
+
   return (
     <section className={`py-8 ${className}`}>
-      <div className={`neon-border bg-card/30 backdrop-blur-sm p-6 rounded-lg ${glowEffect ? 'animate-pulse-neon' : ''}`}>
-        {title && (
-          <h2 className="text-2xl font-bold text-primary mb-6 text-center tracking-wider">
-            {title}
-          </h2>
+      <div 
+        className={`neon-border bg-card/30 backdrop-blur-sm p-6 rounded-lg ${glowEffect ? 'animate-pulse-neon' : ''} ${backgroundImage ? 'relative' : ''}`}
+        style={backgroundStyle}
+      >
+        {backgroundImage && (
+          <div className="absolute inset-0 bg-black/40 rounded-lg"></div>
         )}
-        {children}
+        <div className="relative z-10">
+          {title && (
+            <h2 className="text-2xl font-bold text-primary mb-6 text-center tracking-wider">
+              {title}
+            </h2>
+          )}
+          {children}
+        </div>
       </div>
     </section>
   );

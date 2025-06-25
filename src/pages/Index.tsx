@@ -19,7 +19,10 @@ const Index = () => {
         </ContentSection>
 
         {/* Game Mechanics */}
-        <ContentSection title="How to Win">
+        <ContentSection 
+          title="How to Win" 
+          backgroundImage="/lovable-uploads/a55043cc-ebea-42ff-813b-9a70488507db.png"
+        >
           <GameMechanicsSection />
         </ContentSection>
 
