@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import GameHeader from './GameHeader';
@@ -16,18 +17,18 @@ const characters = [
   { id: 'zerotrust', name: '🔐 ZeroTrust (Hacker/Security)', icon: '🕵️' },
   { id: 'deskjockey', name: '🎧 DeskJockey (HelpDesk)', icon: '💬' },
   { id: 'pingmaster', name: '🌐 PingMaster (Network)', icon: '📡' },
-  { id: 'redtapperipper', name: '📋 RedTapeRipper (Compliance/FTC)', icon: '⚖️' },
+  { id: 'redtaperipper', name: '📋 RedTapeRipper (Compliance/FTC)', icon: '⚖️' },
   { id: 'clutchcache', name: '🎮 ClutchCache (Gamer)', icon: '🕹️' },
 ];
 
 const ScoreKeeper = () => {
   const { toast } = useToast();
   const [players, setPlayers] = useState<Player[]>([
-    { id: '1', name: 'ZeroTrust', score: 0, character: 'zerotrust' },
-    { id: '2', name: 'DeskJockey', score: 0, character: 'deskjockey' },
-    { id: '3', name: 'PingMaster', score: 0, character: 'pingmaster' },
-    { id: '4', name: 'RedTapeRipper', score: 0, character: 'redtapperipper' },
-    { id: '5', name: 'ClutchCache', score: 0, character: 'clutchcache' }
+    { id: '1', name: 'Player 1', score: 0, character: 'zerotrust' },
+    { id: '2', name: 'Player 2', score: 0, character: 'deskjockey' },
+    { id: '3', name: 'Player 3', score: 0, character: 'pingmaster' },
+    { id: '4', name: 'Player 4', score: 0, character: 'redtaperipper' },
+    { id: '5', name: 'Player 5', score: 0, character: 'clutchcache' }
   ]);
 
   const maxPlayers = 5;
