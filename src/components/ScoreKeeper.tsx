@@ -93,17 +93,17 @@ const ScoreKeeper = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center space-x-2">
           <Bitcoin className="h-6 w-6 text-secondary" />
           <h2 className="text-2xl font-bold text-primary">Bitcoin Mining Tracker</h2>
         </div>
-        <div className="flex space-x-2">
+        <div className="flex flex-col sm:flex-row gap-2 sm:space-x-2">
           <Button
             onClick={resetAllScores}
             variant="outline"
             size="sm"
-            className="neon-border text-secondary hover:bg-secondary/10"
+            className="neon-border text-secondary hover:bg-secondary/10 w-full sm:w-auto"
             type="button"
           >
             <RotateCcw className="h-4 w-4 mr-2" />
@@ -112,7 +112,7 @@ const ScoreKeeper = () => {
           {players.length < 5 && (
             <Button
               onClick={addPlayer}
-              className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow"
+              className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow w-full sm:w-auto"
               type="button"
             >
               <Plus className="h-4 w-4 mr-2" />
@@ -173,12 +173,12 @@ const ScoreKeeper = () => {
                 </div>
                 
                 {/* Score Controls */}
-                <div className="flex justify-center space-x-2">
+                <div className="flex flex-col xs:flex-row justify-center gap-2 xs:space-x-2 xs:space-y-0">
                   <Button
                     onClick={() => updateScore(player.id, -1)}
                     variant="outline"
                     size="sm"
-                    className="neon-border text-destructive hover:bg-destructive/10"
+                    className="neon-border text-destructive hover:bg-destructive/10 w-full xs:w-auto"
                     type="button"
                   >
                     <Minus className="h-4 w-4" />
@@ -187,7 +187,7 @@ const ScoreKeeper = () => {
                     onClick={() => updateScore(player.id, 1)}
                     variant="outline"
                     size="sm"
-                    className="neon-border text-primary hover:bg-primary/10"
+                    className="neon-border text-primary hover:bg-primary/10 w-full xs:w-auto"
                     type="button"
                   >
                     <Plus className="h-4 w-4" />
