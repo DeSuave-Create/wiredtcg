@@ -61,49 +61,55 @@ export const TripleCablingIllustration = () => (
 
 export const ComputerIllustration = () => (
   <div className="w-full h-full flex items-center justify-center">
-    <div className="relative flex items-end space-x-3">
-      {/* Monitor */}
-      <div className="relative">
-        <div className="w-28 h-20 bg-gray-600 border-4 border-gray-900 rounded-sm relative">
-          <div className="w-full h-full bg-gray-700 rounded-sm border-2 border-gray-800"></div>
+    <div className="relative flex flex-col items-center space-y-3">
+      {/* Top row: Monitor and Desktop Tower */}
+      <div className="flex items-end space-x-3">
+        {/* Monitor */}
+        <div className="relative">
+          <div className="w-28 h-20 bg-gray-600 border-4 border-gray-900 rounded-sm relative">
+            <div className="w-full h-full bg-gray-700 rounded-sm border-2 border-gray-800"></div>
+          </div>
+          {/* Monitor stand */}
+          <div className="w-20 h-2 bg-gray-700 mx-auto rounded-sm border border-gray-800"></div>
+          <div className="w-12 h-4 bg-gray-800 mx-auto rounded-sm"></div>
         </div>
-        {/* Monitor stand */}
-        <div className="w-20 h-2 bg-gray-700 mx-auto rounded-sm border border-gray-800"></div>
-        <div className="w-12 h-4 bg-gray-800 mx-auto rounded-sm"></div>
-      </div>
-      
-      {/* Desktop Tower */}
-      <div className="w-16 h-24 bg-gray-400 border-4 border-gray-900 rounded-sm relative">
-        {/* Power button */}
-        <div className="absolute top-2 right-2 w-3 h-3 bg-gray-800 rounded-full border border-gray-600"></div>
-        {/* Drive slots */}
-        <div className="absolute top-6 left-2 right-2 h-1 bg-gray-800 rounded-sm"></div>
-        <div className="absolute top-8 left-2 right-2 h-1 bg-gray-800 rounded-sm"></div>
-        {/* Ventilation grilles */}
-        <div className="absolute bottom-4 left-2 right-2 space-y-1">
-          <div className="h-0.5 bg-gray-600 rounded-sm"></div>
-          <div className="h-0.5 bg-gray-600 rounded-sm"></div>
-          <div className="h-0.5 bg-gray-600 rounded-sm"></div>
-        </div>
-      </div>
-      
-      {/* Keyboard */}
-      <div className="w-24 h-8 bg-gray-600 border-2 border-gray-800 rounded-sm relative">
-        {/* Keys grid */}
-        <div className="absolute inset-1 grid grid-cols-8 gap-0.5">
-          {Array.from({ length: 24 }).map((_, i) => (
-            <div key={i} className="bg-gray-500 rounded-sm"></div>
-          ))}
+        
+        {/* Desktop Tower */}
+        <div className="w-16 h-24 bg-gray-400 border-4 border-gray-900 rounded-sm relative">
+          {/* Power button */}
+          <div className="absolute top-2 right-2 w-3 h-3 bg-gray-800 rounded-full border border-gray-600"></div>
+          {/* Drive slots */}
+          <div className="absolute top-6 left-2 right-2 h-1 bg-gray-800 rounded-sm"></div>
+          <div className="absolute top-8 left-2 right-2 h-1 bg-gray-800 rounded-sm"></div>
+          {/* Ventilation grilles */}
+          <div className="absolute bottom-4 left-2 right-2 space-y-1">
+            <div className="h-0.5 bg-gray-600 rounded-sm"></div>
+            <div className="h-0.5 bg-gray-600 rounded-sm"></div>
+            <div className="h-0.5 bg-gray-600 rounded-sm"></div>
+          </div>
         </div>
       </div>
       
-      {/* Mouse */}
-      <div className="w-6 h-10 bg-gray-600 border-2 border-gray-800 rounded-full relative">
-        {/* Mouse buttons */}
-        <div className="absolute top-1 left-1 w-2 h-3 bg-gray-500 rounded-sm"></div>
-        <div className="absolute top-1 right-1 w-2 h-3 bg-gray-500 rounded-sm"></div>
-        {/* Scroll wheel */}
-        <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-1 h-2 bg-gray-400 rounded-full"></div>
+      {/* Bottom row: Keyboard and Mouse */}
+      <div className="flex items-center space-x-4">
+        {/* Keyboard */}
+        <div className="w-32 h-10 bg-gray-600 border-2 border-gray-800 rounded-sm relative">
+          {/* Keys grid */}
+          <div className="absolute inset-1 grid grid-cols-10 gap-0.5">
+            {Array.from({ length: 30 }).map((_, i) => (
+              <div key={i} className="bg-gray-500 rounded-sm"></div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Mouse */}
+        <div className="w-6 h-10 bg-gray-600 border-2 border-gray-800 rounded-full relative">
+          {/* Mouse buttons */}
+          <div className="absolute top-1 left-1 w-2 h-3 bg-gray-500 rounded-sm"></div>
+          <div className="absolute top-1 right-1 w-2 h-3 bg-gray-500 rounded-sm"></div>
+          {/* Scroll wheel */}
+          <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-1 h-2 bg-gray-400 rounded-full"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -111,8 +117,8 @@ export const ComputerIllustration = () => (
 
 export const HackedIllustration = () => (
   <div className="w-full h-full flex items-center justify-center">
-    <div className="relative flex items-end space-x-2">
-      {/* Monitor with hack message */}
+    <div className="relative flex flex-col items-center space-y-2">
+      {/* Top row: Monitor */}
       <div className="relative">
         <div className="w-32 h-24 bg-gray-600 border-4 border-gray-900 rounded-sm relative">
           <div className="w-full h-full bg-gray-900 rounded-sm flex items-center justify-center border-2 border-gray-800">
@@ -126,23 +132,26 @@ export const HackedIllustration = () => (
         <div className="w-16 h-3 bg-gray-800 mx-auto rounded-sm"></div>
       </div>
       
-      {/* Keyboard */}
-      <div className="w-20 h-6 bg-gray-600 border-2 border-gray-800 rounded-sm relative">
-        {/* Keys grid */}
-        <div className="absolute inset-1 grid grid-cols-6 gap-0.5">
-          {Array.from({ length: 18 }).map((_, i) => (
-            <div key={i} className="bg-gray-500 rounded-sm"></div>
-          ))}
+      {/* Bottom row: Keyboard and Mouse */}
+      <div className="flex items-center space-x-3">
+        {/* Keyboard */}
+        <div className="w-28 h-8 bg-gray-600 border-2 border-gray-800 rounded-sm relative">
+          {/* Keys grid */}
+          <div className="absolute inset-1 grid grid-cols-8 gap-0.5">
+            {Array.from({ length: 24 }).map((_, i) => (
+              <div key={i} className="bg-gray-500 rounded-sm"></div>
+            ))}
+          </div>
         </div>
-      </div>
-      
-      {/* Mouse */}
-      <div className="w-5 h-8 bg-gray-600 border-2 border-gray-800 rounded-full relative">
-        {/* Mouse buttons */}
-        <div className="absolute top-1 left-0.5 w-1.5 h-2 bg-gray-500 rounded-sm"></div>
-        <div className="absolute top-1 right-0.5 w-1.5 h-2 bg-gray-500 rounded-sm"></div>
-        {/* Scroll wheel */}
-        <div className="absolute top-1.5 left-1/2 transform -translate-x-1/2 w-0.5 h-1 bg-gray-400 rounded-full"></div>
+        
+        {/* Mouse */}
+        <div className="w-5 h-8 bg-gray-600 border-2 border-gray-800 rounded-full relative">
+          {/* Mouse buttons */}
+          <div className="absolute top-1 left-0.5 w-1.5 h-2 bg-gray-500 rounded-sm"></div>
+          <div className="absolute top-1 right-0.5 w-1.5 h-2 bg-gray-500 rounded-sm"></div>
+          {/* Scroll wheel */}
+          <div className="absolute top-1.5 left-1/2 transform -translate-x-1/2 w-0.5 h-1 bg-gray-400 rounded-full"></div>
+        </div>
       </div>
     </div>
   </div>
