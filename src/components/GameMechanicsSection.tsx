@@ -13,7 +13,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
       <GameCard
         type="equipment"
         title="CABLING"
-        description="Required to connect COMPUTER to SWITCH."
+        description="Once connected, start mining digital currency. Upgrade your network to mine more bitcoins per turn and protect it from outsiders using your specialization cards."
         icon={<Cable />}
         illustration={<CablingIllustration />}
         cardBackgroundImage={cardBackgroundImage}
@@ -22,7 +22,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
       <GameCard
         type="attack"
         title="HACKED"
-        description="Target equipment card DISABLED."
+        description="Use your debuff cards to disrupt opponents' networks or negotiate deals. Protect your setup with buff cards and specialization cards."
         icon={<Shield />}
         illustration={<HackedIllustration />}
         cardBackgroundImage={cardBackgroundImage}
@@ -31,7 +31,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
       <GameCard
         type="equipment"
         title="COMPUTER"
-        description="Connect to the SWITCH to start mining bitcoins."
+        description="Connect your PC to the switch by using your equipment cards. The faster you make your connections, the more bitcoins you mine per turn."
         icon={<Computer />}
         illustration={<ComputerIllustration />}
         cardBackgroundImage={cardBackgroundImage}
