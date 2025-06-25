@@ -9,6 +9,7 @@ export interface GameCardProps {
   icon?: React.ReactNode;
   className?: string;
   illustration?: React.ReactNode;
+  cardBackgroundImage?: string;
 }
 
 const GameCard: React.FC<GameCardProps> = ({
@@ -17,7 +18,8 @@ const GameCard: React.FC<GameCardProps> = ({
   description,
   icon,
   className,
-  illustration
+  illustration,
+  cardBackgroundImage
 }) => {
   const getCardStyles = () => {
     switch (type) {
@@ -53,10 +55,6 @@ const GameCard: React.FC<GameCardProps> = ({
 
   const cardStyles = getCardStyles();
 
-  // Get the card background from the parent section
-  const parentSection = document.querySelector('[data-card-bg]');
-  const cardBg = parentSection?.getAttribute('data-card-bg');
-
   return (
     <div className={cn(
       "relative w-64 h-96 overflow-hidden transition-all duration-300 hover:scale-105",
@@ -69,11 +67,11 @@ const GameCard: React.FC<GameCardProps> = ({
     )}>
       {/* Custom background or circuit board pattern */}
       <div className="absolute inset-0">
-        {cardBg ? (
+        {cardBackgroundImage ? (
           <div 
             className="absolute inset-0 opacity-30"
             style={{
-              backgroundImage: `url(${cardBg})`,
+              backgroundImage: `url(${cardBackgroundImage})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat'

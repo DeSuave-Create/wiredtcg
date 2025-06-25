@@ -18,8 +18,13 @@ const ContentSection = ({ title, children, className = "", glowEffect = false, b
     backgroundRepeat: 'no-repeat'
   } : {};
 
+  // Clone children and pass cardBackgroundImage if it's GameMechanicsSection
+  const childrenWithProps = React.cloneElement(children as React.ReactElement, {
+    cardBackgroundImage
+  });
+
   return (
-    <section className={`py-8 ${className}`} data-card-bg={cardBackgroundImage}>
+    <section className={`py-8 ${className}`}>
       <div 
         className={`neon-border bg-card/30 backdrop-blur-sm p-6 rounded-lg ${glowEffect ? 'animate-pulse-neon' : ''} ${backgroundImage ? 'relative' : ''}`}
         style={backgroundStyle}
@@ -33,7 +38,7 @@ const ContentSection = ({ title, children, className = "", glowEffect = false, b
               {title}
             </h2>
           )}
-          {children}
+          {cardBackgroundImage ? childrenWithProps : children}
         </div>
       </div>
     </section>

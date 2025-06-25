@@ -3,7 +3,11 @@ import GameCard from './GameCard';
 import { Computer, Cable, Shield } from 'lucide-react';
 import { ComputerIllustration, CablingIllustration, HackedIllustration } from './CardIllustrations';
 
-const GameMechanicsSection = () => {
+interface GameMechanicsSectionProps {
+  cardBackgroundImage?: string;
+}
+
+const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps) => {
   return (
     <div className="flex flex-wrap justify-center gap-6 lg:gap-8">
       <GameCard
@@ -12,6 +16,7 @@ const GameMechanicsSection = () => {
         description="Required to connect COMPUTER to SWITCH."
         icon={<Cable />}
         illustration={<CablingIllustration />}
+        cardBackgroundImage={cardBackgroundImage}
       />
       
       <GameCard
@@ -20,6 +25,7 @@ const GameMechanicsSection = () => {
         description="Target equipment card DISABLED."
         icon={<Shield />}
         illustration={<HackedIllustration />}
+        cardBackgroundImage={cardBackgroundImage}
       />
       
       <GameCard
@@ -28,6 +34,7 @@ const GameMechanicsSection = () => {
         description="Connect to the SWITCH to start mining bitcoins."
         icon={<Computer />}
         illustration={<ComputerIllustration />}
+        cardBackgroundImage={cardBackgroundImage}
       />
     </div>
   );
