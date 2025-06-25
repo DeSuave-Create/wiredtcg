@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 export const CablingIllustration = () => (
@@ -61,10 +62,10 @@ export const TripleCablingIllustration = () => (
 export const ComputerIllustration = () => (
   <div className="w-full h-full flex items-center justify-center">
     <div className="relative flex flex-col items-center space-y-3">
-      {/* Top row: Angled Monitor and Desktop Tower */}
+      {/* Top row: Monitor and Desktop Tower */}
       <div className="flex items-end space-x-3">
-        {/* Angled Monitor */}
-        <div className="relative transform -rotate-12">
+        {/* Monitor */}
+        <div className="relative">
           <div className="w-28 h-20 bg-gray-600 border-4 border-gray-900 rounded-sm relative">
             <div className="w-full h-full bg-gray-700 rounded-sm border-2 border-gray-800"></div>
           </div>
@@ -117,8 +118,8 @@ export const ComputerIllustration = () => (
 export const HackedIllustration = () => (
   <div className="w-full h-full flex items-center justify-center">
     <div className="relative flex flex-col items-center space-y-2">
-      {/* Top row: Angled Monitor with hacker message */}
-      <div className="relative transform -rotate-12">
+      {/* Top row: Monitor */}
+      <div className="relative">
         <div className="w-32 h-24 bg-gray-600 border-4 border-gray-900 rounded-sm relative">
           <div className="w-full h-full bg-gray-900 rounded-sm flex items-center justify-center border-2 border-gray-800">
             <div className="text-green-400 text-xs font-mono text-center leading-tight">
