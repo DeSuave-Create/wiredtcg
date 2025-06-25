@@ -1,8 +1,9 @@
 
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Zap, Cpu, Bitcoin } from 'lucide-react';
+import { ShoppingCart, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import Logo from './Logo';
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -29,9 +30,9 @@ const HeroSection = () => {
   return (
     <div className="text-center space-y-4 sm:space-y-6">
       <div className="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-4 mb-4 sm:mb-6">
-        <Cpu className="h-8 w-8 sm:h-10 md:h-12 lg:w-12 text-primary animate-pulse" />
+        <Logo size={48} className="animate-pulse" />
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary tracking-wider">WIRED</h1>
-        <Bitcoin className="h-8 w-8 sm:h-10 md:h-12 lg:w-12 text-secondary animate-pulse" />
+        <Logo size={48} className="animate-pulse" />
       </div>
       <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-xs sm:max-w-md md:max-w-lg lg:max-w-2xl mx-auto px-4 sm:px-0">
         Build your network, connect to the switch, and start mining bitcoins! Race against other players to reach the goal score first through strategic network building, cyber attacks, and cunning deals. Will you dominate through superior infrastructure or sabotage your opponents?
