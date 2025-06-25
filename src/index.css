@@ -8,14 +8,14 @@
 @layer base {
   :root {
     /* Dark theme (default) */
-    --background: 210 15% 8%;
-    --foreground: 180 100% 90%;
+    --background: 0 0% 88%;
+    --foreground: 210 15% 15%;
 
-    --card: 210 15% 12%;
-    --card-foreground: 180 100% 90%;
+    --card: 0 0% 92%;
+    --card-foreground: 210 15% 15%;
 
-    --popover: 210 15% 10%;
-    --popover-foreground: 180 100% 90%;
+    --popover: 0 0% 90%;
+    --popover-foreground: 210 15% 15%;
 
     --primary: 120 60% 50%;
     --primary-foreground: 210 15% 8%;
@@ -23,17 +23,17 @@
     --secondary: 30 100% 50%;
     --secondary-foreground: 210 15% 8%;
 
-    --muted: 210 15% 15%;
-    --muted-foreground: 180 50% 70%;
+    --muted: 0 0% 85%;
+    --muted-foreground: 210 30% 40%;
 
     --accent: 120 60% 40%;
     --accent-foreground: 210 15% 8%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
 
     --border: 120 40% 25%;
-    --input: 210 15% 15%;
+    --input: 0 0% 95%;
     --ring: 120 60% 50%;
 
     --radius: 0.25rem;
@@ -41,13 +41,13 @@
 
   .light {
     /* Light theme */
-    --background: 0 0% 95%;
+    --background: 0 0% 88%;
     --foreground: 210 15% 15%;
 
-    --card: 0 0% 100%;
+    --card: 0 0% 92%;
     --card-foreground: 210 15% 15%;
 
-    --popover: 0 0% 100%;
+    --popover: 0 0% 90%;
     --popover-foreground: 210 15% 15%;
 
     --primary: 120 60% 45%;
@@ -56,7 +56,7 @@
     --secondary: 30 100% 45%;
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 210 40% 92%;
+    --muted: 0 0% 85%;
     --muted-foreground: 215 16% 47%;
 
     --accent: 120 60% 35%;
@@ -66,7 +66,7 @@
     --destructive-foreground: 0 0% 98%;
 
     --border: 214.3 31.8% 85%;
-    --input: 214.3 31.8% 91%;
+    --input: 0 0% 95%;
     --ring: 120 60% 45%;
   }
 }
@@ -79,12 +79,14 @@
   body {
     @apply bg-background text-foreground font-mono;
     transition: background-color 0.3s ease, color 0.3s ease;
+    background-color: hsl(0, 0%, 88%);
   }
 
   /* Dark theme background */
   .dark body {
+    background-color: hsl(0, 0%, 88%);
     background-image: 
-      url('/lovable-uploads/4bbe449b-2b5c-4db2-8add-31ebfb863320.png'),
+      url('/lovable-uploads/4dec6d97-b06e-43be-83ce-00dbc090c356.png'),
       linear-gradient(rgba(120, 200, 80, 0.03) 1px, transparent 1px),
       linear-gradient(90deg, rgba(120, 200, 80, 0.03) 1px, transparent 1px);
     background-size: cover, 20px 20px, 20px 20px;
@@ -95,8 +97,9 @@
 
   /* Light theme background */
   .light body {
+    background-color: hsl(0, 0%, 88%);
     background-image: 
-      url('/lovable-uploads/c6e00df3-d900-4fe1-a096-253fd7c1af29.png'),
+      url('/lovable-uploads/4dec6d97-b06e-43be-83ce-00dbc090c356.png'),
       linear-gradient(rgba(120, 180, 80, 0.05) 1px, transparent 1px),
       linear-gradient(90deg, rgba(120, 180, 80, 0.05) 1px, transparent 1px);
     background-size: cover, 20px 20px, 20px 20px;
