@@ -17,7 +17,7 @@ const characters = [
   { id: 'dev', name: '👨‍💻 Developer', icon: '💻' },
   { id: 'admin', name: '🔧 System Admin', icon: '⚙️' },
   { id: 'hacker', name: '🕵️ Ethical Hacker', icon: '🔐' },
-  { id = 'analyst', name: '📊 Data Analyst', icon: '📈' },
+  { id: 'analyst', name: '📊 Data Analyst', icon: '📈' },
   { id: 'engineer', name: '🏗️ Network Engineer', icon: '🌐' },
 ];
 
