@@ -1,13 +1,9 @@
-
 import React from 'react';
-
-export const CablingIllustration = () => (
-  <div className="w-full h-full flex items-center justify-center">
+export const CablingIllustration = () => <div className="w-full h-full flex items-center justify-center py-0 px-0 my-0 mx-[31px]">
     <div className="relative">
       {/* Three ethernet cables matching the green card design */}
-      <div className="flex space-x-4">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="flex flex-col items-center">
+      <div className="flex space-x-4 my-[2px] py-0 px-0 mx-[14px]">
+        {[1, 2, 3].map(i => <div key={i} className="flex flex-col items-center">
             {/* Cable body */}
             <div className="w-3 h-32 bg-gray-800 rounded-full relative">
               {/* Cable stripes */}
@@ -23,20 +19,15 @@ export const CablingIllustration = () => (
               {/* Yellow/gold pins */}
               <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-4 h-1 bg-yellow-400"></div>
             </div>
-          </div>
-        ))}
+          </div>)}
       </div>
     </div>
-  </div>
-);
-
-export const TripleCablingIllustration = () => (
-  <div className="w-full h-full flex items-center justify-center">
+  </div>;
+export const TripleCablingIllustration = () => <div className="w-full h-full flex items-center justify-center">
     <div className="relative">
       {/* Three ethernet cables matching the green card design */}
       <div className="flex space-x-3">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="flex flex-col items-center">
+        {[1, 2, 3].map(i => <div key={i} className="flex flex-col items-center">
             {/* Cable body */}
             <div className="w-2 h-28 bg-gray-800 rounded-full relative">
               {/* Cable stripes */}
@@ -52,15 +43,11 @@ export const TripleCablingIllustration = () => (
               {/* Yellow/gold pins */}
               <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-3 h-0.5 bg-yellow-400"></div>
             </div>
-          </div>
-        ))}
+          </div>)}
       </div>
     </div>
-  </div>
-);
-
-export const ComputerIllustration = () => (
-  <div className="w-full h-full flex items-center justify-center">
+  </div>;
+export const ComputerIllustration = () => <div className="w-full h-full flex items-center justify-center">
     <div className="relative flex flex-col items-center space-y-3">
       {/* Top row: Monitor and Desktop Tower */}
       <div className="flex items-end space-x-3">
@@ -96,9 +83,9 @@ export const ComputerIllustration = () => (
         <div className="w-32 h-10 bg-gray-600 border-2 border-gray-800 rounded-sm relative">
           {/* Keys grid */}
           <div className="absolute inset-1 grid grid-cols-10 gap-0.5">
-            {Array.from({ length: 30 }).map((_, i) => (
-              <div key={i} className="bg-gray-500 rounded-sm"></div>
-            ))}
+            {Array.from({
+            length: 30
+          }).map((_, i) => <div key={i} className="bg-gray-500 rounded-sm"></div>)}
           </div>
         </div>
         
@@ -112,18 +99,15 @@ export const ComputerIllustration = () => (
         </div>
       </div>
     </div>
-  </div>
-);
-
-export const HackedIllustration = () => (
-  <div className="w-full h-full flex items-center justify-center">
+  </div>;
+export const HackedIllustration = () => <div className="w-full h-full flex items-center justify-center">
     <div className="relative flex flex-col items-center space-y-2">
       {/* Top row: Monitor */}
       <div className="relative">
         <div className="w-32 h-24 bg-gray-600 border-4 border-gray-900 rounded-sm relative">
           <div className="w-full h-full bg-gray-900 rounded-sm flex items-center justify-center border-2 border-gray-800">
             <div className="text-green-400 text-xs font-mono text-center leading-tight">
-              C:\I'm<br/>in your base...
+              C:\I'm<br />in your base...
             </div>
           </div>
         </div>
@@ -138,9 +122,9 @@ export const HackedIllustration = () => (
         <div className="w-28 h-8 bg-gray-600 border-2 border-gray-800 rounded-sm relative">
           {/* Keys grid */}
           <div className="absolute inset-1 grid grid-cols-8 gap-0.5">
-            {Array.from({ length: 24 }).map((_, i) => (
-              <div key={i} className="bg-gray-500 rounded-sm"></div>
-            ))}
+            {Array.from({
+            length: 24
+          }).map((_, i) => <div key={i} className="bg-gray-500 rounded-sm"></div>)}
           </div>
         </div>
         
@@ -154,11 +138,8 @@ export const HackedIllustration = () => (
         </div>
       </div>
     </div>
-  </div>
-);
-
-export const FacilitiesIllustration = () => (
-  <div className="w-full h-full flex items-center justify-center">
+  </div>;
+export const FacilitiesIllustration = () => <div className="w-full h-full flex items-center justify-center">
     <div className="relative">
       {/* Simple stick figure character holding lightbulb */}
       <div className="flex flex-col items-center">
@@ -210,11 +191,8 @@ export const FacilitiesIllustration = () => (
         </div>
       </div>
     </div>
-  </div>
-);
-
-export const FieldTechIllustration = () => (
-  <div className="w-full h-full flex items-center justify-center">
+  </div>;
+export const FieldTechIllustration = () => <div className="w-full h-full flex items-center justify-center">
     <div className="relative">
       {/* Simple stick figure character with wagon */}
       <div className="flex items-end space-x-8">
@@ -284,5 +262,4 @@ export const FieldTechIllustration = () => (
         </div>
       </div>
     </div>
-  </div>
-);
+  </div>;

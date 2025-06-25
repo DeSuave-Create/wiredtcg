@@ -1,7 +1,5 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
-
 export interface GameCardProps {
   type: 'equipment' | 'specialization' | 'attack';
   title: string;
@@ -11,7 +9,6 @@ export interface GameCardProps {
   illustration?: React.ReactNode;
   cardBackgroundImage?: string;
 }
-
 const GameCard: React.FC<GameCardProps> = ({
   type,
   title,
@@ -52,34 +49,17 @@ const GameCard: React.FC<GameCardProps> = ({
         };
     }
   };
-
   const cardStyles = getCardStyles();
-
-  return (
-    <div className={cn(
-      "relative w-64 h-96 overflow-hidden transition-all duration-300 hover:scale-105",
-      cardStyles.border,
-      cardStyles.borderWidth,
-      cardStyles.rounded,
-      cardStyles.shadow,
-      "hover:shadow-3xl hover:drop-shadow-2xl",
-      className
-    )}>
+  return <div className={cn("relative w-64 h-96 overflow-hidden transition-all duration-300 hover:scale-105", cardStyles.border, cardStyles.borderWidth, cardStyles.rounded, cardStyles.shadow, "hover:shadow-3xl hover:drop-shadow-2xl", className)}>
       {/* Custom background or circuit board pattern */}
       <div className="absolute inset-0">
-        {cardBackgroundImage ? (
-          <div 
-            className="absolute inset-0 opacity-30"
-            style={{
-              backgroundImage: `url(${cardBackgroundImage})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat'
-            }}
-          />
-        ) : (
-          <div className="absolute inset-0 opacity-20" style={{
-            backgroundImage: `
+        {cardBackgroundImage ? <div className="absolute inset-0 opacity-30" style={{
+        backgroundImage: `url(${cardBackgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }} /> : <div className="absolute inset-0 opacity-20" style={{
+        backgroundImage: `
               radial-gradient(circle at 20% 20%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
               radial-gradient(circle at 80% 20%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
               radial-gradient(circle at 20% 80%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
@@ -88,48 +68,35 @@ const GameCard: React.FC<GameCardProps> = ({
               linear-gradient(rgba(200, 200, 200, 0.1) 1px, transparent 1px),
               linear-gradient(90deg, rgba(200, 200, 200, 0.1) 1px, transparent 1px)
             `,
-            backgroundSize: '40px 40px, 40px 40px, 40px 40px, 40px 40px, 40px 40px, 20px 20px, 20px 20px'
-          }}></div>
-        )}
+        backgroundSize: '40px 40px, 40px 40px, 40px 40px, 40px 40px, 40px 40px, 20px 20px, 20px 20px'
+      }}></div>}
       </div>
       
       {/* Card content */}
-      <div className={cn(
-        "relative h-full flex flex-col p-6",
-        cardStyles.bg
-      )}>
+      <div className={cn("relative h-full flex flex-col p-6", cardStyles.bg)}>
         {/* Top corner icon */}
         <div className="absolute top-4 left-4">
-          {icon && (
-            <div className={cn("w-6 h-6", cardStyles.titleColor)}>
+          {icon && <div className={cn("w-6 h-6", cardStyles.titleColor)}>
               {icon}
-            </div>
-          )}
+            </div>}
         </div>
 
         {/* Title - Bold, all-caps, colored */}
-        <div className="mb-6 mt-8">
-          <h2 className={cn(
-            "text-2xl font-black text-center tracking-wider uppercase leading-tight font-sans",
-            cardStyles.titleColor
-          )}>
+        <div className="mb-6 mt-8 my-[8px]">
+          <h2 className={cn("text-2xl font-black text-center tracking-wider uppercase leading-tight font-sans", cardStyles.titleColor)}>
             {title}
           </h2>
         </div>
 
         {/* Main illustration area */}
         <div className="flex-1 flex items-center justify-center mb-6">
-          {illustration ? (
-            <div className="w-full h-full flex items-center justify-center">
+          {illustration ? <div className="w-full h-full flex items-center justify-center">
               {illustration}
-            </div>
-          ) : icon && (
-            <div className={cn("w-32 h-32 flex items-center justify-center", cardStyles.titleColor)}>
-              {React.cloneElement(icon as React.ReactElement, { 
-                className: "w-full h-full" 
-              })}
-            </div>
-          )}
+            </div> : icon && <div className={cn("w-32 h-32 flex items-center justify-center", cardStyles.titleColor)}>
+              {React.cloneElement(icon as React.ReactElement, {
+            className: "w-full h-full"
+          })}
+            </div>}
         </div>
 
         {/* Description - Monospace font, black text */}
@@ -141,17 +108,13 @@ const GameCard: React.FC<GameCardProps> = ({
 
         {/* Bottom right corner icon */}
         <div className="absolute bottom-4 right-4">
-          {icon && (
-            <div className={cn("w-4 h-4 transform rotate-180", cardStyles.titleColor)}>
-              {React.cloneElement(icon as React.ReactElement, { 
-                className: "w-full h-full" 
-              })}
-            </div>
-          )}
+          {icon && <div className={cn("w-4 h-4 transform rotate-180", cardStyles.titleColor)}>
+              {React.cloneElement(icon as React.ReactElement, {
+            className: "w-full h-full"
+          })}
+            </div>}
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default GameCard;
