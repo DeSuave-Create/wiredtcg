@@ -32,6 +32,7 @@ const ScoreKeeper = () => {
   const minPlayers = 2;
 
   const addPlayer = () => {
+    console.log('Adding player, current count:', players.length);
     if (players.length < maxPlayers) {
       const newPlayer: Player = {
         id: Date.now().toString(),
@@ -39,32 +40,56 @@ const ScoreKeeper = () => {
         score: 0,
         character: 'dev'
       };
-      setPlayers([...players, newPlayer]);
+      setPlayers(prevPlayers => {
+        const updatedPlayers = [...prevPlayers, newPlayer];
+        console.log('Players after adding:', updatedPlayers);
+        return updatedPlayers;
+      });
     }
   };
 
   const removePlayer = (playerId: string) => {
+    console.log('Removing player:', playerId, 'current count:', players.length);
     if (players.length > minPlayers) {
-      setPlayers(players.filter(p => p.id !== playerId));
+      setPlayers(prevPlayers => {
+        const updatedPlayers = prevPlayers.filter(p => p.id !== playerId);
+        console.log('Players after removing:', updatedPlayers);
+        return updatedPlayers;
+      });
     }
   };
 
   const updateScore = (playerId: string, change: number) => {
-    setPlayers(players.map(p => 
-      p.id === playerId ? { ...p, score: Math.max(0, p.score + change) } : p
-    ));
+    console.log('Updating score for player:', playerId, 'change:', change);
+    setPlayers(prevPlayers => {
+      const updatedPlayers = prevPlayers.map(p => 
+        p.id === playerId ? { ...p, score: Math.max(0, p.score + change) } : p
+      );
+      console.log('Players after score update:', updatedPlayers);
+      return updatedPlayers;
+    });
   };
 
   const updatePlayerName = (playerId: string, name: string) => {
-    setPlayers(players.map(p => 
-      p.id === playerId ? { ...p, name } : p
-    ));
+    console.log('Updating name for player:', playerId, 'new name:', name);
+    setPlayers(prevPlayers => {
+      const updatedPlayers = prevPlayers.map(p => 
+        p.id === playerId ? { ...p, name } : p
+      );
+      console.log('Players after name update:', updatedPlayers);
+      return updatedPlayers;
+    });
   };
 
   const updatePlayerCharacter = (playerId: string, character: string) => {
-    setPlayers(players.map(p => 
-      p.id === playerId ? { ...p, character } : p
-    ));
+    console.log('Updating character for player:', playerId, 'new character:', character);
+    setPlayers(prevPlayers => {
+      const updatedPlayers = prevPlayers.map(p => 
+        p.id === playerId ? { ...p, character } : p
+      );
+      console.log('Players after character update:', updatedPlayers);
+      return updatedPlayers;
+    });
   };
 
   const resetAllScores = () => {
@@ -89,6 +114,9 @@ const ScoreKeeper = () => {
     return players.find(p => p.score === highest);
   };
 
+  // Add debugging for render
+  console.log('ScoreKeeper rendering with players:', players);
+
   return (
     <div className="space-y-6">
       <GameHeader 
@@ -107,6 +135,7 @@ const ScoreKeeper = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {players.map((player) => {
           const isLeader = player.score === getHighestScore() && player.score > 0;
+          console.log('Rendering PlayerCard for:', player.id, player.name);
           return (
             <PlayerCard
               key={player.id}
