@@ -13,7 +13,7 @@ const GameHeader = ({ playerCount, maxPlayers, onAddPlayer, onReset }: GameHeade
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div className="flex items-center space-x-2">
-        <Bitcoin className="h-6 w-6 text-yellow-500" />
+        <Bitcoin className="h-6 w-6 text-yellow-400" />
         <h2 className="text-2xl font-bold text-primary">Bitcoin Mining Tracker</h2>
       </div>
       <div className="flex flex-col sm:flex-row gap-2 sm:space-x-2">

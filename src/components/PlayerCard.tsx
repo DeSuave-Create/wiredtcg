@@ -74,7 +74,7 @@ const PlayerCard = ({
       {/* Bitcoin Score Display */}
       <div className="text-center">
         <div className="flex items-center justify-center space-x-2 mb-2">
-          <Bitcoin className="h-6 w-6 text-yellow-500" />
+          <Bitcoin className="h-6 w-6 text-yellow-400" />
           <span className="text-sm text-muted-foreground">Bitcoins Mined</span>
         </div>
         <div className={`text-4xl font-bold mb-4 text-red-500 ${isLeader ? 'animate-pulse-neon' : ''}`}>
