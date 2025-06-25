@@ -95,36 +95,36 @@ const GameCard: React.FC<GameCardProps> = ({
       
       {/* Card content */}
       <div className={cn(
-        "relative h-full flex flex-col p-4",
+        "relative h-full flex flex-col p-6",
         cardStyles.bg
       )}>
         {/* Top corner icon */}
-        <div className="absolute top-3 left-3">
+        <div className="absolute top-4 left-4">
           {icon && (
-            <div className={cn("w-5 h-5", cardStyles.titleColor)}>
+            <div className={cn("w-6 h-6", cardStyles.titleColor)}>
               {icon}
             </div>
           )}
         </div>
 
-        {/* Title - Bold, all-caps, colored - positioned higher with less margin */}
-        <div className="mb-2 mt-4">
+        {/* Title - Bold, all-caps, colored */}
+        <div className="mb-6 mt-8">
           <h2 className={cn(
-            "text-base font-black text-center tracking-wider uppercase leading-tight font-sans",
+            "text-2xl font-black text-center tracking-wider uppercase leading-tight font-sans",
             cardStyles.titleColor
           )}>
             {title}
           </h2>
         </div>
 
-        {/* Main illustration area - smaller and more compact */}
-        <div className="flex-shrink-0 flex items-center justify-center mb-2 h-20">
+        {/* Main illustration area */}
+        <div className="flex-1 flex items-center justify-center mb-6">
           {illustration ? (
             <div className="w-full h-full flex items-center justify-center">
               {illustration}
             </div>
           ) : icon && (
-            <div className={cn("w-16 h-16 flex items-center justify-center", cardStyles.titleColor)}>
+            <div className={cn("w-32 h-32 flex items-center justify-center", cardStyles.titleColor)}>
               {React.cloneElement(icon as React.ReactElement, { 
                 className: "w-full h-full" 
               })}
@@ -132,17 +132,17 @@ const GameCard: React.FC<GameCardProps> = ({
           )}
         </div>
 
-        {/* Description - Takes remaining space with proper padding */}
-        <div className="flex-1 flex items-start justify-center text-center px-1 pb-8">
-          <p className="text-xs font-mono text-black leading-relaxed font-medium">
+        {/* Description - Monospace font, black text */}
+        <div className="mt-auto text-center">
+          <p className="text-sm font-mono text-black leading-relaxed font-medium">
             {description}
           </p>
         </div>
 
         {/* Bottom right corner icon */}
-        <div className="absolute bottom-3 right-3">
+        <div className="absolute bottom-4 right-4">
           {icon && (
-            <div className={cn("w-3 h-3 transform rotate-180", cardStyles.titleColor)}>
+            <div className={cn("w-4 h-4 transform rotate-180", cardStyles.titleColor)}>
               {React.cloneElement(icon as React.ReactElement, { 
                 className: "w-full h-full" 
               })}
