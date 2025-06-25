@@ -26,11 +26,11 @@ const ContentSection = ({ title, children, className = "", glowEffect = false, b
   return (
     <section className={`py-8 ${className}`}>
       <div 
-        className={`neon-border bg-card/30 backdrop-blur-sm p-6 rounded-lg ${glowEffect ? 'animate-pulse-neon' : ''} ${backgroundImage ? 'relative' : ''}`}
+        className={`neon-border bg-card/30 backdrop-blur-sm p-6 rounded-3xl ${glowEffect ? 'animate-pulse-neon' : ''} ${backgroundImage ? 'relative' : ''}`}
         style={backgroundStyle}
       >
         {backgroundImage && (
-          <div className="absolute inset-0 bg-black/40 rounded-lg"></div>
+          <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
         )}
         <div className="relative z-10">
           {title && (
