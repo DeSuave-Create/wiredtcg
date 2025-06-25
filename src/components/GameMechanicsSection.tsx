@@ -9,7 +9,7 @@ const GameMechanicsSection = () => {
       <GameCard
         type="equipment"
         title="COMPUTER"
-        description="Your endless source of information, cat videos and doom scrolling."
+        description="Connect to the SWITCH to start mining bitcoins."
         icon={<Computer />}
         illustration={<ComputerIllustration />}
       />
@@ -17,7 +17,7 @@ const GameMechanicsSection = () => {
       <GameCard
         type="equipment"
         title="CABLING"
-        description="Hooking it Up."
+        description="Required to connect COMPUTER to SWITCH."
         icon={<Cable />}
         illustration={<CablingIllustration />}
       />
