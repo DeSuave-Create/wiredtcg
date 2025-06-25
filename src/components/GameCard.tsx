@@ -82,7 +82,7 @@ const GameCard: React.FC<GameCardProps> = ({
         </div>
 
         {/* Title - Bold, all-caps, colored */}
-        <div className="mb-6 mt-8 my-[8px]">
+        <div className="mb-6 mt-8 my-[9px]">
           <h2 className={cn("text-2xl font-black text-center tracking-wider uppercase leading-tight font-sans", cardStyles.titleColor)}>
             {title}
           </h2>
