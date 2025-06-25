@@ -17,15 +17,18 @@ const characters = [
   { id: 'dev', name: '👨‍💻 Developer', icon: '💻' },
   { id: 'admin', name: '🔧 System Admin', icon: '⚙️' },
   { id: 'hacker', name: '🕵️ Ethical Hacker', icon: '🔐' },
-  { id: 'analyst', name: '📊 Data Analyst', icon: '📈' },
+  { id = 'analyst', name: '📊 Data Analyst', icon: '📈' },
   { id: 'engineer', name: '🏗️ Network Engineer', icon: '🌐' },
 ];
 
 const ScoreKeeper = () => {
   const { toast } = useToast();
   const [players, setPlayers] = useState<Player[]>([
-    { id: '1', name: 'Player 1', score: 0, character: 'dev' },
-    { id: '2', name: 'Player 2', score: 0, character: 'admin' }
+    { id: '1', name: 'ZeroTrust', score: 0, character: 'hacker' },
+    { id: '2', name: 'DeskJockey', score: 0, character: 'admin' },
+    { id: '3', name: 'PingMaster', score: 0, character: 'engineer' },
+    { id: '4', name: 'RedTapeRipper', score: 0, character: 'analyst' },
+    { id: '5', name: 'ClutchCache', score: 0, character: 'dev' }
   ]);
 
   const maxPlayers = 5;
