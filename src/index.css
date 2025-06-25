@@ -3,10 +3,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Tron-inspired design system with dark theme and neon colors */
+/* Tron-inspired design system with dual theme support */
 
 @layer base {
   :root {
+    /* Dark theme (default) */
     --background: 210 15% 8%;
     --foreground: 180 100% 90%;
 
@@ -37,6 +38,37 @@
 
     --radius: 0.25rem;
   }
+
+  .light {
+    /* Light theme */
+    --background: 0 0% 95%;
+    --foreground: 210 15% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 15% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 15% 15%;
+
+    --primary: 180 100% 35%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 30 100% 45%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 210 40% 92%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 180 100% 30%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 214.3 31.8% 85%;
+    --input: 214.3 31.8% 91%;
+    --ring: 180 100% 35%;
+  }
 }
 
 @layer base {
@@ -46,10 +78,31 @@
 
   body {
     @apply bg-background text-foreground font-mono;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Dark theme background */
+  .dark body {
     background-image: 
+      url('/lovable-uploads/4bbe449b-2b5c-4db2-8add-31ebfb863320.png'),
       linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
       linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
-    background-size: 20px 20px;
+    background-size: cover, 20px 20px, 20px 20px;
+    background-position: center, 0 0, 0 0;
+    background-repeat: no-repeat, repeat, repeat;
+    background-attachment: fixed;
+  }
+
+  /* Light theme background */
+  .light body {
+    background-image: 
+      url('/lovable-uploads/c6e00df3-d900-4fe1-a096-253fd7c1af29.png'),
+      linear-gradient(rgba(0, 150, 150, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 150, 150, 0.05) 1px, transparent 1px);
+    background-size: cover, 20px 20px, 20px 20px;
+    background-position: center, 0 0, 0 0;
+    background-repeat: no-repeat, repeat, repeat;
+    background-attachment: fixed;
   }
 }
 
@@ -58,12 +111,24 @@
     @apply border border-primary/50 shadow-[0_0_10px_rgba(0,255,255,0.3)];
   }
   
+  .light .neon-border {
+    @apply shadow-[0_0_10px_rgba(0,150,150,0.4)];
+  }
+  
   .neon-glow {
     @apply shadow-[0_0_20px_rgba(0,255,255,0.5)];
   }
   
+  .light .neon-glow {
+    @apply shadow-[0_0_20px_rgba(0,150,150,0.6)];
+  }
+  
   .orange-neon {
     @apply border-secondary/50 shadow-[0_0_10px_rgba(255,165,0,0.3)];
+  }
+  
+  .light .orange-neon {
+    @apply shadow-[0_0_10px_rgba(255,140,0,0.4)];
   }
   
   .grid-pattern {
@@ -71,6 +136,12 @@
       linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
       linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
     background-size: 40px 40px;
+  }
+  
+  .light .grid-pattern {
+    background-image: 
+      linear-gradient(rgba(0, 150, 150, 0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 150, 150, 0.15) 1px, transparent 1px);
   }
 }
 
@@ -80,6 +151,19 @@
   }
   50% { 
     box-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.5);
+  }
+}
+
+.light .animate-pulse-neon {
+  animation: pulse-neon-light 2s infinite;
+}
+
+@keyframes pulse-neon-light {
+  0%, 100% { 
+    box-shadow: 0 0 5px rgba(0, 150, 150, 0.6), 0 0 10px rgba(0, 150, 150, 0.4);
+  }
+  50% { 
+    box-shadow: 0 0 10px rgba(0, 150, 150, 0.9), 0 0 20px rgba(0, 150, 150, 0.6);
   }
 }
 
