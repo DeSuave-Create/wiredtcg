@@ -4,6 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
 import TextSection from '@/components/TextSection';
+import CardGallery from '@/components/CardGallery';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShoppingCart, Zap, Cpu, Network, Bitcoin, Shield, Users, Server, Router, HardDrive } from 'lucide-react';
@@ -99,6 +100,11 @@ const Index = () => {
               </Button>
             </div>
           </div>
+        </ContentSection>
+
+        {/* Game Cards Section */}
+        <ContentSection>
+          <CardGallery />
         </ContentSection>
 
         {/* Game Mechanics */}
