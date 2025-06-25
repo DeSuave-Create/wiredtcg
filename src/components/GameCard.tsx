@@ -8,6 +8,7 @@ export interface GameCardProps {
   description: string;
   icon?: React.ReactNode;
   className?: string;
+  illustration?: React.ReactNode;
 }
 
 const GameCard: React.FC<GameCardProps> = ({
@@ -15,33 +16,37 @@ const GameCard: React.FC<GameCardProps> = ({
   title,
   description,
   icon,
-  className
+  className,
+  illustration
 }) => {
   const getCardStyles = () => {
     switch (type) {
       case 'equipment':
         return {
           border: 'border-green-500',
-          bg: 'bg-green-50/90',
+          bg: 'bg-gray-200',
           titleColor: 'text-green-600',
-          borderWidth: 'border-4',
-          shadow: 'shadow-[0_0_15px_rgba(34,197,94,0.3)]'
+          borderWidth: 'border-8',
+          shadow: 'shadow-none',
+          rounded: 'rounded-3xl'
         };
       case 'specialization':
         return {
           border: 'border-blue-500',
-          bg: 'bg-blue-50/90',
+          bg: 'bg-gray-200',
           titleColor: 'text-blue-600',
-          borderWidth: 'border-4',
-          shadow: 'shadow-[0_0_15px_rgba(59,130,246,0.3)]'
+          borderWidth: 'border-8',
+          shadow: 'shadow-none',
+          rounded: 'rounded-3xl'
         };
       case 'attack':
         return {
           border: 'border-red-500',
-          bg: 'bg-red-50/90',
+          bg: 'bg-gray-200',
           titleColor: 'text-red-600',
-          borderWidth: 'border-4',
-          shadow: 'shadow-[0_0_15px_rgba(239,68,68,0.3)]'
+          borderWidth: 'border-8',
+          shadow: 'shadow-none',
+          rounded: 'rounded-3xl'
         };
     }
   };
@@ -50,18 +55,18 @@ const GameCard: React.FC<GameCardProps> = ({
     switch (type) {
       case 'equipment':
         return {
-          bg: 'dark:bg-green-900/20',
-          titleColor: 'dark:text-green-400'
+          bg: 'dark:bg-gray-200',
+          titleColor: 'dark:text-green-600'
         };
       case 'specialization':
         return {
-          bg: 'dark:bg-blue-900/20',
-          titleColor: 'dark:text-blue-400'
+          bg: 'dark:bg-gray-200',
+          titleColor: 'dark:text-blue-600'
         };
       case 'attack':
         return {
-          bg: 'dark:bg-red-900/20',
-          titleColor: 'dark:text-red-400'
+          bg: 'dark:bg-gray-200',
+          titleColor: 'dark:text-red-600'
         };
     }
   };
@@ -71,20 +76,17 @@ const GameCard: React.FC<GameCardProps> = ({
 
   return (
     <div className={cn(
-      "relative w-64 h-96 rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105",
+      "relative w-64 h-96 overflow-hidden transition-all duration-300 hover:scale-105",
       cardStyles.border,
       cardStyles.borderWidth,
+      cardStyles.rounded,
       cardStyles.shadow,
       "hover:shadow-lg",
       className
     )}>
       {/* Background with circuit pattern */}
-      <div className={cn(
-        "absolute inset-0 opacity-10",
-        "bg-gradient-to-br from-gray-200 to-gray-300",
-        "dark:from-gray-700 dark:to-gray-800"
-      )}>
-        <div className="absolute inset-0 grid-pattern opacity-30"></div>
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute inset-0 grid-pattern opacity-40"></div>
       </div>
       
       {/* Card content */}
@@ -93,60 +95,56 @@ const GameCard: React.FC<GameCardProps> = ({
         cardStyles.bg,
         darkStyles.bg
       )}>
-        {/* Top section with small icons */}
-        <div className="flex justify-between items-start mb-4">
+        {/* Top section with small corner icons */}
+        <div className="flex justify-between items-start mb-2">
           <div className="flex space-x-1">
             {icon && (
-              <div className={cn("w-6 h-6", cardStyles.titleColor, darkStyles.titleColor)}>
+              <div className="w-6 h-6 text-gray-600">
                 {icon}
               </div>
             )}
           </div>
-          <div className="text-xs font-mono opacity-60">WIRED</div>
+          <div className="text-xs font-mono text-gray-500">WIRED</div>
         </div>
 
         {/* Title */}
-        <div className="flex-1 flex flex-col justify-center">
+        <div className="mb-4">
           <h2 className={cn(
-            "text-2xl font-bold text-center mb-6 tracking-wider uppercase",
+            "text-4xl font-black text-center tracking-wider uppercase leading-tight",
             cardStyles.titleColor,
             darkStyles.titleColor
           )}>
             {title}
           </h2>
+        </div>
 
-          {/* Main icon/illustration area */}
-          {icon && (
-            <div className="flex justify-center mb-6">
-              <div className={cn(
-                "w-20 h-20 flex items-center justify-center",
-                cardStyles.titleColor,
-                darkStyles.titleColor
-              )}>
-                {React.cloneElement(icon as React.ReactElement, { 
-                  className: "w-full h-full" 
-                })}
-              </div>
+        {/* Main illustration area */}
+        <div className="flex-1 flex items-center justify-center mb-6">
+          {illustration ? (
+            <div className="w-full h-full flex items-center justify-center">
+              {illustration}
+            </div>
+          ) : icon && (
+            <div className="w-32 h-32 flex items-center justify-center text-gray-700">
+              {React.cloneElement(icon as React.ReactElement, { 
+                className: "w-full h-full" 
+              })}
             </div>
           )}
         </div>
 
         {/* Description */}
-        <div className="mt-auto">
-          <p className="text-sm text-center text-gray-800 dark:text-gray-200 font-medium leading-relaxed">
+        <div className="mt-auto text-center">
+          <p className="text-lg font-bold text-black leading-tight">
             {description}
           </p>
         </div>
 
         {/* Bottom corner decoration */}
         <div className="absolute bottom-4 right-4 flex space-x-1">
-          <div className="text-xs font-mono opacity-40 rotate-180">WIRED</div>
+          <div className="text-xs font-mono text-gray-500 rotate-180">WIRED</div>
           {icon && (
-            <div className={cn(
-              "w-4 h-4 opacity-40 rotate-180",
-              cardStyles.titleColor,
-              darkStyles.titleColor
-            )}>
+            <div className="w-4 h-4 text-gray-600 rotate-180">
               {React.cloneElement(icon as React.ReactElement, { 
                 className: "w-full h-full" 
               })}

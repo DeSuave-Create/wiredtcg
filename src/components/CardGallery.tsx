@@ -2,6 +2,14 @@
 import React from 'react';
 import GameCard from './GameCard';
 import { Cable, Monitor, Lightbulb, Truck, ShieldAlert } from 'lucide-react';
+import { 
+  CablingIllustration, 
+  TripleCablingIllustration, 
+  ComputerIllustration, 
+  HackedIllustration, 
+  FacilitiesIllustration, 
+  FieldTechIllustration 
+} from './CardIllustrations';
 
 const CardGallery: React.FC = () => {
   const sampleCards = [
@@ -9,31 +17,43 @@ const CardGallery: React.FC = () => {
       type: 'equipment' as const,
       title: 'CABLING',
       description: 'Hooking it Up.',
-      icon: <Cable />
+      icon: <Cable />,
+      illustration: <CablingIllustration />
+    },
+    {
+      type: 'equipment' as const,
+      title: 'CABLING',
+      description: 'Hooking it Up.',
+      icon: <Cable />,
+      illustration: <TripleCablingIllustration />
     },
     {
       type: 'equipment' as const,
       title: 'COMPUTER',
       description: 'Your endless source of information, cat videos and doom scrolling.',
-      icon: <Monitor />
-    },
-    {
-      type: 'specialization' as const,
-      title: 'FACILITIES',
-      description: "Resolves all 'Power Outage' cards for the player.",
-      icon: <Lightbulb />
-    },
-    {
-      type: 'specialization' as const,
-      title: 'FIELD TECH',
-      description: 'Player gets one extra Equipment move per turn.',
-      icon: <Truck />
+      icon: <Monitor />,
+      illustration: <ComputerIllustration />
     },
     {
       type: 'attack' as const,
       title: 'HACKED',
       description: 'Target equipment card DISABLED.',
-      icon: <ShieldAlert />
+      icon: <ShieldAlert />,
+      illustration: <HackedIllustration />
+    },
+    {
+      type: 'specialization' as const,
+      title: 'FACILITIES',
+      description: "Resolves all 'Power Outage' cards for the player.",
+      icon: <Lightbulb />,
+      illustration: <FacilitiesIllustration />
+    },
+    {
+      type: 'specialization' as const,
+      title: 'FIELD TECH',
+      description: 'Player gets one extra Equipment move per turn.',
+      icon: <Truck />,
+      illustration: <FieldTechIllustration />
     }
   ];
 
@@ -47,7 +67,7 @@ const CardGallery: React.FC = () => {
         </p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8 justify-items-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-8 justify-items-center">
         {sampleCards.map((card, index) => (
           <GameCard
             key={index}
@@ -55,6 +75,7 @@ const CardGallery: React.FC = () => {
             title={card.title}
             description={card.description}
             icon={card.icon}
+            illustration={card.illustration}
           />
         ))}
       </div>
