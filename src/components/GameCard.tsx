@@ -29,7 +29,7 @@ const GameCard: React.FC<GameCardProps> = ({
           bg: 'bg-gray-100',
           titleColor: 'text-green-600',
           borderWidth: 'border-8',
-          shadow: 'shadow-xl',
+          shadow: 'shadow-2xl drop-shadow-lg',
           rounded: 'rounded-3xl'
         };
       case 'specialization':
@@ -38,7 +38,7 @@ const GameCard: React.FC<GameCardProps> = ({
           bg: 'bg-gray-100',
           titleColor: 'text-blue-600',
           borderWidth: 'border-8',
-          shadow: 'shadow-xl',
+          shadow: 'shadow-2xl drop-shadow-lg',
           rounded: 'rounded-3xl'
         };
       case 'attack':
@@ -47,7 +47,7 @@ const GameCard: React.FC<GameCardProps> = ({
           bg: 'bg-gray-100',
           titleColor: 'text-red-600',
           borderWidth: 'border-8',
-          shadow: 'shadow-xl',
+          shadow: 'shadow-2xl drop-shadow-lg',
           rounded: 'rounded-3xl'
         };
     }
@@ -62,7 +62,7 @@ const GameCard: React.FC<GameCardProps> = ({
       cardStyles.borderWidth,
       cardStyles.rounded,
       cardStyles.shadow,
-      "hover:shadow-2xl",
+      "hover:shadow-3xl hover:drop-shadow-2xl",
       className
     )}>
       {/* Custom background or circuit board pattern */}
