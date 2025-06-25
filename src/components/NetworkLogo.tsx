@@ -13,7 +13,7 @@ const NetworkLogo = ({ className = "", size = 40 }: NetworkLogoProps) => {
         viewBox="0 0 100 100"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="drop-shadow-[0_0_8px_rgba(16,185,129,0.6)] hover:drop-shadow-[0_0_16px_rgba(16,185,129,0.8)] transition-all duration-300"
+        className="transition-all duration-300"
       >
         {/* Top left node */}
         <circle cx="20" cy="20" r="8" fill="#10b981" stroke="#22c55e" strokeWidth="2"/>
