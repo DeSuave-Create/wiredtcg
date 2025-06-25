@@ -8,14 +8,6 @@ const GameMechanicsSection = () => {
     <div className="flex flex-wrap justify-center gap-6 lg:gap-8">
       <GameCard
         type="equipment"
-        title="COMPUTER"
-        description="Connect to the SWITCH to start mining bitcoins."
-        icon={<Computer />}
-        illustration={<ComputerIllustration />}
-      />
-      
-      <GameCard
-        type="equipment"
         title="CABLING"
         description="Required to connect COMPUTER to SWITCH."
         icon={<Cable />}
@@ -28,6 +20,14 @@ const GameMechanicsSection = () => {
         description="Target equipment card DISABLED."
         icon={<Shield />}
         illustration={<HackedIllustration />}
+      />
+      
+      <GameCard
+        type="equipment"
+        title="COMPUTER"
+        description="Connect to the SWITCH to start mining bitcoins."
+        icon={<Computer />}
+        illustration={<ComputerIllustration />}
       />
     </div>
   );
