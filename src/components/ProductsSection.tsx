@@ -1,4 +1,3 @@
-
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -79,7 +78,7 @@ const ProductsSection = () => {
         const cardStyles = getCardStyles();
         
         return (
-          <div key={product.id} className={`relative w-full h-[500px] overflow-hidden transition-all duration-300 hover:scale-105 ${cardStyles.border} border-8 rounded-3xl shadow-xl hover:shadow-2xl bg-gray-100`}>
+          <div key={product.id} className={`relative w-full h-[520px] overflow-hidden transition-all duration-300 hover:scale-105 ${cardStyles.border} border-8 rounded-3xl shadow-xl hover:shadow-2xl bg-gray-100`}>
             {/* Circuit board pattern background */}
             <div className="absolute inset-0 opacity-20" style={{
               backgroundImage: `
@@ -103,38 +102,38 @@ const ProductsSection = () => {
                 </div>
               </div>
 
-              {/* Title - Bold, all-caps, colored */}
-              <div className="mb-6 mt-8">
+              {/* Title - Fixed height container */}
+              <div className="mb-6 mt-8 h-16 flex items-center justify-center">
                 <h2 className={`text-xl font-black text-center tracking-wider uppercase leading-tight font-sans ${cardStyles.titleColor}`}>
                   {product.name}
                 </h2>
               </div>
 
-              {/* Main icon area */}
-              <div className="flex-1 flex items-center justify-center mb-6">
+              {/* Main icon area - Fixed height */}
+              <div className="flex items-center justify-center mb-6 h-24">
                 <div className={`w-24 h-24 flex items-center justify-center ${cardStyles.iconColor}`}>
                   <IconComponent className="w-full h-full" />
                 </div>
               </div>
 
-              {/* Description - Monospace font, black text */}
-              <div className="mb-6 text-center min-h-[4rem]">
+              {/* Description - Fixed height container */}
+              <div className="mb-6 text-center h-24 flex items-center justify-center">
                 <p className="text-sm font-mono text-black leading-relaxed font-medium">
                   {product.description}
                 </p>
               </div>
 
-              {/* Price and Stock */}
-              <div className="flex justify-between items-center mb-4">
+              {/* Price and Stock - Fixed height */}
+              <div className="flex justify-between items-center mb-4 h-8">
                 <span className="text-2xl font-bold text-black">${product.price}</span>
                 <span className="text-sm text-gray-600 font-mono">Stock: {product.stock}</span>
               </div>
 
-              {/* Add to Cart Button */}
+              {/* Add to Cart Button - Fixed at bottom */}
               <div className="mt-auto">
                 <Button 
                   onClick={() => handleAddToCart(product)}
-                  className="w-full bg-primary text-primary-foreground hover:bg-primary/80 neon-glow text-base font-bold"
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/80 neon-glow text-base font-bold h-12"
                 >
                   <ShoppingCart className="h-4 w-4 mr-2" />
                   Add to Cart
