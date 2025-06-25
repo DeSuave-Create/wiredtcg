@@ -2,7 +2,6 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
-import CardGallery from '@/components/CardGallery';
 import HeroSection from '@/components/HeroSection';
 import GameMechanicsSection from '@/components/GameMechanicsSection';
 import ProductsSection from '@/components/ProductsSection';
@@ -17,11 +16,6 @@ const Index = () => {
         {/* Hero Section */}
         <ContentSection glowEffect>
           <HeroSection />
-        </ContentSection>
-
-        {/* Game Cards Section */}
-        <ContentSection>
-          <CardGallery />
         </ContentSection>
 
         {/* Game Mechanics */}
