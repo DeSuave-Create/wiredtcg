@@ -47,64 +47,108 @@ const ProductsSection = () => {
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
       {products.map(product => {
         const IconComponent = product.cardIcon;
-        const borderColor = product.cardColor === 'primary' ? 'border-primary/50 shadow-[0_0_10px_rgba(0,255,255,0.3)]' :
-                            product.cardColor === 'secondary' ? 'border-secondary/50 shadow-[0_0_10px_rgba(255,165,0,0.3)]' :
-                            'border-destructive/50 shadow-[0_0_10px_rgba(239,68,68,0.3)]';
-        const iconColor = product.cardColor === 'primary' ? 'text-primary' :
-                         product.cardColor === 'secondary' ? 'text-secondary' :
-                         'text-destructive';
+        const getCardStyles = () => {
+          switch (product.cardColor) {
+            case 'primary':
+              return {
+                border: 'border-green-600',
+                titleColor: 'text-green-600',
+                iconColor: 'text-green-600'
+              };
+            case 'secondary':
+              return {
+                border: 'border-blue-600',
+                titleColor: 'text-blue-600',
+                iconColor: 'text-blue-600'
+              };
+            case 'destructive':
+              return {
+                border: 'border-red-600',
+                titleColor: 'text-red-600',
+                iconColor: 'text-red-600'
+              };
+            default:
+              return {
+                border: 'border-primary',
+                titleColor: 'text-primary',
+                iconColor: 'text-primary'
+              };
+          }
+        };
+
+        const cardStyles = getCardStyles();
         
         return (
-          <Card key={product.id} className="neon-border bg-card/50 hover:bg-card/70 transition-all duration-300 flex flex-col h-full">
-            <CardHeader className="p-4 sm:p-6 flex-shrink-0">
-              {/* Playing Card Style Design */}
-              <div className={`w-full h-36 sm:h-40 md:h-48 ${borderColor} border-2 rounded-lg mb-3 sm:mb-4 bg-card/80 flex flex-col justify-between p-3 sm:p-4 relative overflow-hidden`}>
-                {/* Grid pattern background */}
-                <div className="absolute inset-0 opacity-10 grid-pattern"></div>
-                
-                {/* Top left corner */}
-                <div className="flex flex-col items-start">
-                  <IconComponent className={`h-6 w-6 sm:h-8 sm:w-8 ${iconColor}`} />
-                  <span className={`text-xs font-mono ${iconColor} mt-1`}>WIRED</span>
+          <div key={product.id} className={`relative w-full h-[500px] overflow-hidden transition-all duration-300 hover:scale-105 ${cardStyles.border} border-8 rounded-3xl shadow-xl hover:shadow-2xl bg-gray-100`}>
+            {/* Circuit board pattern background */}
+            <div className="absolute inset-0 opacity-20" style={{
+              backgroundImage: `
+                radial-gradient(circle at 20% 20%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
+                radial-gradient(circle at 80% 20%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
+                radial-gradient(circle at 20% 80%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
+                radial-gradient(circle at 80% 80%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
+                radial-gradient(circle at 50% 50%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
+                linear-gradient(rgba(200, 200, 200, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(200, 200, 200, 0.1) 1px, transparent 1px)
+              `,
+              backgroundSize: '40px 40px, 40px 40px, 40px 40px, 40px 40px, 40px 40px, 20px 20px, 20px 20px'
+            }}></div>
+            
+            {/* Card content */}
+            <div className="relative h-full flex flex-col p-6">
+              {/* Top corner icon */}
+              <div className="absolute top-4 left-4">
+                <div className={`w-6 h-6 ${cardStyles.iconColor}`}>
+                  <IconComponent className="w-full h-full" />
                 </div>
-                
-                {/* Center icon */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <IconComponent className={`h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 ${iconColor} opacity-80`} />
-                </div>
-                
-                {/* Bottom right corner (rotated) */}
-                <div className="flex flex-col items-end rotate-180">
-                  <IconComponent className={`h-6 w-6 sm:h-8 sm:w-8 ${iconColor}`} />
-                  <span className={`text-xs font-mono ${iconColor} mt-1`}>WIRED</span>
-                </div>
-                
-                {/* Circuit lines decoration */}
-                <div className={`absolute top-2 right-2 w-8 h-8 sm:w-12 sm:h-12 border ${iconColor.replace('text-', 'border-')} opacity-30 rounded`}></div>
-                <div className={`absolute bottom-2 left-2 w-6 h-6 sm:w-8 sm:h-8 border ${iconColor.replace('text-', 'border-')} opacity-20 rounded`}></div>
               </div>
-              
-              <CardTitle className="text-primary text-base sm:text-lg">{product.name}</CardTitle>
-              <CardDescription className="text-muted-foreground text-sm sm:text-base min-h-[4rem] sm:min-h-[5rem]">
-                {product.description}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-4 sm:p-6 pt-0 flex-shrink-0">
-              <div className="flex justify-between items-center">
-                <span className="text-xl sm:text-2xl font-bold text-secondary">${product.price}</span>
-                <span className="text-xs sm:text-sm text-muted-foreground">Stock: {product.stock}</span>
+
+              {/* Title - Bold, all-caps, colored */}
+              <div className="mb-6 mt-8">
+                <h2 className={`text-xl font-black text-center tracking-wider uppercase leading-tight font-sans ${cardStyles.titleColor}`}>
+                  {product.name}
+                </h2>
               </div>
-            </CardContent>
-            <CardFooter className="p-4 sm:p-6 pt-0 mt-auto">
-              <Button 
-                onClick={() => handleAddToCart(product)}
-                className="w-full bg-primary text-primary-foreground hover:bg-primary/80 neon-glow text-sm sm:text-base"
-              >
-                <ShoppingCart className="h-4 w-4 mr-2" />
-                Add to Cart
-              </Button>
-            </CardFooter>
-          </Card>
+
+              {/* Main icon area */}
+              <div className="flex-1 flex items-center justify-center mb-6">
+                <div className={`w-24 h-24 flex items-center justify-center ${cardStyles.iconColor}`}>
+                  <IconComponent className="w-full h-full" />
+                </div>
+              </div>
+
+              {/* Description - Monospace font, black text */}
+              <div className="mb-6 text-center min-h-[4rem]">
+                <p className="text-sm font-mono text-black leading-relaxed font-medium">
+                  {product.description}
+                </p>
+              </div>
+
+              {/* Price and Stock */}
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-2xl font-bold text-black">${product.price}</span>
+                <span className="text-sm text-gray-600 font-mono">Stock: {product.stock}</span>
+              </div>
+
+              {/* Add to Cart Button */}
+              <div className="mt-auto">
+                <Button 
+                  onClick={() => handleAddToCart(product)}
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/80 neon-glow text-base font-bold"
+                >
+                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  Add to Cart
+                </Button>
+              </div>
+
+              {/* Bottom right corner icon */}
+              <div className="absolute bottom-4 right-4">
+                <div className={`w-4 h-4 transform rotate-180 ${cardStyles.iconColor}`}>
+                  <IconComponent className="w-full h-full" />
+                </div>
+              </div>
+            </div>
+          </div>
         );
       })}
     </div>
