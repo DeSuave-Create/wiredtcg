@@ -4,7 +4,7 @@ interface NetworkLogoProps {
   size?: number;
 }
 
-const NetworkLogo = ({ className = "", size = 32 }: NetworkLogoProps) => {
+const NetworkLogo = ({ className = "", size = 40 }: NetworkLogoProps) => {
   return (
     <div className={`relative ${className}`} style={{ width: size, height: size }}>
       <svg
