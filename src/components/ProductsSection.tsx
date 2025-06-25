@@ -55,8 +55,8 @@ const ProductsSection = () => {
                          'text-destructive';
         
         return (
-          <Card key={product.id} className="neon-border bg-card/50 hover:bg-card/70 transition-all duration-300">
-            <CardHeader className="p-4 sm:p-6">
+          <Card key={product.id} className="neon-border bg-card/50 hover:bg-card/70 transition-all duration-300 flex flex-col h-full">
+            <CardHeader className="p-4 sm:p-6 flex-shrink-0">
               {/* Playing Card Style Design */}
               <div className={`w-full h-36 sm:h-40 md:h-48 ${borderColor} border-2 rounded-lg mb-3 sm:mb-4 bg-card/80 flex flex-col justify-between p-3 sm:p-4 relative overflow-hidden`}>
                 {/* Grid pattern background */}
@@ -85,17 +85,17 @@ const ProductsSection = () => {
               </div>
               
               <CardTitle className="text-primary text-base sm:text-lg">{product.name}</CardTitle>
-              <CardDescription className="text-muted-foreground text-sm sm:text-base">
+              <CardDescription className="text-muted-foreground text-sm sm:text-base min-h-[4rem] sm:min-h-[5rem]">
                 {product.description}
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-4 sm:p-6 pt-0">
+            <CardContent className="p-4 sm:p-6 pt-0 flex-shrink-0">
               <div className="flex justify-between items-center">
                 <span className="text-xl sm:text-2xl font-bold text-secondary">${product.price}</span>
                 <span className="text-xs sm:text-sm text-muted-foreground">Stock: {product.stock}</span>
               </div>
             </CardContent>
-            <CardFooter className="p-4 sm:p-6 pt-0">
+            <CardFooter className="p-4 sm:p-6 pt-0 mt-auto">
               <Button 
                 onClick={() => handleAddToCart(product)}
                 className="w-full bg-primary text-primary-foreground hover:bg-primary/80 neon-glow text-sm sm:text-base"
