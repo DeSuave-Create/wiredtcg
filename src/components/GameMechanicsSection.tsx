@@ -13,7 +13,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
       <GameCard
         type="equipment"
         title="CABLING"
-        description="Connect to the switch to start mining."
+        description="Use cables to connect your pc to the switch to start mining."
         icon={<Cable />}
         illustration={<CablingIllustration />}
         cardBackgroundImage={cardBackgroundImage}
