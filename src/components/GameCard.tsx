@@ -107,24 +107,24 @@ const GameCard: React.FC<GameCardProps> = ({
           )}
         </div>
 
-        {/* Title - Bold, all-caps, colored */}
-        <div className="mb-4 mt-8">
+        {/* Title - Bold, all-caps, colored - moved higher */}
+        <div className="mb-3 mt-6">
           <h2 className={cn(
-            "text-xl font-black text-center tracking-wider uppercase leading-tight font-sans",
+            "text-lg font-black text-center tracking-wider uppercase leading-tight font-sans",
             cardStyles.titleColor
           )}>
             {title}
           </h2>
         </div>
 
-        {/* Main illustration area - reduced size */}
-        <div className="flex-shrink-0 flex items-center justify-center mb-4 h-32">
+        {/* Main illustration area - made even smaller */}
+        <div className="flex-shrink-0 flex items-center justify-center mb-3 h-24">
           {illustration ? (
             <div className="w-full h-full flex items-center justify-center">
               {illustration}
             </div>
           ) : icon && (
-            <div className={cn("w-24 h-24 flex items-center justify-center", cardStyles.titleColor)}>
+            <div className={cn("w-20 h-20 flex items-center justify-center", cardStyles.titleColor)}>
               {React.cloneElement(icon as React.ReactElement, { 
                 className: "w-full h-full" 
               })}
@@ -133,7 +133,7 @@ const GameCard: React.FC<GameCardProps> = ({
         </div>
 
         {/* Description - Monospace font, black text, more space */}
-        <div className="flex-1 flex items-center text-center">
+        <div className="flex-1 flex items-center text-center px-2">
           <p className="text-xs font-mono text-black leading-relaxed font-medium">
             {description}
           </p>
