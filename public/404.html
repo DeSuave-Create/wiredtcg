@@ -18,8 +18,10 @@
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
     
     <script>
-      // Redirect all 404s to index.html for client-side routing
-      window.location.replace('/');
+      // Get the current path and redirect to index.html with the path as a parameter
+      var currentPath = window.location.pathname;
+      var newUrl = window.location.origin + '/#' + currentPath;
+      window.location.replace(newUrl);
     </script>
   </head>
 
