@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import GameHeader from './GameHeader';
@@ -117,7 +116,6 @@ const ScoreKeeper = () => {
     return players.find(p => p.score === highest);
   };
 
-  // Add debugging for render
   console.log('ScoreKeeper rendering with players:', players);
 
   return (
@@ -134,8 +132,8 @@ const ScoreKeeper = () => {
         highestScore={getHighestScore()}
       />
 
-      {/* Players Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Players - Mobile List / Desktop Grid */}
+      <div className="flex flex-col space-y-3 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0">
         {players.map((player) => {
           const isLeader = player.score === getHighestScore() && player.score > 0;
           console.log('Rendering PlayerCard for:', player.id, player.name);
