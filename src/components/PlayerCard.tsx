@@ -61,7 +61,7 @@ const PlayerCard = ({
       )}
 
       {/* Mobile Layout - Compact */}
-      <div className="md:hidden p-3">
+      <div className="md:hidden p-3 pr-10">
         <div className="flex items-center gap-3">
           {/* Left: Character Icon */}
           <div className="flex-shrink-0">
