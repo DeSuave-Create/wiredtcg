@@ -47,25 +47,23 @@ const PlayerCard = ({
 
   return (
     <div className={`neon-border bg-card/50 rounded-lg relative ${isLeader ? 'ring-2 ring-secondary/50' : ''}`}>
-      {/* Remove Button - Top Right */}
-      {canRemove && (
-        <Button
-          onClick={() => onRemove(player.id)}
-          variant="outline"
-          size="sm"
-          className="absolute top-2 right-2 neon-border text-destructive hover:bg-destructive/10 h-6 w-6 p-0 z-10"
-          type="button"
-        >
-          <Trash2 className="h-3 w-3" />
-        </Button>
-      )}
-
       {/* Mobile Layout - Compact */}
-      <div className="md:hidden p-3 pr-10">
+      <div className="md:hidden p-3">
         <div className="flex items-center gap-3">
-          {/* Left: Character Icon */}
-          <div className="flex-shrink-0">
+          {/* Left: Character Icon and Remove Button */}
+          <div className="flex-shrink-0 flex flex-col items-center gap-1">
             <div className="text-xl">{character.icon}</div>
+            {canRemove && (
+              <Button
+                onClick={() => onRemove(player.id)}
+                variant="outline"
+                size="sm"
+                className="neon-border text-destructive hover:bg-destructive/10 h-4 w-4 p-0"
+                type="button"
+              >
+                <Trash2 className="h-2 w-2" />
+              </Button>
+            )}
           </div>
           
           {/* Center: Player Info */}
@@ -122,7 +120,20 @@ const PlayerCard = ({
       </div>
 
       {/* Desktop Layout */}
-      <div className="hidden md:block p-6 space-y-4">
+      <div className="hidden md:block p-6 space-y-4 relative">
+        {/* Remove Button - Top Right for Desktop */}
+        {canRemove && (
+          <Button
+            onClick={() => onRemove(player.id)}
+            variant="outline"
+            size="sm"
+            className="absolute top-2 right-2 neon-border text-destructive hover:bg-destructive/10 h-6 w-6 p-0 z-10"
+            type="button"
+          >
+            <Trash2 className="h-3 w-3" />
+          </Button>
+        )}
+
         {/* Character Display */}
         <div className="text-center">
           <div className="text-4xl mb-2">{character.icon}</div>
