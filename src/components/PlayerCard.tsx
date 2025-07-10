@@ -46,24 +46,37 @@ const PlayerCard = ({
   const character = getCharacter(player.character);
 
   return (
-    <div className={`neon-border bg-card/50 rounded-lg ${isLeader ? 'ring-2 ring-secondary/50' : ''}`}>
-      {/* Mobile Layout */}
-      <div className="md:hidden p-4">
-        <div className="flex items-center justify-between gap-4">
+    <div className={`neon-border bg-card/50 rounded-lg relative ${isLeader ? 'ring-2 ring-secondary/50' : ''}`}>
+      {/* Remove Button - Top Right */}
+      {canRemove && (
+        <Button
+          onClick={() => onRemove(player.id)}
+          variant="outline"
+          size="sm"
+          className="absolute top-2 right-2 neon-border text-destructive hover:bg-destructive/10 h-6 w-6 p-0 z-10"
+          type="button"
+        >
+          <Trash2 className="h-3 w-3" />
+        </Button>
+      )}
+
+      {/* Mobile Layout - Compact */}
+      <div className="md:hidden p-3">
+        <div className="flex items-center gap-3">
           {/* Left: Character Icon */}
           <div className="flex-shrink-0">
-            <div className="text-2xl">{character.icon}</div>
+            <div className="text-xl">{character.icon}</div>
           </div>
           
           {/* Center: Player Info */}
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 space-y-1">
             <Input
               value={player.name}
               onChange={(e) => onUpdateName(player.id, e.target.value)}
-              className="text-sm font-semibold neon-border bg-input mb-2 h-8"
+              className="text-xs font-semibold neon-border bg-input h-6 px-2"
             />
             <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-              <SelectTrigger className="neon-border bg-input text-xs h-7">
+              <SelectTrigger className="neon-border bg-input text-xs h-5 px-2">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-popover border-primary/30">
@@ -77,20 +90,20 @@ const PlayerCard = ({
           </div>
           
           {/* Right: Score and Controls */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <Button
               onClick={() => onUpdateScore(player.id, -1)}
               variant="outline"
               size="sm"
-              className="neon-border text-destructive hover:bg-destructive/10 h-8 w-8 p-0"
+              className="neon-border text-destructive hover:bg-destructive/10 h-6 w-6 p-0"
               type="button"
             >
-              <Minus className="h-3 w-3" />
+              <Minus className="h-2 w-2" />
             </Button>
             
-            <div className="flex flex-col items-center min-w-[60px]">
-              <Bitcoin className="h-4 w-4 text-yellow-400 mb-1" />
-              <div className={`text-lg font-bold text-red-500 ${isLeader ? 'animate-pulse-neon' : ''}`}>
+            <div className="flex flex-col items-center min-w-[40px]">
+              <Bitcoin className="h-3 w-3 text-yellow-400" />
+              <div className={`text-sm font-bold text-red-500 leading-none ${isLeader ? 'animate-pulse-neon' : ''}`}>
                 {player.score}
               </div>
             </div>
@@ -99,27 +112,13 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, 1)}
               variant="outline"
               size="sm"
-              className="neon-border text-primary hover:bg-primary/10 h-8 w-8 p-0"
+              className="neon-border text-primary hover:bg-primary/10 h-6 w-6 p-0"
               type="button"
             >
-              <Plus className="h-3 w-3" />
+              <Plus className="h-2 w-2" />
             </Button>
           </div>
         </div>
-        
-        {/* Remove Button - Mobile */}
-        {canRemove && (
-          <Button
-            onClick={() => onRemove(player.id)}
-            variant="outline"
-            size="sm"
-            className="w-full mt-3 neon-border text-destructive hover:bg-destructive/10 h-8"
-            type="button"
-          >
-            <Trash2 className="h-3 w-3 mr-2" />
-            Remove
-          </Button>
-        )}
       </div>
 
       {/* Desktop Layout */}
@@ -180,20 +179,6 @@ const PlayerCard = ({
             </Button>
           </div>
         </div>
-
-        {/* Remove Player */}
-        {canRemove && (
-          <Button
-            onClick={() => onRemove(player.id)}
-            variant="outline"
-            size="sm"
-            className="w-full neon-border text-destructive hover:bg-destructive/10"
-            type="button"
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Remove Miner
-          </Button>
-        )}
       </div>
     </div>
   );
