@@ -17,8 +17,8 @@
     --popover: 0 0% 90%;
     --popover-foreground: 210 15% 15%;
 
-    --primary: 120 60% 50%;
-    --primary-foreground: 210 15% 8%;
+    --primary: 135 92% 42%;
+    --primary-foreground: 0 0% 98%;
 
     --secondary: 30 100% 50%;
     --secondary-foreground: 210 15% 8%;
@@ -26,15 +26,18 @@
     --muted: 0 0% 85%;
     --muted-foreground: 210 30% 40%;
 
-    --accent: 120 60% 40%;
-    --accent-foreground: 210 15% 8%;
+    --accent: 135 92% 35%;
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 120 40% 25%;
+    --border: 135 40% 25%;
     --input: 0 0% 95%;
-    --ring: 120 60% 50%;
+    --ring: 135 92% 42%;
+
+    --navbar: 195 91% 12%;
+    --navbar-foreground: 0 0% 98%;
 
     --radius: 0.25rem;
   }
@@ -50,7 +53,7 @@
     --popover: 0 0% 90%;
     --popover-foreground: 210 15% 15%;
 
-    --primary: 120 60% 45%;
+    --primary: 135 92% 42%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 30 100% 45%;
@@ -59,7 +62,7 @@
     --muted: 0 0% 85%;
     --muted-foreground: 215 16% 47%;
 
-    --accent: 120 60% 35%;
+    --accent: 135 92% 35%;
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84.2% 60.2%;
@@ -67,7 +70,10 @@
 
     --border: 214.3 31.8% 85%;
     --input: 0 0% 95%;
-    --ring: 120 60% 45%;
+    --ring: 135 92% 42%;
+
+    --navbar: 195 91% 12%;
+    --navbar-foreground: 0 0% 98%;
   }
 }
 
@@ -80,50 +86,49 @@
     @apply bg-background text-foreground font-mono;
     transition: background-color 0.3s ease, color 0.3s ease;
     background-color: hsl(0, 0%, 88%);
+    background-image: url('/lovable-uploads/51c3767e-4295-4b08-96c5-9d6144ea8954.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
   }
 
   /* Dark theme background */
   .dark body {
     background-color: hsl(0, 0%, 88%);
-    background-image: 
-      url('/lovable-uploads/4dec6d97-b06e-43be-83ce-00dbc090c356.png'),
-      linear-gradient(rgba(120, 200, 80, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(120, 200, 80, 0.03) 1px, transparent 1px);
-    background-size: cover, 20px 20px, 20px 20px;
-    background-position: center, 0 0, 0 0;
-    background-repeat: no-repeat, repeat, repeat;
+    background-image: url('/lovable-uploads/51c3767e-4295-4b08-96c5-9d6144ea8954.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     background-attachment: fixed;
   }
 
   /* Light theme background */
   .light body {
     background-color: hsl(0, 0%, 88%);
-    background-image: 
-      url('/lovable-uploads/4dec6d97-b06e-43be-83ce-00dbc090c356.png'),
-      linear-gradient(rgba(120, 180, 80, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(120, 180, 80, 0.05) 1px, transparent 1px);
-    background-size: cover, 20px 20px, 20px 20px;
-    background-position: center, 0 0, 0 0;
-    background-repeat: no-repeat, repeat, repeat;
+    background-image: url('/lovable-uploads/51c3767e-4295-4b08-96c5-9d6144ea8954.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     background-attachment: fixed;
   }
 }
 
 @layer components {
   .neon-border {
-    @apply border border-primary/50 shadow-[0_0_10px_rgba(120,200,80,0.3)];
+    @apply border border-primary/50 shadow-[0_0_10px_rgba(11,206,49,0.3)];
   }
   
   .light .neon-border {
-    @apply shadow-[0_0_10px_rgba(120,180,80,0.4)];
+    @apply shadow-[0_0_10px_rgba(11,206,49,0.4)];
   }
   
   .neon-glow {
-    @apply shadow-[0_0_20px_rgba(120,200,80,0.5)];
+    @apply shadow-[0_0_20px_rgba(11,206,49,0.5)];
   }
   
   .light .neon-glow {
-    @apply shadow-[0_0_20px_rgba(120,180,80,0.6)];
+    @apply shadow-[0_0_20px_rgba(11,206,49,0.6)];
   }
   
   .orange-neon {
@@ -136,24 +141,24 @@
   
   .grid-pattern {
     background-image: 
-      linear-gradient(rgba(120, 200, 80, 0.1) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(120, 200, 80, 0.1) 1px, transparent 1px);
+      linear-gradient(rgba(11, 206, 49, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(11, 206, 49, 0.1) 1px, transparent 1px);
     background-size: 40px 40px;
   }
   
   .light .grid-pattern {
     background-image: 
-      linear-gradient(rgba(120, 180, 80, 0.15) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(120, 180, 80, 0.15) 1px, transparent 1px);
+      linear-gradient(rgba(11, 206, 49, 0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(11, 206, 49, 0.15) 1px, transparent 1px);
   }
 }
 
 @keyframes pulse-neon {
   0%, 100% { 
-    box-shadow: 0 0 5px rgba(120, 200, 80, 0.5), 0 0 10px rgba(120, 200, 80, 0.3);
+    box-shadow: 0 0 5px rgba(11, 206, 49, 0.5), 0 0 10px rgba(11, 206, 49, 0.3);
   }
   50% { 
-    box-shadow: 0 0 10px rgba(120, 200, 80, 0.8), 0 0 20px rgba(120, 200, 80, 0.5);
+    box-shadow: 0 0 10px rgba(11, 206, 49, 0.8), 0 0 20px rgba(11, 206, 49, 0.5);
   }
 }
 
@@ -163,10 +168,10 @@
 
 @keyframes pulse-neon-light {
   0%, 100% { 
-    box-shadow: 0 0 5px rgba(120, 180, 80, 0.6), 0 0 10px rgba(120, 180, 80, 0.4);
+    box-shadow: 0 0 5px rgba(11, 206, 49, 0.6), 0 0 10px rgba(11, 206, 49, 0.4);
   }
   50% { 
-    box-shadow: 0 0 10px rgba(120, 180, 80, 0.9), 0 0 20px rgba(120, 180, 80, 0.6);
+    box-shadow: 0 0 10px rgba(11, 206, 49, 0.9), 0 0 20px rgba(11, 206, 49, 0.6);
   }
 }
 

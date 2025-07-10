@@ -52,6 +52,10 @@ export default {
 				card: {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
+				},
+				navbar: {
+					DEFAULT: 'hsl(var(--navbar))',
+					foreground: 'hsl(var(--navbar-foreground))'
 				}
 			},
 			borderRadius: {
@@ -78,10 +82,10 @@ export default {
 				},
 				'glow-pulse': {
 					'0%, 100%': {
-						boxShadow: '0 0 5px rgba(0, 255, 255, 0.5)'
+						boxShadow: '0 0 5px rgba(11, 206, 49, 0.5)'
 					},
 					'50%': {
-						boxShadow: '0 0 20px rgba(0, 255, 255, 0.8), 0 0 30px rgba(0, 255, 255, 0.6)'
+						boxShadow: '0 0 20px rgba(11, 206, 49, 0.8), 0 0 30px rgba(11, 206, 49, 0.6)'
 					}
 				}
 			},
