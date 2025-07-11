@@ -9,7 +9,7 @@ const Score = () => {
     <div className="min-h-screen">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 flex justify-center">
         <ContentSection>
           <ScoreKeeper />
         </ContentSection>
