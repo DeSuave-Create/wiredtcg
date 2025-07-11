@@ -21,9 +21,9 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <img 
-                src="/lovable-uploads/1cd31d6c-8cee-44d0-ae00-017216ecc7a0.png" 
-                alt="WIRED Logo" 
-                className="h-6 w-auto"
+                src="/lovable-uploads/c94c67d1-2325-4e36-850c-50546144bde7.png" 
+                alt="WIRED Official Logo" 
+                className="h-8 w-8"
               />
               <span className="text-xl font-bold text-primary">WIRED</span>
             </div>
