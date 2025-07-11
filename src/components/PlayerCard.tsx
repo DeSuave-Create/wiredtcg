@@ -114,7 +114,7 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, -1)}
               variant="outline"
               size="sm"
-              className="border-green-600 border-2 text-destructive hover:bg-destructive/10 h-7 w-7 p-0 bg-gray-100"
+              className="border-green-600 border-2 text-destructive hover:bg-gray-200 hover:text-destructive h-7 w-7 p-0 bg-gray-100"
               style={{ backgroundColor: '#f3f4f6' }}
               type="button"
             >
@@ -132,7 +132,7 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, 1)}
               variant="outline"
               size="sm"
-              className="border-green-600 border-2 text-primary hover:bg-primary/10 h-7 w-7 p-0 bg-gray-100"
+              className="border-green-600 border-2 text-primary hover:bg-gray-200 hover:text-primary h-7 w-7 p-0 bg-gray-100"
               style={{ backgroundColor: '#f3f4f6' }}
               type="button"
             >
@@ -199,7 +199,7 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, -1)}
               variant="outline"
               size="sm"
-              className="border-green-600 border-2 text-destructive hover:bg-destructive/10 w-full xs:w-auto"
+              className="border-green-600 border-2 text-destructive hover:bg-gray-200 hover:text-destructive w-full xs:w-auto"
               style={{ backgroundColor: '#fffbef' }}
               type="button"
             >
@@ -209,7 +209,7 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, 1)}
               variant="outline"
               size="sm"
-              className="border-green-600 border-2 text-primary hover:bg-primary/10 w-full xs:w-auto"
+              className="border-green-600 border-2 text-primary hover:bg-gray-200 hover:text-primary w-full xs:w-auto"
               style={{ backgroundColor: '#fffbef' }}
               type="button"
             >
