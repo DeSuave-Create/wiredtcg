@@ -15,7 +15,7 @@ const GameStatus = ({ leader, highestScore }: GameStatusProps) => {
   if (highestScore === 0) return null;
 
   return (
-    <div className="neon-border bg-card/50 p-4 rounded-lg text-center">
+    <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-4 text-center shadow-2xl drop-shadow-lg">
       <p className="text-primary font-semibold">
         {leader?.name} is leading with {highestScore} bitcoins mined!
       </p>
