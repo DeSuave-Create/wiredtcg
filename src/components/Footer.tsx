@@ -2,6 +2,7 @@
 import { Github, Twitter, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import Logo from './Logo';
 
 const Footer = () => {
   const { toast } = useToast();
@@ -20,11 +21,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <img 
-                src="/lovable-uploads/c94c67d1-2325-4e36-850c-50546144bde7.png" 
-                alt="WIRED Official Logo" 
-                className="h-8 w-8"
-              />
+              <Logo />
               <span className="text-xl font-bold text-primary">WIRED</span>
             </div>
             <p className="text-primary text-sm">
