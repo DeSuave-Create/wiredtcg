@@ -46,7 +46,7 @@ const PlayerCard = ({
   const character = getCharacter(player.character);
 
   return (
-    <div className={`relative overflow-hidden transition-all duration-300 hover:scale-105 border-green-600 border-8 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl ${isLeader ? 'ring-2 ring-secondary/50' : ''}`} style={{ backgroundColor: '#fffbef' }}>
+    <div className="relative overflow-hidden transition-all duration-300 hover:scale-105 border-green-600 border-8 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl" style={{ backgroundColor: '#fffbef' }}>
       {/* Circuit board pattern background */}
       <div className="absolute inset-0 opacity-20" style={{
         backgroundImage: `
