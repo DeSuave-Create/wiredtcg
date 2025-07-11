@@ -127,8 +127,11 @@ export default {
 					'0%': {
 						strokeDasharray: '0 1000'
 					},
-					'100%': {
+					'50%': {
 						strokeDasharray: '1000 0'
+					},
+					'100%': {
+						strokeDasharray: '0 1000'
 					}
 				}
 			},
@@ -139,7 +142,7 @@ export default {
 				'data-transfer': 'data-transfer 2s ease-in-out infinite',
 				'data-pulse': 'data-pulse 3s ease-in-out infinite',
 				'scan-line': 'scan-line 1.5s ease-in-out',
-				'connect-line': 'connect-line 1s ease-out forwards'
+				'connect-line': 'connect-line 4s ease-in-out infinite'
 			},
 			fontFamily: {
 				'orbitron': ['Orbitron', 'sans-serif'],

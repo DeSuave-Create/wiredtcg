@@ -34,7 +34,7 @@ const ConnectionLines = ({ className = "" }: ConnectionLinesProps) => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* Main connection line - make it more visible */}
+      {/* Main connection line - make it continuously animate */}
       <path
         d="M50 64 Q200 20, 400 64 T750 64"
         className={`${isVisible ? 'animate-connect-line' : ''}`}
@@ -43,57 +43,55 @@ const ConnectionLines = ({ className = "" }: ConnectionLinesProps) => {
           strokeWidth: '3',
           fill: 'none',
           strokeDasharray: '1000',
-          strokeDashoffset: isVisible ? '0' : '1000',
-          transition: 'stroke-dashoffset 2s ease-out',
-          animationDelay: '0s' 
+          strokeDashoffset: '0'
         }}
       />
       
-      {/* Branch lines - make them more visible */}
+      {/* Branch lines - make them continuously animate */}
       <path
         d="M200 64 L200 40 L250 40"
+        className={`${isVisible ? 'animate-connect-line' : ''}`}
         style={{ 
           stroke: 'rgb(34, 197, 94)',
           strokeWidth: '2',
           fill: 'none',
           strokeDasharray: '100',
-          strokeDashoffset: isVisible ? '0' : '100',
-          transition: 'stroke-dashoffset 1s ease-out 0.5s'
+          animationDelay: '0.5s'
         }}
       />
       
       <path
         d="M400 64 L400 88 L450 88"
+        className={`${isVisible ? 'animate-connect-line' : ''}`}
         style={{ 
           stroke: 'rgb(34, 197, 94)',
           strokeWidth: '2',
           fill: 'none',
           strokeDasharray: '100',
-          strokeDashoffset: isVisible ? '0' : '100',
-          transition: 'stroke-dashoffset 1s ease-out 1s'
+          animationDelay: '1s'
         }}
       />
       
       <path
         d="M600 64 L600 40 L650 40"
+        className={`${isVisible ? 'animate-connect-line' : ''}`}
         style={{ 
           stroke: 'rgb(34, 197, 94)',
           strokeWidth: '2',
           fill: 'none',
           strokeDasharray: '100',
-          strokeDashoffset: isVisible ? '0' : '100',
-          transition: 'stroke-dashoffset 1s ease-out 1.5s'
+          animationDelay: '1.5s'
         }}
       />
 
-      {/* Connection nodes - make them more visible */}
+      {/* Connection nodes - continuously pulsing */}
       <circle
         cx="50"
         cy="64"
         r="6"
         fill="rgb(34, 197, 94)"
         className={isVisible ? 'animate-ping' : ''}
-        style={{ animationDelay: '2s', animationDuration: '2s' }}
+        style={{ animationDelay: '2s', animationDuration: '3s' }}
       />
       <circle
         cx="200"
@@ -101,7 +99,7 @@ const ConnectionLines = ({ className = "" }: ConnectionLinesProps) => {
         r="4"
         fill="rgb(34, 197, 94)"
         className={isVisible ? 'animate-pulse' : ''}
-        style={{ animationDelay: '2.2s' }}
+        style={{ animationDelay: '2.2s', animationDuration: '3s' }}
       />
       <circle
         cx="400"
@@ -109,7 +107,7 @@ const ConnectionLines = ({ className = "" }: ConnectionLinesProps) => {
         r="4"
         fill="rgb(34, 197, 94)"
         className={isVisible ? 'animate-pulse' : ''}
-        style={{ animationDelay: '2.4s' }}
+        style={{ animationDelay: '2.4s', animationDuration: '3s' }}
       />
       <circle
         cx="600"
@@ -117,7 +115,7 @@ const ConnectionLines = ({ className = "" }: ConnectionLinesProps) => {
         r="4"
         fill="rgb(34, 197, 94)"
         className={isVisible ? 'animate-pulse' : ''}
-        style={{ animationDelay: '2.6s' }}
+        style={{ animationDelay: '2.6s', animationDuration: '3s' }}
       />
       <circle
         cx="750"
@@ -125,7 +123,7 @@ const ConnectionLines = ({ className = "" }: ConnectionLinesProps) => {
         r="6"
         fill="rgb(34, 197, 94)"
         className={isVisible ? 'animate-ping' : ''}
-        style={{ animationDelay: '2.8s', animationDuration: '2s' }}
+        style={{ animationDelay: '2.8s', animationDuration: '3s' }}
       />
     </svg>
   );
