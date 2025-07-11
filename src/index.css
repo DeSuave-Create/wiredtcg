@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -56,11 +55,11 @@
     --primary: 135 92% 42%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 30 100% 45%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 30 100% 50%;
+    --secondary-foreground: 210 15% 8%;
 
     --muted: 0 0% 85%;
-    --muted-foreground: 215 16% 47%;
+    --muted-foreground: 210 30% 40%;
 
     --accent: 135 92% 35%;
     --accent-foreground: 0 0% 98%;
@@ -68,7 +67,7 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 85%;
+    --border: 135 40% 25%;
     --input: 0 0% 95%;
     --ring: 135 92% 42%;
 
@@ -81,72 +80,40 @@
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground;
-    font-family: 'Market Deco', sans-serif;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    background-color: hsl(0, 0%, 88%);
-    background-image: url('/lovable-uploads/51c3767e-4295-4b08-96c5-9d6144ea8954.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    @apply font-sans;
+    background-image: 
+      linear-gradient(rgba(11, 206, 49, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(11, 206, 49, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
   }
 
-  /* Dark theme background */
-  .dark body {
-    background-color: hsl(0, 0%, 88%);
-    background-image: url('/lovable-uploads/51c3767e-4295-4b08-96c5-9d6144ea8954.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-  }
-
-  /* Light theme background */
   .light body {
-    background-color: hsl(0, 0%, 88%);
-    background-image: url('/lovable-uploads/51c3767e-4295-4b08-96c5-9d6144ea8954.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    background-color: hsl(var(--background));
+    background-image: 
+      linear-gradient(rgba(11, 206, 49, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(11, 206, 49, 0.08) 1px, transparent 1px);
   }
 }
 
-@layer components {
-  .neon-border {
-    @apply border border-primary/50 shadow-[0_0_10px_rgba(11,206,49,0.3)];
-  }
-  
-  .light .neon-border {
-    @apply shadow-[0_0_10px_rgba(11,206,49,0.4)];
-  }
-  
-  .neon-glow {
-    @apply shadow-[0_0_20px_rgba(11,206,49,0.5)];
-  }
-  
-  .light .neon-glow {
-    @apply shadow-[0_0_20px_rgba(11,206,49,0.6)];
-  }
-  
-  .orange-neon {
-    @apply border-secondary/50 shadow-[0_0_10px_rgba(255,165,0,0.3)];
-  }
-  
-  .light .orange-neon {
-    @apply shadow-[0_0_10px_rgba(255,140,0,0.4)];
-  }
-  
-  .grid-pattern {
-    background-image: 
-      linear-gradient(rgba(11, 206, 49, 0.1) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(11, 206, 49, 0.1) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-  
+/* Global styling for components */
+.neon-border {
+  @apply border-2 border-primary/50 shadow-[0_0_15px_rgba(11,206,49,0.3)];
+}
+
+.neon-glow {
+  @apply shadow-[0_0_15px_rgba(11,206,49,0.3)];
+}
+
+.grid-pattern {
+  background-image: 
+    linear-gradient(rgba(11, 206, 49, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 206, 49, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+@media (prefers-color-scheme: light) {
   .light .grid-pattern {
     background-image: 
       linear-gradient(rgba(11, 206, 49, 0.15) 1px, transparent 1px),

@@ -108,6 +108,7 @@ export default {
 					'50%': {
 						textShadow: '0 0 15px rgba(11, 206, 49, 0.9), 0 0 25px rgba(11, 206, 49, 0.7)',
 						transform: 'scale(1.02)'
+					}
 				},
 				'neon-flicker': {
 					'0%, 18%, 22%, 25%, 53%, 57%, 100%': {
@@ -145,24 +146,24 @@ export default {
 				},
 				'circuit-trace': {
 					'0%': {
-						'border-image-source': 'linear-gradient(0deg, transparent 95%, #2ecc71 95%)',
-						'border-image-slice': '1'
+						borderImageSource: 'linear-gradient(0deg, transparent 95%, #2ecc71 95%)',
+						borderImageSlice: '1'
 					},
 					'25%': {
-						'border-image-source': 'linear-gradient(90deg, transparent 95%, #2ecc71 95%)',
-						'border-image-slice': '1'
+						borderImageSource: 'linear-gradient(90deg, transparent 95%, #2ecc71 95%)',
+						borderImageSlice: '1'
 					},
 					'50%': {
-						'border-image-source': 'linear-gradient(180deg, transparent 95%, #2ecc71 95%)',
-						'border-image-slice': '1'
+						borderImageSource: 'linear-gradient(180deg, transparent 95%, #2ecc71 95%)',
+						borderImageSlice: '1'
 					},
 					'75%': {
-						'border-image-source': 'linear-gradient(270deg, transparent 95%, #2ecc71 95%)',
-						'border-image-slice': '1'
+						borderImageSource: 'linear-gradient(270deg, transparent 95%, #2ecc71 95%)',
+						borderImageSlice: '1'
 					},
 					'100%': {
-						'border-image-source': 'linear-gradient(360deg, transparent 95%, #2ecc71 95%)',
-						'border-image-slice': '1'
+						borderImageSource: 'linear-gradient(360deg, transparent 95%, #2ecc71 95%)',
+						borderImageSlice: '1'
 					}
 				}
 			},
