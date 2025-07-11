@@ -14,12 +14,12 @@ interface Player {
 }
 
 const characters = [
-  { id: 'zerotrust', name: '🔐 ZeroTrust (Hacker/Security)', icon: '🕵️' },
-  { id: 'deskjockey', name: '🎧 DeskJockey (HelpDesk)', icon: '💬' },
-  { id: 'pingmaster', name: '🌐 PingMaster (Network)', icon: '📡' },
-  { id: 'redtaperipper', name: '📋 RedTapeRipper (Compliance/FTC)', icon: '⚖️' },
-  { id: 'clutchcache', name: '🎮 ClutchCache (Gamer)', icon: '🕹️' },
-  { id: 'cloudcrafter', name: '☁️ CloudCrafter (DevOps/Cloud)', icon: '⚙️' },
+  { id: 'zerotrust', name: '🔐 ZeroTrust', icon: '🕵️' },
+  { id: 'deskjockey', name: '🎧 DeskJockey', icon: '💬' },
+  { id: 'pingmaster', name: '🌐 PingMaster', icon: '📡' },
+  { id: 'redtaperipper', name: '📋 RedTapeRipper', icon: '⚖️' },
+  { id: 'clutchcache', name: '🎮 ClutchCache', icon: '🕹️' },
+  { id: 'cloudcrafter', name: '☁️ CloudCrafter', icon: '⚙️' },
 ];
 
 const defaultPlayers: Player[] = [
