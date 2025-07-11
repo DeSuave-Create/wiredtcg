@@ -62,13 +62,29 @@ const PlayerCard = ({
       }}></div>
 
       {/* Mobile Layout - Compact */}
-      <div className="md:hidden p-3 relative z-10">
+      <div className="md:hidden p-4 relative z-10">
         <div className="flex items-center gap-3">
-          {/* Left: Character Icon */}
-          <div className="flex-shrink-0 flex flex-col items-center gap-1">
-            <div className="text-xl">{character.icon}</div>
+          {/* Left: Trash Button */}
+          <div className="flex-shrink-0">
+            {canRemove && (
+              <Button
+                onClick={() => onRemove(player.id)}
+                variant="outline"
+                size="sm"
+                className="border-green-600 border-2 text-destructive hover:bg-destructive/10 h-8 w-8 p-0"
+                style={{ backgroundColor: '#fffbef' }}
+                type="button"
+              >
+                <Trash2 className="h-3 w-3" />
+              </Button>
+            )}
+          </div>
+          
+          {/* Character Icon and Selection */}
+          <div className="flex-shrink-0 flex flex-col items-center gap-2">
+            <div className="text-2xl">{character.icon}</div>
             <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-              <SelectTrigger className="border-green-600 border-2 bg-input text-xs h-5 px-2" style={{ backgroundColor: '#fffbef' }}>
+              <SelectTrigger className="border-green-600 border-2 bg-input text-xs h-6 px-2 w-24" style={{ backgroundColor: '#fffbef' }}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-popover border-primary/30">
@@ -79,46 +95,34 @@ const PlayerCard = ({
                 ))}
               </SelectContent>
             </Select>
-            {canRemove && (
-              <Button
-                onClick={() => onRemove(player.id)}
-                variant="outline"
-                size="sm"
-                className="border-green-600 border-2 text-destructive hover:bg-destructive/10 h-4 w-4 p-0"
-                style={{ backgroundColor: '#fffbef' }}
-                type="button"
-              >
-                <Trash2 className="h-2 w-2" />
-              </Button>
-            )}
           </div>
           
-          {/* Center: Player Info */}
-          <div className="flex-1 min-w-0 space-y-1">
+          {/* Center: Player Name */}
+          <div className="flex-1 min-w-0">
             <Input
               value={player.name}
               onChange={(e) => onUpdateName(player.id, e.target.value)}
-              className="text-xs font-semibold border-green-600 border-2 h-6 px-2"
+              className="text-sm font-semibold border-green-600 border-2 h-8 px-3"
               style={{ backgroundColor: '#fffbef' }}
             />
           </div>
           
           {/* Right: Score and Controls */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             <Button
               onClick={() => onUpdateScore(player.id, -1)}
               variant="outline"
               size="sm"
-              className="border-green-600 border-2 text-destructive hover:bg-destructive/10 h-6 w-6 p-0"
+              className="border-green-600 border-2 text-destructive hover:bg-destructive/10 h-8 w-8 p-0"
               style={{ backgroundColor: '#fffbef' }}
               type="button"
             >
-              <Minus className="h-2 w-2" />
+              <Minus className="h-3 w-3" />
             </Button>
             
             <div className="flex flex-col items-center min-w-[40px]">
-              <Bitcoin className="h-3 w-3 text-yellow-400" />
-              <div className={`text-sm font-bold text-red-500 leading-none ${isLeader ? 'animate-pulse-neon' : ''}`}>
+              <Bitcoin className="h-4 w-4 text-yellow-400" />
+              <div className={`text-lg font-bold text-red-500 leading-none ${isLeader ? 'animate-pulse-neon' : ''}`}>
                 {player.score}
               </div>
             </div>
@@ -127,11 +131,11 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, 1)}
               variant="outline"
               size="sm"
-              className="border-green-600 border-2 text-primary hover:bg-primary/10 h-6 w-6 p-0"
+              className="border-green-600 border-2 text-primary hover:bg-primary/10 h-8 w-8 p-0"
               style={{ backgroundColor: '#fffbef' }}
               type="button"
             >
-              <Plus className="h-2 w-2" />
+              <Plus className="h-3 w-3" />
             </Button>
           </div>
         </div>
