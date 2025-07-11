@@ -48,10 +48,10 @@ const Extras = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="container mx-auto px-4 py-8 flex justify-center">
+      <main className="container mx-auto px-4 py-8 flex justify-center flex-grow">
         <div className="w-full max-w-6xl">
           {/* Page Header */}
           <ContentSection title="Game Extras & Resources" glowEffect>

@@ -67,10 +67,10 @@ const FAQs = () => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="container mx-auto px-4 py-8 flex justify-center">
+      <main className="container mx-auto px-4 py-8 flex justify-center flex-grow">
         <div className="w-full max-w-4xl">
           {/* Page Header */}
           <ContentSection title="Frequently Asked Questions" glowEffect>
