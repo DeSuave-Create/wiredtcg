@@ -57,7 +57,7 @@ const GameCard: React.FC<GameCardProps> = ({
 
   return (
     <div className={cn(
-      "relative w-64 h-96 overflow-hidden transition-all duration-300 hover:scale-105",
+      "relative w-64 h-96 overflow-hidden transition-all duration-300 hover:scale-105 circuit-card",
       cardStyles.border,
       cardStyles.borderWidth,
       cardStyles.rounded,

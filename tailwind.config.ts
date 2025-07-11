@@ -133,6 +133,28 @@ export default {
 					'100%': {
 						strokeDasharray: '0 1000'
 					}
+				},
+				'circuit-trace': {
+					'0%': {
+						'border-image-source': 'linear-gradient(0deg, transparent 95%, #2ecc71 95%)',
+						'border-image-slice': '1'
+					},
+					'25%': {
+						'border-image-source': 'linear-gradient(90deg, transparent 95%, #2ecc71 95%)',
+						'border-image-slice': '1'
+					},
+					'50%': {
+						'border-image-source': 'linear-gradient(180deg, transparent 95%, #2ecc71 95%)',
+						'border-image-slice': '1'
+					},
+					'75%': {
+						'border-image-source': 'linear-gradient(270deg, transparent 95%, #2ecc71 95%)',
+						'border-image-slice': '1'
+					},
+					'100%': {
+						'border-image-source': 'linear-gradient(360deg, transparent 95%, #2ecc71 95%)',
+						'border-image-slice': '1'
+					}
 				}
 			},
 			animation: {
@@ -142,7 +164,8 @@ export default {
 				'data-transfer': 'data-transfer 2s ease-in-out infinite',
 				'data-pulse': 'data-pulse 3s ease-in-out infinite',
 				'scan-line': 'scan-line 1.5s ease-in-out',
-				'connect-line': 'connect-line 4s ease-in-out infinite'
+				'connect-line': 'connect-line 4s ease-in-out infinite',
+				'circuit-trace': 'circuit-trace 3s linear infinite'
 			},
 			fontFamily: {
 				'orbitron': ['Orbitron', 'sans-serif'],

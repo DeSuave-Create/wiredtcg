@@ -6,7 +6,6 @@ import HeroSection from '@/components/HeroSection';
 import GameMechanicsSection from '@/components/GameMechanicsSection';
 import StrategySection from '@/components/StrategySection';
 import ConnectionLines from '@/components/ConnectionLines';
-import ProductsSection from '@/components/ProductsSection';
 
 const Index = () => {
   return (
@@ -38,14 +37,6 @@ const Index = () => {
           {/* Strategy Section */}
           <ContentSection title="Master the Game">
             <StrategySection />
-          </ContentSection>
-
-          {/* Connection Animation */}
-          <ConnectionLines className="my-4" />
-
-          {/* Products Section */}
-          <ContentSection title="Available Products" data-products>
-            <ProductsSection />
           </ContentSection>
 
           {/* Final Connection Animation */}
