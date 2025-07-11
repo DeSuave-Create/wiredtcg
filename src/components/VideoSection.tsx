@@ -38,7 +38,7 @@ const VideoSection = ({ src, title, description, className = "", isYouTube = fal
           </div>
         ) : isYouTube ? (
           <iframe
-            src={src}
+            src={`${src}?autoplay=1`}
             className="w-full h-64 md:h-80"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
