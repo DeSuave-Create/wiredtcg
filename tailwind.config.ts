@@ -165,6 +165,14 @@ export default {
 						borderImageSource: 'linear-gradient(360deg, transparent 95%, #2ecc71 95%)',
 						borderImageSlice: '1'
 					}
+				},
+				'wave-sweep': {
+					'0%': {
+						transform: 'translateX(-100%) rotate(45deg)'
+					},
+					'100%': {
+						transform: 'translateX(300%) rotate(45deg)'
+					}
 				}
 			},
 			animation: {
@@ -176,7 +184,8 @@ export default {
 				'neon-flicker': 'neon-flicker 3s ease-in-out infinite',
 				'scan-line': 'scan-line 1.5s ease-in-out',
 				'connect-line': 'connect-line 4s ease-in-out infinite',
-				'circuit-trace': 'circuit-trace 3s linear infinite'
+				'circuit-trace': 'circuit-trace 3s linear infinite',
+				'wave-sweep': 'wave-sweep 2s ease-in-out infinite'
 			},
 			fontFamily: {
 				'orbitron': ['Orbitron', 'sans-serif'],

@@ -55,6 +55,17 @@ const GameCard: React.FC<GameCardProps> = ({
 
   const cardStyles = getCardStyles();
 
+  const getWaveColor = () => {
+    switch (type) {
+      case 'equipment':
+        return 'rgba(34, 197, 94, 0.3)'; // green-500 with opacity
+      case 'specialization':
+        return 'rgba(37, 99, 235, 0.3)'; // blue-600 with opacity
+      case 'attack':
+        return 'rgba(220, 38, 38, 0.3)'; // red-600 with opacity
+    }
+  };
+
   return (
     <div className={cn(
       "relative w-64 h-96 overflow-hidden transition-all duration-300 hover:scale-105 circuit-card",
@@ -65,6 +76,14 @@ const GameCard: React.FC<GameCardProps> = ({
       "hover:shadow-3xl hover:drop-shadow-2xl",
       className
     )}>
+      {/* Color wave effect */}
+      <div 
+        className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500"
+        style={{
+          background: `linear-gradient(45deg, transparent 30%, ${getWaveColor()} 50%, transparent 70%)`,
+          animation: 'wave-sweep 2s ease-in-out infinite'
+        }}
+      />
       {/* Custom background or circuit board pattern */}
       <div className="absolute inset-0">
         {cardBackgroundImage ? (
