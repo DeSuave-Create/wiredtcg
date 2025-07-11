@@ -1,5 +1,5 @@
 
-import { Zap, Github, Twitter, Mail } from 'lucide-react';
+import { Github, Twitter, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 
@@ -14,13 +14,17 @@ const Footer = () => {
   };
 
   return (
-    <footer className="border-t neon-border bg-card/30 mt-20">
+    <footer className="border-t neon-border bg-navbar mt-20">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <Zap className="h-6 w-6 text-primary" />
+              <img 
+                src="/lovable-uploads/1cd31d6c-8cee-44d0-ae00-017216ecc7a0.png" 
+                alt="WIRED Logo" 
+                className="h-6 w-auto"
+              />
               <span className="text-xl font-bold text-primary">WIRED</span>
             </div>
             <p className="text-primary text-sm">
