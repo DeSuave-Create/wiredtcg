@@ -49,6 +49,7 @@ const PlayerCard = ({
       case 'deskjockey':
         return 'border-green-600';
       case 'pingmaster':
+      case 'cloudcrafter':
         return 'border-blue-600';
       case 'redtaperipper':
       case 'clutchcache':

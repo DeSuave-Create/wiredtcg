@@ -19,6 +19,7 @@ const characters = [
   { id: 'pingmaster', name: '🌐 PingMaster (Network)', icon: '📡' },
   { id: 'redtaperipper', name: '📋 RedTapeRipper (Compliance/FTC)', icon: '⚖️' },
   { id: 'clutchcache', name: '🎮 ClutchCache (Gamer)', icon: '🕹️' },
+  { id: 'cloudcrafter', name: '☁️ CloudCrafter (DevOps/Cloud)', icon: '⚙️' },
 ];
 
 const defaultPlayers: Player[] = [
