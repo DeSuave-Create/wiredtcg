@@ -143,7 +143,7 @@ const PlayerCard = ({
       </div>
 
       {/* Desktop Layout */}
-      <div className="hidden md:block p-6 space-y-4 relative z-10">
+      <div className="hidden md:block p-6 space-y-4 relative z-10 bg-gray-100">
         {/* Remove Button - Top Right for Desktop */}
         {canRemove && (
           <Button
