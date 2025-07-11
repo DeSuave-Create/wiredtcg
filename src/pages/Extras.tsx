@@ -85,7 +85,7 @@ const Extras = () => {
                 </TextSection>
                 <Button 
                   onClick={handleWatchTutorial}
-                  className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow"
+                  className="bg-green-600 text-white hover:bg-green-700 neon-glow"
                 >
                   <Play className="h-4 w-4 mr-2" />
                   Watch Full Tutorial
@@ -119,7 +119,7 @@ const Extras = () => {
                 <div className="flex space-x-4">
                   <Button 
                     onClick={() => handleDownload('Rulebook PDF')}
-                    className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow"
+                    className="bg-green-600 text-white hover:bg-green-700 neon-glow"
                   >
                     <Download className="h-4 w-4 mr-2" />
                     Download PDF
@@ -197,7 +197,7 @@ const Extras = () => {
                 <div className="flex justify-center space-x-4">
                   <Button 
                     onClick={handleJoinDiscord}
-                    className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow"
+                    className="bg-green-600 text-white hover:bg-green-700 neon-glow"
                   >
                     Join Discord
                   </Button>

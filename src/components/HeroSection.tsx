@@ -39,7 +39,7 @@ const HeroSection = () => {
       <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 px-4 sm:px-0">
         <Button 
           onClick={handleShopNow}
-          className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow px-6 sm:px-8 py-2 sm:py-3 w-full sm:w-auto"
+          className="bg-green-600 text-white hover:bg-green-700 neon-glow px-6 sm:px-8 py-2 sm:py-3 w-full sm:w-auto"
         >
           <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
           Shop Now

@@ -123,7 +123,7 @@ const ProductsSection = () => {
               <div className="mt-auto">
                 <Button 
                   onClick={() => handleAddToCart(product)}
-                  className="w-full bg-primary text-primary-foreground hover:bg-primary/80 neon-glow text-base font-bold h-12"
+                  className="w-full bg-green-600 text-white hover:bg-green-700 neon-glow text-base font-bold h-12"
                 >
                   <ShoppingCart className="h-4 w-4 mr-2" />
                   Add to Cart

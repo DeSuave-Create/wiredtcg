@@ -83,7 +83,7 @@ const Cart = () => {
             <ContentSection>
               <div className="text-center space-y-6">
                 <p className="text-lg text-muted-foreground">Your cart is currently empty.</p>
-                <Button className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow">
+                <Button className="bg-green-600 text-white hover:bg-green-700 neon-glow">
                   Continue Shopping
                 </Button>
               </div>
