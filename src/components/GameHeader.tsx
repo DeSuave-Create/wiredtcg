@@ -21,7 +21,7 @@ const GameHeader = ({ playerCount, maxPlayers, onAddPlayer, onReset }: GameHeade
           onClick={onReset}
           variant="outline"
           size="sm"
-          className="bg-gray-100 border-green-600 border-8 rounded-3xl text-secondary hover:bg-gray-200 w-full sm:w-auto shadow-2xl drop-shadow-lg"
+          className="bg-gray-100 rounded-3xl text-secondary hover:bg-gray-200 w-full sm:w-auto shadow-2xl drop-shadow-lg"
           type="button"
         >
           <RotateCcw className="h-4 w-4 mr-2" />

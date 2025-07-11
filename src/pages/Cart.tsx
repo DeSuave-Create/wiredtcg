@@ -149,7 +149,7 @@ const Cart = () => {
                   
                   <Button 
                     variant="outline" 
-                    className="w-full bg-gray-100 border-green-600 border-8 rounded-3xl text-primary hover:bg-gray-200 shadow-2xl drop-shadow-lg"
+                    className="w-full bg-gray-100 rounded-3xl text-primary hover:bg-gray-200 shadow-2xl drop-shadow-lg"
                   >
                     Continue Shopping
                   </Button>
