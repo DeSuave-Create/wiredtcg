@@ -126,14 +126,14 @@ const Extras = () => {
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button 
                     onClick={() => handleDownload('Rulebook PDF')}
-                    className="bg-green-600 text-white hover:bg-green-700 neon-glow px-6 py-2 rounded-lg flex items-center justify-center font-medium"
+                    className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg border-2 border-green-600 flex items-center justify-center"
                   >
                     <Download className="h-4 w-4 mr-2" />
                     Download PDF
                   </button>
                   <button 
                     onClick={handleViewOnline}
-                    className="bg-gray-100 border-2 border-gray-300 text-gray-700 hover:bg-gray-200 hover:border-gray-400 px-6 py-2 rounded-lg flex items-center justify-center font-medium"
+                    className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg border-2 border-green-600 flex items-center justify-center"
                   >
                     <BookOpen className="h-4 w-4 mr-2" />
                     View Online
