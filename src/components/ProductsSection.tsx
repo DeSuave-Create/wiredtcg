@@ -89,13 +89,15 @@ const ProductsSection = () => {
         const cardStyles = getCardStyles();
         
         return (
-          <div key={product.id} className={`relative w-full h-[347px] overflow-hidden transition-all duration-300 hover:scale-105 ${cardStyles.border} border-8 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl bg-gray-100 group hover:animate-scan-line`}>
-            {/* Hover scan line effect */}
-            <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-green-400 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-scan-line transform -translate-x-full group-hover:translate-x-full transition-all duration-1000"></div>
+          <div key={product.id} className={`relative w-full h-[347px] overflow-hidden transition-all duration-300 hover:scale-105 ${cardStyles.border} border-8 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl bg-gray-100 group`}>
+            
+            {/* Scan line effect on hover */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-green-400 to-transparent opacity-0 group-hover:opacity-100 transform translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-1500 ease-in-out z-20"></div>
             
             {/* Data transfer particles */}
-            <div className="absolute top-2 left-2 w-1 h-1 bg-green-400 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-data-transfer"></div>
-            <div className="absolute top-4 right-4 w-1 h-1 bg-green-400 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-data-transfer" style={{animationDelay: '0.5s'}}></div>
+            <div className="absolute top-4 left-4 w-2 h-2 bg-green-400 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-pulse z-20"></div>
+            <div className="absolute bottom-4 right-4 w-2 h-2 bg-green-400 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-ping z-20" style={{animationDelay: '0.3s'}}></div>
+            <div className="absolute top-1/2 left-1/2 w-1 h-1 bg-green-400 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-bounce z-20" style={{animationDelay: '0.6s'}}></div>
             {/* Circuit board pattern background */}
             <div className="absolute inset-0 opacity-20" style={{
               backgroundImage: `

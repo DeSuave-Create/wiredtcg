@@ -29,77 +29,103 @@ const ConnectionLines = ({ className = "" }: ConnectionLinesProps) => {
   return (
     <svg
       ref={svgRef}
-      className={`w-full h-32 ${className}`}
+      className={`w-full h-32 ${className} overflow-visible`}
       viewBox="0 0 800 128"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* Main connection line */}
+      {/* Main connection line - make it more visible */}
       <path
         d="M50 64 Q200 20, 400 64 T750 64"
-        className={`connection-line ${isVisible ? 'animate' : ''}`}
-        style={{ animationDelay: '0s' }}
+        className={`${isVisible ? 'animate-connect-line' : ''}`}
+        style={{ 
+          stroke: 'rgb(34, 197, 94)',
+          strokeWidth: '3',
+          fill: 'none',
+          strokeDasharray: '1000',
+          strokeDashoffset: isVisible ? '0' : '1000',
+          transition: 'stroke-dashoffset 2s ease-out',
+          animationDelay: '0s' 
+        }}
       />
       
-      {/* Branch lines */}
+      {/* Branch lines - make them more visible */}
       <path
         d="M200 64 L200 40 L250 40"
-        className={`connection-line ${isVisible ? 'animate' : ''}`}
-        style={{ animationDelay: '0.3s' }}
+        style={{ 
+          stroke: 'rgb(34, 197, 94)',
+          strokeWidth: '2',
+          fill: 'none',
+          strokeDasharray: '100',
+          strokeDashoffset: isVisible ? '0' : '100',
+          transition: 'stroke-dashoffset 1s ease-out 0.5s'
+        }}
       />
       
       <path
         d="M400 64 L400 88 L450 88"
-        className={`connection-line ${isVisible ? 'animate' : ''}`}
-        style={{ animationDelay: '0.6s' }}
+        style={{ 
+          stroke: 'rgb(34, 197, 94)',
+          strokeWidth: '2',
+          fill: 'none',
+          strokeDasharray: '100',
+          strokeDashoffset: isVisible ? '0' : '100',
+          transition: 'stroke-dashoffset 1s ease-out 1s'
+        }}
       />
       
       <path
         d="M600 64 L600 40 L650 40"
-        className={`connection-line ${isVisible ? 'animate' : ''}`}
-        style={{ animationDelay: '0.9s' }}
+        style={{ 
+          stroke: 'rgb(34, 197, 94)',
+          strokeWidth: '2',
+          fill: 'none',
+          strokeDasharray: '100',
+          strokeDashoffset: isVisible ? '0' : '100',
+          transition: 'stroke-dashoffset 1s ease-out 1.5s'
+        }}
       />
 
-      {/* Connection nodes */}
+      {/* Connection nodes - make them more visible */}
       <circle
         cx="50"
         cy="64"
-        r="4"
-        fill="rgba(11, 206, 49, 0.9)"
-        className={isVisible ? 'animate-glow-pulse' : ''}
-        style={{ animationDelay: '1.2s' }}
+        r="6"
+        fill="rgb(34, 197, 94)"
+        className={isVisible ? 'animate-ping' : ''}
+        style={{ animationDelay: '2s', animationDuration: '2s' }}
       />
       <circle
         cx="200"
         cy="64"
-        r="3"
-        fill="rgba(11, 206, 49, 0.7)"
-        className={isVisible ? 'animate-glow-pulse' : ''}
-        style={{ animationDelay: '1.4s' }}
+        r="4"
+        fill="rgb(34, 197, 94)"
+        className={isVisible ? 'animate-pulse' : ''}
+        style={{ animationDelay: '2.2s' }}
       />
       <circle
         cx="400"
         cy="64"
-        r="3"
-        fill="rgba(11, 206, 49, 0.7)"
-        className={isVisible ? 'animate-glow-pulse' : ''}
-        style={{ animationDelay: '1.6s' }}
+        r="4"
+        fill="rgb(34, 197, 94)"
+        className={isVisible ? 'animate-pulse' : ''}
+        style={{ animationDelay: '2.4s' }}
       />
       <circle
         cx="600"
         cy="64"
-        r="3"
-        fill="rgba(11, 206, 49, 0.7)"
-        className={isVisible ? 'animate-glow-pulse' : ''}
-        style={{ animationDelay: '1.8s' }}
+        r="4"
+        fill="rgb(34, 197, 94)"
+        className={isVisible ? 'animate-pulse' : ''}
+        style={{ animationDelay: '2.6s' }}
       />
       <circle
         cx="750"
         cy="64"
-        r="4"
-        fill="rgba(11, 206, 49, 0.9)"
-        className={isVisible ? 'animate-glow-pulse' : ''}
-        style={{ animationDelay: '2s' }}
+        r="6"
+        fill="rgb(34, 197, 94)"
+        className={isVisible ? 'animate-ping' : ''}
+        style={{ animationDelay: '2.8s', animationDuration: '2s' }}
       />
     </svg>
   );
