@@ -126,7 +126,7 @@ const ProductsSection = () => {
 
               {/* Price and Stock - Fixed height */}
               <div className="flex justify-between items-center mb-4 h-8">
-                <span className="text-2xl font-bold text-black">${product.price}</span>
+                <span className="text-2xl font-bold text-black">$</span>
                 <span className="text-sm text-gray-600 font-mono">Stock: {product.stock}</span>
               </div>
 
