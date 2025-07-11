@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import wireIcon from '@/assets/wire-icon.png';
-import computerIcon from '@/assets/computer-icon.png';
-import bitcoinIcon from '@/assets/bitcoin-icon.png';
+import CableIcon from './icons/CableIcon';
+import ComputerIcon from './icons/ComputerIcon';
+import BitcoinIcon from './icons/BitcoinIcon';
 
 interface ConnectionLinesProps {
   className?: string;
@@ -131,50 +131,50 @@ const ConnectionLines = ({ className = "" }: ConnectionLinesProps) => {
         />
       </svg>
 
-      {/* Game-themed images that appear during animation */}
+      {/* Game-themed SVG icons that appear during animation */}
       {isVisible && (
         <>
-          {/* Wire image at 1/3 of animation (around 3s mark) */}
-          <img
-            src={wireIcon}
-            alt="Wire"
-            className="absolute w-8 h-8 opacity-0 animate-game-image-1"
+          {/* Cable icon at 1/3 of animation - disappears when computer appears */}
+          <div
+            className="absolute opacity-0 animate-game-icon-cable"
             style={{
               left: '25%',
               top: '30%',
               animationDelay: '3s',
-              animationDuration: '1.5s',
+              animationDuration: '3s',
               animationFillMode: 'forwards'
             }}
-          />
+          >
+            <CableIcon />
+          </div>
           
-          {/* Computer image at 2/3 of animation (around 6s mark) */}
-          <img
-            src={computerIcon}
-            alt="Computer"
-            className="absolute w-8 h-8 opacity-0 animate-game-image-2"
+          {/* Computer icon at 2/3 of animation - disappears when bitcoin appears */}
+          <div
+            className="absolute opacity-0 animate-game-icon-computer"
             style={{
               left: '50%',
               top: '20%',
               animationDelay: '6s',
-              animationDuration: '1.5s',
+              animationDuration: '3s',
               animationFillMode: 'forwards'
             }}
-          />
+          >
+            <ComputerIcon />
+          </div>
           
-          {/* Bitcoin image that flies out at the end (around 9s mark) */}
-          <img
-            src={bitcoinIcon}
-            alt="Bitcoin"
-            className="absolute w-8 h-8 opacity-0 animate-game-image-3"
+          {/* Bitcoin icon that flies out at the end */}
+          <div
+            className="absolute opacity-0 animate-game-icon-bitcoin"
             style={{
               left: '75%',
               top: '40%',
               animationDelay: '9s',
-              animationDuration: '2s',
+              animationDuration: '3s',
               animationFillMode: 'forwards'
             }}
-          />
+          >
+            <BitcoinIcon />
+          </div>
         </>
       )}
     </div>

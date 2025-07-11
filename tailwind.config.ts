@@ -174,35 +174,43 @@ export default {
 						transform: 'translateX(300%) rotate(45deg)'
 					}
 				},
-				'game-image-1': {
+				'game-icon-cable': {
 					'0%': {
 						opacity: '0',
 						transform: 'scale(0.5) translateY(-20px)'
 					},
-					'50%': {
+					'20%': {
 						opacity: '1',
 						transform: 'scale(1.2) translateY(0px)'
 					},
-					'100%': {
-						opacity: '0.8',
+					'60%': {
+						opacity: '1',
 						transform: 'scale(1) translateY(0px)'
+					},
+					'100%': {
+						opacity: '0',
+						transform: 'scale(0.8) translateY(10px)'
 					}
 				},
-				'game-image-2': {
+				'game-icon-computer': {
 					'0%': {
 						opacity: '0',
-						transform: 'scale(0.3) rotate(-180deg)'
+						transform: 'scale(0.3) rotate(-90deg)'
 					},
-					'50%': {
+					'20%': {
 						opacity: '1',
 						transform: 'scale(1.3) rotate(0deg)'
 					},
-					'100%': {
-						opacity: '0.8',
+					'60%': {
+						opacity: '1',
 						transform: 'scale(1) rotate(0deg)'
+					},
+					'100%': {
+						opacity: '0',
+						transform: 'scale(0.8) rotate(90deg)'
 					}
 				},
-				'game-image-3': {
+				'game-icon-bitcoin': {
 					'0%': {
 						opacity: '0',
 						transform: 'scale(0.5) translateX(0px) translateY(0px)'
@@ -211,9 +219,13 @@ export default {
 						opacity: '1',
 						transform: 'scale(1.5) translateX(0px) translateY(0px)'
 					},
+					'70%': {
+						opacity: '1',
+						transform: 'scale(1.2) translateX(20px) translateY(-10px)'
+					},
 					'100%': {
 						opacity: '0',
-						transform: 'scale(0.8) translateX(100px) translateY(-50px)'
+						transform: 'scale(0.5) translateX(100px) translateY(-50px)'
 					}
 				}
 			},
@@ -228,9 +240,9 @@ export default {
 				'connect-line': 'connect-line 4s ease-in-out infinite',
 				'circuit-trace': 'circuit-trace 3s linear infinite',
 				'wave-sweep': 'wave-sweep 2s ease-in-out infinite',
-				'game-image-1': 'game-image-1 1.5s ease-in-out forwards',
-				'game-image-2': 'game-image-2 1.5s ease-in-out forwards',
-				'game-image-3': 'game-image-3 2s ease-in-out forwards'
+				'game-icon-cable': 'game-icon-cable 3s ease-in-out forwards',
+				'game-icon-computer': 'game-icon-computer 3s ease-in-out forwards',
+				'game-icon-bitcoin': 'game-icon-bitcoin 3s ease-in-out forwards'
 			},
 			fontFamily: {
 				'orbitron': ['Orbitron', 'sans-serif'],
