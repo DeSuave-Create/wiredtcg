@@ -68,7 +68,7 @@ const ProductsSection = () => {
         const cardStyles = getCardStyles();
         
         return (
-          <div key={product.id} className={`relative w-full h-[520px] overflow-hidden transition-all duration-300 hover:scale-105 ${cardStyles.border} border-8 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl bg-gray-100`}>
+          <div key={product.id} className={`relative w-full h-[347px] overflow-hidden transition-all duration-300 hover:scale-105 ${cardStyles.border} border-6 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl bg-gray-100`}>
             {/* Circuit board pattern background */}
             <div className="absolute inset-0 opacity-20" style={{
               backgroundImage: `
@@ -84,54 +84,54 @@ const ProductsSection = () => {
             }}></div>
             
             {/* Card content */}
-            <div className="relative h-full flex flex-col p-6">
+            <div className="relative h-full flex flex-col p-4">
               {/* Top corner icon */}
-              <div className="absolute top-4 left-4">
-                <div className={`w-6 h-6 ${cardStyles.iconColor}`}>
+              <div className="absolute top-3 left-3">
+                <div className={`w-4 h-4 ${cardStyles.iconColor}`}>
                   <IconComponent className="w-full h-full" />
                 </div>
               </div>
 
               {/* Title - Fixed height container */}
-              <div className="mb-6 mt-8 h-16 flex items-center justify-center">
-                <h2 className={`text-xl font-black text-center tracking-wider uppercase leading-tight font-sans ${cardStyles.titleColor}`}>
+              <div className="mb-4 mt-6 h-11 flex items-center justify-center">
+                <h2 className={`text-lg font-black text-center tracking-wider uppercase leading-tight font-sans ${cardStyles.titleColor}`}>
                   {product.name}
                 </h2>
               </div>
 
               {/* Main icon area - Fixed height */}
-              <div className="flex items-center justify-center mb-6 h-24">
-                <div className={`w-24 h-24 flex items-center justify-center ${cardStyles.iconColor}`}>
+              <div className="flex items-center justify-center mb-4 h-16">
+                <div className={`w-16 h-16 flex items-center justify-center ${cardStyles.iconColor}`}>
                   <IconComponent className="w-full h-full" />
                 </div>
               </div>
 
               {/* Description - Fixed height container */}
-              <div className="mb-6 text-center h-24 flex items-center justify-center">
-                <p className="text-sm text-black leading-relaxed font-medium">
+              <div className="mb-4 text-center h-16 flex items-center justify-center">
+                <p className="text-xs text-black leading-relaxed font-medium">
                   {product.description}
                 </p>
               </div>
 
               {/* Price - Fixed height */}
-              <div className="flex justify-center items-center mb-4 h-8">
-                <span className="text-2xl font-bold text-black">$</span>
+              <div className="flex justify-center items-center mb-3 h-6">
+                <span className="text-xl font-bold text-black">$</span>
               </div>
 
               {/* Add to Cart Button - Fixed at bottom */}
               <div className="mt-auto">
                 <Button 
                   onClick={() => handleAddToCart(product)}
-                  className="w-full bg-green-600 text-white hover:bg-green-700 neon-glow text-base font-bold h-12"
+                  className="w-full bg-green-600 text-white hover:bg-green-700 neon-glow text-sm font-bold h-8"
                 >
-                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  <ShoppingCart className="h-3 w-3 mr-2" />
                   Add to Cart
                 </Button>
               </div>
 
               {/* Bottom right corner icon */}
-              <div className="absolute bottom-4 right-4">
-                <div className={`w-4 h-4 transform rotate-180 ${cardStyles.iconColor}`}>
+              <div className="absolute bottom-3 right-3">
+                <div className={`w-3 h-3 transform rotate-180 ${cardStyles.iconColor}`}>
                   <IconComponent className="w-full h-full" />
                 </div>
               </div>
