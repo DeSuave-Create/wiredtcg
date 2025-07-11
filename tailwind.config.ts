@@ -112,12 +112,12 @@ export default {
 				},
 				'neon-flicker': {
 					'0%, 18%, 22%, 25%, 53%, 57%, 100%': {
-						textShadow: '0 0 5px rgba(11, 206, 49, 0.8), 0 0 10px rgba(11, 206, 49, 0.8), 0 0 15px rgba(11, 206, 49, 0.8), 0 0 20px rgba(11, 206, 49, 0.8)',
+						textShadow: '0 0 3px rgba(11, 206, 49, 0.6), 0 0 6px rgba(11, 206, 49, 0.4)',
 						opacity: '1'
 					},
 					'20%, 24%, 55%': {
-						textShadow: '0 0 2px rgba(11, 206, 49, 0.4)',
-						opacity: '0.4'
+						textShadow: '0 0 1px rgba(11, 206, 49, 0.3)',
+						opacity: '0.7'
 					}
 				},
 				'scan-line': {
