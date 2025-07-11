@@ -112,7 +112,7 @@ const PlayerCard = ({
               style={{ backgroundColor: '#f3f4f6' }}
             />
             <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-              <SelectTrigger className={`${borderColor} border-2 bg-input text-xs h-5 px-2 bg-gray-100 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none`} style={{ backgroundColor: '#f3f4f6' }}>
+              <SelectTrigger className={`${borderColor} border-2 bg-input text-xs h-5 px-2 bg-gray-100 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none text-center`} style={{ backgroundColor: '#f3f4f6' }}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-popover border-primary/30">
@@ -179,7 +179,7 @@ const PlayerCard = ({
         <div className="text-center">
           <div className="text-4xl mb-2">{character.icon}</div>
           <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-            <SelectTrigger className={`${borderColor} border-2 text-sm rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none`} style={{ backgroundColor: '#fffbef' }}>
+            <SelectTrigger className={`${borderColor} border-2 text-sm rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none text-center`} style={{ backgroundColor: '#fffbef' }}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-popover border-primary/30">
