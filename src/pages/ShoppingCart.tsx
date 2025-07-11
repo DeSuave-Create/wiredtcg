@@ -9,7 +9,6 @@ import { useToast } from '@/hooks/use-toast';
 interface CartItem {
   id: number;
   name: string;
-  price: number;
   quantity: number;
   image: string;
 }
@@ -108,7 +107,6 @@ const ShoppingCartPage = () => {
                           />
                           <div className="flex-1">
                             <h3 className="font-semibold text-green-600">{item.name}</h3>
-                            <p className="text-sm text-muted-foreground">${item.price.toFixed(2)} each</p>
                           </div>
                           <div className="flex items-center space-x-2">
                             <Button
@@ -130,7 +128,6 @@ const ShoppingCartPage = () => {
                             </Button>
                           </div>
                           <div className="text-right">
-                            <p className="font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
                             <Button
                               onClick={() => removeItem(item.id)}
                               variant="outline"

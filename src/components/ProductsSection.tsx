@@ -12,14 +12,12 @@ const ProductsSection = () => {
   const products = [{
     id: 1,
     name: 'Starter Deck',
-    price: 29.99,
     description: 'Build your network, mine bitcoins, and dominate the competition. Contains PC cards, network cables, switch cards, and bitcoin mining cards.',
     cardIcon: Cpu,
     cardColor: 'primary'
   }, {
     id: 2,
     name: 'Office Expansion Pack',
-    price: 19.99,
     description: 'Expand your infrastructure with router cards, server cards, and advanced networking components for faster mining operations.',
     cardIcon: Router,
     cardColor: 'secondary'
@@ -40,7 +38,6 @@ const ProductsSection = () => {
       const cartItem = {
         id: product.id,
         name: product.name,
-        price: product.price,
         quantity: 1,
         image: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=200&h=150&fit=crop'
       };
@@ -137,20 +134,15 @@ const ProductsSection = () => {
                 </p>
               </div>
 
-              {/* Price - Fixed height */}
-              <div className="flex justify-center items-center mb-3 h-6">
-                <span className="text-xl font-bold text-black">$</span>
-              </div>
-
               {/* Add to Cart Button - Fixed at bottom */}
               <div className="mt-auto">
-                <Button 
+                <button 
                   onClick={() => handleAddToCart(product)}
-                  className="w-full bg-green-600 text-white hover:bg-green-700 neon-glow text-sm font-bold h-8"
+                  className="w-full bg-green-600 text-white hover:bg-green-700 neon-glow text-sm font-bold h-8 flex items-center justify-center rounded-3xl"
                 >
                   <ShoppingCart className="h-3 w-3 mr-2" />
                   Add to Cart
-                </Button>
+                </button>
               </div>
 
               {/* Bottom right corner icon */}
