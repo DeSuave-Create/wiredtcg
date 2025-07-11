@@ -40,7 +40,7 @@ const Extras = () => {
     });
   };
 
-  const handleFollowTwitter = () => {
+  const handleFollowUpdates = () => {
     toast({
       title: "Follow Us",
       description: "Stay updated with the latest WIRED news!",
@@ -123,22 +123,21 @@ const Extras = () => {
                     <li>Troubleshooting and FAQ section</li>
                   </ul>
                 </TextSection>
-                <div className="flex space-x-4">
-                  <Button 
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button 
                     onClick={() => handleDownload('Rulebook PDF')}
-                    className="bg-green-600 text-white hover:bg-green-700 neon-glow"
+                    className="bg-green-600 text-white hover:bg-green-700 neon-glow px-6 py-2 rounded-lg flex items-center justify-center font-medium"
                   >
                     <Download className="h-4 w-4 mr-2" />
                     Download PDF
-                  </Button>
-                  <Button 
+                  </button>
+                  <button 
                     onClick={handleViewOnline}
-                    variant="outline" 
-                    className="neon-border"
+                    className="bg-gray-100 border-2 border-gray-300 text-gray-700 hover:bg-gray-200 hover:border-gray-400 px-6 py-2 rounded-lg flex items-center justify-center font-medium"
                   >
                     <BookOpen className="h-4 w-4 mr-2" />
                     View Online
-                  </Button>
+                  </button>
                 </div>
               </div>
             </div>
@@ -209,11 +208,11 @@ const Extras = () => {
                     Join Discord
                   </Button>
                   <Button 
-                    onClick={handleFollowTwitter}
+                    onClick={handleFollowUpdates}
                     variant="outline" 
                     className="neon-border"
                   >
-                    Follow on Twitter
+                    Follow Updates
                   </Button>
                 </div>
               </div>
