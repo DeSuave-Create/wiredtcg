@@ -12,29 +12,31 @@ const Index = () => {
     <div className="min-h-screen">
       <Header />
       
-      <main className="container mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
-        {/* Hero Section */}
-        <ContentSection glowEffect>
-          <HeroSection />
-        </ContentSection>
+      <main className="container mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8 flex justify-center">
+        <div className="w-full max-w-6xl">
+          {/* Hero Section */}
+          <ContentSection glowEffect>
+            <HeroSection />
+          </ContentSection>
 
-        {/* Game Mechanics */}
-        <ContentSection 
-          title="How to Win" 
-          cardBackgroundImage="/lovable-uploads/63928df8-c1b1-4e1d-8fa4-5c14c990cce7.png"
-        >
-          <GameMechanicsSection />
-        </ContentSection>
+          {/* Game Mechanics */}
+          <ContentSection 
+            title="How to Win" 
+            cardBackgroundImage="/lovable-uploads/63928df8-c1b1-4e1d-8fa4-5c14c990cce7.png"
+          >
+            <GameMechanicsSection />
+          </ContentSection>
 
-        {/* Products */}
-        <ContentSection title="Available Products" data-products>
-          <ProductsSection />
-        </ContentSection>
+          {/* Products */}
+          <ContentSection title="Available Products" data-products>
+            <ProductsSection />
+          </ContentSection>
 
-        {/* Strategy Section */}
-        <ContentSection title="Master the Game">
-          <StrategySection />
-        </ContentSection>
+          {/* Strategy Section */}
+          <ContentSection title="Master the Game">
+            <StrategySection />
+          </ContentSection>
+        </div>
       </main>
 
       <Footer />

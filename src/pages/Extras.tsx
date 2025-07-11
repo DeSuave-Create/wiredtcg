@@ -50,165 +50,167 @@ const Extras = () => {
     <div className="min-h-screen">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
-        {/* Page Header */}
-        <ContentSection title="Game Extras & Resources" glowEffect>
-          <div className="text-center">
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to master WIRED - from gameplay tutorials to official rules and downloads.
-            </p>
-          </div>
-        </ContentSection>
+      <main className="container mx-auto px-4 py-8 flex justify-center">
+        <div className="w-full max-w-6xl">
+          {/* Page Header */}
+          <ContentSection title="Game Extras & Resources" glowEffect>
+            <div className="text-center">
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Everything you need to master WIRED - from gameplay tutorials to official rules and downloads.
+              </p>
+            </div>
+          </ContentSection>
 
-        {/* Gameplay Video Section */}
-        <ContentSection title="How to Play">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div>
-              <VideoSection
-                src="/placeholder-video.mp4"
-                title="Official Gameplay Tutorial"
-                description="Learn the basics of WIRED in this comprehensive 10-minute tutorial covering setup, gameplay mechanics, and winning strategies."
-              />
-            </div>
-            <div className="space-y-6">
-              <TextSection title="Quick Start Guide">
-                <ol className="list-decimal list-inside space-y-2 text-sm">
-                  <li>Dealer shuffles and deals out 6 cards to each player.</li>
-                  <li>Player to the left of Dealer goes first</li>
-                  <li>Player turn goes as follows: Trade, 3 Moves, Discard, Draw</li>
-                  <li>Players take turns building their networks and disabling other players networks.</li>
-                  <li>First player to 25 points wins</li>
-                </ol>
-              </TextSection>
-              <Button 
-                onClick={handleWatchTutorial}
-                className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow"
-              >
-                <Play className="h-4 w-4 mr-2" />
-                Watch Full Tutorial
-              </Button>
-            </div>
-          </div>
-        </ContentSection>
-
-        {/* Rule Book Section */}
-        <ContentSection title="Official Rulebook">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <ImageSection
-                src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=600&h=400&fit=crop"
-                alt="WIRED Rulebook Cover"
-                title="Complete Game Manual"
-                description="The comprehensive 24-page rulebook includes advanced strategies, variant game modes, and tournament rules."
-              />
-            </div>
-            <div className="space-y-6">
-              <TextSection title="What's Included">
-                <ul className="list-disc list-inside space-y-2 text-sm">
-                  <li>Basic gameplay rules and setup instructions</li>
-                  <li>Advanced strategies for network optimization</li>
-                  <li>Card reference guide with all abilities</li>
-                  <li>Tournament and competitive play rules</li>
-                  <li>Variant game modes for 1-6 players</li>
-                  <li>Troubleshooting and FAQ section</li>
-                </ul>
-              </TextSection>
-              <div className="flex space-x-4">
+          {/* Gameplay Video Section */}
+          <ContentSection title="How to Play">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div>
+                <VideoSection
+                  src="/placeholder-video.mp4"
+                  title="Official Gameplay Tutorial"
+                  description="Learn the basics of WIRED in this comprehensive 10-minute tutorial covering setup, gameplay mechanics, and winning strategies."
+                />
+              </div>
+              <div className="space-y-6">
+                <TextSection title="Quick Start Guide">
+                  <ol className="list-decimal list-inside space-y-2 text-sm">
+                    <li>Dealer shuffles and deals out 6 cards to each player.</li>
+                    <li>Player to the left of Dealer goes first</li>
+                    <li>Player turn goes as follows: Trade, 3 Moves, Discard, Draw</li>
+                    <li>Players take turns building their networks and disabling other players networks.</li>
+                    <li>First player to 25 points wins</li>
+                  </ol>
+                </TextSection>
                 <Button 
-                  onClick={() => handleDownload('Rulebook PDF')}
+                  onClick={handleWatchTutorial}
                   className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow"
+                >
+                  <Play className="h-4 w-4 mr-2" />
+                  Watch Full Tutorial
+                </Button>
+              </div>
+            </div>
+          </ContentSection>
+
+          {/* Rule Book Section */}
+          <ContentSection title="Official Rulebook">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <ImageSection
+                  src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=600&h=400&fit=crop"
+                  alt="WIRED Rulebook Cover"
+                  title="Complete Game Manual"
+                  description="The comprehensive 24-page rulebook includes advanced strategies, variant game modes, and tournament rules."
+                />
+              </div>
+              <div className="space-y-6">
+                <TextSection title="What's Included">
+                  <ul className="list-disc list-inside space-y-2 text-sm">
+                    <li>Basic gameplay rules and setup instructions</li>
+                    <li>Advanced strategies for network optimization</li>
+                    <li>Card reference guide with all abilities</li>
+                    <li>Tournament and competitive play rules</li>
+                    <li>Variant game modes for 1-6 players</li>
+                    <li>Troubleshooting and FAQ section</li>
+                  </ul>
+                </TextSection>
+                <div className="flex space-x-4">
+                  <Button 
+                    onClick={() => handleDownload('Rulebook PDF')}
+                    className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download PDF
+                  </Button>
+                  <Button 
+                    onClick={handleViewOnline}
+                    variant="outline" 
+                    className="neon-border"
+                  >
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    View Online
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </ContentSection>
+
+          {/* Downloads Section */}
+          <ContentSection title="Downloads & Resources">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Rulebook Download */}
+              <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg">
+                <FileText className="h-12 w-12 text-primary mx-auto" />
+                <h3 className="text-lg font-semibold text-primary">Official Rulebook</h3>
+                <p className="text-sm text-muted-foreground">Complete game rules and strategies (PDF, 2.4MB)</p>
+                <Button 
+                  onClick={() => handleDownload('Official Rulebook')}
+                  variant="outline" 
+                  className="neon-border w-full"
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Download PDF
+                  Download
                 </Button>
+              </div>
+
+              {/* Score Sheets */}
+              <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg">
+                <FileText className="h-12 w-12 text-secondary mx-auto" />
+                <h3 className="text-lg font-semibold text-primary">Score Sheets</h3>
+                <p className="text-sm text-muted-foreground">Printable score tracking sheets (PDF, 0.5MB)</p>
                 <Button 
-                  onClick={handleViewOnline}
+                  onClick={() => handleDownload('Score Sheets')}
                   variant="outline" 
-                  className="neon-border"
+                  className="neon-border w-full"
                 >
-                  <BookOpen className="h-4 w-4 mr-2" />
-                  View Online
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+              </div>
+
+              {/* Card Reference */}
+              <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg">
+                <FileText className="h-12 w-12 text-primary mx-auto" />
+                <h3 className="text-lg font-semibold text-primary">Card Reference</h3>
+                <p className="text-sm text-muted-foreground">Quick reference for all cards (PDF, 1.1MB)</p>
+                <Button 
+                  onClick={() => handleDownload('Card Reference')}
+                  variant="outline" 
+                  className="neon-border w-full"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
                 </Button>
               </div>
             </div>
-          </div>
-        </ContentSection>
+          </ContentSection>
 
-        {/* Downloads Section */}
-        <ContentSection title="Downloads & Resources">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Rulebook Download */}
-            <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg">
-              <FileText className="h-12 w-12 text-primary mx-auto" />
-              <h3 className="text-lg font-semibold text-primary">Official Rulebook</h3>
-              <p className="text-sm text-muted-foreground">Complete game rules and strategies (PDF, 2.4MB)</p>
-              <Button 
-                onClick={() => handleDownload('Official Rulebook')}
-                variant="outline" 
-                className="neon-border w-full"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Download
-              </Button>
-            </div>
-
-            {/* Score Sheets */}
-            <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg">
-              <FileText className="h-12 w-12 text-secondary mx-auto" />
-              <h3 className="text-lg font-semibold text-primary">Score Sheets</h3>
-              <p className="text-sm text-muted-foreground">Printable score tracking sheets (PDF, 0.5MB)</p>
-              <Button 
-                onClick={() => handleDownload('Score Sheets')}
-                variant="outline" 
-                className="neon-border w-full"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Download
-              </Button>
-            </div>
-
-            {/* Card Reference */}
-            <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg">
-              <FileText className="h-12 w-12 text-primary mx-auto" />
-              <h3 className="text-lg font-semibold text-primary">Card Reference</h3>
-              <p className="text-sm text-muted-foreground">Quick reference for all cards (PDF, 1.1MB)</p>
-              <Button 
-                onClick={() => handleDownload('Card Reference')}
-                variant="outline" 
-                className="neon-border w-full"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Download
-              </Button>
-            </div>
-          </div>
-        </ContentSection>
-
-        {/* Community Section */}
-        <ContentSection title="Join the Community">
-          <TextSection>
-            <div className="text-center space-y-4">
-              <p className="text-lg">
-                Connect with other WIRED players, share strategies, and stay updated on tournaments and new releases.
-              </p>
-              <div className="flex justify-center space-x-4">
-                <Button 
-                  onClick={handleJoinDiscord}
-                  className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow"
-                >
-                  Join Discord
-                </Button>
-                <Button 
-                  onClick={handleFollowTwitter}
-                  variant="outline" 
-                  className="neon-border"
-                >
-                  Follow on Twitter
-                </Button>
+          {/* Community Section */}
+          <ContentSection title="Join the Community">
+            <TextSection>
+              <div className="text-center space-y-4">
+                <p className="text-lg">
+                  Connect with other WIRED players, share strategies, and stay updated on tournaments and new releases.
+                </p>
+                <div className="flex justify-center space-x-4">
+                  <Button 
+                    onClick={handleJoinDiscord}
+                    className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow"
+                  >
+                    Join Discord
+                  </Button>
+                  <Button 
+                    onClick={handleFollowTwitter}
+                    variant="outline" 
+                    className="neon-border"
+                  >
+                    Follow on Twitter
+                  </Button>
+                </div>
               </div>
-            </div>
-          </TextSection>
-        </ContentSection>
+            </TextSection>
+          </ContentSection>
+        </div>
       </main>
 
       <Footer />

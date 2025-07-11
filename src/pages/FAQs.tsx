@@ -69,59 +69,61 @@ const FAQs = () => {
     <div className="min-h-screen">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
-        {/* Page Header */}
-        <ContentSection title="Frequently Asked Questions" glowEffect>
-          <div className="text-center space-y-4">
-            <HelpCircle className="h-16 w-16 text-primary mx-auto animate-pulse" />
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Find answers to common questions about WIRED, from gameplay mechanics to purchasing information.
-            </p>
-          </div>
-        </ContentSection>
-
-        {/* FAQ Accordion */}
-        <ContentSection>
-          <Accordion type="single" collapsible className="space-y-4">
-            {faqs.map((faq, index) => (
-              <AccordionItem 
-                key={index} 
-                value={`item-${index}`}
-                className="bg-gray-100 rounded-3xl px-6 shadow-2xl drop-shadow-lg data-[state=open]:animate-pulse-neon"
-              >
-                <AccordionTrigger className="text-left font-semibold text-primary hover:text-primary/80">
-                  {faq.question}
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed pt-2">
-                  {faq.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </ContentSection>
-
-        {/* Contact Section */}
-        <ContentSection title="Still Have Questions?">
-          <div className="text-center space-y-4">
-            <p className="text-muted-foreground">
-              Can't find what you're looking for? Our support team is here to help.
-            </p>
-            <div className="flex justify-center space-x-4">
-              <button 
-                onClick={handleContactSupport}
-                className="bg-gray-100 border-green-600 border-8 rounded-3xl text-primary hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg"
-              >
-                Contact Support
-              </button>
-              <button 
-                onClick={handleJoinDiscord}
-                className="bg-gray-100 border-green-600 border-8 rounded-3xl text-primary hover:bg-gray-200 px-6 py-2 font-medium shadow-2xl drop-shadow-lg"
-              >
-                Join Discord
-              </button>
+      <main className="container mx-auto px-4 py-8 flex justify-center">
+        <div className="w-full max-w-4xl">
+          {/* Page Header */}
+          <ContentSection title="Frequently Asked Questions" glowEffect>
+            <div className="text-center space-y-4">
+              <HelpCircle className="h-16 w-16 text-primary mx-auto animate-pulse" />
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Find answers to common questions about WIRED, from gameplay mechanics to purchasing information.
+              </p>
             </div>
-          </div>
-        </ContentSection>
+          </ContentSection>
+
+          {/* FAQ Accordion */}
+          <ContentSection>
+            <Accordion type="single" collapsible className="space-y-4">
+              {faqs.map((faq, index) => (
+                <AccordionItem 
+                  key={index} 
+                  value={`item-${index}`}
+                  className="bg-gray-100 rounded-3xl px-6 shadow-2xl drop-shadow-lg data-[state=open]:animate-pulse-neon"
+                >
+                  <AccordionTrigger className="text-left font-semibold text-primary hover:text-primary/80">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed pt-2">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </ContentSection>
+
+          {/* Contact Section */}
+          <ContentSection title="Still Have Questions?">
+            <div className="text-center space-y-4">
+              <p className="text-muted-foreground">
+                Can't find what you're looking for? Our support team is here to help.
+              </p>
+              <div className="flex justify-center space-x-4">
+                <button 
+                  onClick={handleContactSupport}
+                  className="bg-gray-100 border-green-600 border-8 rounded-3xl text-primary hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg"
+                >
+                  Contact Support
+                </button>
+                <button 
+                  onClick={handleJoinDiscord}
+                  className="bg-gray-100 border-green-600 border-8 rounded-3xl text-primary hover:bg-gray-200 px-6 py-2 font-medium shadow-2xl drop-shadow-lg"
+                >
+                  Join Discord
+                </button>
+              </div>
+            </div>
+          </ContentSection>
+        </div>
       </main>
 
       <Footer />

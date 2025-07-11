@@ -55,109 +55,111 @@ const Cart = () => {
     <div className="min-h-screen">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
-        {/* Page Header */}
-        <ContentSection title="Shopping Cart" glowEffect>
-          <div className="text-center">
-            <ShoppingCart className="h-16 w-16 text-primary mx-auto mb-4 animate-pulse" />
-            <p className="text-muted-foreground">
-              {cartItems.length === 0 
-                ? "Your cart is empty - time to gear up for the digital battlefield!"
-                : `You have ${cartItems.length} item${cartItems.length > 1 ? 's' : ''} in your cart`
-              }
-            </p>
-          </div>
-        </ContentSection>
-
-        {cartItems.length === 0 ? (
-          <ContentSection>
-            <div className="text-center space-y-6">
-              <p className="text-lg text-muted-foreground">Your cart is currently empty.</p>
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow">
-                Continue Shopping
-              </Button>
+      <main className="container mx-auto px-4 py-8 flex justify-center">
+        <div className="w-full max-w-6xl">
+          {/* Page Header */}
+          <ContentSection title="Shopping Cart" glowEffect>
+            <div className="text-center">
+              <ShoppingCart className="h-16 w-16 text-primary mx-auto mb-4 animate-pulse" />
+              <p className="text-muted-foreground">
+                {cartItems.length === 0 
+                  ? "Your cart is empty - time to gear up for the digital battlefield!"
+                  : `You have ${cartItems.length} item${cartItems.length > 1 ? 's' : ''} in your cart`
+                }
+              </p>
             </div>
           </ContentSection>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Cart Items */}
-            <div className="lg:col-span-2">
-              <ContentSection title="Cart Items">
-                <div className="space-y-4">
-                  {cartItems.map((item) => (
-                    <div key={item.id} className="bg-gray-100 border-green-600 border-8 rounded-3xl p-4 shadow-2xl drop-shadow-lg">
-                      <div className="flex items-center space-x-4">
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="w-20 h-20 object-cover rounded neon-border"
-                        />
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-primary">{item.name}</h3>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Button
-                            onClick={() => updateQuantity(item.id, -1)}
-                            variant="outline"
-                            size="sm"
-                            className="neon-border"
-                          >
-                            <Minus className="h-4 w-4" />
-                          </Button>
-                          <span className="w-8 text-center font-semibold">{item.quantity}</span>
-                          <Button
-                            onClick={() => updateQuantity(item.id, 1)}
-                            variant="outline"
-                            size="sm"
-                            className="neon-border"
-                          >
-                            <Plus className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <div className="text-right">
-                          <Button
-                            onClick={() => removeItem(item.id)}
-                            variant="outline"
-                            size="sm"
-                            className="mt-2 text-destructive hover:bg-destructive/10"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+
+          {cartItems.length === 0 ? (
+            <ContentSection>
+              <div className="text-center space-y-6">
+                <p className="text-lg text-muted-foreground">Your cart is currently empty.</p>
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow">
+                  Continue Shopping
+                </Button>
+              </div>
+            </ContentSection>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Cart Items */}
+              <div className="lg:col-span-2">
+                <ContentSection title="Cart Items">
+                  <div className="space-y-4">
+                    {cartItems.map((item) => (
+                      <div key={item.id} className="bg-gray-100 border-green-600 border-8 rounded-3xl p-4 shadow-2xl drop-shadow-lg">
+                        <div className="flex items-center space-x-4">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-20 h-20 object-cover rounded neon-border"
+                          />
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-primary">{item.name}</h3>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              onClick={() => updateQuantity(item.id, -1)}
+                              variant="outline"
+                              size="sm"
+                              className="neon-border"
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                            <span className="w-8 text-center font-semibold">{item.quantity}</span>
+                            <Button
+                              onClick={() => updateQuantity(item.id, 1)}
+                              variant="outline"
+                              size="sm"
+                              className="neon-border"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <div className="text-right">
+                            <Button
+                              onClick={() => removeItem(item.id)}
+                              variant="outline"
+                              size="sm"
+                              className="mt-2 text-destructive hover:bg-destructive/10"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </ContentSection>
-            </div>
-
-            {/* Order Summary */}
-            <div className="lg:col-span-1">
-              <ContentSection title="Order Summary">
-                <div className="space-y-4">
-                  <div className="border-t border-primary/20 pt-4">
-                    <div className="flex justify-between text-lg font-bold">
-                      <span className="text-primary">Items in Cart:</span>
-                      <span className="text-secondary">{cartItems.length}</span>
-                    </div>
+                    ))}
                   </div>
+                </ContentSection>
+              </div>
 
-                  <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/80 neon-glow py-3">
-                    <CreditCard className="h-5 w-5 mr-2" />
-                    Proceed to Checkout
-                  </Button>
-                  
-                  <Button 
-                    variant="outline" 
-                    className="w-full bg-gray-100 rounded-3xl text-primary hover:bg-gray-200 shadow-2xl drop-shadow-lg"
-                  >
-                    Continue Shopping
-                  </Button>
-                </div>
-              </ContentSection>
+              {/* Order Summary */}
+              <div className="lg:col-span-1">
+                <ContentSection title="Order Summary">
+                  <div className="space-y-4">
+                    <div className="border-t border-primary/20 pt-4">
+                      <div className="flex justify-between text-lg font-bold">
+                        <span className="text-primary">Items in Cart:</span>
+                        <span className="text-secondary">{cartItems.length}</span>
+                      </div>
+                    </div>
+
+                    <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/80 neon-glow py-3">
+                      <CreditCard className="h-5 w-5 mr-2" />
+                      Proceed to Checkout
+                    </Button>
+                    
+                    <Button 
+                      variant="outline" 
+                      className="w-full bg-gray-100 rounded-3xl text-primary hover:bg-gray-200 shadow-2xl drop-shadow-lg"
+                    >
+                      Continue Shopping
+                    </Button>
+                  </div>
+                </ContentSection>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </main>
 
       <Footer />
