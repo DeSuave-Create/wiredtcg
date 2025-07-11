@@ -70,6 +70,7 @@ const Extras = () => {
                 title="Official Gameplay Tutorial"
                 description="Learn the basics of WIRED in this comprehensive tutorial covering setup, gameplay mechanics, and winning strategies."
                 isYouTube={true}
+                useLogoThumbnail={true}
               />
             </div>
               <div className="space-y-6">
