@@ -4,7 +4,7 @@ import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
 import HeroSection from '@/components/HeroSection';
 import GameMechanicsSection from '@/components/GameMechanicsSection';
-import ProductsSection from '@/components/ProductsSection';
+
 import StrategySection from '@/components/StrategySection';
 
 const Index = () => {
@@ -27,10 +27,6 @@ const Index = () => {
             <GameMechanicsSection />
           </ContentSection>
 
-          {/* Products */}
-          <ContentSection title="Available Products" data-products>
-            <ProductsSection />
-          </ContentSection>
 
           {/* Strategy Section */}
           <ContentSection title="Master the Game">

@@ -26,7 +26,6 @@ const ProductsSection = () => {
   }];
 
   const handleAddToCart = (product: typeof products[0]) => {
-    navigate('/cart');
     toast({
       title: "Added to Cart!",
       description: `${product.name} has been added to your cart.`,

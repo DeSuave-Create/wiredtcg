@@ -9,10 +9,10 @@ const Header = () => {
   const location = useLocation();
 
   const navItems = [
-    { path: '/', label: 'Shop' },
+    { path: '/', label: 'Home' },
     { path: '/extras', label: 'Extras' },
     { path: '/faqs', label: 'FAQs' },
-    { path: '/cart', label: 'Cart' },
+    { path: '/cart', label: 'Shop' },
     { path: '/score', label: 'Score Keeper' }
   ];
 
