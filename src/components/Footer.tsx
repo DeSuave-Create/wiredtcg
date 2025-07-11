@@ -22,7 +22,7 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <Logo />
-              <span className="text-xl font-bold font-orbitron text-primary animate-data-pulse">WIRED</span>
+              <span className="text-xl font-bold font-orbitron text-primary animate-neon-flicker">WIRED</span>
             </div>
             <p className="text-primary text-sm">
               The ultimate IT-themed card game. Connect, compete, and conquer the digital grid.
@@ -78,7 +78,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-primary/20 mt-8 pt-8 text-center text-sm text-primary">
-          <p>&copy; 2024 <span className="font-orbitron animate-data-pulse">WIRED</span> Card Game. All rights reserved. | Powered by the Grid.</p>
+          <p>&copy; 2024 <span className="font-orbitron animate-neon-flicker">WIRED</span> Card Game. All rights reserved. | Powered by the Grid.</p>
         </div>
       </div>
     </footer>

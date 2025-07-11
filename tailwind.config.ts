@@ -108,6 +108,15 @@ export default {
 					'50%': {
 						textShadow: '0 0 15px rgba(11, 206, 49, 0.9), 0 0 25px rgba(11, 206, 49, 0.7)',
 						transform: 'scale(1.02)'
+				},
+				'neon-flicker': {
+					'0%, 18%, 22%, 25%, 53%, 57%, 100%': {
+						textShadow: '0 0 5px rgba(11, 206, 49, 0.8), 0 0 10px rgba(11, 206, 49, 0.8), 0 0 15px rgba(11, 206, 49, 0.8), 0 0 20px rgba(11, 206, 49, 0.8)',
+						opacity: '1'
+					},
+					'20%, 24%, 55%': {
+						textShadow: '0 0 2px rgba(11, 206, 49, 0.4)',
+						opacity: '0.4'
 					}
 				},
 				'scan-line': {
@@ -163,6 +172,7 @@ export default {
 				'glow-pulse': 'glow-pulse 2s infinite',
 				'data-transfer': 'data-transfer 2s ease-in-out infinite',
 				'data-pulse': 'data-pulse 3s ease-in-out infinite',
+				'neon-flicker': 'neon-flicker 3s ease-in-out infinite',
 				'scan-line': 'scan-line 1.5s ease-in-out',
 				'connect-line': 'connect-line 4s ease-in-out infinite',
 				'circuit-trace': 'circuit-trace 3s linear infinite'
