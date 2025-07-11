@@ -123,7 +123,7 @@ const PlayerCard = ({
             
             <div className="flex flex-col items-center min-w-[35px]">
               <Bitcoin className="h-3 w-3 text-yellow-400" />
-              <div className={`text-sm font-bold text-red-500 leading-none ${isLeader ? 'animate-pulse-neon' : ''}`}>
+              <div className={`text-sm font-bold text-red-500 leading-none ${isLeader ? 'animate-pulse-bitcoin' : ''}`}>
                 {player.score}
               </div>
             </div>
@@ -189,7 +189,7 @@ const PlayerCard = ({
             <Bitcoin className="h-6 w-6 text-yellow-400" />
             <span className="text-sm text-muted-foreground">Bitcoins Mined</span>
           </div>
-          <div className={`text-4xl font-bold mb-4 text-red-500 ${isLeader ? 'animate-pulse-neon' : ''}`}>
+          <div className={`text-4xl font-bold mb-4 text-red-500 ${isLeader ? 'animate-pulse-bitcoin' : ''}`}>
             {player.score}
           </div>
           
