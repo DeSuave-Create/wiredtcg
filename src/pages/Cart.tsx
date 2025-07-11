@@ -94,7 +94,6 @@ const Cart = () => {
                         />
                         <div className="flex-1">
                           <h3 className="font-semibold text-primary">{item.name}</h3>
-                          <p className="text-secondary font-bold">${item.price}</p>
                         </div>
                         <div className="flex items-center space-x-2">
                           <Button
@@ -116,7 +115,6 @@ const Cart = () => {
                           </Button>
                         </div>
                         <div className="text-right">
-                          <p className="font-bold text-primary">${(item.price * item.quantity).toFixed(2)}</p>
                           <Button
                             onClick={() => removeItem(item.id)}
                             variant="outline"
@@ -137,32 +135,12 @@ const Cart = () => {
             <div className="lg:col-span-1">
               <ContentSection title="Order Summary">
                 <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Subtotal:</span>
-                    <span className="font-semibold">${subtotal.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Shipping:</span>
-                    <span className="font-semibold">
-                      {shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Tax:</span>
-                    <span className="font-semibold">${tax.toFixed(2)}</span>
-                  </div>
                   <div className="border-t border-primary/20 pt-4">
                     <div className="flex justify-between text-lg font-bold">
-                      <span className="text-primary">Total:</span>
-                      <span className="text-secondary">${total.toFixed(2)}</span>
+                      <span className="text-primary">Items in Cart:</span>
+                      <span className="text-secondary">{cartItems.length}</span>
                     </div>
                   </div>
-                  
-                  {subtotal < 50 && (
-                    <p className="text-sm text-muted-foreground text-center">
-                      Add ${(50 - subtotal).toFixed(2)} more for free shipping!
-                    </p>
-                  )}
 
                   <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/80 neon-glow py-3">
                     <CreditCard className="h-5 w-5 mr-2" />

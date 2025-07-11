@@ -34,7 +34,7 @@ const HeroSection = () => {
         <Logo size={48} />
       </div>
       <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-xs sm:max-w-md md:max-w-lg lg:max-w-2xl mx-auto px-4 sm:px-0">
-        Build your network, connect to the switch, and start mining bitcoins! Race against other players to reach the goal score first through strategic network building, cyber attacks, and cunning deals. Will you dominate through superior infrastructure or sabotage your opponents?
+        Build your network, connect to the switch, and start mining bitcoin! Race against other players through strategic network building, cyber attacks, and cunning deals. Will you dominate through superior infrastructure or be sabotaged by your opponents?
       </p>
       <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 px-4 sm:px-0">
         <Button 

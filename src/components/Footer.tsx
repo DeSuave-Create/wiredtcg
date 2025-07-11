@@ -23,7 +23,7 @@ const Footer = () => {
               <Zap className="h-6 w-6 text-primary" />
               <span className="text-xl font-bold text-primary">WIRED</span>
             </div>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-primary text-sm">
               The ultimate IT-themed card game. Connect, compete, and conquer the digital grid.
             </p>
           </div>
@@ -32,10 +32,10 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold text-primary mb-4">Quick Links</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/extras" className="text-muted-foreground hover:text-primary transition-colors">Game Rules</Link></li>
-              <li><Link to="/extras" className="text-muted-foreground hover:text-primary transition-colors">Tutorial Video</Link></li>
-              <li><Link to="/faqs" className="text-muted-foreground hover:text-primary transition-colors">FAQs</Link></li>
-              <li><Link to="/score" className="text-muted-foreground hover:text-primary transition-colors">Score Keeper</Link></li>
+              <li><Link to="/extras" className="text-primary hover:text-primary/80 transition-colors">Game Rules</Link></li>
+              <li><Link to="/extras" className="text-primary hover:text-primary/80 transition-colors">Tutorial Video</Link></li>
+              <li><Link to="/faqs" className="text-primary hover:text-primary/80 transition-colors">FAQs</Link></li>
+              <li><Link to="/score" className="text-primary hover:text-primary/80 transition-colors">Score Keeper</Link></li>
             </ul>
           </div>
 
@@ -43,10 +43,10 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold text-primary mb-4">Shop</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/" className="text-muted-foreground hover:text-primary transition-colors">Base Game</Link></li>
-              <li><Link to="/" className="text-muted-foreground hover:text-primary transition-colors">Expansions</Link></li>
-              <li><Link to="/" className="text-muted-foreground hover:text-primary transition-colors">Accessories</Link></li>
-              <li><Link to="/cart" className="text-muted-foreground hover:text-primary transition-colors">View Cart</Link></li>
+              <li><Link to="/" className="text-primary hover:text-primary/80 transition-colors">Base Game</Link></li>
+              <li><Link to="/" className="text-primary hover:text-primary/80 transition-colors">Expansions</Link></li>
+              <li><Link to="/" className="text-primary hover:text-primary/80 transition-colors">Accessories</Link></li>
+              <li><Link to="/cart" className="text-primary hover:text-primary/80 transition-colors">View Cart</Link></li>
             </ul>
           </div>
 
@@ -56,19 +56,19 @@ const Footer = () => {
             <div className="flex space-x-4">
               <button 
                 onClick={() => handleSocialClick('Twitter')}
-                className="text-muted-foreground hover:text-primary transition-colors"
+                className="text-primary hover:text-primary/80 transition-colors"
               >
                 <Twitter className="h-5 w-5" />
               </button>
               <button 
                 onClick={() => handleSocialClick('GitHub')}
-                className="text-muted-foreground hover:text-primary transition-colors"
+                className="text-primary hover:text-primary/80 transition-colors"
               >
                 <Github className="h-5 w-5" />
               </button>
               <button 
                 onClick={() => handleSocialClick('Email')}
-                className="text-muted-foreground hover:text-primary transition-colors"
+                className="text-primary hover:text-primary/80 transition-colors"
               >
                 <Mail className="h-5 w-5" />
               </button>
@@ -76,7 +76,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-primary/20 mt-8 pt-8 text-center text-sm text-muted-foreground">
+        <div className="border-t border-primary/20 mt-8 pt-8 text-center text-sm text-primary">
           <p>&copy; 2024 WIRED Card Game. All rights reserved. | Powered by the Grid.</p>
         </div>
       </div>

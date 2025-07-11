@@ -74,12 +74,11 @@ const Extras = () => {
             <div className="space-y-6">
               <TextSection title="Quick Start Guide">
                 <ol className="list-decimal list-inside space-y-2 text-sm">
-                  <li>Each player starts with 5 Computer cards and 3 Wire cards</li>
-                  <li>Place Switch cards in the center of the play area</li>
-                  <li>Players take turns deploying cards to build their network</li>
-                  <li>Connect Computers with Wires to create processing chains</li>
-                  <li>Use Switches to redirect opponent's connections</li>
-                  <li>First player to complete a full network loop wins!</li>
+                  <li>Dealer shuffles and deals out 6 cards to each player.</li>
+                  <li>Player to the left of Dealer goes first</li>
+                  <li>Player turn goes as follows: Trade, 3 Moves, Discard, Draw</li>
+                  <li>Players take turns building their networks and disabling other players networks.</li>
+                  <li>First player to 25 points wins</li>
                 </ol>
               </TextSection>
               <Button 
@@ -111,7 +110,7 @@ const Extras = () => {
                   <li>Advanced strategies for network optimization</li>
                   <li>Card reference guide with all abilities</li>
                   <li>Tournament and competitive play rules</li>
-                  <li>Variant game modes for 2-5 players</li>
+                  <li>Variant game modes for 1-6 players</li>
                   <li>Troubleshooting and FAQ section</li>
                 </ul>
               </TextSection>

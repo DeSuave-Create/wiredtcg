@@ -25,15 +25,15 @@ const FAQs = () => {
   const faqs = [
     {
       question: "How many players can play WIRED?",
-      answer: "WIRED supports 2-5 players. The game is optimized for 3-4 players, but works great with any number in that range. The score keeper tool on our website supports up to 5 players for tracking games."
+      answer: "WIRED supports 1-6 players. The game has different modes: 1-2 for AI, 2-6 for Internet and 4-6 for Botnet."
     },
     {
       question: "How long does a typical game take?",
-      answer: "A standard game of WIRED takes 30-45 minutes. Quick games with experienced players can be completed in 20 minutes, while learning games with new players might take up to an hour."
+      answer: "2-3 Player is 5-10 minutes, 4-6 Player is 20-30 minutes."
     },
     {
       question: "What's the recommended age for players?",
-      answer: "WIRED is recommended for ages 12 and up due to the strategic thinking required. However, younger players who are familiar with technology concepts may enjoy it with some guidance."
+      answer: "WIRED is recommended for ages 8 and up due to the strategic thinking required. However, younger players who are familiar with technology concepts may enjoy it with some guidance."
     },
     {
       question: "Do I need IT knowledge to play?",
@@ -45,11 +45,11 @@ const FAQs = () => {
     },
     {
       question: "What comes in the base game box?",
-      answer: "The base game includes 120 cards (40 Computer cards, 40 Wire cards, 40 Switch cards), a game manual, quick-start guide, and score tracking sheets."
+      answer: "146 cards plus an informational card only."
     },
     {
       question: "Are there expansion packs available?",
-      answer: "Yes! We offer the Network Expansion Pack with routers and servers, and the Security Protocol Pack with cybersecurity elements. More expansions are in development."
+      answer: "They are in development and coming soon."
     },
     {
       question: "How do I win the game?",
@@ -62,14 +62,6 @@ const FAQs = () => {
     {
       question: "Is there a tournament scene for WIRED?",
       answer: "We're building a competitive community! Check our Discord for local tournaments and online competitions. Official tournament rules are available in the extras section."
-    },
-    {
-      question: "What if I lose cards or they get damaged?",
-      answer: "Contact our support team through the website. We offer replacement cards for damaged components and can help with missing pieces from new games."
-    },
-    {
-      question: "Are there different difficulty levels?",
-      answer: "Yes! The rulebook includes beginner, standard, and advanced rule sets. There are also variant game modes that change the complexity and play style."
     }
   ];
 

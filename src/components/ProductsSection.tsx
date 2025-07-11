@@ -11,28 +11,18 @@ const ProductsSection = () => {
 
   const products = [{
     id: 1,
-    name: 'WIRED Base Game',
+    name: 'Starter Deck',
     price: 29.99,
     description: 'Build your network, mine bitcoins, and dominate the competition. Contains PC cards, network cables, switch cards, and bitcoin mining cards.',
     cardIcon: Cpu,
-    cardColor: 'primary',
-    stock: 15
+    cardColor: 'primary'
   }, {
     id: 2,
-    name: 'Network Expansion Pack',
+    name: 'Office Expansion Pack',
     price: 19.99,
     description: 'Expand your infrastructure with router cards, server cards, and advanced networking components for faster mining operations.',
     cardIcon: Router,
-    cardColor: 'secondary',
-    stock: 8
-  }, {
-    id: 3,
-    name: 'Security Protocol Pack',
-    price: 24.99,
-    description: 'Defend your network with firewall cards and attack other players with virus cards, DDoS attack cards, and cyber warfare tactics.',
-    cardIcon: Shield,
-    cardColor: 'destructive',
-    stock: 12
+    cardColor: 'secondary'
   }];
 
   const handleAddToCart = (product: typeof products[0]) => {
@@ -124,10 +114,9 @@ const ProductsSection = () => {
                 </p>
               </div>
 
-              {/* Price and Stock - Fixed height */}
-              <div className="flex justify-between items-center mb-4 h-8">
+              {/* Price - Fixed height */}
+              <div className="flex justify-center items-center mb-4 h-8">
                 <span className="text-2xl font-bold text-black">$</span>
-                <span className="text-sm text-gray-600 font-mono">Stock: {product.stock}</span>
               </div>
 
               {/* Add to Cart Button - Fixed at bottom */}
