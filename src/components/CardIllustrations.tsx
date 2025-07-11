@@ -106,7 +106,7 @@ export const HackedIllustration = () => <div className="w-full h-full flex items
       <div className="relative">
         <div className="w-32 h-24 bg-gray-600 border-4 border-gray-900 rounded-sm relative">
           <div className="w-full h-full bg-gray-900 rounded-sm flex items-center justify-center border-2 border-gray-800">
-            <div className="text-green-400 text-xs font-mono text-center leading-tight">
+            <div className="text-green-600 text-xs font-mono text-center leading-tight">
               C:\I'm<br />in your base...
             </div>
           </div>

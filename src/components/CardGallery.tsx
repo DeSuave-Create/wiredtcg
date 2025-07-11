@@ -81,11 +81,11 @@ const CardGallery: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-12">
-        <div className="text-center space-y-3 p-6 border border-green-500/30 rounded-lg bg-green-500/5">
-          <div className="w-12 h-12 mx-auto bg-green-500/20 rounded-full flex items-center justify-center">
-            <Cable className="h-6 w-6 text-green-500" />
+        <div className="text-center space-y-3 p-6 border border-green-600/30 rounded-lg bg-green-600/5">
+          <div className="w-12 h-12 mx-auto bg-green-600/20 rounded-full flex items-center justify-center">
+            <Cable className="h-6 w-6 text-green-600" />
           </div>
-          <h3 className="text-xl font-semibold text-green-600 dark:text-green-400">Equipment Cards</h3>
+          <h3 className="text-xl font-semibold text-green-600 dark:text-green-600">Equipment Cards</h3>
           <p className="text-sm text-muted-foreground">
             Build your network infrastructure with computers, cables, and networking equipment. 
             These cards form the foundation of your bitcoin mining operation.
