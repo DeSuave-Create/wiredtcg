@@ -43,10 +43,26 @@ const PlayerCard = ({
     return characters.find(c => c.id === characterId) || characters[0];
   };
 
+  const getCharacterBorderColor = (characterId: string) => {
+    switch (characterId) {
+      case 'zerotrust':
+      case 'deskjockey':
+        return 'border-green-600';
+      case 'pingmaster':
+        return 'border-blue-600';
+      case 'redtaperipper':
+      case 'clutchcache':
+        return 'border-red-600';
+      default:
+        return 'border-green-600';
+    }
+  };
+
   const character = getCharacter(player.character);
+  const borderColor = isLeader ? 'border-yellow-400' : getCharacterBorderColor(player.character);
 
   return (
-    <div className={`relative overflow-hidden transition-all duration-300 hover:scale-105 ${isLeader ? 'border-yellow-400' : 'border-green-600'} border-8 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl`} style={{ backgroundColor: '#fffbef' }}>
+    <div className={`relative overflow-hidden transition-all duration-300 hover:scale-105 ${borderColor} border-2 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl`} style={{ backgroundColor: '#fffbef' }}>
       {/* Circuit board pattern background */}
       <div className="absolute inset-0 opacity-20" style={{
         backgroundImage: `
@@ -71,7 +87,7 @@ const PlayerCard = ({
                 onClick={() => onRemove(player.id)}
                 variant="outline"
                 size="sm"
-                className="border-green-600 border-2 text-destructive hover:bg-destructive/10 h-7 w-7 p-0 bg-gray-100"
+                className={`${borderColor} border-2 text-destructive hover:bg-destructive/10 h-7 w-7 p-0 bg-gray-100`}
                 style={{ backgroundColor: '#f3f4f6' }}
                 type="button"
               >
@@ -91,11 +107,11 @@ const PlayerCard = ({
             <Input
               value={player.name}
               onChange={(e) => onUpdateName(player.id, e.target.value)}
-              className="text-xs font-semibold border-green-600 border-2 h-6 px-2 text-center bg-gray-100"
+              className={`text-xs font-semibold ${borderColor} border-2 h-6 px-2 text-center bg-gray-100`}
               style={{ backgroundColor: '#f3f4f6' }}
             />
             <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-              <SelectTrigger className="border-green-600 border-2 bg-input text-xs h-5 px-2 bg-gray-100" style={{ backgroundColor: '#f3f4f6' }}>
+              <SelectTrigger className={`${borderColor} border-2 bg-input text-xs h-5 px-2 bg-gray-100`} style={{ backgroundColor: '#f3f4f6' }}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-popover border-primary/30">
@@ -114,7 +130,7 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, -1)}
               variant="outline"
               size="sm"
-              className="border-green-600 border-2 text-destructive hover:bg-gray-200 hover:text-destructive h-7 w-7 p-0 bg-gray-100"
+              className={`${borderColor} border-2 text-destructive hover:bg-gray-200 hover:text-destructive h-7 w-7 p-0 bg-gray-100`}
               style={{ backgroundColor: '#f3f4f6' }}
               type="button"
             >
@@ -132,7 +148,7 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, 1)}
               variant="outline"
               size="sm"
-              className="border-green-600 border-2 text-primary hover:bg-gray-200 hover:text-primary h-7 w-7 p-0 bg-gray-100"
+              className={`${borderColor} border-2 text-primary hover:bg-gray-200 hover:text-primary h-7 w-7 p-0 bg-gray-100`}
               style={{ backgroundColor: '#f3f4f6' }}
               type="button"
             >
@@ -150,7 +166,7 @@ const PlayerCard = ({
             onClick={() => onRemove(player.id)}
             variant="outline"
             size="sm"
-            className="absolute top-2 right-2 border-green-600 border-2 text-destructive hover:bg-destructive/10 h-6 w-6 p-0 z-10"
+            className={`absolute top-2 right-2 ${borderColor} border-2 text-destructive hover:bg-destructive/10 h-6 w-6 p-0 z-10`}
             style={{ backgroundColor: '#fffbef' }}
             type="button"
           >
@@ -162,7 +178,7 @@ const PlayerCard = ({
         <div className="text-center">
           <div className="text-4xl mb-2">{character.icon}</div>
           <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-            <SelectTrigger className="border-green-600 border-2 text-sm" style={{ backgroundColor: '#fffbef' }}>
+            <SelectTrigger className={`${borderColor} border-2 text-sm`} style={{ backgroundColor: '#fffbef' }}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-popover border-primary/30">
@@ -179,7 +195,7 @@ const PlayerCard = ({
         <Input
           value={player.name}
           onChange={(e) => onUpdateName(player.id, e.target.value)}
-          className="text-center font-semibold text-lg border-green-600 border-2"
+          className={`text-center font-semibold text-lg ${borderColor} border-2`}
           style={{ backgroundColor: '#fffbef' }}
         />
 
@@ -199,7 +215,7 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, -1)}
               variant="outline"
               size="sm"
-              className="border-green-600 border-2 text-destructive hover:bg-gray-200 hover:text-destructive w-full xs:w-auto"
+              className={`${borderColor} border-2 text-destructive hover:bg-gray-200 hover:text-destructive w-full xs:w-auto`}
               style={{ backgroundColor: '#fffbef' }}
               type="button"
             >
@@ -209,7 +225,7 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, 1)}
               variant="outline"
               size="sm"
-              className="border-green-600 border-2 text-primary hover:bg-gray-200 hover:text-primary w-full xs:w-auto"
+              className={`${borderColor} border-2 text-primary hover:bg-gray-200 hover:text-primary w-full xs:w-auto`}
               style={{ backgroundColor: '#fffbef' }}
               type="button"
             >
