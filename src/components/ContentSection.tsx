@@ -26,12 +26,16 @@ const ContentSection = ({ title, children, className = "", glowEffect = false, b
   return (
     <section className={`py-8 ${className}`}>
       <div 
-        className={`neon-border bg-card backdrop-blur-sm p-6 rounded-3xl ${glowEffect ? 'animate-pulse-neon' : ''} ${backgroundImage ? 'relative' : ''}`}
-        style={backgroundStyle}
+        className={`neon-border bg-card backdrop-blur-sm p-6 rounded-3xl relative ${glowEffect ? 'animate-pulse-neon' : ''}`}
+        style={{
+          ...backgroundStyle,
+          backgroundImage: backgroundImage ? `url(${backgroundImage})` : `url('/lovable-uploads/a08479d2-01b1-41b6-8666-5ded32438273.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
       >
-        {backgroundImage && (
-          <div className="absolute inset-0 bg-black/40 rounded-3xl"></div>
-        )}
+        <div className="absolute inset-0 bg-card/60 backdrop-blur-[1px] rounded-3xl"></div>
         <div className="relative z-10">
           {title && (
             <h2 className="text-2xl font-bold text-primary mb-6 text-center tracking-wider">
