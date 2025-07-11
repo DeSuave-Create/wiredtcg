@@ -13,6 +13,7 @@ const Header = () => {
     { path: '/extras', label: 'Extras' },
     { path: '/faqs', label: 'FAQs' },
     { path: '/cart', label: 'Shop' },
+    { path: '/shopping-cart', label: 'Cart' },
     { path: '/score', label: 'Score Keeper' }
   ];
 

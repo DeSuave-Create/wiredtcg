@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Extras from "./pages/Extras";
 import FAQs from "./pages/FAQs";
 import Cart from "./pages/Cart";
+import ShoppingCart from "./pages/ShoppingCart";
 import Score from "./pages/Score";
 import NotFound from "./pages/NotFound";
 
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/extras" element={<Extras />} />
             <Route path="/faqs" element={<FAQs />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/shopping-cart" element={<ShoppingCart />} />
             <Route path="/score" element={<Score />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

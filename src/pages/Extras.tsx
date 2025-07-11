@@ -147,7 +147,7 @@ const Extras = () => {
                 <p className="text-sm text-muted-foreground flex-grow">Complete game rules and strategies (PDF, 2.4MB)</p>
                 <button 
                   onClick={() => handleDownload('Official Rulebook')}
-                  className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-green-600 mt-auto"
+                  className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-green-600 mt-auto flex items-center justify-center"
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Download
@@ -161,7 +161,7 @@ const Extras = () => {
                 <p className="text-sm text-muted-foreground flex-grow">Printable score tracking sheets (PDF, 0.5MB)</p>
                 <button 
                   onClick={() => handleDownload('Score Sheets')}
-                  className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-green-600 mt-auto"
+                  className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-green-600 mt-auto flex items-center justify-center"
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Download
@@ -175,7 +175,7 @@ const Extras = () => {
                 <p className="text-sm text-muted-foreground flex-grow">Quick reference for all cards (PDF, 1.1MB)</p>
                 <button 
                   onClick={() => handleDownload('Card Reference')}
-                  className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-green-600 mt-auto"
+                  className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-green-600 mt-auto flex items-center justify-center"
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Download

@@ -26,6 +26,30 @@ const ProductsSection = () => {
   }];
 
   const handleAddToCart = (product: typeof products[0]) => {
+    // Get existing cart items from localStorage
+    const existingCart = JSON.parse(localStorage.getItem('cartItems') || '[]');
+    
+    // Check if item already exists in cart
+    const existingItemIndex = existingCart.findIndex((item: any) => item.id === product.id);
+    
+    if (existingItemIndex >= 0) {
+      // Increase quantity if item exists
+      existingCart[existingItemIndex].quantity += 1;
+    } else {
+      // Add new item to cart
+      const cartItem = {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: 1,
+        image: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=200&h=150&fit=crop'
+      };
+      existingCart.push(cartItem);
+    }
+    
+    // Save updated cart to localStorage
+    localStorage.setItem('cartItems', JSON.stringify(existingCart));
+    
     toast({
       title: "Added to Cart!",
       description: `${product.name} has been added to your cart.`,
