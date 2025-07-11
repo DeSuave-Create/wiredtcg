@@ -174,11 +174,6 @@ export default {
 						transform: 'translateX(300%) rotate(45deg)'
 					}
 				},
-				'dash-draw': {
-					'to': {
-						'stroke-dashoffset': '0'
-					}
-				},
 				'game-icon-cable': {
 					'0%': {
 						opacity: '0',
@@ -247,8 +242,7 @@ export default {
 				'wave-sweep': 'wave-sweep 2s ease-in-out infinite',
 				'game-icon-cable': 'game-icon-cable 3s ease-in-out forwards',
 				'game-icon-computer': 'game-icon-computer 3s ease-in-out forwards',
-				'game-icon-bitcoin': 'game-icon-bitcoin 3s ease-in-out forwards',
-				'dash-draw': 'dash-draw 1s ease-out forwards'
+				'game-icon-bitcoin': 'game-icon-bitcoin 3s ease-in-out forwards'
 			},
 			fontFamily: {
 				'orbitron': ['Orbitron', 'sans-serif'],
