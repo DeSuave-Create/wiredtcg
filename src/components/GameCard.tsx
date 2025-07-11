@@ -117,14 +117,14 @@ const GameCard: React.FC<GameCardProps> = ({
           </h2>
         </div>
 
-        {/* Main illustration area */}
-        <div className="flex-1 flex items-center justify-center mb-6 px-4">
+        {/* Main illustration area - Fixed height */}
+        <div className="flex-1 flex items-center justify-center mb-6 px-4 h-32">
           {illustration ? (
             <div className="w-full h-full flex items-center justify-center">
               {illustration}
             </div>
           ) : icon && (
-            <div className={cn("w-32 h-32 flex items-center justify-center", cardStyles.titleColor)}>
+            <div className={cn("w-24 h-24 flex items-center justify-center", cardStyles.titleColor)}>
               {React.cloneElement(icon as React.ReactElement, {
                 className: "w-full h-full"
               })}
@@ -132,8 +132,8 @@ const GameCard: React.FC<GameCardProps> = ({
           )}
         </div>
 
-        {/* Description - Monospace font, black text */}
-        <div className="text-center px-2 pb-4">
+        {/* Description - Fixed height container */}
+        <div className="text-center px-2 pb-4 h-20 flex items-center justify-center">
           <p className="text-sm text-black leading-relaxed font-medium">
             {description}
           </p>
