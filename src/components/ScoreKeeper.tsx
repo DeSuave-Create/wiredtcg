@@ -24,11 +24,7 @@ const characters = [
 
 const defaultPlayers: Player[] = [
   { id: '1', name: 'Player 1', score: 0, character: 'zerotrust' },
-  { id: '2', name: 'Player 2', score: 0, character: 'deskjockey' },
-  { id: '3', name: 'Player 3', score: 0, character: 'pingmaster' },
-  { id: '4', name: 'Player 4', score: 0, character: 'redtaperipper' },
-  { id: '5', name: 'Player 5', score: 0, character: 'clutchcache' },
-  { id: '6', name: 'Player 6', score: 0, character: 'zerotrust' }
+  { id: '2', name: 'Player 2', score: 0, character: 'deskjockey' }
 ];
 
 // Cookie helper functions
