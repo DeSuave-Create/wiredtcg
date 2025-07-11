@@ -18,14 +18,14 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([
     {
       id: 1,
-      name: 'WIRED Base Game',
+      name: 'Starter Deck',
       price: 29.99,
       quantity: 1,
       image: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=200&h=150&fit=crop'
     },
     {
       id: 2,
-      name: 'Network Expansion Pack',
+      name: 'Office Expansion Pack',
       price: 19.99,
       quantity: 2,
       image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200&h=150&fit=crop'
@@ -33,9 +33,9 @@ const Cart = () => {
   ]);
 
   const getItemBorderColor = (itemName: string) => {
-    if (itemName.includes('Base Game') || itemName.includes('Starter')) {
+    if (itemName.includes('Starter Deck')) {
       return 'border-green-600'; // Primary color - green
-    } else if (itemName.includes('Expansion') || itemName.includes('Office')) {
+    } else if (itemName.includes('Office Expansion Pack')) {
       return 'border-blue-600'; // Secondary color - blue
     }
     return 'border-green-600'; // Default to green
