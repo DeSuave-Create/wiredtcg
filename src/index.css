@@ -83,7 +83,8 @@
   }
 
   body {
-    @apply bg-background text-foreground font-mono;
+    @apply bg-background text-foreground;
+    font-family: 'Market Deco', sans-serif;
     transition: background-color 0.3s ease, color 0.3s ease;
     background-color: hsl(0, 0%, 88%);
     background-image: url('/lovable-uploads/51c3767e-4295-4b08-96c5-9d6144ea8954.png');

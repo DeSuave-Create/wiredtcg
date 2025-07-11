@@ -95,7 +95,9 @@ export default {
 				'glow-pulse': 'glow-pulse 2s infinite'
 			},
 			fontFamily: {
-				mono: ['Courier New', 'monospace']
+				'market-deco': ['Market Deco', 'sans-serif'],
+				'sans': ['Market Deco', 'ui-sans-serif', 'system-ui'],
+				'mono': ['Market Deco', 'Courier New', 'monospace']
 			}
 		}
 	},
