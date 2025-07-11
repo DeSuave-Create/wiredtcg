@@ -83,7 +83,7 @@ const FAQs = () => {
           </ContentSection>
           
           {/* Connection Animation */}
-          <ConnectionLines className="my-4" />
+          <ConnectionLines className="my-2" />
 
           {/* FAQ Accordion */}
           <ContentSection>
@@ -128,8 +128,6 @@ const FAQs = () => {
             </div>
           </ContentSection>
           
-          {/* Connection Animation */}
-          <ConnectionLines className="my-4" />
         </div>
       </main>
 

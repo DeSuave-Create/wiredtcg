@@ -63,7 +63,7 @@ const Extras = () => {
           </ContentSection>
           
           {/* Connection Animation */}
-          <ConnectionLines className="my-4" />
+          <ConnectionLines className="my-2" />
 
           {/* Gameplay Video Section */}
           <ContentSection title="How to Play">
@@ -99,7 +99,7 @@ const Extras = () => {
           </ContentSection>
           
           {/* Connection Animation */}
-          <ConnectionLines className="my-4" />
+          <ConnectionLines className="my-2" />
 
           {/* Rule Book Section */}
           <ContentSection title="Official Rulebook">
@@ -145,7 +145,7 @@ const Extras = () => {
           </ContentSection>
           
           {/* Connection Animation */}
-          <ConnectionLines className="my-4" />
+          <ConnectionLines className="my-2" />
 
           {/* Downloads Section */}
           <ContentSection title="Downloads & Resources">
@@ -194,9 +194,6 @@ const Extras = () => {
             </div>
           </ContentSection>
           
-          {/* Connection Animation */}
-          <ConnectionLines className="my-4" />
-
           {/* Community Section */}
           <ContentSection title="Join the Community">
             <TextSection>

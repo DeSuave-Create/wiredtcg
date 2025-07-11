@@ -20,7 +20,7 @@ const Index = () => {
           </ContentSection>
 
           {/* Connection Animation */}
-          <ConnectionLines className="my-4" />
+          <ConnectionLines className="my-2" />
 
           {/* Game Mechanics */}
           <ContentSection 
@@ -31,16 +31,13 @@ const Index = () => {
           </ContentSection>
 
           {/* Connection Animation */}
-          <ConnectionLines className="my-4" />
+          <ConnectionLines className="my-2" />
 
 
           {/* Strategy Section */}
           <ContentSection title="Master the Game">
             <StrategySection />
           </ContentSection>
-
-          {/* Final Connection Animation */}
-          <ConnectionLines className="my-4" />
         </div>
       </main>
 

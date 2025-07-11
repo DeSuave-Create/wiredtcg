@@ -142,10 +142,10 @@ const ShoppingCartPage = () => {
                       </div>
                     ))}
                   </div>
-          </ContentSection>
-          
-          {/* Connection Animation */}
-          <ConnectionLines className="my-4" />
+                </ContentSection>
+                
+                {/* Connection Animation */}
+                <ConnectionLines className="my-2" />
               </div>
 
               {/* Order Summary */}
@@ -177,8 +177,6 @@ const ShoppingCartPage = () => {
                   </div>
           </ContentSection>
           
-          {/* Connection Animation */}
-          <ConnectionLines className="my-4" />
               </div>
             </div>
           )}
