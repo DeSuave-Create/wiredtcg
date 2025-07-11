@@ -117,7 +117,7 @@ const PlayerCard = ({
               </SelectTrigger>
               <SelectContent className="bg-popover border-primary/30">
                 {characters.map((char) => (
-                  <SelectItem key={char.id} value={char.id} className="hover:bg-primary/20 text-xs">
+                  <SelectItem key={char.id} value={char.id} className="hover:bg-primary/20 text-xs text-center">
                     {char.name}
                   </SelectItem>
                 ))}
@@ -184,7 +184,7 @@ const PlayerCard = ({
             </SelectTrigger>
             <SelectContent className="bg-popover border-primary/30">
               {characters.map((char) => (
-                <SelectItem key={char.id} value={char.id} className="hover:bg-primary/20">
+                <SelectItem key={char.id} value={char.id} className="hover:bg-primary/20 text-center">
                   {char.name}
                 </SelectItem>
               ))}
