@@ -145,14 +145,13 @@ const Extras = () => {
                 <FileText className="h-12 w-12 text-primary mx-auto" />
                 <h3 className="text-lg font-semibold text-primary">Official Rulebook</h3>
                 <p className="text-sm text-muted-foreground">Complete game rules and strategies (PDF, 2.4MB)</p>
-                <Button 
+                <button 
                   onClick={() => handleDownload('Official Rulebook')}
-                  variant="outline" 
-                  className="neon-border w-full"
+                  className="bg-gray-100 rounded-3xl text-primary hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full"
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Download
-                </Button>
+                </button>
               </div>
 
               {/* Score Sheets */}
@@ -160,14 +159,13 @@ const Extras = () => {
                 <FileText className="h-12 w-12 text-secondary mx-auto" />
                 <h3 className="text-lg font-semibold text-primary">Score Sheets</h3>
                 <p className="text-sm text-muted-foreground">Printable score tracking sheets (PDF, 0.5MB)</p>
-                <Button 
+                <button 
                   onClick={() => handleDownload('Score Sheets')}
-                  variant="outline" 
-                  className="neon-border w-full"
+                  className="bg-gray-100 rounded-3xl text-primary hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full"
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Download
-                </Button>
+                </button>
               </div>
 
               {/* Card Reference */}
@@ -175,14 +173,13 @@ const Extras = () => {
                 <FileText className="h-12 w-12 text-primary mx-auto" />
                 <h3 className="text-lg font-semibold text-primary">Card Reference</h3>
                 <p className="text-sm text-muted-foreground">Quick reference for all cards (PDF, 1.1MB)</p>
-                <Button 
+                <button 
                   onClick={() => handleDownload('Card Reference')}
-                  variant="outline" 
-                  className="neon-border w-full"
+                  className="bg-gray-100 rounded-3xl text-primary hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full"
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Download
-                </Button>
+                </button>
               </div>
             </div>
           </ContentSection>
