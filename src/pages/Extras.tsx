@@ -141,13 +141,13 @@ const Extras = () => {
           <ContentSection title="Downloads & Resources">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Rulebook Download */}
-              <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg">
-                <FileText className="h-12 w-12 text-primary mx-auto" />
-                <h3 className="text-lg font-semibold text-primary">Official Rulebook</h3>
-                <p className="text-sm text-muted-foreground">Complete game rules and strategies (PDF, 2.4MB)</p>
+              <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
+                <FileText className="h-12 w-12 text-green-600 mx-auto" />
+                <h3 className="text-lg font-semibold text-green-600">Official Rulebook</h3>
+                <p className="text-sm text-muted-foreground flex-grow">Complete game rules and strategies (PDF, 2.4MB)</p>
                 <button 
                   onClick={() => handleDownload('Official Rulebook')}
-                  className="bg-gray-100 rounded-3xl text-primary hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full"
+                  className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-green-600 mt-auto"
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Download
@@ -155,13 +155,13 @@ const Extras = () => {
               </div>
 
               {/* Score Sheets */}
-              <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg">
-                <FileText className="h-12 w-12 text-secondary mx-auto" />
-                <h3 className="text-lg font-semibold text-primary">Score Sheets</h3>
-                <p className="text-sm text-muted-foreground">Printable score tracking sheets (PDF, 0.5MB)</p>
+              <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
+                <FileText className="h-12 w-12 text-green-600 mx-auto" />
+                <h3 className="text-lg font-semibold text-green-600">Score Sheets</h3>
+                <p className="text-sm text-muted-foreground flex-grow">Printable score tracking sheets (PDF, 0.5MB)</p>
                 <button 
                   onClick={() => handleDownload('Score Sheets')}
-                  className="bg-gray-100 rounded-3xl text-primary hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full"
+                  className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-green-600 mt-auto"
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Download
@@ -169,13 +169,13 @@ const Extras = () => {
               </div>
 
               {/* Card Reference */}
-              <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg">
-                <FileText className="h-12 w-12 text-primary mx-auto" />
-                <h3 className="text-lg font-semibold text-primary">Card Reference</h3>
-                <p className="text-sm text-muted-foreground">Quick reference for all cards (PDF, 1.1MB)</p>
+              <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
+                <FileText className="h-12 w-12 text-green-600 mx-auto" />
+                <h3 className="text-lg font-semibold text-green-600">Card Reference</h3>
+                <p className="text-sm text-muted-foreground flex-grow">Quick reference for all cards (PDF, 1.1MB)</p>
                 <button 
                   onClick={() => handleDownload('Card Reference')}
-                  className="bg-gray-100 rounded-3xl text-primary hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full"
+                  className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-green-600 mt-auto"
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Download
