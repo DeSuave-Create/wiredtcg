@@ -32,6 +32,15 @@ const Cart = () => {
     }
   ]);
 
+  const getItemBorderColor = (itemName: string) => {
+    if (itemName.includes('Base Game') || itemName.includes('Starter')) {
+      return 'border-green-600'; // Primary color - green
+    } else if (itemName.includes('Expansion') || itemName.includes('Office')) {
+      return 'border-blue-600'; // Secondary color - blue
+    }
+    return 'border-green-600'; // Default to green
+  };
+
   const updateQuantity = (id: number, change: number) => {
     setCartItems(items =>
       items.map(item =>
@@ -86,7 +95,7 @@ const Cart = () => {
                 <ContentSection title="Cart Items">
                   <div className="space-y-4">
                     {cartItems.map((item) => (
-                      <div key={item.id} className="bg-gray-100 border-green-600 border-8 rounded-3xl p-4 shadow-2xl drop-shadow-lg">
+                      <div key={item.id} className={`bg-gray-100 ${getItemBorderColor(item.name)} border-2 rounded-3xl p-4 shadow-2xl drop-shadow-lg`}>
                         <div className="flex items-center space-x-4">
                           <img
                             src={item.image}
