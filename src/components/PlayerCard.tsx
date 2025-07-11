@@ -71,8 +71,8 @@ const PlayerCard = ({
                 onClick={() => onRemove(player.id)}
                 variant="outline"
                 size="sm"
-                className="border-green-600 border-2 text-destructive hover:bg-destructive/10 h-7 w-7 p-0"
-                style={{ backgroundColor: '#fffbef' }}
+                className="border-green-600 border-2 text-destructive hover:bg-destructive/10 h-7 w-7 p-0 bg-gray-100"
+                style={{ backgroundColor: '#f3f4f6' }}
                 type="button"
               >
                 <Trash2 className="h-3 w-3" />
@@ -91,11 +91,11 @@ const PlayerCard = ({
             <Input
               value={player.name}
               onChange={(e) => onUpdateName(player.id, e.target.value)}
-              className="text-xs font-semibold border-green-600 border-2 h-6 px-2 text-center"
-              style={{ backgroundColor: '#fffbef' }}
+              className="text-xs font-semibold border-green-600 border-2 h-6 px-2 text-center bg-gray-100"
+              style={{ backgroundColor: '#f3f4f6' }}
             />
             <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-              <SelectTrigger className="border-green-600 border-2 bg-input text-xs h-5 px-2" style={{ backgroundColor: '#fffbef' }}>
+              <SelectTrigger className="border-green-600 border-2 bg-input text-xs h-5 px-2 bg-gray-100" style={{ backgroundColor: '#f3f4f6' }}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-popover border-primary/30">
@@ -114,8 +114,8 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, -1)}
               variant="outline"
               size="sm"
-              className="border-green-600 border-2 text-destructive hover:bg-destructive/10 h-7 w-7 p-0"
-              style={{ backgroundColor: '#fffbef' }}
+              className="border-green-600 border-2 text-destructive hover:bg-destructive/10 h-7 w-7 p-0 bg-gray-100"
+              style={{ backgroundColor: '#f3f4f6' }}
               type="button"
             >
               <Minus className="h-3 w-3" />
@@ -132,8 +132,8 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, 1)}
               variant="outline"
               size="sm"
-              className="border-green-600 border-2 text-primary hover:bg-primary/10 h-7 w-7 p-0"
-              style={{ backgroundColor: '#fffbef' }}
+              className="border-green-600 border-2 text-primary hover:bg-primary/10 h-7 w-7 p-0 bg-gray-100"
+              style={{ backgroundColor: '#f3f4f6' }}
               type="button"
             >
               <Plus className="h-3 w-3" />

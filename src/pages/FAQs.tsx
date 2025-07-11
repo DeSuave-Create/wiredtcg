@@ -87,7 +87,7 @@ const FAQs = () => {
               <AccordionItem 
                 key={index} 
                 value={`item-${index}`}
-                className="neon-border bg-card/30 rounded-lg px-6 data-[state=open]:animate-pulse-neon"
+                className="bg-gray-100 border-green-600 border-8 rounded-3xl px-6 shadow-2xl drop-shadow-lg data-[state=open]:animate-pulse-neon"
               >
                 <AccordionTrigger className="text-left font-semibold text-primary hover:text-primary/80">
                   {faq.question}
@@ -109,13 +109,13 @@ const FAQs = () => {
             <div className="flex justify-center space-x-4">
               <button 
                 onClick={handleContactSupport}
-                className="bg-primary text-primary-foreground hover:bg-primary/80 neon-glow px-6 py-2 rounded font-medium"
+                className="bg-gray-100 border-green-600 border-8 rounded-3xl text-primary hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg"
               >
                 Contact Support
               </button>
               <button 
                 onClick={handleJoinDiscord}
-                className="border border-primary/50 text-primary hover:bg-primary/10 px-6 py-2 rounded font-medium neon-border"
+                className="bg-gray-100 border-green-600 border-8 rounded-3xl text-primary hover:bg-gray-200 px-6 py-2 font-medium shadow-2xl drop-shadow-lg"
               >
                 Join Discord
               </button>

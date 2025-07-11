@@ -85,7 +85,7 @@ const Cart = () => {
               <ContentSection title="Cart Items">
                 <div className="space-y-4">
                   {cartItems.map((item) => (
-                    <div key={item.id} className="neon-border bg-card/30 p-4 rounded-lg">
+                    <div key={item.id} className="bg-gray-100 border-green-600 border-8 rounded-3xl p-4 shadow-2xl drop-shadow-lg">
                       <div className="flex items-center space-x-4">
                         <img
                           src={item.image}
@@ -149,7 +149,7 @@ const Cart = () => {
                   
                   <Button 
                     variant="outline" 
-                    className="w-full neon-border"
+                    className="w-full bg-gray-100 border-green-600 border-8 rounded-3xl text-primary hover:bg-gray-200 shadow-2xl drop-shadow-lg"
                   >
                     Continue Shopping
                   </Button>

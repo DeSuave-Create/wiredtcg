@@ -1,4 +1,3 @@
-
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
@@ -139,7 +138,7 @@ const Extras = () => {
         <ContentSection title="Downloads & Resources">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Rulebook Download */}
-            <div className="neon-border bg-card/30 p-6 rounded-lg text-center space-y-4">
+            <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg">
               <FileText className="h-12 w-12 text-primary mx-auto" />
               <h3 className="text-lg font-semibold text-primary">Official Rulebook</h3>
               <p className="text-sm text-muted-foreground">Complete game rules and strategies (PDF, 2.4MB)</p>
@@ -154,7 +153,7 @@ const Extras = () => {
             </div>
 
             {/* Score Sheets */}
-            <div className="neon-border bg-card/30 p-6 rounded-lg text-center space-y-4">
+            <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg">
               <FileText className="h-12 w-12 text-secondary mx-auto" />
               <h3 className="text-lg font-semibold text-primary">Score Sheets</h3>
               <p className="text-sm text-muted-foreground">Printable score tracking sheets (PDF, 0.5MB)</p>
@@ -169,7 +168,7 @@ const Extras = () => {
             </div>
 
             {/* Card Reference */}
-            <div className="neon-border bg-card/30 p-6 rounded-lg text-center space-y-4">
+            <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg">
               <FileText className="h-12 w-12 text-primary mx-auto" />
               <h3 className="text-lg font-semibold text-primary">Card Reference</h3>
               <p className="text-sm text-muted-foreground">Quick reference for all cards (PDF, 1.1MB)</p>

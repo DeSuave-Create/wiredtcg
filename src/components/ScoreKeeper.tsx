@@ -26,7 +26,8 @@ const defaultPlayers: Player[] = [
   { id: '2', name: 'Player 2', score: 0, character: 'deskjockey' },
   { id: '3', name: 'Player 3', score: 0, character: 'pingmaster' },
   { id: '4', name: 'Player 4', score: 0, character: 'redtaperipper' },
-  { id: '5', name: 'Player 5', score: 0, character: 'clutchcache' }
+  { id: '5', name: 'Player 5', score: 0, character: 'clutchcache' },
+  { id: '6', name: 'Player 6', score: 0, character: 'zerotrust' }
 ];
 
 // Cookie helper functions
@@ -63,7 +64,7 @@ const ScoreKeeper = () => {
     return defaultPlayers;
   });
 
-  const maxPlayers = 5;
+  const maxPlayers = 6;
   const minPlayers = 2;
 
   // Save to cookie whenever players state changes
