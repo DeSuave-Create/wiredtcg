@@ -12,7 +12,7 @@ interface GameHeaderProps {
 const GameHeader = ({ playerCount, maxPlayers, onAddPlayer, onReset }: GameHeaderProps) => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center justify-center sm:justify-start space-x-2 w-full sm:w-auto">
         <Bitcoin className="h-6 w-6 text-yellow-400" />
         <h2 className="text-2xl font-bold text-primary">Bitcoin Mining Tracker</h2>
       </div>
