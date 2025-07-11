@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -87,12 +86,60 @@ export default {
 					'50%': {
 						boxShadow: '0 0 20px rgba(11, 206, 49, 0.8), 0 0 30px rgba(11, 206, 49, 0.6)'
 					}
+				},
+				'data-transfer': {
+					'0%': {
+						transform: 'translateX(-100%) translateY(-100%)',
+						opacity: '0'
+					},
+					'50%': {
+						opacity: '1'
+					},
+					'100%': {
+						transform: 'translateX(100%) translateY(100%)',
+						opacity: '0'
+					}
+				},
+				'data-pulse': {
+					'0%, 100%': {
+						textShadow: '0 0 5px rgba(11, 206, 49, 0.5)',
+						transform: 'scale(1)'
+					},
+					'50%': {
+						textShadow: '0 0 15px rgba(11, 206, 49, 0.9), 0 0 25px rgba(11, 206, 49, 0.7)',
+						transform: 'scale(1.02)'
+					}
+				},
+				'scan-line': {
+					'0%': {
+						transform: 'translateX(-100%)',
+						opacity: '0'
+					},
+					'50%': {
+						opacity: '1'
+					},
+					'100%': {
+						transform: 'translateX(100%)',
+						opacity: '0'
+					}
+				},
+				'connect-line': {
+					'0%': {
+						strokeDasharray: '0 1000'
+					},
+					'100%': {
+						strokeDasharray: '1000 0'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'glow-pulse': 'glow-pulse 2s infinite'
+				'glow-pulse': 'glow-pulse 2s infinite',
+				'data-transfer': 'data-transfer 2s ease-in-out infinite',
+				'data-pulse': 'data-pulse 3s ease-in-out infinite',
+				'scan-line': 'scan-line 1.5s ease-in-out',
+				'connect-line': 'connect-line 1s ease-out forwards'
 			},
 			fontFamily: {
 				'orbitron': ['Orbitron', 'sans-serif'],

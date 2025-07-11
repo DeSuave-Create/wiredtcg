@@ -4,8 +4,8 @@ import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
 import HeroSection from '@/components/HeroSection';
 import GameMechanicsSection from '@/components/GameMechanicsSection';
-
 import StrategySection from '@/components/StrategySection';
+import ConnectionLines from '@/components/ConnectionLines';
 
 const Index = () => {
   return (
@@ -19,6 +19,9 @@ const Index = () => {
             <HeroSection />
           </ContentSection>
 
+          {/* Connection Animation */}
+          <ConnectionLines className="my-8" />
+
           {/* Game Mechanics */}
           <ContentSection 
             title="How to Win" 
@@ -27,11 +30,17 @@ const Index = () => {
             <GameMechanicsSection />
           </ContentSection>
 
+          {/* Connection Animation */}
+          <ConnectionLines className="my-8" />
+
 
           {/* Strategy Section */}
           <ContentSection title="Master the Game">
             <StrategySection />
           </ContentSection>
+
+          {/* Final Connection Animation */}
+          <ConnectionLines className="my-8" />
         </div>
       </main>
 

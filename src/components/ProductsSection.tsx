@@ -89,7 +89,7 @@ const ProductsSection = () => {
         const cardStyles = getCardStyles();
         
         return (
-          <div key={product.id} className={`relative w-full h-[347px] overflow-hidden transition-all duration-300 hover:scale-105 ${cardStyles.border} border-8 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl bg-gray-100`}>
+          <div key={product.id} className={`relative w-full h-[347px] overflow-hidden transition-all duration-300 hover:scale-105 ${cardStyles.border} border-8 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl bg-gray-100 card-hover`}>
             {/* Circuit board pattern background */}
             <div className="absolute inset-0 opacity-20" style={{
               backgroundImage: `
