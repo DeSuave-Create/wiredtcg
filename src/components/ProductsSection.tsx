@@ -34,7 +34,7 @@ const ProductsSection = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4 sm:gap-6 justify-items-center max-w-4xl mx-auto">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-8 sm:gap-12 justify-items-center max-w-4xl mx-auto">
       {products.map(product => {
         const IconComponent = product.cardIcon;
         const getCardStyles = () => {
