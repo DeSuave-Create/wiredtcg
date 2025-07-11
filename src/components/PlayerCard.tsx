@@ -108,11 +108,11 @@ const PlayerCard = ({
             <Input
               value={player.name}
               onChange={(e) => onUpdateName(player.id, e.target.value)}
-              className={`text-xs font-semibold ${borderColor} border-2 h-6 px-2 text-center bg-gray-100 rounded-xl`}
+              className={`text-xs font-semibold ${borderColor} border-2 h-6 px-2 text-center bg-gray-100 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none`}
               style={{ backgroundColor: '#f3f4f6' }}
             />
             <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-              <SelectTrigger className={`${borderColor} border-2 bg-input text-xs h-5 px-2 bg-gray-100 rounded-xl`} style={{ backgroundColor: '#f3f4f6' }}>
+              <SelectTrigger className={`${borderColor} border-2 bg-input text-xs h-5 px-2 bg-gray-100 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none`} style={{ backgroundColor: '#f3f4f6' }}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-popover border-primary/30">
@@ -179,7 +179,7 @@ const PlayerCard = ({
         <div className="text-center">
           <div className="text-4xl mb-2">{character.icon}</div>
           <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-            <SelectTrigger className={`${borderColor} border-2 text-sm rounded-xl`} style={{ backgroundColor: '#fffbef' }}>
+            <SelectTrigger className={`${borderColor} border-2 text-sm rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none`} style={{ backgroundColor: '#fffbef' }}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-popover border-primary/30">
@@ -196,7 +196,7 @@ const PlayerCard = ({
         <Input
           value={player.name}
           onChange={(e) => onUpdateName(player.id, e.target.value)}
-          className={`text-center font-semibold text-lg ${borderColor} border-2 rounded-xl`}
+          className={`text-center font-semibold text-lg ${borderColor} border-2 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none`}
           style={{ backgroundColor: '#fffbef' }}
         />
 
