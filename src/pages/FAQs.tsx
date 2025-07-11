@@ -110,13 +110,13 @@ const FAQs = () => {
               <div className="flex justify-center space-x-4">
                 <button 
                   onClick={handleContactSupport}
-                  className="bg-gray-100 border-green-600 border-8 rounded-3xl text-primary hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg"
+                  className="bg-gray-100 rounded-3xl text-primary hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg"
                 >
                   Contact Support
                 </button>
                 <button 
                   onClick={handleJoinDiscord}
-                  className="bg-gray-100 border-green-600 border-8 rounded-3xl text-primary hover:bg-gray-200 px-6 py-2 font-medium shadow-2xl drop-shadow-lg"
+                  className="bg-gray-100 rounded-3xl text-primary hover:bg-gray-200 px-6 py-2 font-medium shadow-2xl drop-shadow-lg"
                 >
                   Join Discord
                 </button>

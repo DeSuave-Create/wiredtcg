@@ -152,7 +152,7 @@ const Cart = () => {
                       </div>
                     </div>
 
-                    <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/80 neon-glow py-3">
+                    <Button className="w-full bg-green-600 text-white hover:bg-green-700 neon-glow py-3">
                       <CreditCard className="h-5 w-5 mr-2" />
                       Proceed to Checkout
                     </Button>
