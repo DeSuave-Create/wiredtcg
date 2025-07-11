@@ -64,13 +64,14 @@ const Extras = () => {
           {/* Gameplay Video Section */}
           <ContentSection title="How to Play">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div>
-                <VideoSection
-                  src="/placeholder-video.mp4"
-                  title="Official Gameplay Tutorial"
-                  description="Learn the basics of WIRED in this comprehensive 10-minute tutorial covering setup, gameplay mechanics, and winning strategies."
-                />
-              </div>
+            <div>
+              <VideoSection
+                src="https://www.youtube.com/embed/Aq5WXmQQooo"
+                title="Official Gameplay Tutorial"
+                description="Learn the basics of WIRED in this comprehensive tutorial covering setup, gameplay mechanics, and winning strategies."
+                isYouTube={true}
+              />
+            </div>
               <div className="space-y-6">
                 <TextSection title="Quick Start Guide">
                   <ol className="list-decimal list-inside space-y-2 text-sm">
