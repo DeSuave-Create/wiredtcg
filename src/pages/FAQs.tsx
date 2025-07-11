@@ -2,6 +2,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import ConnectionLines from '@/components/ConnectionLines';
 import { HelpCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -80,6 +81,9 @@ const FAQs = () => {
               </p>
             </div>
           </ContentSection>
+          
+          {/* Connection Animation */}
+          <ConnectionLines className="my-4" />
 
           {/* FAQ Accordion */}
           <ContentSection>
@@ -123,6 +127,9 @@ const FAQs = () => {
               </div>
             </div>
           </ContentSection>
+          
+          {/* Connection Animation */}
+          <ConnectionLines className="my-4" />
         </div>
       </main>
 

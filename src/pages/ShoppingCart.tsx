@@ -3,6 +3,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
 import { Button } from '@/components/ui/button';
+import ConnectionLines from '@/components/ConnectionLines';
 import { Plus, Minus, Trash2, CreditCard, ShoppingCart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -141,7 +142,10 @@ const ShoppingCartPage = () => {
                       </div>
                     ))}
                   </div>
-                </ContentSection>
+          </ContentSection>
+          
+          {/* Connection Animation */}
+          <ConnectionLines className="my-4" />
               </div>
 
               {/* Order Summary */}
@@ -171,7 +175,10 @@ const ShoppingCartPage = () => {
                       Continue Shopping
                     </Button>
                   </div>
-                </ContentSection>
+          </ContentSection>
+          
+          {/* Connection Animation */}
+          <ConnectionLines className="my-4" />
               </div>
             </div>
           )}

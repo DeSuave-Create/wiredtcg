@@ -3,6 +3,7 @@ import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
 import ImageSection from '@/components/ImageSection';
 import VideoSection from '@/components/VideoSection';
+import ConnectionLines from '@/components/ConnectionLines';
 import TextSection from '@/components/TextSection';
 import { Button } from '@/components/ui/button';
 import { Download, Play, BookOpen, FileText } from 'lucide-react';
@@ -60,6 +61,9 @@ const Extras = () => {
               </p>
             </div>
           </ContentSection>
+          
+          {/* Connection Animation */}
+          <ConnectionLines className="my-4" />
 
           {/* Gameplay Video Section */}
           <ContentSection title="How to Play">
@@ -93,6 +97,9 @@ const Extras = () => {
               </div>
             </div>
           </ContentSection>
+          
+          {/* Connection Animation */}
+          <ConnectionLines className="my-4" />
 
           {/* Rule Book Section */}
           <ContentSection title="Official Rulebook">
@@ -136,6 +143,9 @@ const Extras = () => {
               </div>
             </div>
           </ContentSection>
+          
+          {/* Connection Animation */}
+          <ConnectionLines className="my-4" />
 
           {/* Downloads Section */}
           <ContentSection title="Downloads & Resources">
@@ -183,6 +193,9 @@ const Extras = () => {
               </div>
             </div>
           </ContentSection>
+          
+          {/* Connection Animation */}
+          <ConnectionLines className="my-4" />
 
           {/* Community Section */}
           <ContentSection title="Join the Community">
