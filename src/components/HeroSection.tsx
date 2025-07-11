@@ -8,6 +8,9 @@ const HeroSection = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Debug: Log when component mounts
+  console.log('HeroSection mounted with WIRED animation');
+
   const handleShopNow = () => {
     toast({
       title: "Welcome to the Shop!",
@@ -30,7 +33,7 @@ const HeroSection = () => {
     <div className="text-center space-y-4 sm:space-y-6">
       <div className="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-4 mb-4 sm:mb-6">
         <Logo size={48} />
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-orbitron text-primary tracking-wider wired-pulse">WIRED</h1>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-orbitron text-primary tracking-wider animate-data-pulse">WIRED</h1>
         <Logo size={48} />
       </div>
       <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-xs sm:max-w-md md:max-w-lg lg:max-w-2xl mx-auto px-4 sm:px-0">

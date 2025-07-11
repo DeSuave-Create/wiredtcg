@@ -12,6 +12,7 @@ const ConnectionLines = ({ className = "" }: ConnectionLinesProps) => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
+          console.log('Connection lines triggered!');
           setIsVisible(true);
         }
       },
