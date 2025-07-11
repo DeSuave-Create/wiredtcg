@@ -6,9 +6,9 @@ const StrategySection = () => {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
       <div className="space-y-4">
         <h3 className="text-xl font-semibold text-secondary text-center">Strategic Depth</h3>
-        <div className="text-center space-y-2 text-muted-foreground leading-relaxed">
-          <p className="text-sm sm:text-base">Every decision matters in WIRED. Choose your strategy wisely.</p>
-          <p className="text-sm sm:text-base">Do you want to focus on expanding or attacking?</p>
+        <div className="text-center text-muted-foreground leading-relaxed">
+          <p className="text-sm sm:text-base mb-4">Every decision matters in WIRED. Choose your strategy wisely.</p>
+          <p className="text-sm sm:text-base mb-4">Do you want to focus on expanding or attacking?</p>
           <p className="text-sm sm:text-base">Form temporary alliances with other players and come up with your own strategy.</p>
         </div>
       </div>
