@@ -134,7 +134,7 @@ const GameCard: React.FC<GameCardProps> = ({
 
         {/* Description - Monospace font, black text */}
         <div className="text-center px-2 pb-4">
-          <p className="text-sm font-mono text-black leading-relaxed font-medium">
+          <p className="text-sm text-black leading-relaxed font-medium">
             {description}
           </p>
         </div>

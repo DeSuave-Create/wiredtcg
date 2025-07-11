@@ -109,7 +109,7 @@ const ProductsSection = () => {
 
               {/* Description - Fixed height container */}
               <div className="mb-6 text-center h-24 flex items-center justify-center">
-                <p className="text-sm font-mono text-black leading-relaxed font-medium">
+                <p className="text-sm text-black leading-relaxed font-medium">
                   {product.description}
                 </p>
               </div>
