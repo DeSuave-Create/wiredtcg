@@ -193,6 +193,9 @@ const Extras = () => {
             </div>
           </ContentSection>
           
+          {/* Connection Animation */}
+          <ConnectionLines className="my-2" />
+          
           {/* Community Section */}
           <ContentSection title="Join the Community">
             <TextSection>

@@ -80,6 +80,9 @@ const ShoppingCartPage = () => {
             </div>
           </ContentSection>
 
+          {/* Connection Animation */}
+          <ConnectionLines className="my-2" />
+
           {cartItems.length === 0 ? (
             <ContentSection>
               <div className="text-center space-y-6">

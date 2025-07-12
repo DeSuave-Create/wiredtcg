@@ -105,6 +105,9 @@ const FAQs = () => {
             </Accordion>
           </ContentSection>
 
+          {/* Connection Animation */}
+          <ConnectionLines className="my-2" />
+
           {/* Contact Section */}
           <ContentSection title="Still Have Questions?">
             <div className="text-center space-y-4">

@@ -18,6 +18,9 @@ const Cart = () => {
           <ContentSection title="Available Products" data-products>
             <ProductsSection />
           </ContentSection>
+          
+          {/* Connection Animation */}
+          <ConnectionLines className="my-2" />
         </div>
       </main>
 
