@@ -194,8 +194,8 @@ export const FacilitiesIllustration = () => <div className="w-full h-full flex i
   </div>;
 export const FieldTechIllustration = () => <div className="w-full h-full flex items-center justify-center">
     <div className="relative">
-      {/* Simple stick figure character with wagon */}
-      <div className="flex items-end space-x-8">
+      {/* Simple stick figure character with wagon based on uploaded image */}
+      <div className="flex items-end space-x-6">
         {/* Character */}
         <div className="flex flex-col items-center">
           {/* Head */}
