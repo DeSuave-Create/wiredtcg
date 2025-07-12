@@ -1,7 +1,7 @@
 
 import GameCard from './GameCard';
-import { Computer, Cable, Shield, User } from 'lucide-react';
-import { ComputerIllustration, CablingIllustration, HackedIllustration, FieldTechIllustration } from './CardIllustrations';
+import { Computer, Cable, Shield } from 'lucide-react';
+import { ComputerIllustration, CablingIllustration, HackedIllustration } from './CardIllustrations';
 
 interface GameMechanicsSectionProps {
   cardBackgroundImage?: string;
@@ -34,15 +34,6 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
         description="The faster you make your connections, the more bitcoins you mine per turn."
         icon={<Computer />}
         illustration={<ComputerIllustration />}
-        cardBackgroundImage={cardBackgroundImage}
-      />
-      
-      <GameCard
-        type="specialization"
-        title="FIELD TECH"
-        description="Your mobile tech specialist. Carries all the tools needed to fix any network issue."
-        icon={<User />}
-        illustration={<FieldTechIllustration />}
         cardBackgroundImage={cardBackgroundImage}
       />
     </div>
