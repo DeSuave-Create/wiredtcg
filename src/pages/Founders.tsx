@@ -9,25 +9,45 @@ const Founders = () => {
       title: "PLATINUM",
       description: "Premier supporters who made WIRED possible",
       members: [],
-      color: "bg-gradient-to-r from-slate-300 to-slate-500"
+      borderColor: "border-purple-500 shadow-purple-500/50",
+      glowColor: "shadow-[0_0_20px_rgba(168,85,247,0.5)]",
+      textColor: "text-purple-400",
+      bgGradient: "bg-gradient-to-br from-purple-900/20 to-purple-800/10",
+      accessId: "#WTCG-PT-2017",
+      clearance: "CLASS III"
     },
     {
       title: "GOLD", 
       description: "Major contributors to the WIRED project",
       members: [],
-      color: "bg-gradient-to-r from-yellow-400 to-yellow-600"
+      borderColor: "border-yellow-500 shadow-yellow-500/50",
+      glowColor: "shadow-[0_0_20px_rgba(234,179,8,0.5)]",
+      textColor: "text-yellow-400",
+      bgGradient: "bg-gradient-to-br from-yellow-900/20 to-yellow-800/10",
+      accessId: "#WTCG-GD-0217",
+      clearance: "CLASS III"
     },
     {
       title: "BETA",
       description: "Early supporters and beta testers",
       members: [],
-      color: "bg-gradient-to-r from-blue-400 to-blue-600"
+      borderColor: "border-green-500 shadow-green-500/50",
+      glowColor: "shadow-[0_0_20px_rgba(34,197,94,0.5)]",
+      textColor: "text-green-400",
+      bgGradient: "bg-gradient-to-br from-green-900/20 to-green-800/10",
+      accessId: "#WTCG-BT-0217",
+      clearance: "CLASS III"
     },
     {
       title: "ALPHA",
       description: "Original visionaries and first supporters",
       members: [],
-      color: "bg-gradient-to-r from-green-400 to-green-600"
+      borderColor: "border-cyan-500 shadow-cyan-500/50",
+      glowColor: "shadow-[0_0_20px_rgba(6,182,212,0.5)]",
+      textColor: "text-cyan-400",
+      bgGradient: "bg-gradient-to-br from-cyan-900/20 to-cyan-800/10",
+      accessId: "#WTCG-AL-0217",
+      clearance: "CLASS III"
     }
   ];
 
@@ -48,21 +68,81 @@ const Founders = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {founderCategories.map((category) => (
-                <div key={category.title} className="neon-border rounded-xl p-6 bg-card/50">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Badge className={`${category.color} text-white font-bold px-4 py-2`}>
-                      {category.title}
-                    </Badge>
+                <div 
+                  key={category.title} 
+                  className={`relative rounded-2xl border-2 ${category.borderColor} ${category.glowColor} ${category.bgGradient} backdrop-blur-sm transition-all duration-300 hover:scale-105`}
+                >
+                  {/* Card Header */}
+                  <div className="p-6 border-b border-gray-700/50">
+                    <div className="text-center mb-4">
+                      <h3 className="text-sm font-mono text-gray-400 tracking-wider mb-2">FOUNDER</h3>
+                      <h2 className="text-sm font-mono text-gray-400 tracking-wider">ACCESS</h2>
+                    </div>
+                    
+                    {/* Icon/Symbol */}
+                    <div className="flex justify-center mb-4">
+                      <div className={`w-12 h-12 rounded border-2 ${category.borderColor} ${category.bgGradient} flex items-center justify-center`}>
+                        <span className={`text-xl font-bold ${category.textColor}`}>
+                          {category.title.charAt(0)}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  
-                  <p className="text-muted-foreground mb-4">{category.description}</p>
-                  
-                  <div className="min-h-[100px] flex items-center justify-center border-2 border-dashed border-muted rounded-lg">
-                    <p className="text-muted-foreground text-sm">
-                      Founders will be listed here soon
-                    </p>
+
+                  {/* Card Body */}
+                  <div className="p-6 space-y-4">
+                    <div className="text-center">
+                      <p className="text-xs font-mono text-gray-400 mb-1">TIER:</p>
+                      <h3 className={`text-2xl font-bold ${category.textColor} tracking-wider font-mono`}>
+                        {category.title}
+                      </h3>
+                    </div>
+
+                    <div className="space-y-3 text-xs font-mono">
+                      <div>
+                        <span className="text-gray-400">ACCESS ID:</span>
+                        <p className={`${category.textColor} font-bold`}>{category.accessId}</p>
+                      </div>
+                      
+                      <div>
+                        <span className="text-gray-400">CLEARANCE LEVEL:</span>
+                        <p className={`${category.textColor} font-bold`}>{category.clearance}</p>
+                      </div>
+                      
+                      <div>
+                        <span className="text-gray-400">AUTHORIZED FOR:</span>
+                        <div className={`${category.textColor} space-y-1 mt-1`}>
+                          <p>✦ DEV NETWORK ENTRY</p>
+                          <p>✦ DECK BUILD PROTOTYPING</p>
+                          <p>✦ WIRED OPS CHAT</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Founders List */}
+                    <div className="mt-6 pt-4 border-t border-gray-700/50">
+                      <div className="min-h-[60px] flex items-center justify-center">
+                        <p className="text-gray-500 text-xs font-mono">
+                          FOUNDERS WILL BE LISTED HERE SOON
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* QR Code Placeholder */}
+                    <div className="flex justify-center mt-4">
+                      <div className={`w-16 h-16 border ${category.borderColor} ${category.bgGradient} rounded flex items-center justify-center`}>
+                        <div className="grid grid-cols-4 gap-0.5">
+                          {Array.from({ length: 16 }).map((_, i) => (
+                            <div 
+                              key={i} 
+                              className={`w-1 h-1 ${Math.random() > 0.5 ? `bg-current ${category.textColor}` : 'bg-transparent'}`} 
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
