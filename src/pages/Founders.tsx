@@ -74,14 +74,14 @@ const Founders = () => {
                   key={category.title} 
                   className={`relative rounded-2xl border-2 ${category.borderColor} ${category.glowColor} backdrop-blur-sm transition-all duration-300 hover:scale-105`}
                   style={{
-                    backgroundImage: `url('/lovable-uploads/1c401f60-09cd-4ef4-ab16-66ae92fa73bc.png')`,
+                    backgroundImage: `url('/lovable-uploads/abd7e39a-0e3c-4d15-a1eb-7aeceb15ed1f.png')`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat'
                   }}
                 >
-                  {/* Dark overlay for better text readability */}
-                  <div className={`absolute inset-0 rounded-2xl ${category.bgGradient} opacity-90`}></div>
+                  {/* Gray overlay to match game card interior */}
+                  <div className="absolute inset-0 rounded-2xl bg-gray-100 opacity-95"></div>
                   
                   <div className="relative z-10">
                     {/* Card Header */}
