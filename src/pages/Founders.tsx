@@ -84,7 +84,7 @@ const Founders = () => {
                   <div className="absolute inset-0 rounded-2xl bg-gray-100 opacity-95"></div>
                   
                   {/* Magnetic stripe on the right side */}
-                  <div className="absolute top-0 right-0 w-8 h-full bg-black rounded-r-2xl"></div>
+                  <div className="absolute top-4 right-4 w-6 h-[calc(100%-2rem)] bg-black rounded"></div>
                   
                   <div className="relative z-10">
                     {/* Card Header */}
