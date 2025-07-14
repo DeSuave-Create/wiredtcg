@@ -72,74 +72,85 @@ const Founders = () => {
               {founderCategories.map((category) => (
                 <div 
                   key={category.title} 
-                  className={`relative rounded-2xl border-2 ${category.borderColor} ${category.glowColor} ${category.bgGradient} backdrop-blur-sm transition-all duration-300 hover:scale-105`}
+                  className={`relative rounded-2xl border-2 ${category.borderColor} ${category.glowColor} backdrop-blur-sm transition-all duration-300 hover:scale-105`}
+                  style={{
+                    backgroundImage: `url('/lovable-uploads/1c401f60-09cd-4ef4-ab16-66ae92fa73bc.png')`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat'
+                  }}
                 >
-                  {/* Card Header */}
-                  <div className="p-6 border-b border-gray-700/50">
-                    <div className="text-center mb-4">
-                      <h3 className="text-sm font-mono text-gray-400 tracking-wider mb-2">FOUNDER</h3>
-                      <h2 className="text-sm font-mono text-gray-400 tracking-wider">ACCESS</h2>
-                    </div>
-                    
-                    {/* Icon/Symbol */}
-                    <div className="flex justify-center mb-4">
-                      <div className={`w-12 h-12 rounded border-2 ${category.borderColor} ${category.bgGradient} flex items-center justify-center`}>
-                        <span className={`text-xl font-bold ${category.textColor}`}>
-                          {category.title.charAt(0)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Card Body */}
-                  <div className="p-6 space-y-4">
-                    <div className="text-center">
-                      <p className="text-xs font-mono text-gray-400 mb-1">TIER:</p>
-                      <h3 className={`text-2xl font-bold ${category.textColor} tracking-wider font-mono`}>
-                        {category.title}
-                      </h3>
-                    </div>
-
-                    <div className="space-y-3 text-xs font-mono">
-                      <div>
-                        <span className="text-gray-400">ACCESS ID:</span>
-                        <p className={`${category.textColor} font-bold`}>{category.accessId}</p>
+                  {/* Dark overlay for better text readability */}
+                  <div className={`absolute inset-0 rounded-2xl ${category.bgGradient} opacity-90`}></div>
+                  
+                  <div className="relative z-10">
+                    {/* Card Header */}
+                    <div className="p-6 border-b border-gray-700/50">
+                      <div className="text-center mb-4">
+                        <h3 className="text-sm font-mono text-gray-400 tracking-wider mb-2">FOUNDER</h3>
+                        <h2 className="text-sm font-mono text-gray-400 tracking-wider">ACCESS</h2>
                       </div>
                       
-                      <div>
-                        <span className="text-gray-400">CLEARANCE LEVEL:</span>
-                        <p className={`${category.textColor} font-bold`}>{category.clearance}</p>
-                      </div>
-                      
-                      <div>
-                        <span className="text-gray-400">AUTHORIZED FOR:</span>
-                        <div className={`${category.textColor} space-y-1 mt-1`}>
-                          <p>✦ DEV NETWORK ENTRY</p>
-                          <p>✦ DECK BUILD PROTOTYPING</p>
-                          <p>✦ WIRED OPS CHAT</p>
+                      {/* Icon/Symbol */}
+                      <div className="flex justify-center mb-4">
+                        <div className={`w-12 h-12 rounded border-2 ${category.borderColor} ${category.bgGradient} flex items-center justify-center`}>
+                          <span className={`text-xl font-bold ${category.textColor}`}>
+                            {category.title.charAt(0)}
+                          </span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Founders List */}
-                    <div className="mt-6 pt-4 border-t border-gray-700/50">
-                      <div className="min-h-[60px] flex items-center justify-center">
-                        <p className="text-gray-500 text-xs font-mono">
-                          FOUNDERS WILL BE LISTED HERE SOON
-                        </p>
+                    {/* Card Body */}
+                    <div className="p-6 space-y-4">
+                      <div className="text-center">
+                        <p className="text-xs font-mono text-gray-400 mb-1">TIER:</p>
+                        <h3 className={`text-2xl font-bold ${category.textColor} tracking-wider font-mono`}>
+                          {category.title}
+                        </h3>
                       </div>
-                    </div>
 
-                    {/* QR Code Placeholder */}
-                    <div className="flex justify-center mt-4">
-                      <div className={`w-16 h-16 border ${category.borderColor} ${category.bgGradient} rounded flex items-center justify-center`}>
-                        <div className="grid grid-cols-4 gap-0.5">
-                          {Array.from({ length: 16 }).map((_, i) => (
-                            <div 
-                              key={i} 
-                              className={`w-1 h-1 ${Math.random() > 0.5 ? `bg-current ${category.textColor}` : 'bg-transparent'}`} 
-                            />
-                          ))}
+                      <div className="space-y-3 text-xs font-mono">
+                        <div>
+                          <span className="text-gray-400">ACCESS ID:</span>
+                          <p className={`${category.textColor} font-bold`}>{category.accessId}</p>
+                        </div>
+                        
+                        <div>
+                          <span className="text-gray-400">CLEARANCE LEVEL:</span>
+                          <p className={`${category.textColor} font-bold`}>{category.clearance}</p>
+                        </div>
+                        
+                        <div>
+                          <span className="text-gray-400">AUTHORIZED FOR:</span>
+                          <div className={`${category.textColor} space-y-1 mt-1`}>
+                            <p>✦ DEV NETWORK ENTRY</p>
+                            <p>✦ DECK BUILD PROTOTYPING</p>
+                            <p>✦ WIRED OPS CHAT</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Founders List */}
+                      <div className="mt-6 pt-4 border-t border-gray-700/50">
+                        <div className="min-h-[60px] flex items-center justify-center">
+                          <p className="text-gray-500 text-xs font-mono">
+                            FOUNDERS WILL BE LISTED HERE SOON
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* QR Code Placeholder */}
+                      <div className="flex justify-center mt-4">
+                        <div className={`w-16 h-16 border ${category.borderColor} ${category.bgGradient} rounded flex items-center justify-center`}>
+                          <div className="grid grid-cols-4 gap-0.5">
+                            {Array.from({ length: 16 }).map((_, i) => (
+                              <div 
+                                key={i} 
+                                className={`w-1 h-1 ${Math.random() > 0.5 ? `bg-current ${category.textColor}` : 'bg-transparent'}`} 
+                              />
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
