@@ -8,7 +8,12 @@ const Founders = () => {
     {
       title: "PLATINUM",
       description: "Premier supporters who made WIRED possible",
-      members: [],
+      members: [
+        "Alex Thompson",
+        "Sarah Chen", 
+        "Marcus Rodriguez",
+        "Elena Volkov"
+      ],
       borderColor: "border-purple-500 shadow-purple-500/50",
       glowColor: "shadow-[0_0_20px_rgba(168,85,247,0.5)]",
       textColor: "text-purple-400",
@@ -19,7 +24,13 @@ const Founders = () => {
     {
       title: "GOLD", 
       description: "Major contributors to the WIRED project",
-      members: [],
+      members: [
+        "David Kim",
+        "Jessica Martinez",
+        "Ryan O'Connor",
+        "Zara Okafor",
+        "Luke Nakamura"
+      ],
       borderColor: "border-yellow-500 shadow-yellow-500/50",
       glowColor: "shadow-[0_0_20px_rgba(234,179,8,0.5)]",
       textColor: "text-yellow-400",
@@ -30,7 +41,14 @@ const Founders = () => {
     {
       title: "BETA",
       description: "Early supporters and beta testers",
-      members: [],
+      members: [
+        "Priya Sharma",
+        "Antonio Silva",
+        "Maya Patel",
+        "Jackson Wright",
+        "Fatima Al-Rashid",
+        "Oliver Johansson"
+      ],
       borderColor: "border-green-500 shadow-green-500/50",
       glowColor: "shadow-[0_0_20px_rgba(34,197,94,0.5)]",
       textColor: "text-green-400",
@@ -41,7 +59,15 @@ const Founders = () => {
     {
       title: "ALPHA",
       description: "Original visionaries and first supporters",
-      members: [],
+      members: [
+        "Cameron Foster",
+        "Valentina Rossi",
+        "Aiden Brooks",
+        "Lila Harrison",
+        "Sebastian Torres",
+        "Nora Andersson",
+        "Kai Tanaka"
+      ],
       borderColor: "border-cyan-500 shadow-cyan-500/50",
       glowColor: "shadow-[0_0_20px_rgba(6,182,212,0.5)]",
       textColor: "text-cyan-400",
@@ -136,10 +162,15 @@ const Founders = () => {
 
                       {/* Founders List */}
                       <div className="mt-6 pt-4 border-t border-gray-700/50">
-                        <div className="min-h-[60px] flex items-center justify-center">
-                          <p className="text-gray-500 text-xs font-mono">
-                            FOUNDERS WILL BE LISTED HERE SOON
-                          </p>
+                        <div className="space-y-2">
+                          <p className="text-gray-400 text-xs font-mono mb-3 text-center">FOUNDERS:</p>
+                          {category.members.map((member, index) => (
+                            <div key={index} className="text-center">
+                              <p className={`text-xs font-mono ${category.textColor} font-bold`}>
+                                {member}
+                              </p>
+                            </div>
+                          ))}
                         </div>
                       </div>
 
