@@ -83,6 +83,9 @@ const Founders = () => {
                   {/* Gray overlay to match game card interior */}
                   <div className="absolute inset-0 rounded-2xl bg-gray-100 opacity-95"></div>
                   
+                  {/* Magnetic stripe on the right side */}
+                  <div className="absolute top-0 right-0 w-8 h-full bg-black rounded-r-2xl"></div>
+                  
                   <div className="relative z-10">
                     {/* Card Header */}
                     <div className="p-6 border-b border-gray-700/50">
