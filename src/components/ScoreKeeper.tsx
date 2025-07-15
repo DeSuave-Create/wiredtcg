@@ -1,6 +1,9 @@
 
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { Users } from 'lucide-react';
 import GameHeader from './GameHeader';
 import GameStatus from './GameStatus';
 import PlayerCard from './PlayerCard';
@@ -47,6 +50,7 @@ const getCookie = (name: string): string | null => {
 
 const ScoreKeeper = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [players, setPlayers] = useState<Player[]>(() => {
     // Load from cookie on initialization
     const savedPlayers = getCookie('scorekeeper-players');
@@ -163,6 +167,20 @@ const ScoreKeeper = () => {
         onAddPlayer={addPlayer}
         onReset={resetAllScores}
       />
+
+      <div className="text-center">
+        <Button 
+          onClick={() => navigate('/room')} 
+          variant="outline" 
+          className="gap-2"
+        >
+          <Users className="h-4 w-4" />
+          Join Multiplayer Room
+        </Button>
+        <p className="text-xs text-muted-foreground mt-2">
+          Play with friends online in real-time
+        </p>
+      </div>
 
       <GameStatus 
         leader={getLeader()}
