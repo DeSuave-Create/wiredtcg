@@ -13,6 +13,7 @@ import ShoppingCart from "./pages/ShoppingCart";
 import Score from "./pages/Score";
 import Founders from "./pages/Founders";
 import Solysis from "./pages/Solysis";
+import Room from "./pages/Room";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,8 @@ const App = () => (
             <Route path="/score" element={<Score />} />
             <Route path="/founders" element={<Founders />} />
             <Route path="/solysis" element={<Solysis />} />
+            <Route path="/room" element={<Room />} />
+            <Route path="/room/:roomCode" element={<Room />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
