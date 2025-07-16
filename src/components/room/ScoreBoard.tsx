@@ -8,7 +8,7 @@ import { Plus, Minus, Edit3, Check, X } from 'lucide-react';
 interface Player {
   id: string;
   name: string;
-  role: string;
+  character: string;
   score: number;
 }
 
@@ -44,16 +44,30 @@ const ScoreBoard = ({ players, isAdmin, onUpdateScore }: ScoreBoardProps) => {
     }
   };
 
-  const getRoleColor = (role: string) => {
-    const colors: Record<string, string> = {
-      'Network': 'bg-blue-500/20 text-blue-400 border-blue-500/50',
-      'ISP': 'bg-green-500/20 text-green-400 border-green-500/50',
-      'End User': 'bg-purple-500/20 text-purple-400 border-purple-500/50',
-      'Hacker': 'bg-red-500/20 text-red-400 border-red-500/50',
-      'Government': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50',
-      'Corporation': 'bg-orange-500/20 text-orange-400 border-orange-500/50'
-    };
-    return colors[role] || 'bg-gray-500/20 text-gray-400 border-gray-500/50';
+  const getCharacterDisplay = (character: string) => {
+    const characters = [
+      { id: 'zerotrust', name: '🔐 ZeroTrust', icon: '🕵️' },
+      { id: 'deskjockey', name: '🎧 DeskJockey', icon: '💬' },
+      { id: 'pingmaster', name: '🌐 PingMaster', icon: '📡' },
+      { id: 'redtaperipper', name: '📋 RedTapeRipper', icon: '⚖️' },
+      { id: 'clutchcache', name: '🎮 ClutchCache', icon: '🕹️' },
+      { id: 'cloudcrafter', name: '☁️ CloudCrafter', icon: '⚙️' },
+    ];
+    
+    const char = characters.find(c => c.id === character);
+    return char ? char.name : '🔐 ZeroTrust';
+  };
+
+  const getCharacterColor = (character: string) => {
+    switch (character) {
+      case 'zerotrust': return 'bg-blue-500/10 text-blue-700 border-blue-200';
+      case 'deskjockey': return 'bg-green-500/10 text-green-700 border-green-200';
+      case 'pingmaster': return 'bg-purple-500/10 text-purple-700 border-purple-200';
+      case 'redtaperipper': return 'bg-red-500/10 text-red-700 border-red-200';
+      case 'clutchcache': return 'bg-yellow-500/10 text-yellow-700 border-yellow-200';
+      case 'cloudcrafter': return 'bg-orange-500/10 text-orange-700 border-orange-200';
+      default: return 'bg-gray-500/10 text-gray-700 border-gray-200';
+    }
   };
 
   if (players.length === 0) {
@@ -96,9 +110,12 @@ const ScoreBoard = ({ players, isAdmin, onUpdateScore }: ScoreBoardProps) => {
               </div>
               <div>
                 <h3 className="font-semibold">{player.name}</h3>
-                <Badge variant="outline" className={getRoleColor(player.role)}>
-                  {player.role}
-                </Badge>
+              <Badge 
+                variant="outline" 
+                className={`text-xs ${getCharacterColor(player.character)}`}
+              >
+                {getCharacterDisplay(player.character)}
+              </Badge>
               </div>
             </div>
 

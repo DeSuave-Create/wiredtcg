@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Users, Crown, Plus, RotateCcw, Edit3 } from 'lucide-react';
+import { Users, Crown, Plus, RotateCcw, Edit3, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import RoomCreator from '@/components/room/RoomCreator';
 import RoomJoiner from '@/components/room/RoomJoiner';
@@ -14,7 +14,7 @@ import ScoreBoard from '@/components/room/ScoreBoard';
 interface Player {
   id: string;
   name: string;
-  role: string;
+  character: string;
   score: number;
 }
 
@@ -62,11 +62,29 @@ const Room = () => {
       const code = Math.random().toString(36).substr(2, 5).toUpperCase();
       const adminToken = crypto.randomUUID();
       
+      // Import players from ScoreKeeper if available
+      const savedPlayers = localStorage.getItem('scorekeeper-players');
+      let importedPlayers: Player[] = [];
+      
+      if (savedPlayers) {
+        try {
+          const scorekeeperPlayers = JSON.parse(savedPlayers);
+          importedPlayers = scorekeeperPlayers.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            character: p.character,
+            score: p.score
+          }));
+        } catch (error) {
+          console.log('Error importing scorekeeper players:', error);
+        }
+      }
+      
       const newRoom: Room = {
         id: crypto.randomUUID(),
         code,
         adminToken,
-        players: [],
+        players: importedPlayers,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
@@ -114,9 +132,9 @@ const Room = () => {
         code: code,
         adminToken: crypto.randomUUID(),
         players: [
-          { id: '1', name: 'Player 1', role: 'Network', score: 15 },
-          { id: '2', name: 'Player 2', role: 'ISP', score: 8 },
-          { id: '3', name: 'Player 3', role: 'End User', score: 12 }
+          { id: '1', name: 'Player 1', character: 'zerotrust', score: 15 },
+          { id: '2', name: 'Player 2', character: 'deskjockey', score: 8 },
+          { id: '3', name: 'Player 3', character: 'pingmaster', score: 12 }
         ],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
@@ -251,6 +269,15 @@ const Room = () => {
       <div className="bg-card border-b px-4 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => navigate('/score')}
+              className="gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Score Keeper
+            </Button>
             <Users className="h-6 w-6 text-primary" />
             <div>
               <h1 className="text-xl font-bold">Room {room.code}</h1>

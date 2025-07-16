@@ -8,7 +8,7 @@ import { Plus, Trash2, Save } from 'lucide-react';
 interface Player {
   id: string;
   name: string;
-  role: string;
+  character: string;
   score: number;
 }
 
@@ -18,13 +18,13 @@ interface PlayerManagementProps {
   onClose: () => void;
 }
 
-const AVAILABLE_ROLES = [
-  'Network',
-  'ISP', 
-  'End User',
-  'Hacker',
-  'Government',
-  'Corporation'
+const characters = [
+  { id: 'zerotrust', name: '🔐 ZeroTrust', icon: '🕵️' },
+  { id: 'deskjockey', name: '🎧 DeskJockey', icon: '💬' },
+  { id: 'pingmaster', name: '🌐 PingMaster', icon: '📡' },
+  { id: 'redtaperipper', name: '📋 RedTapeRipper', icon: '⚖️' },
+  { id: 'clutchcache', name: '🎮 ClutchCache', icon: '🕹️' },
+  { id: 'cloudcrafter', name: '☁️ CloudCrafter', icon: '⚙️' },
 ];
 
 const PlayerManagement = ({ players, onUpdatePlayers, onClose }: PlayerManagementProps) => {
@@ -34,7 +34,7 @@ const PlayerManagement = ({ players, onUpdatePlayers, onClose }: PlayerManagemen
     const newPlayer: Player = {
       id: crypto.randomUUID(),
       name: `Player ${editablePlayers.length + 1}`,
-      role: 'Network',
+      character: 'zerotrust',
       score: 0
     };
     setEditablePlayers([...editablePlayers, newPlayer]);
@@ -70,16 +70,16 @@ const PlayerManagement = ({ players, onUpdatePlayers, onClose }: PlayerManagemen
               className="flex-1"
             />
             <Select
-              value={player.role}
-              onValueChange={(value) => updatePlayer(player.id, 'role', value)}
+              value={player.character}
+              onValueChange={(value) => updatePlayer(player.id, 'character', value)}
             >
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {AVAILABLE_ROLES.map((role) => (
-                  <SelectItem key={role} value={role}>
-                    {role}
+                {characters.map((character) => (
+                  <SelectItem key={character.id} value={character.id}>
+                    {character.name}
                   </SelectItem>
                 ))}
               </SelectContent>

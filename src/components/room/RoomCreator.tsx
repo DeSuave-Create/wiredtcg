@@ -1,6 +1,7 @@
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Users } from 'lucide-react';
+import { Plus, Users, ArrowLeft } from 'lucide-react';
 
 interface RoomCreatorProps {
   onCreateRoom: () => void;
@@ -9,8 +10,21 @@ interface RoomCreatorProps {
 }
 
 const RoomCreator = ({ onCreateRoom, onJoinRoom, isLoading }: RoomCreatorProps) => {
+  const navigate = useNavigate();
+  
   return (
     <div className="space-y-6">
+      <div className="flex items-center gap-4 mb-6">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/score')}
+          className="gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Score Keeper
+        </Button>
+      </div>
+      
       <div className="text-center">
         <h1 className="text-3xl font-bold mb-2">WIRED Rooms</h1>
         <p className="text-muted-foreground">Create or join a multiplayer game room</p>
