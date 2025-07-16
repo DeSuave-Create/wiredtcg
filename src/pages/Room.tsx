@@ -42,6 +42,7 @@ const Room = () => {
   useEffect(() => {
     if (room) {
       const adminToken = localStorage.getItem(`room_admin_${room.code}`);
+      console.log('Checking admin status:', { roomCode: room.code, adminToken, roomAdminToken: room.adminToken });
       setIsAdmin(adminToken === room.adminToken);
     }
   }, [room]);
@@ -119,6 +120,10 @@ const Room = () => {
   const handleJoinRoom = async (code: string) => {
     setIsLoading(true);
     try {
+      // Check if user is admin of this room first
+      const adminToken = localStorage.getItem(`room_admin_${code}`);
+      console.log('Joining room with admin token:', adminToken);
+      
       // TODO: Replace with Supabase call
       // const { data, error } = await supabase
       //   .from('rooms')
@@ -126,11 +131,14 @@ const Room = () => {
       //   .eq('code', code)
       //   .single();
 
+      // If user has admin token, use it; otherwise create mock room
+      const roomAdminToken = adminToken || crypto.randomUUID();
+      
       // Mock room data
       const mockRoom: Room = {
         id: crypto.randomUUID(),
         code: code,
-        adminToken: crypto.randomUUID(),
+        adminToken: roomAdminToken,
         players: [
           { id: '1', name: 'Player 1', character: 'zerotrust', score: 15 },
           { id: '2', name: 'Player 2', character: 'deskjockey', score: 8 },
