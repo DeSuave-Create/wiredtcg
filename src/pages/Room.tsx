@@ -8,7 +8,7 @@ import { Users, Crown, Plus, RotateCcw, Edit3, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import RoomCreator from '@/components/room/RoomCreator';
 import RoomJoiner from '@/components/room/RoomJoiner';
-import PlayerManagement from '@/components/room/PlayerManagement';
+import AdminScoreKeeper from '@/components/room/AdminScoreKeeper';
 import ScoreBoard from '@/components/room/ScoreBoard';
 
 interface Player {
@@ -36,7 +36,6 @@ const Room = () => {
   const [room, setRoom] = useState<Room | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [editingPlayers, setEditingPlayers] = useState(false);
 
   // Check if user is admin (stored in localStorage)
   useEffect(() => {
@@ -191,11 +190,11 @@ const Room = () => {
     }
   };
 
-  const handleUpdateScore = async (playerId: string, newScore: number) => {
+  const handleUpdateScore = async (playerId: string, change: number) => {
     if (!room) return;
     
     const updatedPlayers = room.players.map(player => 
-      player.id === playerId ? { ...player, score: newScore } : player
+      player.id === playerId ? { ...player, score: Math.max(0, player.score + change) } : player
     );
     
     try {
@@ -273,112 +272,63 @@ const Room = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="bg-card border-b px-4 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => navigate('/score')}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Score Keeper
-            </Button>
-            <Users className="h-6 w-6 text-primary" />
-            <div>
-              <h1 className="text-xl font-bold">Room {room.code}</h1>
+      {isAdmin ? (
+        // Admin View - Full ScoreKeeper-like interface
+        <div className="container mx-auto px-4 py-8">
+          <AdminScoreKeeper
+            players={room.players}
+            roomCode={room.code}
+            onUpdatePlayers={handleUpdatePlayers}
+            onUpdateScore={handleUpdateScore}
+            onResetScores={handleResetScores}
+          />
+        </div>
+      ) : (
+        // Participant View - Just the scoreboard
+        <div className="min-h-screen bg-background">
+          {/* Header */}
+          <div className="bg-card border-b px-4 py-4">
+            <div className="max-w-4xl mx-auto flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => navigate('/score')}
+                  className="gap-2"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Back to Score Keeper
+                </Button>
+                <Users className="h-6 w-6 text-primary" />
+                <div>
+                  <h1 className="text-xl font-bold">Room {room.code}</h1>
+                  <p className="text-sm text-muted-foreground">
+                    {room.players.length} player{room.players.length !== 1 ? 's' : ''} • Participant View
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="max-w-4xl mx-auto p-4 space-y-6">
+            {/* Score Board */}
+            <ScoreBoard
+              players={room.players}
+              isAdmin={false}
+              onUpdateScore={() => {}} // No-op for participants
+            />
+
+            {/* Room Info */}
+            <div className="text-center p-4 bg-card rounded-lg border">
+              <h3 className="font-semibold mb-2">Room Code</h3>
+              <p className="text-2xl font-bold text-primary mb-2">{room.code}</p>
               <p className="text-sm text-muted-foreground">
-                {room.players.length} player{room.players.length !== 1 ? 's' : ''}
+                You're viewing as a participant. Only the admin can make changes.
               </p>
             </div>
           </div>
-          {isAdmin && (
-            <Badge variant="secondary" className="gap-1">
-              <Crown className="h-3 w-3" />
-              Admin
-            </Badge>
-          )}
         </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto p-4 space-y-6">
-        {/* Admin Controls */}
-        {isAdmin && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Crown className="h-5 w-5" />
-                Admin Controls
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex flex-wrap gap-2">
-                <Button 
-                  onClick={() => setEditingPlayers(!editingPlayers)}
-                  variant="outline"
-                  size="sm"
-                  className="gap-2"
-                >
-                  <Edit3 className="h-4 w-4" />
-                  {editingPlayers ? 'Save Players' : 'Edit Players'}
-                </Button>
-                <Button 
-                  onClick={handleResetScores}
-                  variant="outline"
-                  size="sm"
-                  className="gap-2"
-                >
-                  <RotateCcw className="h-4 w-4" />
-                  Reset Scores
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Player Management (Admin Only) */}
-        {isAdmin && editingPlayers && (
-          <PlayerManagement
-            players={room.players}
-            onUpdatePlayers={handleUpdatePlayers}
-            onClose={() => setEditingPlayers(false)}
-          />
-        )}
-
-        {/* Score Board */}
-        <ScoreBoard
-          players={room.players}
-          isAdmin={isAdmin}
-          onUpdateScore={handleUpdateScore}
-        />
-
-        {/* Share Room Code */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Share Room</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-2">
-              <Input 
-                value={`${window.location.origin}/room/${room.code}`} 
-                readOnly 
-                className="font-mono text-sm"
-              />
-              <Button 
-                onClick={() => {
-                  navigator.clipboard.writeText(`${window.location.origin}/room/${room.code}`);
-                  toast({ title: "Copied!", description: "Room link copied to clipboard" });
-                }}
-                variant="outline"
-              >
-                Copy
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      )}
     </div>
   );
 };
