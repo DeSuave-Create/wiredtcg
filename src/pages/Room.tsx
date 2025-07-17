@@ -6,26 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Users, Crown, Plus, RotateCcw, Edit3, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { roomStorage, type Room, type Player } from '@/services/roomStorage';
 import RoomCreator from '@/components/room/RoomCreator';
 import RoomJoiner from '@/components/room/RoomJoiner';
 import AdminScoreKeeper from '@/components/room/AdminScoreKeeper';
 import ScoreBoard from '@/components/room/ScoreBoard';
 
-interface Player {
-  id: string;
-  name: string;
-  character: string;
-  score: number;
-}
-
-interface Room {
-  id: string;
-  code: string;
-  adminToken: string;
-  players: Player[];
-  createdAt: string;
-  updatedAt: string;
-}
 
 const Room = () => {
   const { roomCode } = useParams();
@@ -36,6 +22,20 @@ const Room = () => {
   const [room, setRoom] = useState<Room | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Initialize room storage listener
+  useEffect(() => {
+    roomStorage.startListening();
+    
+    // Listen for room changes
+    const unsubscribe = roomStorage.onRoomChange((rooms) => {
+      if (room && rooms[room.code]) {
+        setRoom(rooms[room.code]);
+      }
+    });
+
+    return unsubscribe;
+  }, [room]);
 
   // Check if user is admin (stored in localStorage)
   useEffect(() => {
@@ -54,7 +54,7 @@ const Room = () => {
     }
   }, [roomCode]);
 
-  // Mock functions - replace with actual Supabase calls
+  // Create room function
   const handleCreateRoom = async () => {
     setIsLoading(true);
     try {
@@ -89,13 +89,8 @@ const Room = () => {
         updatedAt: new Date().toISOString()
       };
 
-      // TODO: Replace with Supabase call
-      // const { data, error } = await supabase
-      //   .from('rooms')
-      //   .insert([newRoom])
-      //   .select()
-      //   .single();
-
+      // Save room to storage
+      await roomStorage.createRoom(newRoom);
       setRoom(newRoom);
       localStorage.setItem(`room_admin_${code}`, adminToken);
       navigate(`/room/${code}`);
@@ -123,37 +118,31 @@ const Room = () => {
       const adminToken = localStorage.getItem(`room_admin_${code}`);
       console.log('Joining room with admin token:', adminToken);
       
-      // TODO: Replace with Supabase call
-      // const { data, error } = await supabase
-      //   .from('rooms')
-      //   .select('*')
-      //   .eq('code', code)
-      //   .single();
-
-      // If user has admin token, use it; otherwise create mock room
-      const roomAdminToken = adminToken || crypto.randomUUID();
+      // Try to get existing room from storage
+      const existingRoom = await roomStorage.getRoom(code);
       
-      // Use actual room data or create empty room for new participants
-      const mockRoom: Room = {
-        id: crypto.randomUUID(),
-        code: code,
-        adminToken: roomAdminToken,
-        players: [], // Start with empty players array - will be populated by admin
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-
-      setRoom(mockRoom);
-      setCurrentView('room');
-      
-      toast({
-        title: "Joined Room!",
-        description: `Connected to room ${code}`,
-      });
+      if (existingRoom) {
+        // Room exists, join it
+        setRoom(existingRoom);
+        setCurrentView('room');
+        
+        toast({
+          title: "Joined Room!",
+          description: `Connected to room ${code}`,
+        });
+      } else {
+        // Room doesn't exist, show error
+        toast({
+          title: "Error",
+          description: "Room not found. Please check the room code.",
+          variant: "destructive"
+        });
+        return;
+      }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Room not found",
+        description: "Failed to join room",
         variant: "destructive"
       });
     } finally {
@@ -165,13 +154,7 @@ const Room = () => {
     if (!room || !isAdmin) return;
     
     try {
-      // TODO: Replace with Supabase call
-      // const { error } = await supabase
-      //   .from('rooms')
-      //   .update({ players, updated_at: new Date().toISOString() })
-      //   .eq('id', room.id);
-
-      setRoom({ ...room, players, updatedAt: new Date().toISOString() });
+      await roomStorage.updateRoom(room.code, { players });
       
       toast({
         title: "Players Updated!",
@@ -194,8 +177,7 @@ const Room = () => {
     );
     
     try {
-      // TODO: Replace with Supabase call
-      setRoom({ ...room, players: updatedPlayers, updatedAt: new Date().toISOString() });
+      await roomStorage.updateRoom(room.code, { players: updatedPlayers });
     } catch (error) {
       toast({
         title: "Error",
@@ -211,8 +193,7 @@ const Room = () => {
     const resetPlayers = room.players.map(player => ({ ...player, score: 0 }));
     
     try {
-      // TODO: Replace with Supabase call
-      setRoom({ ...room, players: resetPlayers, updatedAt: new Date().toISOString() });
+      await roomStorage.updateRoom(room.code, { players: resetPlayers });
       
       toast({
         title: "Scores Reset!",
