@@ -1,17 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Users, Crown, Plus, RotateCcw, Edit3, ArrowLeft } from 'lucide-react';
+import { Users, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { roomStorage, type Room, type Player } from '@/services/roomStorage';
+import { roomStorage } from '@/services/roomStorage';
+import type { RoomWithPlayers, Player } from '@/services/roomStorage';
 import RoomCreator from '@/components/room/RoomCreator';
 import RoomJoiner from '@/components/room/RoomJoiner';
 import AdminScoreKeeper from '@/components/room/AdminScoreKeeper';
 import ScoreBoard from '@/components/room/ScoreBoard';
-
 
 const Room = () => {
   const { roomCode } = useParams();
@@ -19,30 +16,15 @@ const Room = () => {
   const { toast } = useToast();
   
   const [currentView, setCurrentView] = useState<'create' | 'join' | 'room'>('create');
-  const [room, setRoom] = useState<Room | null>(null);
+  const [room, setRoom] = useState<RoomWithPlayers | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Initialize room storage listener
-  useEffect(() => {
-    roomStorage.startListening();
-    
-    // Listen for room changes
-    const unsubscribe = roomStorage.onRoomChange((rooms) => {
-      if (room && rooms[room.code]) {
-        setRoom(rooms[room.code]);
-      }
-    });
-
-    return unsubscribe;
-  }, [room]);
-
-  // Check if user is admin (stored in localStorage)
+  // Check admin status when room changes
   useEffect(() => {
     if (room) {
       const adminToken = localStorage.getItem(`room_admin_${room.code}`);
-      console.log('Checking admin status:', { roomCode: room.code, adminToken, roomAdminToken: room.adminToken });
-      setIsAdmin(adminToken === room.adminToken);
+      setIsAdmin(adminToken === room.admin_token);
     }
   }, [room]);
 
@@ -54,45 +36,66 @@ const Room = () => {
     }
   }, [roomCode]);
 
-  // Create room function
+  // Subscribe to room updates
+  useEffect(() => {
+    if (!room) return;
+
+    const unsubscribe = roomStorage.subscribeToRoom(room.code, (updatedRoom) => {
+      if (updatedRoom) {
+        setRoom(updatedRoom);
+      }
+    });
+
+    return unsubscribe;
+  }, [room?.code]);
+
+  const generateRoomCode = () => {
+    return Math.random().toString(36).substr(2, 5).toUpperCase();
+  };
+
+  const generateAdminToken = () => {
+    return crypto.randomUUID();
+  };
+
   const handleCreateRoom = async () => {
     setIsLoading(true);
     try {
-      // Generate 5-character room code
-      const code = Math.random().toString(36).substr(2, 5).toUpperCase();
-      const adminToken = crypto.randomUUID();
-      
+      const code = generateRoomCode();
+      const adminToken = generateAdminToken();
+
+      // Create room in database
+      const createdRoom = await roomStorage.createRoom({
+        code,
+        admin_token: adminToken
+      });
+
       // Import players from ScoreKeeper if available
       const savedPlayers = localStorage.getItem('scorekeeper-players');
-      let importedPlayers: Player[] = [];
-      
       if (savedPlayers) {
         try {
           const scorekeeperPlayers = JSON.parse(savedPlayers);
-          importedPlayers = scorekeeperPlayers.map((p: any) => ({
-            id: p.id,
-            name: p.name,
-            character: p.character,
-            score: p.score
-          }));
+          // Add players to the room
+          for (const player of scorekeeperPlayers) {
+            await roomStorage.addPlayer(createdRoom.id, {
+              name: player.name,
+              character: player.character,
+              score: player.score
+            });
+          }
         } catch (error) {
           console.log('Error importing scorekeeper players:', error);
         }
       }
-      
-      const newRoom: Room = {
-        id: crypto.randomUUID(),
-        code,
-        adminToken,
-        players: importedPlayers,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
 
-      // Save room to storage
-      await roomStorage.createRoom(newRoom);
-      setRoom(newRoom);
+      // Get the complete room with players
+      const roomWithPlayers = await roomStorage.getRoom(code);
+      setRoom(roomWithPlayers);
+      setIsAdmin(true);
+      
+      // Store admin credentials
       localStorage.setItem(`room_admin_${code}`, adminToken);
+      
+      // Navigate to room
       navigate(`/room/${code}`);
       setCurrentView('room');
       
@@ -101,6 +104,7 @@ const Room = () => {
         description: `Room code: ${code}`,
       });
     } catch (error) {
+      console.error('Error creating room:', error);
       toast({
         title: "Error",
         description: "Failed to create room",
@@ -114,15 +118,9 @@ const Room = () => {
   const handleJoinRoom = async (code: string) => {
     setIsLoading(true);
     try {
-      // Check if user is admin of this room first
-      const adminToken = localStorage.getItem(`room_admin_${code}`);
-      console.log('Joining room with admin token:', adminToken);
-      
-      // Try to get existing room from storage
       const existingRoom = await roomStorage.getRoom(code);
       
       if (existingRoom) {
-        // Room exists, join it
         setRoom(existingRoom);
         setCurrentView('room');
         
@@ -131,15 +129,14 @@ const Room = () => {
           description: `Connected to room ${code}`,
         });
       } else {
-        // Room doesn't exist, show error
         toast({
           title: "Error",
           description: "Room not found. Please check the room code.",
           variant: "destructive"
         });
-        return;
       }
     } catch (error) {
+      console.error('Error joining room:', error);
       toast({
         title: "Error",
         description: "Failed to join room",
@@ -154,13 +151,14 @@ const Room = () => {
     if (!room || !isAdmin) return;
     
     try {
-      await roomStorage.updateRoom(room.code, { players });
+      await roomStorage.bulkUpdatePlayers(room.id, players);
       
       toast({
         title: "Players Updated!",
         description: "Player information has been saved",
       });
     } catch (error) {
+      console.error('Error updating players:', error);
       toast({
         title: "Error",
         description: "Failed to update players",
@@ -172,13 +170,14 @@ const Room = () => {
   const handleUpdateScore = async (playerId: string, change: number) => {
     if (!room) return;
     
-    const updatedPlayers = room.players.map(player => 
-      player.id === playerId ? { ...player, score: Math.max(0, player.score + change) } : player
-    );
-    
     try {
-      await roomStorage.updateRoom(room.code, { players: updatedPlayers });
+      const player = room.players.find(p => p.id === playerId);
+      if (player) {
+        const newScore = Math.max(0, player.score + change);
+        await roomStorage.updatePlayer(playerId, { score: newScore });
+      }
     } catch (error) {
+      console.error('Error updating score:', error);
       toast({
         title: "Error",
         description: "Failed to update score",
@@ -190,16 +189,18 @@ const Room = () => {
   const handleResetScores = async () => {
     if (!room || !isAdmin) return;
     
-    const resetPlayers = room.players.map(player => ({ ...player, score: 0 }));
-    
     try {
-      await roomStorage.updateRoom(room.code, { players: resetPlayers });
+      const resetPromises = room.players.map(player => 
+        roomStorage.updatePlayer(player.id, { score: 0 })
+      );
+      await Promise.all(resetPromises);
       
       toast({
         title: "Scores Reset!",
         description: "All player scores have been reset to 0",
       });
     } catch (error) {
+      console.error('Error resetting scores:', error);
       toast({
         title: "Error",
         description: "Failed to reset scores",
