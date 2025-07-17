@@ -133,16 +133,12 @@ const Room = () => {
       // If user has admin token, use it; otherwise create mock room
       const roomAdminToken = adminToken || crypto.randomUUID();
       
-      // Mock room data
+      // Use actual room data or create empty room for new participants
       const mockRoom: Room = {
         id: crypto.randomUUID(),
         code: code,
         adminToken: roomAdminToken,
-        players: [
-          { id: '1', name: 'Player 1', character: 'zerotrust', score: 15 },
-          { id: '2', name: 'Player 2', character: 'deskjockey', score: 8 },
-          { id: '3', name: 'Player 3', character: 'pingmaster', score: 12 }
-        ],
+        players: [], // Start with empty players array - will be populated by admin
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };

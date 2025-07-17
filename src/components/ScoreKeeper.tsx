@@ -172,7 +172,7 @@ const ScoreKeeper = () => {
         <Button 
           onClick={() => navigate('/room')} 
           variant="outline" 
-          className="gap-2"
+          className="bg-gray-100 rounded-3xl text-secondary hover:bg-gray-200 shadow-2xl drop-shadow-lg gap-2"
         >
           <Users className="h-4 w-4" />
           Join Multiplayer Room
