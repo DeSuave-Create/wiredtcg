@@ -60,8 +60,8 @@ const ScoreKeeper = () => {
     return defaultPlayers;
   });
 
-  const maxPlayers = 6;
-  const minPlayers = 2;
+  const maxPlayers = null; // No max limit
+  const minPlayers = 1;
 
   // Save to cookie whenever players state changes
   useEffect(() => {
@@ -69,14 +69,13 @@ const ScoreKeeper = () => {
   }, [players]);
 
   const addPlayer = () => {
-    if (players.length < maxPlayers) {
-      const newPlayer: Player = {
-        id: crypto.randomUUID(),
-        name: `Player ${players.length + 1}`,
-        score: 0,
-      };
-      setPlayers(prevPlayers => [...prevPlayers, newPlayer]);
-    }
+    // No max limit check
+    const newPlayer: Player = {
+      id: crypto.randomUUID(),
+      name: `Player ${players.length + 1}`,
+      score: 0,
+    };
+    setPlayers(prevPlayers => [...prevPlayers, newPlayer]);
   };
 
   const removePlayer = (playerId: string) => {
@@ -117,6 +116,15 @@ const ScoreKeeper = () => {
 
   return (
     <div className="space-y-6">
+      {/* Leader Announcement */}
+      {getLeader() && getHighestScore() > 0 && (
+        <div className="text-center p-4 bg-green-100 rounded-lg border-2 border-green-600">
+          <p className="text-lg font-semibold text-green-800">
+            {getLeader()?.name} is leading with {getHighestScore()} bitcoins mined!
+          </p>
+        </div>
+      )}
+
       <GameHeader 
         playerCount={players.length}
         maxPlayers={maxPlayers}
@@ -143,8 +151,8 @@ const ScoreKeeper = () => {
         highestScore={getHighestScore()}
       />
 
-      {/* Players Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {/* Players Grid - More Compact, 3 columns */}
+      <div className="grid gap-3 grid-cols-1 md:grid-cols-3 max-w-4xl mx-auto">
         {players.map((player, index) => {
           const isLeader = player.score === getHighestScore() && player.score > 0;
           const cardColors = ['green', 'blue', 'red', 'yellow', 'purple', 'orange'] as const;

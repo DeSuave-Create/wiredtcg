@@ -35,8 +35,8 @@ const AdminScoreKeeper = ({
     windowMs: 10000
   });
 
-  const maxPlayers = 6;
-  const minPlayers = 2;
+  const maxPlayers = null; // No max limit
+  const minPlayers = 1;
 
   // Create a stable, sorted list of players that only updates when players change
   const stablePlayers = useMemo(() => {
@@ -55,22 +55,21 @@ const AdminScoreKeeper = ({
   }, [stablePlayers]);
 
   const addPlayer = async () => {
-    if (localPlayers.length < maxPlayers) {
-      const newPlayerData = { name: `Player ${localPlayers.length + 1}`, score: 0 };
-      try {
-        // Add to database - this will trigger real-time updates
-        const roomData = await roomStorage.getRoom(roomCode);
-        if (roomData) {
-          await roomStorage.addPlayer(roomData.id, newPlayerData);
-        }
-      } catch (error) {
-        console.error('Error adding player:', error);
-        toast({
-          title: "Error",
-          description: "Failed to add player",
-          variant: "destructive"
-        });
+    // No max limit check
+    const newPlayerData = { name: `Player ${localPlayers.length + 1}`, score: 0 };
+    try {
+      // Add to database - this will trigger real-time updates
+      const roomData = await roomStorage.getRoom(roomCode);
+      if (roomData) {
+        await roomStorage.addPlayer(roomData.id, newPlayerData);
       }
+    } catch (error) {
+      console.error('Error adding player:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add player",
+        variant: "destructive"
+      });
     }
   };
 
@@ -141,6 +140,15 @@ const AdminScoreKeeper = ({
 
   return (
     <div className="space-y-6">
+      {/* Leader Announcement */}
+      {getLeader() && getHighestScore() > 0 && (
+        <div className="text-center p-4 bg-green-100 rounded-lg border-2 border-green-600">
+          <p className="text-lg font-semibold text-green-800">
+            {getLeader()?.name} is leading with {getHighestScore()} bitcoins mined!
+          </p>
+        </div>
+      )}
+
       {/* Room Header */}
       <div className="flex items-center justify-between">
         <Button 
@@ -163,13 +171,12 @@ const AdminScoreKeeper = ({
         <div className="flex items-center gap-2">
           <Users className="h-5 w-5 text-primary" />
           <span className="text-sm text-muted-foreground">
-            {localPlayers.length} / {maxPlayers} Players
+            {localPlayers.length} Players
           </span>
         </div>
         <div className="flex gap-2">
           <Button 
             onClick={addPlayer}
-            disabled={localPlayers.length >= maxPlayers}
             size="sm"
           >
             <Plus className="h-4 w-4 mr-2" />
@@ -194,8 +201,8 @@ const AdminScoreKeeper = ({
         </div>
       )}
 
-      {/* Players Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {/* Players Grid - More Compact, 3 columns */}
+      <div className="grid gap-3 grid-cols-1 md:grid-cols-3 max-w-4xl mx-auto">
         {localPlayers.map((player, index) => (
           <AdminPlayerCard
             key={player.id}

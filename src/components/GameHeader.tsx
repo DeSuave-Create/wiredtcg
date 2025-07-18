@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 
 interface GameHeaderProps {
   playerCount: number;
-  maxPlayers: number;
+  maxPlayers: number | null;
   onAddPlayer: () => void;
   onReset: () => void;
 }
@@ -27,16 +27,14 @@ const GameHeader = ({ playerCount, maxPlayers, onAddPlayer, onReset }: GameHeade
           <RotateCcw className="h-4 w-4 mr-2" />
           Reset Network
         </Button>
-        {playerCount < maxPlayers && (
-          <Button
-            onClick={onAddPlayer}
-            className="bg-green-600 text-white hover:bg-green-700 neon-glow w-full sm:w-auto"
-            type="button"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Miner
-          </Button>
-        )}
+        <Button
+          onClick={onAddPlayer}
+          className="bg-green-600 text-white hover:bg-green-700 neon-glow w-full sm:w-auto"
+          type="button"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Add Miner
+        </Button>
       </div>
     </div>
   );
