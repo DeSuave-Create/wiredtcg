@@ -145,8 +145,9 @@ const ScoreKeeper = () => {
 
       {/* Players Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {players.map((player) => {
+        {players.map((player, index) => {
           const isLeader = player.score === getHighestScore() && player.score > 0;
+          const cardColors = ['green', 'blue', 'red', 'yellow', 'purple', 'orange'] as const;
           return (
             <PlayerCard
               key={player.id}
@@ -155,6 +156,10 @@ const ScoreKeeper = () => {
               isEditable
               onNameChange={(name) => updatePlayerName(player.id, name)}
               onScoreChange={(change) => updateScore(player.id, change)}
+              onRemove={() => removePlayer(player.id)}
+              canRemove={players.length > minPlayers}
+              isLeader={isLeader}
+              cardColor={cardColors[index % cardColors.length]}
             />
           );
         })}

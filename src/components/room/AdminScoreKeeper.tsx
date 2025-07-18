@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Users, ArrowLeft, Plus, Minus, Trash2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import PlayerCard from '../PlayerCard';
 import type { Player } from '@/services/roomStorage';
 import { roomStorage } from '@/services/roomStorage';
 import { useRateLimit } from '@/hooks/useRateLimit';
@@ -195,7 +196,7 @@ const AdminScoreKeeper = ({
 
       {/* Players Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {localPlayers.map((player) => (
+        {localPlayers.map((player, index) => (
           <AdminPlayerCard
             key={player.id}
             player={player}
@@ -204,6 +205,7 @@ const AdminScoreKeeper = ({
             onUpdateScore={updateScore}
             onUpdateName={updatePlayerName}
             onRemove={removePlayer}
+            playerIndex={index}
           />
         ))}
       </div>
@@ -235,6 +237,7 @@ interface AdminPlayerCardProps {
   onUpdateScore: (playerId: string, change: number) => void;
   onUpdateName: (playerId: string, name: string) => void;
   onRemove: (playerId: string) => void;
+  playerIndex: number;
 }
 
 const AdminPlayerCard = ({ 
@@ -243,96 +246,24 @@ const AdminPlayerCard = ({
   canRemove, 
   onUpdateScore, 
   onUpdateName, 
-  onRemove 
+  onRemove,
+  playerIndex
 }: AdminPlayerCardProps) => {
-  const [localName, setLocalName] = useState(player.name);
-  const [isEditingName, setIsEditingName] = useState(false);
-
-  useEffect(() => {
-    setLocalName(player.name);
-  }, [player.name]);
-
-  const handleNameSubmit = () => {
-    if (localName.trim() && localName !== player.name) {
-      onUpdateName(player.id, localName.trim());
-    }
-    setIsEditingName(false);
-  };
-
-  const handleNameKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleNameSubmit();
-    } else if (e.key === 'Escape') {
-      setLocalName(player.name);
-      setIsEditingName(false);
-    }
-  };
+  const cardColors = ['green', 'blue', 'red', 'yellow', 'purple', 'orange'] as const;
+  const cardColor = cardColors[playerIndex % cardColors.length];
 
   return (
-    <Card className={`w-full bg-card/50 border-primary/20 backdrop-blur-sm hover:bg-card/60 transition-all duration-200 ${isLeader ? 'ring-2 ring-primary' : ''}`}>
-      <CardContent className="p-4">
-        <div className="flex flex-col items-center space-y-3">
-          {/* Player Name */}
-          <div className="text-center w-full">
-            {isEditingName ? (
-              <Input
-                value={localName}
-                onChange={(e) => setLocalName(e.target.value)}
-                onBlur={handleNameSubmit}
-                onKeyDown={handleNameKeyPress}
-                className="text-center text-lg font-bold bg-background/80"
-                autoFocus
-              />
-            ) : (
-              <h3 
-                className="text-lg font-bold text-primary cursor-pointer"
-                onClick={() => setIsEditingName(true)}
-              >
-                {localName}
-                {isLeader && ' 👑'}
-              </h3>
-            )}
-          </div>
-
-          {/* Score Display */}
-          <div className="flex items-center justify-center bg-primary/10 rounded-lg px-6 py-3 min-w-[120px]">
-            <span className="text-2xl font-bold text-primary">
-              {player.score}
-            </span>
-          </div>
-
-          {/* Score Controls */}
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onUpdateScore(player.id, -1)}
-              className="w-10 h-10 p-0 border-destructive/50 text-destructive hover:bg-destructive/10"
-            >
-              <Minus className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onUpdateScore(player.id, 1)}
-              className="w-10 h-10 p-0 border-primary/50 text-primary hover:bg-primary/10"
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-            {canRemove && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onRemove(player.id)}
-                className="w-10 h-10 p-0 border-destructive/50 text-destructive hover:bg-destructive/10 ml-2"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+    <PlayerCard
+      name={player.name}
+      score={player.score}
+      isEditable
+      onNameChange={(name) => onUpdateName(player.id, name)}
+      onScoreChange={(change) => onUpdateScore(player.id, change)}
+      onRemove={() => onRemove(player.id)}
+      canRemove={canRemove}
+      isLeader={isLeader}
+      cardColor={cardColor}
+    />
   );
 };
 

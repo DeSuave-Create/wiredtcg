@@ -163,13 +163,18 @@ const ScoreBoard = ({ players, isAdmin, onUpdateScore }: ScoreBoardProps) => {
 
       {/* Player Cards Grid for Visual Display */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {sortedPlayers.map((player) => (
-          <PlayerCard
-            key={player.id}
-            name={player.name}
-            score={player.score}
-          />
-        ))}
+        {sortedPlayers.map((player, index) => {
+          const cardColors = ['green', 'blue', 'red', 'yellow', 'purple', 'orange'] as const;
+          return (
+            <PlayerCard
+              key={player.id}
+              name={player.name}
+              score={player.score}
+              isLeader={player.score === Math.max(...players.map(p => p.score)) && player.score > 0}
+              cardColor={cardColors[index % cardColors.length]}
+            />
+          );
+        })}
       </div>
     </div>
   );
