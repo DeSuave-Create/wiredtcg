@@ -91,7 +91,8 @@ const AdminScoreKeeper = ({
       p.id === playerId ? { ...p, name } : p
     );
     setLocalPlayers(updatedPlayers);
-    onUpdatePlayers(updatedPlayers);
+    // Don't immediately sync to database - let real-time handle it
+    // Only sync on explicit save or add/remove operations
   };
 
   const updatePlayerCharacter = (playerId: string, character: string) => {
@@ -99,7 +100,8 @@ const AdminScoreKeeper = ({
       p.id === playerId ? { ...p, character } : p
     );
     setLocalPlayers(updatedPlayers);
-    onUpdatePlayers(updatedPlayers);
+    // Don't immediately sync to database - let real-time handle it
+    // Only sync on explicit save or add/remove operations
   };
 
   const resetAllScores = () => {
