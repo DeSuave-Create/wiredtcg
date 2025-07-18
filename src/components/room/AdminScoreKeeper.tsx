@@ -8,6 +8,7 @@ import GameStatus from '../GameStatus';
 import PlayerCard from '../PlayerCard';
 import GameInfo from '../GameInfo';
 import type { Player } from '@/services/roomStorage';
+import { roomStorage } from '@/services/roomStorage';
 
 interface AdminScoreKeeperProps {
   players: Player[];
@@ -86,22 +87,42 @@ const AdminScoreKeeper = ({
     onUpdateScore(playerId, change);
   };
 
-  const updatePlayerName = (playerId: string, name: string) => {
+  const updatePlayerName = async (playerId: string, name: string) => {
     const updatedPlayers = localPlayers.map(p => 
       p.id === playerId ? { ...p, name } : p
     );
     setLocalPlayers(updatedPlayers);
-    // Don't immediately sync to database - let real-time handle it
-    // Only sync on explicit save or add/remove operations
+    
+    // Update individual player in database
+    try {
+      await roomStorage.updatePlayer(playerId, { name });
+    } catch (error) {
+      console.error('Error updating player name:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update player name",
+        variant: "destructive"
+      });
+    }
   };
 
-  const updatePlayerCharacter = (playerId: string, character: string) => {
+  const updatePlayerCharacter = async (playerId: string, character: string) => {
     const updatedPlayers = localPlayers.map(p => 
       p.id === playerId ? { ...p, character } : p
     );
     setLocalPlayers(updatedPlayers);
-    // Don't immediately sync to database - let real-time handle it
-    // Only sync on explicit save or add/remove operations
+    
+    // Update individual player in database
+    try {
+      await roomStorage.updatePlayer(playerId, { character });
+    } catch (error) {
+      console.error('Error updating player character:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update player character",
+        variant: "destructive"
+      });
+    }
   };
 
   const resetAllScores = () => {
