@@ -142,8 +142,8 @@ const AdminScoreKeeper = ({
     <div className="space-y-6">
       {/* Leader Announcement */}
       {getLeader() && getHighestScore() > 0 && (
-        <div className="text-center p-4 bg-green-100 rounded-lg border-2 border-green-600">
-          <p className="text-lg font-semibold text-green-800">
+        <div className="text-center p-4 bg-blue-100 rounded-lg border-2 border-blue-600">
+          <p className="text-lg font-semibold text-blue-800">
             {getLeader()?.name} is leading with {getHighestScore()} bitcoins mined!
           </p>
         </div>
