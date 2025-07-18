@@ -7,13 +7,7 @@ import GameHeader from '../GameHeader';
 import GameStatus from '../GameStatus';
 import PlayerCard from '../PlayerCard';
 import GameInfo from '../GameInfo';
-
-interface Player {
-  id: string;
-  name: string;
-  character: string;
-  score: number;
-}
+import type { Player } from '@/services/roomStorage';
 
 interface AdminScoreKeeperProps {
   players: Player[];
@@ -46,18 +40,26 @@ const AdminScoreKeeper = ({
   const maxPlayers = 6;
   const minPlayers = 2;
 
-  // Sync with parent component
+  // Sync with parent component and maintain consistent ordering
   useEffect(() => {
-    setLocalPlayers(players);
+    // Sort players by creation order (created_at) to maintain consistent positioning
+    const sortedPlayers = [...players].sort((a, b) => 
+      new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    );
+    setLocalPlayers(sortedPlayers);
   }, [players]);
 
   const addPlayer = () => {
     if (localPlayers.length < maxPlayers) {
+      const now = new Date().toISOString();
       const newPlayer: Player = {
         id: Date.now().toString(),
+        room_id: '', // Will be set by the parent
         name: `Player ${localPlayers.length + 1}`,
         score: 0,
-        character: 'zerotrust'
+        character: 'zerotrust',
+        created_at: now,
+        updated_at: now
       };
       const updatedPlayers = [...localPlayers, newPlayer];
       setLocalPlayers(updatedPlayers);
