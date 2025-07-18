@@ -9,6 +9,7 @@ import PlayerCard from '../PlayerCard';
 import GameInfo from '../GameInfo';
 import type { Player } from '@/services/roomStorage';
 import { roomStorage } from '@/services/roomStorage';
+import { useRateLimit } from '@/hooks/useRateLimit';
 
 interface AdminScoreKeeperProps {
   players: Player[];
@@ -37,6 +38,12 @@ const AdminScoreKeeper = ({
   const { toast } = useToast();
   const navigate = useNavigate();
   const [localPlayers, setLocalPlayers] = useState<Player[]>(players);
+  
+  // Rate limiting for score updates: max 10 updates per 10 seconds
+  const { isAllowed: isScoreUpdateAllowed, getRemainingTime } = useRateLimit({
+    limit: 10,
+    windowMs: 10000
+  });
 
   const maxPlayers = 6;
   const minPlayers = 2;
@@ -84,6 +91,16 @@ const AdminScoreKeeper = ({
   };
 
   const updateScore = (playerId: string, change: number) => {
+    if (!isScoreUpdateAllowed()) {
+      const remainingTime = Math.ceil(getRemainingTime() / 1000);
+      toast({
+        title: "Rate Limited",
+        description: `Please wait ${remainingTime} seconds before updating scores again`,
+        variant: "destructive"
+      });
+      return;
+    }
+    
     onUpdateScore(playerId, change);
   };
 
