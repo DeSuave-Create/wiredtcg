@@ -27,27 +27,10 @@ const PlayerCard = ({
   cardColor = 'green'
 }: PlayerCardProps) => {
   const [localName, setLocalName] = useState(name);
-  const [isEditingName, setIsEditingName] = useState(false);
 
   useEffect(() => {
     setLocalName(name);
   }, [name]);
-
-  const handleNameSubmit = () => {
-    if (onNameChange && localName.trim()) {
-      onNameChange(localName.trim());
-    }
-    setIsEditingName(false);
-  };
-
-  const handleNameKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleNameSubmit();
-    } else if (e.key === 'Escape') {
-      setLocalName(name);
-      setIsEditingName(false);
-    }
-  };
 
   const getBorderColor = () => {
     if (isLeader) return 'border-yellow-400';
@@ -63,16 +46,8 @@ const PlayerCard = ({
   };
 
   const getPlayerIcon = () => {
-    // Cycle through different player icons based on card color
-    switch (cardColor) {
-      case 'green': return '👤';
-      case 'blue': return '🎮';
-      case 'red': return '⚡';
-      case 'yellow': return '🌟';
-      case 'purple': return '🔮';
-      case 'orange': return '🔥';
-      default: return '👤';
-    }
+    // Use a consistent player icon for all
+    return '👤';
   };
 
   const borderColor = getBorderColor();
@@ -120,24 +95,16 @@ const PlayerCard = ({
           
           {/* Center: Player Name */}
           <div className="flex-1 min-w-0">
-            {isEditable && isEditingName ? (
-              <Input
-                value={localName}
-                onChange={(e) => setLocalName(e.target.value)}
-                onBlur={handleNameSubmit}
-                onKeyDown={handleNameKeyPress}
-                className={`text-xs font-semibold ${borderColor} border-2 h-6 px-2 text-center bg-gray-100 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0`}
-                style={{ backgroundColor: '#f3f4f6' }}
-                autoFocus
-              />
-            ) : (
-              <div 
-                className={`text-xs font-semibold text-center cursor-${isEditable ? 'pointer' : 'default'} py-1`}
-                onClick={() => isEditable && setIsEditingName(true)}
-              >
-                {localName}{isLeader && ' 👑'}
-              </div>
-            )}
+            <Input
+              value={localName}
+              onChange={(e) => {
+                setLocalName(e.target.value);
+                if (onNameChange) onNameChange(e.target.value);
+              }}
+              className={`text-xs font-semibold ${borderColor} border-2 h-6 px-2 text-center bg-gray-100 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0`}
+              style={{ backgroundColor: '#f3f4f6' }}
+              readOnly={!isEditable}
+            />
           </div>
           
           {/* Right: Score Controls */}
@@ -179,7 +146,7 @@ const PlayerCard = ({
       </div>
 
       {/* Desktop Layout */}
-      <div className="hidden md:block p-6 space-y-4 relative z-10" style={{ backgroundColor: '#fffbef' }}>
+      <div className="hidden md:block p-6 space-y-4 relative z-10 bg-gray-100">
         {/* Remove Button - Top Right for Desktop */}
         {canRemove && onRemove && (
           <Button
@@ -194,43 +161,35 @@ const PlayerCard = ({
           </Button>
         )}
 
-        {/* Player Icon Display */}
+        {/* Player Icon Display - EXACTLY like original */}
         <div className="text-center">
           <div className="text-4xl mb-2">{getPlayerIcon()}</div>
-          <div className="text-sm text-muted-foreground">Custom Player</div>
+          {/* Removed the dropdown but keep the spacing */}
         </div>
 
-        {/* Player Name */}
-        {isEditable && isEditingName ? (
-          <Input
-            value={localName}
-            onChange={(e) => setLocalName(e.target.value)}
-            onBlur={handleNameSubmit}
-            onKeyDown={handleNameKeyPress}
-            className={`text-center font-semibold text-lg ${borderColor} border-2 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0`}
-            style={{ backgroundColor: '#fffbef' }}
-            autoFocus
-          />
-        ) : (
-          <div
-            className={`text-center font-semibold text-lg cursor-${isEditable ? 'pointer' : 'default'} py-2`}
-            onClick={() => isEditable && setIsEditingName(true)}
-          >
-            {localName}{isLeader && ' 👑'}
-          </div>
-        )}
+        {/* Player Name - EXACTLY like original */}
+        <Input
+          value={localName}
+          onChange={(e) => {
+            setLocalName(e.target.value);
+            if (onNameChange) onNameChange(e.target.value);
+          }}
+          className={`text-center font-semibold text-lg ${borderColor} border-2 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0`}
+          style={{ backgroundColor: '#fffbef' }}
+          readOnly={!isEditable}
+        />
 
-        {/* Bitcoin Score Display */}
+        {/* Bitcoin Score Display - EXACTLY like original */}
         <div className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-2">
             <Bitcoin className="h-6 w-6 text-yellow-400" />
             <span className="text-sm text-muted-foreground">Bitcoins Mined</span>
           </div>
-          <div className={`text-4xl font-bold mb-4 text-red-500 ${isLeader ? 'animate-pulse' : ''}`}>
+          <div className={`text-4xl font-bold mb-4 text-red-500 ${isLeader ? 'animate-pulse-bitcoin' : ''}`}>
             {score}
           </div>
           
-          {/* Score Controls */}
+          {/* Score Controls - EXACTLY like original */}
           {isEditable && onScoreChange && (
             <div className="flex flex-col xs:flex-row justify-center gap-2 xs:space-x-2 xs:space-y-0">
               <Button
