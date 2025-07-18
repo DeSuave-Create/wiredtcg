@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -40,14 +40,21 @@ const AdminScoreKeeper = ({
   const maxPlayers = 6;
   const minPlayers = 2;
 
-  // Sync with parent component and maintain consistent ordering
-  useEffect(() => {
-    // Sort players by creation order (created_at) to maintain consistent positioning
-    const sortedPlayers = [...players].sort((a, b) => 
-      new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-    );
-    setLocalPlayers(sortedPlayers);
+  // Create a stable, sorted list of players that only updates when players change
+  const stablePlayers = useMemo(() => {
+    // Create a stable sort by both created_at and id to ensure consistent ordering
+    return [...players].sort((a, b) => {
+      const timeA = new Date(a.created_at).getTime();
+      const timeB = new Date(b.created_at).getTime();
+      // If timestamps are identical, fall back to id comparison for consistency
+      return timeA !== timeB ? timeA - timeB : a.id.localeCompare(b.id);
+    });
   }, [players]);
+
+  // Sync with stable players
+  useEffect(() => {
+    setLocalPlayers(stablePlayers);
+  }, [stablePlayers]);
 
   const addPlayer = () => {
     if (localPlayers.length < maxPlayers) {
