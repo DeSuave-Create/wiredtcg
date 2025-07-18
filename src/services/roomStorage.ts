@@ -110,10 +110,15 @@ class RoomStorageService {
     if (players.length > 0) {
       const { error } = await supabase
         .from('players')
-        .insert(players.map(player => ({
-          ...player,
-          room_id: roomId
-        })));
+        .insert(players.map(player => {
+          // Remove any existing id to let Supabase generate a new UUID
+          const playerData = { ...player } as any;
+          delete playerData.id;
+          return {
+            ...playerData,
+            room_id: roomId
+          };
+        }));
 
       if (error) throw error;
     }
