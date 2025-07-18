@@ -61,7 +61,7 @@ const PlayerCard = ({
   const borderColor = getBorderColor();
 
   return (
-    <div className={`relative overflow-hidden transition-all duration-300 hover:scale-105 ${borderColor} border-2 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl`} style={{ backgroundColor: '#fffbef' }}>
+    <div className={`relative w-64 h-96 overflow-hidden transition-all duration-300 hover:scale-105 ${borderColor} border-2 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl`} style={{ backgroundColor: '#fffbef' }}>
       {/* Circuit board pattern background */}
       <div className="absolute inset-0 opacity-20" style={{
         backgroundImage: `
@@ -153,75 +153,77 @@ const PlayerCard = ({
         </div>
       </div>
 
-      {/* Desktop Layout - More Compact */}
-      <div className="hidden md:block p-4 space-y-3 relative z-10 bg-gray-100">
-        {/* Remove Button - Top Right for Desktop */}
+      {/* Desktop Layout - Same size as GameCard */}
+      <div className="hidden md:flex p-6 space-y-4 relative z-10 h-full flex-col" style={{ backgroundColor: '#fffbef' }}>
+        {/* Remove Button - Top Right */}
         {canRemove && onRemove && (
           <Button
             onClick={onRemove}
             variant="outline"
             size="sm"
-            className={`absolute top-1 right-1 ${borderColor} border-2 text-destructive hover:bg-destructive/10 h-5 w-5 p-0 z-10 rounded-xl`}
+            className={`absolute top-4 right-4 ${borderColor} border-2 text-destructive hover:bg-destructive/10 h-6 w-6 p-0 z-10 rounded-xl`}
             style={{ backgroundColor: '#fffbef' }}
             type="button"
           >
-            <Trash2 className="h-2 w-2" />
+            <Trash2 className="h-3 w-3" />
           </Button>
         )}
 
-        {/* Player Icon Display - More Compact */}
-        <div className="text-center">
-          <div className="text-3xl mb-1">{getPlayerIcon()}</div>
+        {/* Player Icon Display - Same layout as GameCard */}
+        <div className="text-center mt-4">
+          <div className="text-4xl mb-4">{getPlayerIcon()}</div>
         </div>
 
-        {/* Player Name - More Compact */}
-        <Input
-          value={localName}
-          onChange={(e) => {
-            setLocalName(e.target.value);
-            if (onNameChange) onNameChange(e.target.value);
-          }}
-          className={`text-center font-semibold text-base ${borderColor} border-2 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0 py-1`}
-          style={{ backgroundColor: '#fffbef' }}
-          readOnly={!isEditable}
-        />
+        {/* Player Name - Same style as GameCard title */}
+        <div className="mb-6">
+          <Input
+            value={localName}
+            onChange={(e) => {
+              setLocalName(e.target.value);
+              if (onNameChange) onNameChange(e.target.value);
+            }}
+            className={`text-center font-black text-xl tracking-wider uppercase ${borderColor} border-2 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0 py-2`}
+            style={{ backgroundColor: '#fffbef' }}
+            readOnly={!isEditable}
+          />
+        </div>
 
-        {/* Bitcoin Score Display - More Compact */}
-        <div className="text-center">
-          <div className="flex items-center justify-center space-x-1 mb-1">
-            <Bitcoin className="h-4 w-4 text-yellow-400" />
-            <span className="text-xs text-muted-foreground">Bitcoins Mined</span>
+        {/* Bitcoin Score Display - Center area like GameCard illustration */}
+        <div className="flex-1 flex flex-col items-center justify-center mb-6">
+          <div className="flex items-center justify-center space-x-2 mb-4">
+            <Bitcoin className="h-6 w-6 text-yellow-400" />
+            <span className="text-sm text-muted-foreground font-medium">Bitcoins Mined</span>
           </div>
-          <div className={`text-3xl font-bold mb-2 text-red-500 ${isLeader ? 'animate-pulse-bitcoin' : ''}`}>
+          <div className={`text-5xl font-bold text-red-500 ${isLeader ? 'animate-pulse-bitcoin' : ''}`}>
             {score}
           </div>
-          
-          {/* Score Controls - More Compact */}
-          {isEditable && onScoreChange && (
-            <div className="flex justify-center gap-1">
-              <Button
-                onClick={() => onScoreChange(-1)}
-                variant="outline"
-                size="sm"
-                className={`${borderColor} border-2 text-destructive hover:bg-gray-200 hover:text-destructive w-full rounded-xl py-1`}
-                style={{ backgroundColor: '#fffbef' }}
-                type="button"
-              >
-                <Minus className="h-3 w-3" />
-              </Button>
-              <Button
-                onClick={() => onScoreChange(1)}
-                variant="outline"
-                size="sm"
-                className={`${borderColor} border-2 text-primary hover:bg-gray-200 hover:text-primary w-full rounded-xl py-1`}
-                style={{ backgroundColor: '#fffbef' }}
-                type="button"
-              >
-                <Plus className="h-3 w-3" />
-              </Button>
-            </div>
-          )}
         </div>
+          
+        {/* Score Controls - Bottom area like GameCard description */}
+        {isEditable && onScoreChange && (
+          <div className="flex justify-center gap-4 pb-4">
+            <Button
+              onClick={() => onScoreChange(-1)}
+              variant="outline"
+              size="lg"
+              className={`${borderColor} border-2 text-destructive hover:bg-gray-200 hover:text-destructive px-6 py-3 rounded-xl`}
+              style={{ backgroundColor: '#fffbef' }}
+              type="button"
+            >
+              <Minus className="h-4 w-4" />
+            </Button>
+            <Button
+              onClick={() => onScoreChange(1)}
+              variant="outline"
+              size="lg"
+              className={`${borderColor} border-2 text-primary hover:bg-gray-200 hover:text-primary px-6 py-3 rounded-xl`}
+              style={{ backgroundColor: '#fffbef' }}
+              type="button"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
