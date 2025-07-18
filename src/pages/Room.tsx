@@ -78,7 +78,6 @@ const Room = () => {
           for (const player of scorekeeperPlayers) {
             await roomStorage.addPlayer(createdRoom.id, {
               name: player.name,
-              character: player.character,
               score: player.score
             });
           }

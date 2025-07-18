@@ -2,11 +2,9 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
-import { Users, ArrowLeft } from 'lucide-react';
-import GameHeader from '../GameHeader';
-import GameStatus from '../GameStatus';
-import PlayerCard from '../PlayerCard';
-import GameInfo from '../GameInfo';
+import { Users, ArrowLeft, Plus, Minus, Trash2 } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import type { Player } from '@/services/roomStorage';
 import { roomStorage } from '@/services/roomStorage';
 import { useRateLimit } from '@/hooks/useRateLimit';
@@ -18,15 +16,6 @@ interface AdminScoreKeeperProps {
   onUpdateScore: (playerId: string, change: number) => void;
   onResetScores: () => void;
 }
-
-const characters = [
-  { id: 'zerotrust', name: '🔐 ZeroTrust', icon: '🕵️' },
-  { id: 'deskjockey', name: '🎧 DeskJockey', icon: '💬' },
-  { id: 'pingmaster', name: '🌐 PingMaster', icon: '📡' },
-  { id: 'redtaperipper', name: '📋 RedTapeRipper', icon: '⚖️' },
-  { id: 'clutchcache', name: '🎮 ClutchCache', icon: '🕹️' },
-  { id: 'cloudcrafter', name: '☁️ CloudCrafter', icon: '⚙️' },
-];
 
 const AdminScoreKeeper = ({ 
   players, 
@@ -64,29 +53,38 @@ const AdminScoreKeeper = ({
     setLocalPlayers(stablePlayers);
   }, [stablePlayers]);
 
-  const addPlayer = () => {
+  const addPlayer = async () => {
     if (localPlayers.length < maxPlayers) {
-      const now = new Date().toISOString();
-      const newPlayer: Player = {
-        id: Date.now().toString(),
-        room_id: '', // Will be set by the parent
-        name: `Player ${localPlayers.length + 1}`,
-        score: 0,
-        character: 'zerotrust',
-        created_at: now,
-        updated_at: now
-      };
-      const updatedPlayers = [...localPlayers, newPlayer];
-      setLocalPlayers(updatedPlayers);
-      onUpdatePlayers(updatedPlayers);
+      const newPlayerData = { name: `Player ${localPlayers.length + 1}`, score: 0 };
+      try {
+        // Add to database - this will trigger real-time updates
+        const roomData = await roomStorage.getRoom(roomCode);
+        if (roomData) {
+          await roomStorage.addPlayer(roomData.id, newPlayerData);
+        }
+      } catch (error) {
+        console.error('Error adding player:', error);
+        toast({
+          title: "Error",
+          description: "Failed to add player",
+          variant: "destructive"
+        });
+      }
     }
   };
 
-  const removePlayer = (playerId: string) => {
+  const removePlayer = async (playerId: string) => {
     if (localPlayers.length > minPlayers) {
-      const updatedPlayers = localPlayers.filter(p => p.id !== playerId);
-      setLocalPlayers(updatedPlayers);
-      onUpdatePlayers(updatedPlayers);
+      try {
+        await roomStorage.removePlayer(playerId);
+      } catch (error) {
+        console.error('Error removing player:', error);
+        toast({
+          title: "Error", 
+          description: "Failed to remove player",
+          variant: "destructive"
+        });
+      }
     }
   };
 
@@ -118,25 +116,6 @@ const AdminScoreKeeper = ({
       toast({
         title: "Error",
         description: "Failed to update player name",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const updatePlayerCharacter = async (playerId: string, character: string) => {
-    const updatedPlayers = localPlayers.map(p => 
-      p.id === playerId ? { ...p, character } : p
-    );
-    setLocalPlayers(updatedPlayers);
-    
-    // Update individual player in database
-    try {
-      await roomStorage.updatePlayer(playerId, { character });
-    } catch (error) {
-      console.error('Error updating player character:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update player character",
         variant: "destructive"
       });
     }
@@ -178,42 +157,56 @@ const AdminScoreKeeper = ({
         <div className="w-32" /> {/* Spacer for centering */}
       </div>
 
-      <GameHeader 
-        playerCount={localPlayers.length}
-        maxPlayers={maxPlayers}
-        onAddPlayer={addPlayer}
-        onReset={resetAllScores}
-      />
-
-      <GameStatus 
-        leader={getLeader()}
-        highestScore={getHighestScore()}
-      />
-
-      {/* Players - Mobile List / Desktop Grid */}
-      <div className="flex flex-col space-y-3 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0">
-        {localPlayers.map((player) => {
-          const isLeader = player.score === getHighestScore() && player.score > 0;
-          return (
-            <PlayerCard
-              key={player.id}
-              player={player}
-              characters={characters}
-              isLeader={isLeader}
-              canRemove={localPlayers.length > minPlayers}
-              onUpdateScore={updateScore}
-              onUpdateName={updatePlayerName}
-              onUpdateCharacter={updatePlayerCharacter}
-              onRemove={removePlayer}
-            />
-          );
-        })}
+      {/* Game Controls */}
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 bg-card rounded-lg border">
+        <div className="flex items-center gap-2">
+          <Users className="h-5 w-5 text-primary" />
+          <span className="text-sm text-muted-foreground">
+            {localPlayers.length} / {maxPlayers} Players
+          </span>
+        </div>
+        <div className="flex gap-2">
+          <Button 
+            onClick={addPlayer}
+            disabled={localPlayers.length >= maxPlayers}
+            size="sm"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Player
+          </Button>
+          <Button 
+            onClick={resetAllScores}
+            variant="outline"
+            size="sm"
+          >
+            Reset All Scores
+          </Button>
+        </div>
       </div>
 
-      <GameInfo 
-        playerCount={localPlayers.length}
-        maxPlayers={maxPlayers}
-      />
+      {/* Game Status */}
+      {getLeader() && getHighestScore() > 0 && (
+        <div className="text-center p-4 bg-primary/10 rounded-lg border">
+          <h3 className="font-semibold text-primary">Current Leader</h3>
+          <p className="text-2xl font-bold">{getLeader()?.name}</p>
+          <p className="text-sm text-muted-foreground">{getHighestScore()} points</p>
+        </div>
+      )}
+
+      {/* Players Grid */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {localPlayers.map((player) => (
+          <AdminPlayerCard
+            key={player.id}
+            player={player}
+            isLeader={player.score === getHighestScore() && player.score > 0}
+            canRemove={localPlayers.length > minPlayers}
+            onUpdateScore={updateScore}
+            onUpdateName={updatePlayerName}
+            onRemove={removePlayer}
+          />
+        ))}
+      </div>
 
       {/* Room Sharing */}
       <div className="text-center p-4 bg-card rounded-lg border">
@@ -231,6 +224,115 @@ const AdminScoreKeeper = ({
         </Button>
       </div>
     </div>
+  );
+};
+
+// Admin Player Card Component
+interface AdminPlayerCardProps {
+  player: Player;
+  isLeader: boolean;
+  canRemove: boolean;
+  onUpdateScore: (playerId: string, change: number) => void;
+  onUpdateName: (playerId: string, name: string) => void;
+  onRemove: (playerId: string) => void;
+}
+
+const AdminPlayerCard = ({ 
+  player, 
+  isLeader, 
+  canRemove, 
+  onUpdateScore, 
+  onUpdateName, 
+  onRemove 
+}: AdminPlayerCardProps) => {
+  const [localName, setLocalName] = useState(player.name);
+  const [isEditingName, setIsEditingName] = useState(false);
+
+  useEffect(() => {
+    setLocalName(player.name);
+  }, [player.name]);
+
+  const handleNameSubmit = () => {
+    if (localName.trim() && localName !== player.name) {
+      onUpdateName(player.id, localName.trim());
+    }
+    setIsEditingName(false);
+  };
+
+  const handleNameKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleNameSubmit();
+    } else if (e.key === 'Escape') {
+      setLocalName(player.name);
+      setIsEditingName(false);
+    }
+  };
+
+  return (
+    <Card className={`w-full bg-card/50 border-primary/20 backdrop-blur-sm hover:bg-card/60 transition-all duration-200 ${isLeader ? 'ring-2 ring-primary' : ''}`}>
+      <CardContent className="p-4">
+        <div className="flex flex-col items-center space-y-3">
+          {/* Player Name */}
+          <div className="text-center w-full">
+            {isEditingName ? (
+              <Input
+                value={localName}
+                onChange={(e) => setLocalName(e.target.value)}
+                onBlur={handleNameSubmit}
+                onKeyDown={handleNameKeyPress}
+                className="text-center text-lg font-bold bg-background/80"
+                autoFocus
+              />
+            ) : (
+              <h3 
+                className="text-lg font-bold text-primary cursor-pointer"
+                onClick={() => setIsEditingName(true)}
+              >
+                {localName}
+                {isLeader && ' 👑'}
+              </h3>
+            )}
+          </div>
+
+          {/* Score Display */}
+          <div className="flex items-center justify-center bg-primary/10 rounded-lg px-6 py-3 min-w-[120px]">
+            <span className="text-2xl font-bold text-primary">
+              {player.score}
+            </span>
+          </div>
+
+          {/* Score Controls */}
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onUpdateScore(player.id, -1)}
+              className="w-10 h-10 p-0 border-destructive/50 text-destructive hover:bg-destructive/10"
+            >
+              <Minus className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onUpdateScore(player.id, 1)}
+              className="w-10 h-10 p-0 border-primary/50 text-primary hover:bg-primary/10"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+            {canRemove && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onRemove(player.id)}
+                className="w-10 h-10 p-0 border-destructive/50 text-destructive hover:bg-destructive/10 ml-2"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

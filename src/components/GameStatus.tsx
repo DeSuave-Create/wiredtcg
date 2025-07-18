@@ -3,7 +3,6 @@ interface Player {
   id: string;
   name: string;
   score: number;
-  character: string;
 }
 
 interface GameStatusProps {

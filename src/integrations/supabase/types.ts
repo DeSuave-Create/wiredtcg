@@ -16,7 +16,6 @@ export type Database = {
     Tables: {
       players: {
         Row: {
-          character: string
           created_at: string
           id: string
           name: string
@@ -25,7 +24,6 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          character: string
           created_at?: string
           id?: string
           name: string
@@ -34,7 +32,6 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          character?: string
           created_at?: string
           id?: string
           name?: string

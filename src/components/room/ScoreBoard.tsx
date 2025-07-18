@@ -2,14 +2,15 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Plus, Minus, Edit3, Check, X } from 'lucide-react';
+import PlayerCard from '../PlayerCard';
 
 interface Player {
   id: string;
   name: string;
-  character: string;
   score: number;
+  created_at: string;
+  updated_at: string;
 }
 
 interface ScoreBoardProps {
@@ -44,32 +45,6 @@ const ScoreBoard = ({ players, isAdmin, onUpdateScore }: ScoreBoardProps) => {
     }
   };
 
-  const getCharacterDisplay = (character: string) => {
-    const characters = [
-      { id: 'zerotrust', name: '🔐 ZeroTrust', icon: '🕵️' },
-      { id: 'deskjockey', name: '🎧 DeskJockey', icon: '💬' },
-      { id: 'pingmaster', name: '🌐 PingMaster', icon: '📡' },
-      { id: 'redtaperipper', name: '📋 RedTapeRipper', icon: '⚖️' },
-      { id: 'clutchcache', name: '🎮 ClutchCache', icon: '🕹️' },
-      { id: 'cloudcrafter', name: '☁️ CloudCrafter', icon: '⚙️' },
-    ];
-    
-    const char = characters.find(c => c.id === character);
-    return char ? char.name : '🔐 ZeroTrust';
-  };
-
-  const getCharacterColor = (character: string) => {
-    switch (character) {
-      case 'zerotrust': return 'bg-blue-500/10 text-blue-700 border-blue-200';
-      case 'deskjockey': return 'bg-green-500/10 text-green-700 border-green-200';
-      case 'pingmaster': return 'bg-purple-500/10 text-purple-700 border-purple-200';
-      case 'redtaperipper': return 'bg-red-500/10 text-red-700 border-red-200';
-      case 'clutchcache': return 'bg-yellow-500/10 text-yellow-700 border-yellow-200';
-      case 'cloudcrafter': return 'bg-orange-500/10 text-orange-700 border-orange-200';
-      default: return 'bg-gray-500/10 text-gray-700 border-gray-200';
-    }
-  };
-
   if (players.length === 0) {
     return (
       <Card>
@@ -85,106 +60,118 @@ const ScoreBoard = ({ players, isAdmin, onUpdateScore }: ScoreBoardProps) => {
     );
   }
 
-  // Sort players by score (highest first)
-  const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
+  // Sort players by score (highest first), then by creation time for stability
+  const sortedPlayers = [...players].sort((a, b) => {
+    if (b.score !== a.score) {
+      return b.score - a.score;
+    }
+    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+  });
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          Live Scores
-          <span className="text-sm font-normal text-muted-foreground">
-            {players.length} player{players.length !== 1 ? 's' : ''}
-          </span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        {sortedPlayers.map((player, index) => (
-          <div 
-            key={player.id} 
-            className="flex items-center justify-between p-4 rounded-lg border bg-card/50"
-          >
-            <div className="flex items-center gap-3">
-              <div className="text-sm font-mono text-muted-foreground w-6">
-                #{index + 1}
-              </div>
-              <div>
-                <h3 className="font-semibold">{player.name}</h3>
-              <Badge 
-                variant="outline" 
-                className={`text-xs ${getCharacterColor(player.character)}`}
-              >
-                {getCharacterDisplay(player.character)}
-              </Badge>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {editingScore === player.id ? (
-                <div className="flex items-center gap-2">
-                  <Input
-                    type="number"
-                    value={tempScore}
-                    onChange={(e) => setTempScore(parseInt(e.target.value) || 0)}
-                    className="w-20 text-center"
-                    autoFocus
-                  />
-                  <Button
-                    size="sm"
-                    onClick={() => handleSaveScore(player.id)}
-                    className="h-8 w-8 p-0"
-                  >
-                    <Check className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={handleCancelEdit}
-                    className="h-8 w-8 p-0"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            Live Scores
+            <span className="text-sm font-normal text-muted-foreground">
+              {players.length} player{players.length !== 1 ? 's' : ''}
+            </span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {sortedPlayers.map((player, index) => (
+            <div 
+              key={player.id} 
+              className="flex items-center justify-between p-4 rounded-lg border bg-card/50"
+            >
+              <div className="flex items-center gap-3">
+                <div className="text-sm font-mono text-muted-foreground w-6">
+                  #{index + 1}
                 </div>
-              ) : (
-                <>
-                  <span className="text-2xl font-bold min-w-[3rem] text-center">
-                    {player.score}
-                  </span>
-                  {isAdmin && (
-                    <div className="flex gap-1">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => adjustScore(player.id, -1)}
-                        className="h-8 w-8 p-0"
-                      >
-                        <Minus className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => adjustScore(player.id, 1)}
-                        className="h-8 w-8 p-0"
-                      >
-                        <Plus className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleEditScore(player)}
-                        className="h-8 w-8 p-0"
-                      >
-                        <Edit3 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  )}
-                </>
-              )}
+                <div>
+                  <h3 className="font-semibold">{player.name}</h3>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {editingScore === player.id ? (
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      value={tempScore}
+                      onChange={(e) => setTempScore(parseInt(e.target.value) || 0)}
+                      className="w-20 text-center"
+                      autoFocus
+                    />
+                    <Button
+                      size="sm"
+                      onClick={() => handleSaveScore(player.id)}
+                      className="h-8 w-8 p-0"
+                    >
+                      <Check className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleCancelEdit}
+                      className="h-8 w-8 p-0"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <span className="text-2xl font-bold min-w-[3rem] text-center">
+                      {player.score}
+                    </span>
+                    {isAdmin && (
+                      <div className="flex gap-1">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => adjustScore(player.id, -1)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Minus className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => adjustScore(player.id, 1)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Plus className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleEditScore(player)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Edit3 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
-          </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      {/* Player Cards Grid for Visual Display */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {sortedPlayers.map((player) => (
+          <PlayerCard
+            key={player.id}
+            name={player.name}
+            score={player.score}
+          />
         ))}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 

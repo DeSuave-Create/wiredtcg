@@ -5,7 +5,6 @@ export interface Player {
   id: string;
   room_id: string;
   name: string;
-  character: string;
   score: number;
   created_at: string;
   updated_at: string;
@@ -78,7 +77,7 @@ class RoomStorageService {
     return player;
   }
 
-  async updatePlayer(playerId: string, updates: Partial<Pick<Player, 'name' | 'character' | 'score'>>): Promise<Player> {
+  async updatePlayer(playerId: string, updates: Partial<Pick<Player, 'name' | 'score'>>): Promise<Player> {
     const { data: player, error } = await supabase
       .from('players')
       .update(updates)
@@ -112,7 +111,6 @@ class RoomStorageService {
         .from('players')
         .insert(players.map(player => ({
           name: player.name,
-          character: player.character,
           score: player.score,
           room_id: roomId
         })));
