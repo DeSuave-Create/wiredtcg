@@ -94,7 +94,6 @@ const ScoreKeeper = () => {
 
   const updatePlayerName = (id: string, name: string) => {
     setPlayers(players.map(p => p.id === id ? { ...p, name } : p));
-    localStorage.setItem('players', JSON.stringify(players.map(p => p.id === id ? { ...p, name } : p)));
   };
 
   const resetAllScores = () => {
