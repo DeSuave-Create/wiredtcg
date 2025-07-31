@@ -71,7 +71,7 @@ const ScoreBoard = ({ players, isAdmin, onUpdateScore }: ScoreBoardProps) => {
   return (
     <div className="space-y-6">
       {/* Live Scores Section - FAQ style */}
-      <div className="bg-white rounded-3xl border-2 border-gray-200 shadow-lg p-6">
+      <div className="bg-gray-100 rounded-3xl border-2 border-gray-200 shadow-lg p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Live Scores</h2>
           <span className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
