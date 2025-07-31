@@ -76,80 +76,85 @@ const PlayerCard = ({
         backgroundSize: '40px 40px, 40px 40px, 40px 40px, 40px 40px, 40px 40px, 20px 20px, 20px 20px'
       }}></div>
 
-      {/* Mobile Layout - Compact */}
-      <div className="md:hidden p-3 relative z-10">
-        <div className="flex items-center justify-between gap-2">
-          {/* Left: Trash Button */}
+      {/* Mobile Layout - Horizontal inspired by user drawing */}
+      <div className="md:hidden p-4 relative z-10">
+        {/* Top Row: Delete, Name, Icon */}
+        <div className="flex items-center gap-3 mb-3">
+          {/* Delete Button (Red Circle - Left) */}
           <div className="flex-shrink-0">
-            {canRemove && onRemove && (
+            {canRemove && onRemove ? (
               <Button
                 onClick={onRemove}
                 variant="outline"
                 size="sm"
-                className={`${borderColor} border-2 text-destructive hover:bg-destructive/10 h-7 w-7 p-0 bg-gray-100 rounded-xl`}
-                style={{ backgroundColor: '#f3f4f6' }}
+                className="h-10 w-10 p-0 rounded-full bg-red-100 border-2 border-red-400 text-red-600 hover:bg-red-200"
                 type="button"
               >
-                <Trash2 className="h-3 w-3" />
+                <Trash2 className="h-4 w-4" />
               </Button>
+            ) : (
+              <div className="h-10 w-10"></div>
             )}
-            {!canRemove && <div className="h-7 w-7"></div>}
           </div>
           
-          {/* Player Icon */}
-          <div className="flex-shrink-0">
-            <div className="text-xl">{getPlayerIcon()}</div>
-          </div>
-          
-          {/* Center: Player Name */}
-          <div className="flex-1 min-w-0">
+          {/* Player Name (Green Rectangle - Center) */}
+          <div className="flex-1">
             <Input
               value={localName}
               onChange={(e) => {
                 setLocalName(e.target.value);
                 if (onNameChange) onNameChange(e.target.value);
               }}
-              className={`text-xs font-semibold ${borderColor} border-2 h-6 px-2 text-center bg-gray-100 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0`}
-              style={{ backgroundColor: '#f3f4f6' }}
+              className="text-center font-semibold text-sm bg-green-100 border-2 border-green-400 rounded-lg h-10 focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-green-400 focus-visible:ring-0 focus-visible:ring-offset-0"
               readOnly={!isEditable}
             />
           </div>
           
-          {/* Right: Score Controls */}
-          <div className="flex-shrink-0 flex items-center gap-1">
-            {isEditable && onScoreChange && (
-              <Button
-                onClick={() => onScoreChange(-1)}
-                variant="outline"
-                size="sm"
-                className={`${borderColor} border-2 text-destructive hover:bg-gray-200 hover:text-destructive h-7 w-7 p-0 bg-gray-100 rounded-xl`}
-                style={{ backgroundColor: '#f3f4f6' }}
-                type="button"
-              >
-                <Minus className="h-3 w-3" />
-              </Button>
-            )}
-            
-            <div className="flex flex-col items-center min-w-[35px]">
-              <Bitcoin className="h-3 w-3 text-yellow-400" />
-              <div className={`text-sm font-bold text-red-500 leading-none ${isLeader ? 'animate-pulse' : ''}`}>
-                {score}
-              </div>
+          {/* Player Icon (Purple Circle - Right) */}
+          <div className="flex-shrink-0">
+            <div className="h-10 w-10 rounded-full bg-purple-100 border-2 border-purple-400 flex items-center justify-center text-lg">
+              {getPlayerIcon()}
             </div>
-            
-            {isEditable && onScoreChange && (
-              <Button
-                onClick={() => onScoreChange(1)}
-                variant="outline"
-                size="sm"
-                className={`${borderColor} border-2 text-primary hover:bg-gray-200 hover:text-primary h-7 w-7 p-0 bg-gray-100 rounded-xl`}
-                style={{ backgroundColor: '#f3f4f6' }}
-                type="button"
-              >
-                <Plus className="h-3 w-3" />
-              </Button>
-            )}
           </div>
+        </div>
+        
+        {/* Bottom Row: Score Section */}
+        <div className="flex items-center gap-2">
+          {/* Minus Button (Blue Square - Left) */}
+          {isEditable && onScoreChange && (
+            <Button
+              onClick={() => onScoreChange(-1)}
+              variant="outline"
+              size="sm"
+              className="h-10 w-10 p-0 rounded-lg bg-blue-100 border-2 border-blue-400 text-blue-600 hover:bg-blue-200"
+              type="button"
+            >
+              <Minus className="h-4 w-4" />
+            </Button>
+          )}
+          {!isEditable && <div className="h-10 w-10"></div>}
+          
+          {/* Score Display (Yellow Rectangle - Center) */}
+          <div className="flex-1 h-10 bg-yellow-100 border-2 border-yellow-400 rounded-lg flex items-center justify-center gap-2">
+            <Bitcoin className="h-4 w-4 text-yellow-600" />
+            <span className={`text-lg font-bold text-yellow-800 ${isLeader ? 'animate-pulse' : ''}`}>
+              {score}
+            </span>
+          </div>
+          
+          {/* Plus Button (Blue Square - Right) */}
+          {isEditable && onScoreChange && (
+            <Button
+              onClick={() => onScoreChange(1)}
+              variant="outline"
+              size="sm"
+              className="h-10 w-10 p-0 rounded-lg bg-blue-100 border-2 border-blue-400 text-blue-600 hover:bg-blue-200"
+              type="button"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          )}
+          {!isEditable && <div className="h-10 w-10"></div>}
         </div>
       </div>
 
