@@ -120,13 +120,13 @@ const PlayerCard = ({
         
         {/* Bottom Row: Score Section */}
         <div className="flex items-center gap-2">
-          {/* Minus Button (Blue Square - Left) */}
+          {/* Minus Button (Red Square - Left) */}
           {isEditable && onScoreChange && (
             <Button
               onClick={() => onScoreChange(-1)}
               variant="outline"
               size="sm"
-              className="h-10 w-10 p-0 rounded-3xl bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 shadow-lg"
+              className="h-10 w-10 p-0 rounded-3xl bg-white border-2 border-red-600 text-red-600 hover:bg-red-50 shadow-lg"
               type="button"
             >
               <Minus className="h-4 w-4" />
@@ -166,15 +166,15 @@ const PlayerCard = ({
             onClick={onRemove}
             variant="outline"
             size="sm"
-            className="absolute top-4 right-4 border-2 border-red-600 bg-white text-red-600 hover:bg-red-50 h-8 w-8 p-0 z-10 rounded-3xl shadow-lg"
+            className="absolute top-2 right-2 border-2 border-red-600 bg-white text-red-600 hover:bg-red-50 h-8 w-8 p-0 z-10 rounded-3xl shadow-lg"
             type="button"
           >
             <Trash2 className="h-4 w-4" />
           </Button>
         )}
 
-        {/* Player Name - Same style as GameCard title */}
-        <div className="mt-4 mb-4">
+        {/* Player Name - Moved down from top */}
+        <div className="mt-8 mb-4">
           <Input
             value={localName}
             onChange={(e) => {
@@ -211,7 +211,7 @@ const PlayerCard = ({
               onClick={() => onScoreChange(-1)}
               variant="outline"
               size="lg"
-              className="border-2 border-blue-600 bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-3xl shadow-lg"
+              className="border-2 border-red-600 bg-white text-red-600 hover:bg-red-50 px-6 py-3 rounded-3xl shadow-lg"
               type="button"
             >
               <Minus className="h-4 w-4" />

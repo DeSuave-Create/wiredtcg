@@ -189,7 +189,7 @@ const AdminScoreKeeper = ({
         <div className="text-center p-6 bg-green-50 rounded-3xl border-2 border-green-200 shadow-lg">
           <h3 className="font-semibold text-green-600 mb-2">Current Leader</h3>
           <p className="text-3xl font-bold text-gray-800 mb-1">{getLeader()?.name}</p>
-          <p className="text-lg text-gray-600">{getHighestScore()} points</p>
+          <p className="text-3xl font-bold text-gray-800">{getHighestScore()} points</p>
         </div>
       )}
 
