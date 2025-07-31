@@ -201,8 +201,8 @@ const AdminScoreKeeper = ({
         </div>
       )}
 
-      {/* Players Grid - More Compact, 3 columns */}
-      <div className="grid gap-3 grid-cols-1 md:grid-cols-3 max-w-4xl mx-auto">
+      {/* Players Grid - Responsive layout */}
+      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
         {localPlayers.map((player, index) => (
           <AdminPlayerCard
             key={player.id}
