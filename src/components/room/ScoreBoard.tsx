@@ -70,96 +70,98 @@ const ScoreBoard = ({ players, isAdmin, onUpdateScore }: ScoreBoardProps) => {
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            Live Scores
-            <span className="text-sm font-normal text-muted-foreground">
-              {players.length} player{players.length !== 1 ? 's' : ''}
-            </span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
+      {/* Live Scores Section - FAQ style */}
+      <div className="bg-white rounded-3xl border-2 border-gray-200 shadow-lg p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">Live Scores</h2>
+          <span className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+            {players.length} player{players.length !== 1 ? 's' : ''}
+          </span>
+        </div>
+        
+        <div className="space-y-3">
           {sortedPlayers.map((player, index) => (
             <div 
               key={player.id} 
-              className="flex items-center justify-between p-4 rounded-lg border bg-card/50"
+              className="bg-gray-50 rounded-2xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition-shadow"
             >
-              <div className="flex items-center gap-3">
-                <div className="text-sm font-mono text-muted-foreground w-6">
-                  #{index + 1}
-                </div>
-                <div>
-                  <h3 className="font-semibold">{player.name}</h3>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {editingScore === player.id ? (
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      value={tempScore}
-                      onChange={(e) => setTempScore(parseInt(e.target.value) || 0)}
-                      className="w-20 text-center"
-                      autoFocus
-                    />
-                    <Button
-                      size="sm"
-                      onClick={() => handleSaveScore(player.id)}
-                      className="h-8 w-8 p-0"
-                    >
-                      <Check className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={handleCancelEdit}
-                      className="h-8 w-8 p-0"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="text-sm font-bold text-blue-600 bg-blue-100 rounded-full w-8 h-8 flex items-center justify-center">
+                    #{index + 1}
                   </div>
-                ) : (
-                  <>
-                    <span className="text-2xl font-bold min-w-[3rem] text-center">
-                      {player.score}
-                    </span>
-                    {isAdmin && (
-                      <div className="flex gap-1">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => adjustScore(player.id, -1)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <Minus className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => adjustScore(player.id, 1)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <Plus className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleEditScore(player)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <Edit3 className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    )}
-                  </>
-                )}
+                  <div>
+                    <h3 className="font-bold text-lg text-gray-800">{player.name}</h3>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  {editingScore === player.id ? (
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="number"
+                        value={tempScore}
+                        onChange={(e) => setTempScore(parseInt(e.target.value) || 0)}
+                        className="w-20 text-center rounded-xl border-2"
+                        autoFocus
+                      />
+                      <Button
+                        size="sm"
+                        onClick={() => handleSaveScore(player.id)}
+                        className="h-8 w-8 p-0 rounded-xl"
+                      >
+                        <Check className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleCancelEdit}
+                        className="h-8 w-8 p-0 rounded-xl border-2"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <span className="text-3xl font-bold text-gray-800 min-w-[4rem] text-center">
+                        {player.score}
+                      </span>
+                      {isAdmin && (
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => adjustScore(player.id, -1)}
+                            className="h-10 w-10 p-0 rounded-xl border-2 border-red-600 text-red-600 hover:bg-red-50"
+                          >
+                            <Minus className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => adjustScore(player.id, 1)}
+                            className="h-10 w-10 p-0 rounded-xl border-2 border-blue-600 text-blue-600 hover:bg-blue-50"
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleEditScore(player)}
+                            className="h-10 w-10 p-0 rounded-xl border-2 border-gray-600 text-gray-600 hover:bg-gray-50"
+                          >
+                            <Edit3 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           ))}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Player Cards Grid for Visual Display - Only show for admins */}
       {isAdmin && (
