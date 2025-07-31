@@ -173,13 +173,6 @@ const PlayerCard = ({
           </Button>
         )}
 
-        {/* Player Icon Display - Same layout as GameCard */}
-        <div className="absolute top-4 left-4">
-          <div className={`w-6 h-6 ${borderColor.replace('border-', 'text-')}`}>
-            {getPlayerIcon()}
-          </div>
-        </div>
-
         {/* Player Name - Same style as GameCard title */}
         <div className="mt-4 mb-4">
           <Input
@@ -193,9 +186,9 @@ const PlayerCard = ({
           />
         </div>
 
-        {/* Bitcoin Score Display - Center area like GameCard illustration */}
+        {/* Player Icon Display - Center area */}
         <div className="flex-1 flex flex-col items-center justify-center mb-6 px-4 h-32">
-          <div className="text-6xl font-bold mb-4">
+          <div className="text-6xl mb-4">
             {getPlayerIcon()}
           </div>
         </div>
@@ -234,13 +227,6 @@ const PlayerCard = ({
             </Button>
           </div>
         )}
-
-        {/* Bottom right corner icon */}
-        <div className="absolute bottom-4 right-4">
-          <div className={`w-4 h-4 transform rotate-180 ${borderColor.replace('border-', 'text-')}`}>
-            {getPlayerIcon()}
-          </div>
-        </div>
       </div>
     </div>
   );
