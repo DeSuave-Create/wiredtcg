@@ -61,7 +61,7 @@ const PlayerCard = ({
   const borderColor = getBorderColor();
 
   return (
-    <div className={`relative w-full max-w-xs mx-auto h-32 sm:h-96 sm:w-64 overflow-hidden transition-all duration-300 hover:scale-105 ${borderColor} border-8 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl bg-gray-100`}>
+    <div className={`relative w-full max-w-xs mx-auto h-32 sm:h-96 sm:w-64 overflow-hidden transition-all duration-300 hover:scale-105 ${borderColor} border-2 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl bg-white`}>
       {/* Circuit board pattern background */}
       <div className="absolute inset-0 opacity-20" style={{
         backgroundImage: `
@@ -87,7 +87,7 @@ const PlayerCard = ({
                 onClick={onRemove}
                 variant="outline"
                 size="sm"
-                className="h-10 w-10 p-0 rounded-full bg-red-100 border-8 border-red-600 text-red-600 hover:bg-red-200 shadow-xl"
+                className="h-10 w-10 p-0 rounded-full bg-white border-2 border-red-600 text-red-600 hover:bg-red-50 shadow-lg"
                 type="button"
               >
                 <Trash2 className="h-4 w-4" />
@@ -105,7 +105,7 @@ const PlayerCard = ({
                 setLocalName(e.target.value);
                 if (onNameChange) onNameChange(e.target.value);
               }}
-              className="text-center font-semibold text-sm bg-green-100 border-8 border-green-600 rounded-3xl h-10 focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-green-600 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-xl"
+              className="text-center font-semibold text-sm bg-white border-2 border-green-600 rounded-3xl h-10 focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-green-600 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-lg"
               readOnly={!isEditable}
             />
           </div>
@@ -126,7 +126,7 @@ const PlayerCard = ({
               onClick={() => onScoreChange(-1)}
               variant="outline"
               size="sm"
-              className="h-10 w-10 p-0 rounded-3xl bg-blue-100 border-8 border-blue-600 text-blue-600 hover:bg-blue-200 shadow-xl"
+              className="h-10 w-10 p-0 rounded-3xl bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 shadow-lg"
               type="button"
             >
               <Minus className="h-4 w-4" />
@@ -134,10 +134,10 @@ const PlayerCard = ({
           )}
           {!isEditable && <div className="h-10 w-10"></div>}
           
-          {/* Score Display (Yellow Rectangle - Center) */}
-          <div className="flex-1 h-10 bg-yellow-100 border-8 border-yellow-600 rounded-3xl flex items-center justify-center gap-2 shadow-xl">
-            <Bitcoin className="h-4 w-4 text-yellow-600" />
-            <span className={`text-lg font-bold text-yellow-800 ${isLeader ? 'animate-pulse' : ''}`}>
+          {/* Score Display - No border, bigger text */}
+          <div className="flex-1 h-10 bg-white rounded-3xl flex items-center justify-center gap-2 shadow-lg">
+            <Bitcoin className="h-5 w-5 text-yellow-600" />
+            <span className={`text-2xl font-bold text-gray-800 ${isLeader ? 'animate-pulse' : ''}`}>
               {score}
             </span>
           </div>
@@ -148,7 +148,7 @@ const PlayerCard = ({
               onClick={() => onScoreChange(1)}
               variant="outline"
               size="sm"
-              className="h-10 w-10 p-0 rounded-3xl bg-blue-100 border-8 border-blue-600 text-blue-600 hover:bg-blue-200 shadow-xl"
+              className="h-10 w-10 p-0 rounded-3xl bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 shadow-lg"
               type="button"
             >
               <Plus className="h-4 w-4" />
@@ -159,14 +159,14 @@ const PlayerCard = ({
       </div>
 
       {/* Desktop Layout - Same size as GameCard */}
-      <div className="hidden md:flex p-6 space-y-4 relative z-10 h-full flex-col bg-gray-100">
+      <div className="hidden md:flex p-6 space-y-4 relative z-10 h-full flex-col bg-white">
         {/* Remove Button - Top Right */}
         {canRemove && onRemove && (
           <Button
             onClick={onRemove}
             variant="outline"
             size="sm"
-            className="absolute top-4 right-4 border-8 border-red-600 bg-red-100 text-red-600 hover:bg-red-200 h-8 w-8 p-0 z-10 rounded-3xl shadow-xl"
+            className="absolute top-4 right-4 border-2 border-red-600 bg-white text-red-600 hover:bg-red-50 h-8 w-8 p-0 z-10 rounded-3xl shadow-lg"
             type="button"
           >
             <Trash2 className="h-4 w-4" />
@@ -188,7 +188,7 @@ const PlayerCard = ({
               setLocalName(e.target.value);
               if (onNameChange) onNameChange(e.target.value);
             }}
-            className={`text-center font-black text-2xl tracking-wider uppercase ${borderColor.replace('border-', 'text-')} border-8 ${borderColor} rounded-3xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0 py-2 bg-gray-100 shadow-xl`}
+            className={`text-center font-black text-2xl tracking-wider uppercase ${borderColor.replace('border-', 'text-')} border-2 ${borderColor} rounded-3xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0 py-2 bg-white shadow-lg`}
             readOnly={!isEditable}
           />
         </div>
@@ -200,13 +200,13 @@ const PlayerCard = ({
           </div>
         </div>
 
-        {/* Score Section - Fixed height container */}
+        {/* Score Section - Fixed height container, no border, bigger text */}
         <div className="text-center px-2 pb-4 h-20 flex flex-col items-center justify-center">
           <div className="flex items-center justify-center space-x-2 mb-2">
             <Bitcoin className="h-6 w-6 text-yellow-600" />
             <span className="text-sm text-gray-600 font-medium">Bitcoins Mined</span>
           </div>
-          <div className={`text-4xl font-bold text-yellow-800 ${isLeader ? 'animate-pulse' : ''}`}>
+          <div className={`text-6xl font-bold text-gray-800 ${isLeader ? 'animate-pulse' : ''}`}>
             {score}
           </div>
         </div>
@@ -218,7 +218,7 @@ const PlayerCard = ({
               onClick={() => onScoreChange(-1)}
               variant="outline"
               size="lg"
-              className="border-8 border-blue-600 bg-blue-100 text-blue-600 hover:bg-blue-200 px-6 py-3 rounded-3xl shadow-xl"
+              className="border-2 border-blue-600 bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-3xl shadow-lg"
               type="button"
             >
               <Minus className="h-4 w-4" />
@@ -227,7 +227,7 @@ const PlayerCard = ({
               onClick={() => onScoreChange(1)}
               variant="outline"
               size="lg"
-              className="border-8 border-blue-600 bg-blue-100 text-blue-600 hover:bg-blue-200 px-6 py-3 rounded-3xl shadow-xl"
+              className="border-2 border-blue-600 bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-3xl shadow-lg"
               type="button"
             >
               <Plus className="h-4 w-4" />
