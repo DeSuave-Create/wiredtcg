@@ -140,14 +140,6 @@ const AdminScoreKeeper = ({
 
   return (
     <div className="space-y-6">
-      {/* Leader Announcement */}
-      {getLeader() && getHighestScore() > 0 && (
-        <div className="text-center p-4 bg-blue-100 rounded-lg border-2 border-blue-600">
-          <p className="text-lg font-semibold text-blue-800">
-            {getLeader()?.name} is leading with {getHighestScore()} bitcoins mined!
-          </p>
-        </div>
-      )}
 
       {/* Room Header */}
       <div className="flex items-center justify-between">
@@ -167,7 +159,7 @@ const AdminScoreKeeper = ({
       </div>
 
       {/* Game Controls */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 bg-card rounded-lg border">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 bg-card rounded-3xl border shadow-lg">
         <div className="flex items-center gap-2">
           <Users className="h-5 w-5 text-primary" />
           <span className="text-sm text-muted-foreground">
@@ -194,10 +186,10 @@ const AdminScoreKeeper = ({
 
       {/* Game Status */}
       {getLeader() && getHighestScore() > 0 && (
-        <div className="text-center p-4 bg-primary/10 rounded-lg border">
-          <h3 className="font-semibold text-primary">Current Leader</h3>
-          <p className="text-2xl font-bold">{getLeader()?.name}</p>
-          <p className="text-sm text-muted-foreground">{getHighestScore()} points</p>
+        <div className="text-center p-6 bg-green-50 rounded-3xl border-2 border-green-200 shadow-lg">
+          <h3 className="font-semibold text-green-600 mb-2">Current Leader</h3>
+          <p className="text-3xl font-bold text-gray-800 mb-1">{getLeader()?.name}</p>
+          <p className="text-lg text-gray-600">{getHighestScore()} points</p>
         </div>
       )}
 
@@ -218,7 +210,7 @@ const AdminScoreKeeper = ({
       </div>
 
       {/* Room Sharing */}
-      <div className="text-center p-4 bg-card rounded-lg border">
+      <div className="text-center p-4 bg-card rounded-3xl border shadow-lg">
         <h3 className="font-semibold mb-2">Share Room Code</h3>
         <p className="text-2xl font-bold text-primary mb-2">{roomCode}</p>
         <Button 
