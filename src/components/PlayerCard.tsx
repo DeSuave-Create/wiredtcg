@@ -61,7 +61,7 @@ const PlayerCard = ({
   const borderColor = getBorderColor();
 
   return (
-    <div className={`relative w-full max-w-xs mx-auto h-32 sm:h-96 sm:w-64 overflow-hidden transition-all duration-300 hover:scale-105 ${borderColor} border-2 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl`} style={{ backgroundColor: '#fffbef' }}>
+    <div className={`relative w-full max-w-xs mx-auto h-32 sm:h-96 sm:w-64 overflow-hidden transition-all duration-300 hover:scale-105 ${borderColor} border-8 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl bg-gray-100`}>
       {/* Circuit board pattern background */}
       <div className="absolute inset-0 opacity-20" style={{
         backgroundImage: `
@@ -87,7 +87,7 @@ const PlayerCard = ({
                 onClick={onRemove}
                 variant="outline"
                 size="sm"
-                className="h-10 w-10 p-0 rounded-full bg-red-100 border-2 border-red-400 text-red-600 hover:bg-red-200"
+                className="h-10 w-10 p-0 rounded-full bg-red-100 border-8 border-red-600 text-red-600 hover:bg-red-200 shadow-xl"
                 type="button"
               >
                 <Trash2 className="h-4 w-4" />
@@ -105,16 +105,16 @@ const PlayerCard = ({
                 setLocalName(e.target.value);
                 if (onNameChange) onNameChange(e.target.value);
               }}
-              className="text-center font-semibold text-sm bg-green-100 border-2 border-green-400 rounded-lg h-10 focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-green-400 focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="text-center font-semibold text-sm bg-green-100 border-8 border-green-600 rounded-3xl h-10 focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-green-600 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-xl"
               readOnly={!isEditable}
             />
           </div>
           
           {/* Player Icon (Purple Circle - Right) */}
           <div className="flex-shrink-0">
-            <div className="h-10 w-10 rounded-full bg-purple-100 border-2 border-purple-400 flex items-center justify-center text-lg">
-              {getPlayerIcon()}
-            </div>
+             <div className="h-10 w-10 flex items-center justify-center text-lg text-purple-600">
+               {getPlayerIcon()}
+             </div>
           </div>
         </div>
         
@@ -126,7 +126,7 @@ const PlayerCard = ({
               onClick={() => onScoreChange(-1)}
               variant="outline"
               size="sm"
-              className="h-10 w-10 p-0 rounded-lg bg-blue-100 border-2 border-blue-400 text-blue-600 hover:bg-blue-200"
+              className="h-10 w-10 p-0 rounded-3xl bg-blue-100 border-8 border-blue-600 text-blue-600 hover:bg-blue-200 shadow-xl"
               type="button"
             >
               <Minus className="h-4 w-4" />
@@ -135,7 +135,7 @@ const PlayerCard = ({
           {!isEditable && <div className="h-10 w-10"></div>}
           
           {/* Score Display (Yellow Rectangle - Center) */}
-          <div className="flex-1 h-10 bg-yellow-100 border-2 border-yellow-400 rounded-lg flex items-center justify-center gap-2">
+          <div className="flex-1 h-10 bg-yellow-100 border-8 border-yellow-600 rounded-3xl flex items-center justify-center gap-2 shadow-xl">
             <Bitcoin className="h-4 w-4 text-yellow-600" />
             <span className={`text-lg font-bold text-yellow-800 ${isLeader ? 'animate-pulse' : ''}`}>
               {score}
@@ -148,7 +148,7 @@ const PlayerCard = ({
               onClick={() => onScoreChange(1)}
               variant="outline"
               size="sm"
-              className="h-10 w-10 p-0 rounded-lg bg-blue-100 border-2 border-blue-400 text-blue-600 hover:bg-blue-200"
+              className="h-10 w-10 p-0 rounded-3xl bg-blue-100 border-8 border-blue-600 text-blue-600 hover:bg-blue-200 shadow-xl"
               type="button"
             >
               <Plus className="h-4 w-4" />
@@ -159,51 +159,58 @@ const PlayerCard = ({
       </div>
 
       {/* Desktop Layout - Same size as GameCard */}
-      <div className="hidden md:flex p-6 space-y-4 relative z-10 h-full flex-col" style={{ backgroundColor: '#fffbef' }}>
+      <div className="hidden md:flex p-6 space-y-4 relative z-10 h-full flex-col bg-gray-100">
         {/* Remove Button - Top Right */}
         {canRemove && onRemove && (
           <Button
             onClick={onRemove}
             variant="outline"
             size="sm"
-            className={`absolute top-4 right-4 ${borderColor} border-2 text-destructive hover:bg-destructive/10 h-6 w-6 p-0 z-10 rounded-xl`}
-            style={{ backgroundColor: '#fffbef' }}
+            className="absolute top-4 right-4 border-8 border-red-600 bg-red-100 text-red-600 hover:bg-red-200 h-8 w-8 p-0 z-10 rounded-3xl shadow-xl"
             type="button"
           >
-            <Trash2 className="h-3 w-3" />
+            <Trash2 className="h-4 w-4" />
           </Button>
         )}
 
         {/* Player Icon Display - Same layout as GameCard */}
-        <div className="text-center mt-4">
-          <div className="text-4xl mb-4">{getPlayerIcon()}</div>
+        <div className="absolute top-4 left-4">
+          <div className={`w-6 h-6 ${borderColor.replace('border-', 'text-')}`}>
+            {getPlayerIcon()}
+          </div>
         </div>
 
         {/* Player Name - Same style as GameCard title */}
-        <div className="mb-6">
+        <div className="mt-4 mb-4">
           <Input
             value={localName}
             onChange={(e) => {
               setLocalName(e.target.value);
               if (onNameChange) onNameChange(e.target.value);
             }}
-            className={`text-center font-black text-xl tracking-wider uppercase ${borderColor} border-2 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0 py-2`}
-            style={{ backgroundColor: '#fffbef' }}
+            className={`text-center font-black text-2xl tracking-wider uppercase ${borderColor.replace('border-', 'text-')} border-8 ${borderColor} rounded-3xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0 py-2 bg-gray-100 shadow-xl`}
             readOnly={!isEditable}
           />
         </div>
 
         {/* Bitcoin Score Display - Center area like GameCard illustration */}
-        <div className="flex-1 flex flex-col items-center justify-center mb-6">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <Bitcoin className="h-6 w-6 text-yellow-400" />
-            <span className="text-sm text-muted-foreground font-medium">Bitcoins Mined</span>
+        <div className="flex-1 flex flex-col items-center justify-center mb-6 px-4 h-32">
+          <div className="text-6xl font-bold mb-4">
+            {getPlayerIcon()}
           </div>
-          <div className={`text-5xl font-bold text-red-500 ${isLeader ? 'animate-pulse-bitcoin' : ''}`}>
+        </div>
+
+        {/* Score Section - Fixed height container */}
+        <div className="text-center px-2 pb-4 h-20 flex flex-col items-center justify-center">
+          <div className="flex items-center justify-center space-x-2 mb-2">
+            <Bitcoin className="h-6 w-6 text-yellow-600" />
+            <span className="text-sm text-gray-600 font-medium">Bitcoins Mined</span>
+          </div>
+          <div className={`text-4xl font-bold text-yellow-800 ${isLeader ? 'animate-pulse' : ''}`}>
             {score}
           </div>
         </div>
-          
+
         {/* Score Controls - Bottom area like GameCard description */}
         {isEditable && onScoreChange && (
           <div className="flex justify-center gap-4 pb-4">
@@ -211,8 +218,7 @@ const PlayerCard = ({
               onClick={() => onScoreChange(-1)}
               variant="outline"
               size="lg"
-              className={`${borderColor} border-2 text-destructive hover:bg-gray-200 hover:text-destructive px-6 py-3 rounded-xl`}
-              style={{ backgroundColor: '#fffbef' }}
+              className="border-8 border-blue-600 bg-blue-100 text-blue-600 hover:bg-blue-200 px-6 py-3 rounded-3xl shadow-xl"
               type="button"
             >
               <Minus className="h-4 w-4" />
@@ -221,14 +227,20 @@ const PlayerCard = ({
               onClick={() => onScoreChange(1)}
               variant="outline"
               size="lg"
-              className={`${borderColor} border-2 text-primary hover:bg-gray-200 hover:text-primary px-6 py-3 rounded-xl`}
-              style={{ backgroundColor: '#fffbef' }}
+              className="border-8 border-blue-600 bg-blue-100 text-blue-600 hover:bg-blue-200 px-6 py-3 rounded-3xl shadow-xl"
               type="button"
             >
               <Plus className="h-4 w-4" />
             </Button>
           </div>
         )}
+
+        {/* Bottom right corner icon */}
+        <div className="absolute bottom-4 right-4">
+          <div className={`w-4 h-4 transform rotate-180 ${borderColor.replace('border-', 'text-')}`}>
+            {getPlayerIcon()}
+          </div>
+        </div>
       </div>
     </div>
   );
