@@ -1,67 +1,69 @@
-import { useState, useEffect } from 'react';
+
+import { useState } from 'react';
 import { Plus, Minus, Trash2, Bitcoin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-interface PlayerCardProps {
+interface Player {
+  id: string;
   name: string;
   score: number;
-  isEditable?: boolean;
-  onNameChange?: (name: string) => void;
-  onScoreChange?: (change: number) => void;
-  onRemove?: () => void;
-  canRemove?: boolean;
-  isLeader?: boolean;
-  cardColor?: 'green' | 'blue' | 'red' | 'yellow' | 'purple' | 'orange';
+  character: string;
 }
 
-const PlayerCard = ({ 
-  name, 
-  score, 
-  isEditable = false, 
-  onNameChange, 
-  onScoreChange,
-  onRemove,
-  canRemove = false,
-  isLeader = false,
-  cardColor = 'green'
+interface Character {
+  id: string;
+  name: string;
+  icon: string;
+}
+
+interface PlayerCardProps {
+  player: Player;
+  characters: Character[];
+  isLeader: boolean;
+  canRemove: boolean;
+  onUpdateScore: (playerId: string, change: number) => void;
+  onUpdateName: (playerId: string, name: string) => void;
+  onUpdateCharacter: (playerId: string, character: string) => void;
+  onRemove: (playerId: string) => void;
+}
+
+const PlayerCard = ({
+  player,
+  characters,
+  isLeader,
+  canRemove,
+  onUpdateScore,
+  onUpdateName,
+  onUpdateCharacter,
+  onRemove
 }: PlayerCardProps) => {
-  const [localName, setLocalName] = useState(name);
+  const getCharacter = (characterId: string) => {
+    return characters.find(c => c.id === characterId) || characters[0];
+  };
 
-  useEffect(() => {
-    setLocalName(name);
-  }, [name]);
-
-  const getBorderColor = () => {
-    if (isLeader) return 'border-yellow-400';
-    switch (cardColor) {
-      case 'green': return 'border-green-600';
-      case 'blue': return 'border-blue-600';
-      case 'red': return 'border-red-600';
-      case 'yellow': return 'border-yellow-600';
-      case 'purple': return 'border-purple-600';
-      case 'orange': return 'border-orange-600';
-      default: return 'border-green-600';
+  const getCharacterBorderColor = (characterId: string) => {
+    switch (characterId) {
+      case 'zerotrust':
+      case 'deskjockey':
+        return 'border-green-600';
+      case 'pingmaster':
+      case 'cloudcrafter':
+        return 'border-blue-600';
+      case 'redtaperipper':
+      case 'clutchcache':
+        return 'border-red-600';
+      default:
+        return 'border-green-600';
     }
   };
 
-  const getPlayerIcon = () => {
-    // Cycle through different character icons based on card color
-    switch (cardColor) {
-      case 'green': return '🕵️'; // ZeroTrust detective
-      case 'blue': return '📡'; // PingMaster satellite  
-      case 'red': return '⚖️'; // RedTapeRipper scales
-      case 'yellow': return '🕹️'; // ClutchCache gaming
-      case 'purple': return '💬'; // DeskJockey chat
-      case 'orange': return '⚙️'; // CloudCrafter gear
-      default: return '🕵️';
-    }
-  };
-
-  const borderColor = getBorderColor();
+  const character = getCharacter(player.character);
+  const borderColor = isLeader ? 'border-yellow-400' : getCharacterBorderColor(player.character);
 
   return (
-    <div className={`relative w-full max-w-xs mx-auto h-32 sm:h-96 sm:w-64 overflow-hidden transition-all duration-300 hover:scale-105 ${borderColor} border-2 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl bg-white`}>
+    <div className={`relative overflow-hidden transition-all duration-300 hover:scale-105 ${borderColor} border-2 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl`} style={{ backgroundColor: '#fffbef' }}>
       {/* Circuit board pattern background */}
       <div className="absolute inset-0 opacity-20" style={{
         backgroundImage: `
@@ -76,157 +78,162 @@ const PlayerCard = ({
         backgroundSize: '40px 40px, 40px 40px, 40px 40px, 40px 40px, 40px 40px, 20px 20px, 20px 20px'
       }}></div>
 
-      {/* Mobile Layout - Horizontal inspired by user drawing */}
-      <div className="md:hidden p-4 relative z-10">
-        {/* Top Row: Delete, Name, Icon */}
-        <div className="flex items-center gap-3 mb-3">
-          {/* Delete Button (Red Circle - Left) */}
+      {/* Mobile Layout - Compact */}
+      <div className="md:hidden p-3 relative z-10">
+        <div className="flex items-center justify-between gap-2">
+          {/* Left: Trash Button */}
           <div className="flex-shrink-0">
-            {canRemove && onRemove ? (
+            {canRemove && (
               <Button
-                onClick={onRemove}
+                onClick={() => onRemove(player.id)}
                 variant="outline"
                 size="sm"
-                className="h-10 w-10 p-0 rounded-full bg-white border-2 border-red-600 text-red-600 hover:bg-red-50 shadow-lg"
+                className={`${borderColor} border-2 text-destructive hover:bg-destructive/10 h-7 w-7 p-0 bg-gray-100 rounded-xl`}
+                style={{ backgroundColor: '#f3f4f6' }}
                 type="button"
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="h-3 w-3" />
               </Button>
-            ) : (
-              <div className="h-10 w-10"></div>
             )}
+            {!canRemove && <div className="h-7 w-7"></div>}
           </div>
           
-          {/* Player Name (Green Rectangle - Center) */}
-          <div className="flex-1">
-            <Input
-              value={localName}
-              onChange={(e) => {
-                setLocalName(e.target.value);
-                if (onNameChange) onNameChange(e.target.value);
-              }}
-              className="text-center font-semibold text-sm bg-white border-2 border-green-600 rounded-3xl h-10 focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-green-600 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-lg"
-              readOnly={!isEditable}
-            />
-          </div>
-          
-          {/* Player Icon (Purple Circle - Right) */}
+          {/* Character Icon */}
           <div className="flex-shrink-0">
-             <div className="h-10 w-10 flex items-center justify-center text-lg text-purple-600">
-               {getPlayerIcon()}
-             </div>
-          </div>
-        </div>
-        
-        {/* Bottom Row: Score Section */}
-        <div className="flex items-center gap-2">
-          {/* Minus Button (Red Square - Left) */}
-          {isEditable && onScoreChange && (
-            <Button
-              onClick={() => onScoreChange(-1)}
-              variant="outline"
-              size="sm"
-              className="h-10 w-10 p-0 rounded-3xl bg-white border-2 border-red-600 text-red-600 hover:bg-red-50 shadow-lg"
-              type="button"
-            >
-              <Minus className="h-4 w-4" />
-            </Button>
-          )}
-          {!isEditable && <div className="h-10 w-10"></div>}
-          
-          {/* Score Display - No border, bigger text */}
-          <div className="flex-1 h-10 bg-white rounded-3xl flex items-center justify-center gap-2 shadow-lg">
-            <Bitcoin className="h-5 w-5 text-yellow-600" />
-            <span className={`text-2xl font-bold text-gray-800 ${isLeader ? 'animate-pulse' : ''}`}>
-              {score}
-            </span>
+            <div className="text-xl">{character.icon}</div>
           </div>
           
-          {/* Plus Button (Blue Square - Right) */}
-          {isEditable && onScoreChange && (
+          {/* Center: Player Name and Character Selection */}
+          <div className="flex-1 min-w-0 space-y-1">
+            <Input
+              value={player.name}
+              onChange={(e) => onUpdateName(player.id, e.target.value)}
+              className={`text-xs font-semibold ${borderColor} border-2 h-6 px-2 text-center bg-gray-100 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0`}
+              style={{ backgroundColor: '#f3f4f6' }}
+            />
+            <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
+              <SelectTrigger className={`${borderColor} border-2 bg-input text-xs h-5 px-2 bg-gray-100 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none text-center justify-center`} style={{ backgroundColor: '#f3f4f6' }}>
+                <SelectValue className="text-center" />
+              </SelectTrigger>
+              <SelectContent className="bg-popover border-primary/30">
+                {characters.map((char) => (
+                  <SelectItem key={char.id} value={char.id} className="hover:bg-primary/20 text-xs text-center">
+                    {char.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          {/* Right: Score Controls */}
+          <div className="flex-shrink-0 flex items-center gap-1">
             <Button
-              onClick={() => onScoreChange(1)}
+              onClick={() => onUpdateScore(player.id, -1)}
               variant="outline"
               size="sm"
-              className="h-10 w-10 p-0 rounded-3xl bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 shadow-lg"
+              className={`${borderColor} border-2 text-destructive hover:bg-gray-200 hover:text-destructive h-7 w-7 p-0 bg-gray-100 rounded-xl`}
+              style={{ backgroundColor: '#f3f4f6' }}
               type="button"
             >
-              <Plus className="h-4 w-4" />
+              <Minus className="h-3 w-3" />
             </Button>
-          )}
-          {!isEditable && <div className="h-10 w-10"></div>}
+            
+            <div className="flex flex-col items-center min-w-[35px]">
+              <Bitcoin className="h-3 w-3 text-yellow-400" />
+              <div className={`text-sm font-bold text-red-500 leading-none ${isLeader ? 'animate-pulse-bitcoin' : ''}`}>
+                {player.score}
+              </div>
+            </div>
+            
+            <Button
+              onClick={() => onUpdateScore(player.id, 1)}
+              variant="outline"
+              size="sm"
+              className={`${borderColor} border-2 text-primary hover:bg-gray-200 hover:text-primary h-7 w-7 p-0 bg-gray-100 rounded-xl`}
+              style={{ backgroundColor: '#f3f4f6' }}
+              type="button"
+            >
+              <Plus className="h-3 w-3" />
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Desktop Layout - Same size as GameCard */}
-      <div className="hidden md:flex p-6 space-y-4 relative z-10 h-full flex-col bg-white">
-        {/* Remove Button - Top Right */}
-        {canRemove && onRemove && (
+      {/* Desktop Layout */}
+      <div className="hidden md:block p-6 space-y-4 relative z-10 bg-gray-100">
+        {/* Remove Button - Top Right for Desktop */}
+        {canRemove && (
           <Button
-            onClick={onRemove}
+            onClick={() => onRemove(player.id)}
             variant="outline"
             size="sm"
-            className="absolute top-2 right-2 border-2 border-red-600 bg-white text-red-600 hover:bg-red-50 h-8 w-8 p-0 z-10 rounded-3xl shadow-lg"
+            className={`absolute top-2 right-2 ${borderColor} border-2 text-destructive hover:bg-destructive/10 h-6 w-6 p-0 z-10 rounded-xl`}
+            style={{ backgroundColor: '#fffbef' }}
             type="button"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-3 w-3" />
           </Button>
         )}
 
-        {/* Player Name - Moved down from top */}
-        <div className="mt-8 mb-4">
-          <Input
-            value={localName}
-            onChange={(e) => {
-              setLocalName(e.target.value);
-              if (onNameChange) onNameChange(e.target.value);
-            }}
-            className={`text-center font-black text-2xl tracking-wider uppercase ${borderColor.replace('border-', 'text-')} border-2 ${borderColor} rounded-3xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0 py-2 bg-white shadow-lg`}
-            readOnly={!isEditable}
-          />
+        {/* Character Display */}
+        <div className="text-center">
+          <div className="text-4xl mb-2">{character.icon}</div>
+          <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
+            <SelectTrigger className={`${borderColor} border-2 text-sm rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none text-center justify-center`} style={{ backgroundColor: '#fffbef' }}>
+              <SelectValue className="text-center" />
+            </SelectTrigger>
+            <SelectContent className="bg-popover border-primary/30">
+              {characters.map((char) => (
+                <SelectItem key={char.id} value={char.id} className="hover:bg-primary/20 text-center">
+                  {char.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
-        {/* Player Icon Display - Center area */}
-        <div className="flex-1 flex flex-col items-center justify-center mb-6 px-4 h-32">
-          <div className="text-6xl mb-4">
-            {getPlayerIcon()}
-          </div>
-        </div>
+        {/* Player Name */}
+        <Input
+          value={player.name}
+          onChange={(e) => onUpdateName(player.id, e.target.value)}
+          className={`text-center font-semibold text-lg ${borderColor} border-2 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0`}
+          style={{ backgroundColor: '#fffbef' }}
+        />
 
-        {/* Score Section - Fixed height container, no border, bigger text */}
-        <div className="text-center px-2 pb-4 h-20 flex flex-col items-center justify-center">
+        {/* Bitcoin Score Display */}
+        <div className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-2">
-            <Bitcoin className="h-6 w-6 text-yellow-600" />
-            <span className="text-sm text-gray-600 font-medium">Bitcoins Mined</span>
+            <Bitcoin className="h-6 w-6 text-yellow-400" />
+            <span className="text-sm text-muted-foreground">Bitcoins Mined</span>
           </div>
-          <div className={`text-6xl font-bold text-gray-800 ${isLeader ? 'animate-pulse' : ''}`}>
-            {score}
+          <div className={`text-4xl font-bold mb-4 text-red-500 ${isLeader ? 'animate-pulse-bitcoin' : ''}`}>
+            {player.score}
           </div>
-        </div>
-
-        {/* Score Controls - Bottom area like GameCard description */}
-        {isEditable && onScoreChange && (
-          <div className="flex justify-center gap-4 pb-4">
+          
+          {/* Score Controls */}
+          <div className="flex flex-col xs:flex-row justify-center gap-2 xs:space-x-2 xs:space-y-0">
             <Button
-              onClick={() => onScoreChange(-1)}
+              onClick={() => onUpdateScore(player.id, -1)}
               variant="outline"
-              size="lg"
-              className="border-2 border-red-600 bg-white text-red-600 hover:bg-red-50 px-6 py-3 rounded-3xl shadow-lg"
+              size="sm"
+              className={`${borderColor} border-2 text-destructive hover:bg-gray-200 hover:text-destructive w-full xs:w-auto rounded-xl`}
+              style={{ backgroundColor: '#fffbef' }}
               type="button"
             >
               <Minus className="h-4 w-4" />
             </Button>
             <Button
-              onClick={() => onScoreChange(1)}
+              onClick={() => onUpdateScore(player.id, 1)}
               variant="outline"
-              size="lg"
-              className="border-2 border-blue-600 bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-3xl shadow-lg"
+              size="sm"
+              className={`${borderColor} border-2 text-primary hover:bg-gray-200 hover:text-primary w-full xs:w-auto rounded-xl`}
+              style={{ backgroundColor: '#fffbef' }}
               type="button"
             >
               <Plus className="h-4 w-4" />
             </Button>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

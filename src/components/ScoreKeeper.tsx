@@ -1,8 +1,6 @@
+
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { Button } from '@/components/ui/button';
-import { Users } from 'lucide-react';
 import GameHeader from './GameHeader';
 import GameStatus from './GameStatus';
 import PlayerCard from './PlayerCard';
@@ -12,11 +10,21 @@ interface Player {
   id: string;
   name: string;
   score: number;
+  character: string;
 }
 
+const characters = [
+  { id: 'zerotrust', name: '🔐 ZeroTrust', icon: '🕵️' },
+  { id: 'deskjockey', name: '🎧 DeskJockey', icon: '💬' },
+  { id: 'pingmaster', name: '🌐 PingMaster', icon: '📡' },
+  { id: 'redtaperipper', name: '📋 RedTapeRipper', icon: '⚖️' },
+  { id: 'clutchcache', name: '🎮 ClutchCache', icon: '🕹️' },
+  { id: 'cloudcrafter', name: '☁️ CloudCrafter', icon: '⚙️' },
+];
+
 const defaultPlayers: Player[] = [
-  { id: '1', name: 'Player 1', score: 0 },
-  { id: '2', name: 'Player 2', score: 0 }
+  { id: '1', name: 'Player 1', score: 0, character: 'zerotrust' },
+  { id: '2', name: 'Player 2', score: 0, character: 'deskjockey' }
 ];
 
 // Cookie helper functions
@@ -39,19 +47,12 @@ const getCookie = (name: string): string | null => {
 
 const ScoreKeeper = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const [players, setPlayers] = useState<Player[]>(() => {
     // Load from cookie on initialization
     const savedPlayers = getCookie('scorekeeper-players');
     if (savedPlayers) {
       try {
-        const parsed = JSON.parse(savedPlayers);
-        // Remove character field if it exists from old saves
-        return parsed.map((p: any) => ({
-          id: p.id,
-          name: p.name,
-          score: p.score
-        }));
+        return JSON.parse(savedPlayers);
       } catch (error) {
         console.log('Error parsing saved players:', error);
         return defaultPlayers;
@@ -60,47 +61,86 @@ const ScoreKeeper = () => {
     return defaultPlayers;
   });
 
-  const maxPlayers = null; // No max limit
-  const minPlayers = 1;
+  const maxPlayers = 6;
+  const minPlayers = 2;
 
   // Save to cookie whenever players state changes
   useEffect(() => {
     setCookie('scorekeeper-players', JSON.stringify(players));
+    console.log('Players saved to cookie:', players);
   }, [players]);
 
   const addPlayer = () => {
-    // No max limit check
-    const newPlayer: Player = {
-      id: crypto.randomUUID(),
-      name: `Player ${players.length + 1}`,
-      score: 0,
-    };
-    setPlayers(prevPlayers => [...prevPlayers, newPlayer]);
+    console.log('Adding player, current count:', players.length);
+    if (players.length < maxPlayers) {
+      const newPlayer: Player = {
+        id: Date.now().toString(),
+        name: `Player ${players.length + 1}`,
+        score: 0,
+        character: 'zerotrust'
+      };
+      setPlayers(prevPlayers => {
+        const updatedPlayers = [...prevPlayers, newPlayer];
+        console.log('Players after adding:', updatedPlayers);
+        return updatedPlayers;
+      });
+    }
   };
 
   const removePlayer = (playerId: string) => {
+    console.log('Removing player:', playerId, 'current count:', players.length);
     if (players.length > minPlayers) {
-      setPlayers(prevPlayers => prevPlayers.filter(p => p.id !== playerId));
+      setPlayers(prevPlayers => {
+        const updatedPlayers = prevPlayers.filter(p => p.id !== playerId);
+        console.log('Players after removing:', updatedPlayers);
+        return updatedPlayers;
+      });
     }
   };
 
   const updateScore = (playerId: string, change: number) => {
-    setPlayers(prevPlayers => 
-      prevPlayers.map(p => 
+    console.log('Updating score for player:', playerId, 'change:', change);
+    setPlayers(prevPlayers => {
+      const updatedPlayers = prevPlayers.map(p => 
         p.id === playerId ? { ...p, score: Math.max(0, p.score + change) } : p
-      )
-    );
+      );
+      console.log('Players after score update:', updatedPlayers);
+      return updatedPlayers;
+    });
   };
 
-  const updatePlayerName = (id: string, name: string) => {
-    setPlayers(players.map(p => p.id === id ? { ...p, name } : p));
+  const updatePlayerName = (playerId: string, name: string) => {
+    console.log('Updating name for player:', playerId, 'new name:', name);
+    setPlayers(prevPlayers => {
+      const updatedPlayers = prevPlayers.map(p => 
+        p.id === playerId ? { ...p, name } : p
+      );
+      console.log('Players after name update:', updatedPlayers);
+      return updatedPlayers;
+    });
+  };
+
+  const updatePlayerCharacter = (playerId: string, character: string) => {
+    console.log('Updating character for player:', playerId, 'new character:', character);
+    setPlayers(prevPlayers => {
+      const updatedPlayers = prevPlayers.map(p => 
+        p.id === playerId ? { ...p, character } : p
+      );
+      console.log('Players after character update:', updatedPlayers);
+      return updatedPlayers;
+    });
   };
 
   const resetAllScores = () => {
-    setPlayers(prevPlayers => prevPlayers.map(p => ({ ...p, score: 0 })));
+    console.log('Reset button clicked');
+    setPlayers(prevPlayers => {
+      const resetPlayers = prevPlayers.map(p => ({ ...p, score: 0 }));
+      console.log('Players reset:', resetPlayers);
+      return resetPlayers;
+    });
     toast({
       title: "Network Reset!",
-      description: "All scores have been reset to 0.",
+      description: "All mining operations have been reset to 0 bitcoins.",
     });
   };
 
@@ -113,17 +153,10 @@ const ScoreKeeper = () => {
     return players.find(p => p.score === highest);
   };
 
+  console.log('ScoreKeeper rendering with players:', players);
+
   return (
     <div className="space-y-6">
-      {/* Leader Announcement */}
-      {getLeader() && getHighestScore() > 0 && (
-        <div className="text-center p-4 bg-blue-100 rounded-lg border-2 border-blue-600">
-          <p className="text-lg font-semibold text-blue-800">
-            {getLeader()?.name} is leading with {getHighestScore()} bitcoins mined!
-          </p>
-        </div>
-      )}
-
       <GameHeader 
         playerCount={players.length}
         maxPlayers={maxPlayers}
@@ -131,42 +164,27 @@ const ScoreKeeper = () => {
         onReset={resetAllScores}
       />
 
-      <div className="text-center">
-        <Button 
-          onClick={() => navigate('/room')} 
-          variant="outline" 
-          className="bg-gray-100 rounded-3xl text-secondary hover:bg-gray-200 shadow-2xl drop-shadow-lg gap-2"
-        >
-          <Users className="h-4 w-4" />
-          Join Multiplayer Room
-        </Button>
-        <p className="text-xs text-muted-foreground mt-2">
-          Play with friends online in real-time
-        </p>
-      </div>
-
       <GameStatus 
         leader={getLeader()}
         highestScore={getHighestScore()}
       />
 
-      {/* Players Grid - More Compact, 3 columns */}
-      <div className="grid gap-3 grid-cols-1 md:grid-cols-3 max-w-4xl mx-auto">
-        {players.map((player, index) => {
+      {/* Players - Mobile List / Desktop Grid */}
+      <div className="flex flex-col space-y-3 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0">
+        {players.map((player) => {
           const isLeader = player.score === getHighestScore() && player.score > 0;
-          const cardColors = ['green', 'blue', 'red', 'yellow', 'purple', 'orange'] as const;
+          console.log('Rendering PlayerCard for:', player.id, player.name);
           return (
             <PlayerCard
               key={player.id}
-              name={player.name}
-              score={player.score}
-              isEditable
-              onNameChange={(name) => updatePlayerName(player.id, name)}
-              onScoreChange={(change) => updateScore(player.id, change)}
-              onRemove={() => removePlayer(player.id)}
-              canRemove={players.length > minPlayers}
+              player={player}
+              characters={characters}
               isLeader={isLeader}
-              cardColor={cardColors[index % cardColors.length]}
+              canRemove={players.length > minPlayers}
+              onUpdateScore={updateScore}
+              onUpdateName={updatePlayerName}
+              onUpdateCharacter={updatePlayerCharacter}
+              onRemove={removePlayer}
             />
           );
         })}

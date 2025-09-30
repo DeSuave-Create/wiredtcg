@@ -5,7 +5,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import ScrollToTop from "@/components/ScrollToTop";
 import Index from "./pages/Index";
 import Extras from "./pages/Extras";
 import FAQs from "./pages/FAQs";
@@ -14,7 +13,6 @@ import ShoppingCart from "./pages/ShoppingCart";
 import Score from "./pages/Score";
 import Founders from "./pages/Founders";
 import Solysis from "./pages/Solysis";
-import Room from "./pages/Room";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,7 +24,6 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/extras" element={<Extras />} />
@@ -36,8 +33,6 @@ const App = () => (
             <Route path="/score" element={<Score />} />
             <Route path="/founders" element={<Founders />} />
             <Route path="/solysis" element={<Solysis />} />
-            <Route path="/room" element={<Room />} />
-            <Route path="/room/:roomCode" element={<Room />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
