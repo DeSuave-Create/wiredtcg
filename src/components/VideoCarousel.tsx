@@ -18,6 +18,34 @@ interface VideoCarouselProps {
 const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [equipmentCardIndex, setEquipmentCardIndex] = useState(0);
+  const [classificationCardIndex, setClassificationCardIndex] = useState(0);
+  const [attackCardIndex, setAttackCardIndex] = useState(0);
+  const [resolutionCardIndex, setResolutionCardIndex] = useState(0);
+
+  const equipmentCards = [
+    { name: 'Computer', bg: 'bg-white', image: '/lovable-uploads/equipment-computer.png' },
+    { name: 'Cabling', bg: 'bg-white', image: '/lovable-uploads/equipment-cabling.png' },
+    { name: 'Equipment', bg: 'bg-gray-100', image: null }
+  ];
+
+  const classificationCards = [
+    { name: 'Classification 1', bg: 'bg-gray-100' },
+    { name: 'Classification 2', bg: 'bg-gray-100' },
+    { name: 'Classification 3', bg: 'bg-gray-100' }
+  ];
+
+  const attackCards = [
+    { name: 'Attack 1', bg: 'bg-gray-100' },
+    { name: 'Attack 2', bg: 'bg-gray-100' },
+    { name: 'Attack 3', bg: 'bg-gray-100' }
+  ];
+
+  const resolutionCards = [
+    { name: 'Resolution 1', bg: 'bg-gray-100' },
+    { name: 'Resolution 2', bg: 'bg-gray-100' },
+    { name: 'Resolution 3', bg: 'bg-gray-100' }
+  ];
 
   const handlePrevious = () => {
     setIsPlaying(false);
@@ -33,6 +61,22 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
     setIsPlaying(true);
   };
 
+  const cycleEquipmentCard = () => {
+    setEquipmentCardIndex((prev) => (prev + 1) % equipmentCards.length);
+  };
+
+  const cycleClassificationCard = () => {
+    setClassificationCardIndex((prev) => (prev + 1) % classificationCards.length);
+  };
+
+  const cycleAttackCard = () => {
+    setAttackCardIndex((prev) => (prev + 1) % attackCards.length);
+  };
+
+  const cycleResolutionCard = () => {
+    setResolutionCardIndex((prev) => (prev + 1) % resolutionCards.length);
+  };
+
   const currentVideo = videos[currentIndex];
 
   return (
@@ -42,28 +86,72 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
         {/* Left Card Stacks */}
         <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4">
           {/* Top Left - Green Equipment Cards */}
-          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50">
-            <div className="absolute inset-0 bg-gray-100 border-green-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-1 translate-y-1 group-hover:-rotate-12 group-hover:-translate-x-2">
-              Equipment
-            </div>
-            <div className="absolute inset-0 bg-white border-green-600 border-3 rounded-xl shadow-lg overflow-hidden transition-all duration-300 transform translate-x-0.5 translate-y-0.5 z-10 p-1">
-              <img src="/lovable-uploads/equipment-cabling.png" alt="Cabling Equipment" className="w-full h-full object-contain" style={{ imageRendering: 'crisp-edges' }} />
-            </div>
-            <div className="absolute inset-0 bg-white border-green-600 border-3 rounded-xl shadow-lg overflow-hidden transition-all duration-300 z-20 group-hover:rotate-12 group-hover:translate-x-2 p-1">
-              <img src="/lovable-uploads/equipment-computer.png" alt="Computer Equipment" className="w-full h-full object-contain" style={{ imageRendering: 'crisp-edges' }} />
+          <div 
+            className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
+            onClick={cycleEquipmentCard}
+          >
+            {equipmentCards.map((card, idx) => {
+              const offset = (idx - equipmentCardIndex + equipmentCards.length) % equipmentCards.length;
+              const rotation = offset === 0 ? 'group-hover:rotate-12' : offset === 1 ? '' : 'group-hover:-rotate-12';
+              const translation = offset === 0 ? 'group-hover:translate-x-2' : offset === 1 ? 'translate-x-0.5 translate-y-0.5' : 'translate-x-1 translate-y-1 group-hover:-translate-x-2';
+              const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
+              
+              return (
+                <div
+                  key={idx}
+                  className={`absolute inset-0 ${card.bg} border-green-600 border-3 rounded-xl shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex} ${card.image ? 'p-1' : 'flex items-center justify-center'}`}
+                >
+                  {card.image ? (
+                    <img src={card.image} alt={card.name} className="w-full h-full object-contain" style={{ imageRendering: 'crisp-edges' }} />
+                  ) : (
+                    <span className="text-[10px] text-muted-foreground">{card.name}</span>
+                  )}
+                </div>
+              );
+            })}
+            {/* Card indicator dots */}
+            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
+              {equipmentCards.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                    idx === equipmentCardIndex ? 'bg-green-600' : 'bg-gray-300'
+                  }`}
+                />
+              ))}
             </div>
           </div>
           
           {/* Bottom Left - Blue Classification Cards */}
-          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50">
-            <div className="absolute inset-0 bg-gray-100 border-blue-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-1 translate-y-1 group-hover:-rotate-12 group-hover:-translate-x-2">
-              Classification
-            </div>
-            <div className="absolute inset-0 bg-gray-100 border-blue-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-0.5 translate-y-0.5 z-10">
-              Classification
-            </div>
-            <div className="absolute inset-0 bg-gray-100 border-blue-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 z-20 group-hover:rotate-12 group-hover:translate-x-2">
-              Classification
+          <div 
+            className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
+            onClick={cycleClassificationCard}
+          >
+            {classificationCards.map((card, idx) => {
+              const offset = (idx - classificationCardIndex + classificationCards.length) % classificationCards.length;
+              const rotation = offset === 0 ? 'group-hover:rotate-12' : offset === 1 ? '' : 'group-hover:-rotate-12';
+              const translation = offset === 0 ? 'group-hover:translate-x-2' : offset === 1 ? 'translate-x-0.5 translate-y-0.5' : 'translate-x-1 translate-y-1 group-hover:-translate-x-2';
+              const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
+              
+              return (
+                <div
+                  key={idx}
+                  className={`absolute inset-0 ${card.bg} border-blue-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
+                >
+                  {card.name}
+                </div>
+              );
+            })}
+            {/* Card indicator dots */}
+            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
+              {classificationCards.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                    idx === classificationCardIndex ? 'bg-blue-600' : 'bg-gray-300'
+                  }`}
+                />
+              ))}
             </div>
           </div>
         </div>
@@ -130,28 +218,68 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
         {/* Right Card Stacks */}
         <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4 items-end">
           {/* Top Right - Red Attack Cards */}
-          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50">
-            <div className="absolute inset-0 bg-gray-100 border-red-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-1 translate-y-1 group-hover:rotate-12 group-hover:translate-x-2">
-              Attack
-            </div>
-            <div className="absolute inset-0 bg-gray-100 border-red-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-0.5 translate-y-0.5 z-10">
-              Attack
-            </div>
-            <div className="absolute inset-0 bg-gray-100 border-red-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 z-20 group-hover:-rotate-12 group-hover:-translate-x-2">
-              Attack
+          <div 
+            className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
+            onClick={cycleAttackCard}
+          >
+            {attackCards.map((card, idx) => {
+              const offset = (idx - attackCardIndex + attackCards.length) % attackCards.length;
+              const rotation = offset === 0 ? 'group-hover:-rotate-12' : offset === 1 ? '' : 'group-hover:rotate-12';
+              const translation = offset === 0 ? 'group-hover:-translate-x-2' : offset === 1 ? 'translate-x-0.5 translate-y-0.5' : 'translate-x-1 translate-y-1 group-hover:translate-x-2';
+              const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
+              
+              return (
+                <div
+                  key={idx}
+                  className={`absolute inset-0 ${card.bg} border-red-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
+                >
+                  {card.name}
+                </div>
+              );
+            })}
+            {/* Card indicator dots */}
+            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
+              {attackCards.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                    idx === attackCardIndex ? 'bg-red-600' : 'bg-gray-300'
+                  }`}
+                />
+              ))}
             </div>
           </div>
           
           {/* Bottom Right - Red Resolution Cards */}
-          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50">
-            <div className="absolute inset-0 bg-gray-100 border-red-700 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-1 translate-y-1 group-hover:rotate-12 group-hover:translate-x-2">
-              Resolution
-            </div>
-            <div className="absolute inset-0 bg-gray-100 border-red-700 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-0.5 translate-y-0.5 z-10">
-              Resolution
-            </div>
-            <div className="absolute inset-0 bg-gray-100 border-red-700 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 z-20 group-hover:-rotate-12 group-hover:-translate-x-2">
-              Resolution
+          <div 
+            className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
+            onClick={cycleResolutionCard}
+          >
+            {resolutionCards.map((card, idx) => {
+              const offset = (idx - resolutionCardIndex + resolutionCards.length) % resolutionCards.length;
+              const rotation = offset === 0 ? 'group-hover:-rotate-12' : offset === 1 ? '' : 'group-hover:rotate-12';
+              const translation = offset === 0 ? 'group-hover:-translate-x-2' : offset === 1 ? 'translate-x-0.5 translate-y-0.5' : 'translate-x-1 translate-y-1 group-hover:translate-x-2';
+              const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
+              
+              return (
+                <div
+                  key={idx}
+                  className={`absolute inset-0 ${card.bg} border-red-700 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
+                >
+                  {card.name}
+                </div>
+              );
+            })}
+            {/* Card indicator dots */}
+            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
+              {resolutionCards.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                    idx === resolutionCardIndex ? 'bg-red-700' : 'bg-gray-300'
+                  }`}
+                />
+              ))}
             </div>
           </div>
         </div>
