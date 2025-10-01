@@ -39,20 +39,31 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
     <div className={`space-y-6 ${className}`}>
       {/* Video Display with Card Images */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Left Card Images - Fan Layout */}
-        <div className="lg:col-span-2 flex items-center justify-center">
-          <div className="relative w-32 h-48 lg:w-40 lg:h-56">
-            {/* Card 1 - Bottom/Left */}
-            <div className="absolute inset-0 bg-gray-100 border-green-600 border-4 rounded-2xl shadow-xl aspect-[2/3] flex items-center justify-center transform -rotate-12 origin-bottom hover:scale-105 transition-transform">
-              <span className="text-xs text-muted-foreground">Card 1</span>
+        {/* Left Card Stacks */}
+        <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4">
+          {/* Top Left - Green Equipment Cards */}
+          <div className="relative w-20 h-28 lg:w-24 lg:h-32">
+            <div className="absolute inset-0 bg-gray-100 border-green-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transform translate-x-1 translate-y-1">
+              Equipment
             </div>
-            {/* Card 2 - Middle */}
-            <div className="absolute inset-0 bg-gray-100 border-blue-600 border-4 rounded-2xl shadow-xl aspect-[2/3] flex items-center justify-center transform hover:scale-105 transition-transform z-10">
-              <span className="text-xs text-muted-foreground">Card 2</span>
+            <div className="absolute inset-0 bg-gray-100 border-green-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transform translate-x-0.5 translate-y-0.5 z-10">
+              Equipment
             </div>
-            {/* Card 3 - Top/Right */}
-            <div className="absolute inset-0 bg-gray-100 border-red-600 border-4 rounded-2xl shadow-xl aspect-[2/3] flex items-center justify-center transform rotate-12 origin-bottom hover:scale-105 transition-transform">
-              <span className="text-xs text-muted-foreground">Card 3</span>
+            <div className="absolute inset-0 bg-gray-100 border-green-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground z-20">
+              Equipment
+            </div>
+          </div>
+          
+          {/* Bottom Left - Blue Classification Cards */}
+          <div className="relative w-20 h-28 lg:w-24 lg:h-32">
+            <div className="absolute inset-0 bg-gray-100 border-blue-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transform translate-x-1 translate-y-1">
+              Classification
+            </div>
+            <div className="absolute inset-0 bg-gray-100 border-blue-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transform translate-x-0.5 translate-y-0.5 z-10">
+              Classification
+            </div>
+            <div className="absolute inset-0 bg-gray-100 border-blue-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground z-20">
+              Classification
             </div>
           </div>
         </div>
@@ -116,20 +127,31 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
           </div>
         </div>
 
-        {/* Right Card Images - Fan Layout */}
-        <div className="lg:col-span-2 flex items-center justify-center">
-          <div className="relative w-32 h-48 lg:w-40 lg:h-56">
-            {/* Card 4 - Bottom/Right */}
-            <div className="absolute inset-0 bg-gray-100 border-green-600 border-4 rounded-2xl shadow-xl aspect-[2/3] flex items-center justify-center transform rotate-12 origin-bottom hover:scale-105 transition-transform">
-              <span className="text-xs text-muted-foreground">Card 4</span>
+        {/* Right Card Stacks */}
+        <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4 items-end">
+          {/* Top Right - Red Attack Cards */}
+          <div className="relative w-20 h-28 lg:w-24 lg:h-32">
+            <div className="absolute inset-0 bg-gray-100 border-red-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transform translate-x-1 translate-y-1">
+              Attack
             </div>
-            {/* Card 5 - Middle */}
-            <div className="absolute inset-0 bg-gray-100 border-blue-600 border-4 rounded-2xl shadow-xl aspect-[2/3] flex items-center justify-center transform hover:scale-105 transition-transform z-10">
-              <span className="text-xs text-muted-foreground">Card 5</span>
+            <div className="absolute inset-0 bg-gray-100 border-red-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transform translate-x-0.5 translate-y-0.5 z-10">
+              Attack
             </div>
-            {/* Card 6 - Top/Left */}
-            <div className="absolute inset-0 bg-gray-100 border-red-600 border-4 rounded-2xl shadow-xl aspect-[2/3] flex items-center justify-center transform -rotate-12 origin-bottom hover:scale-105 transition-transform">
-              <span className="text-xs text-muted-foreground">Card 6</span>
+            <div className="absolute inset-0 bg-gray-100 border-red-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground z-20">
+              Attack
+            </div>
+          </div>
+          
+          {/* Bottom Right - Red Resolution Cards */}
+          <div className="relative w-20 h-28 lg:w-24 lg:h-32">
+            <div className="absolute inset-0 bg-gray-100 border-red-700 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transform translate-x-1 translate-y-1">
+              Resolution
+            </div>
+            <div className="absolute inset-0 bg-gray-100 border-red-700 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transform translate-x-0.5 translate-y-0.5 z-10">
+              Resolution
+            </div>
+            <div className="absolute inset-0 bg-gray-100 border-red-700 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground z-20">
+              Resolution
             </div>
           </div>
         </div>
