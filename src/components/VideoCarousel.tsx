@@ -80,9 +80,19 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
   const currentVideo = videos[currentIndex];
 
   return (
-    <div className={`space-y-6 ${className}`}>
+    <div className={`space-y-6 ${className} relative`}>
+      {/* Ghost Logo Background */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5">
+        <img 
+          src="/wire-logo-official.png" 
+          alt="WIRED Background Logo" 
+          className="w-auto"
+          style={{ height: '90%', objectFit: 'contain' }}
+        />
+      </div>
+
       {/* Video Display with Card Images */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 relative z-10">
         {/* Left Card Stacks */}
         <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4">
           {/* Top Left - Green Equipment Cards */}
@@ -290,13 +300,13 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
       </div>
 
       {/* Video Info */}
-      <div className="bg-gray-100 border-green-600 border-2 rounded-3xl p-6 shadow-2xl drop-shadow-lg">
+      <div className="bg-gray-100 border-green-600 border-2 rounded-3xl p-6 shadow-2xl drop-shadow-lg relative z-10">
         <h3 className="text-2xl font-bold text-green-600 mb-3">{currentVideo.title}</h3>
         <p className="text-muted-foreground">{currentVideo.description}</p>
       </div>
 
       {/* Thumbnail Navigation */}
-      <div className="flex gap-3 overflow-x-auto pb-2 justify-center">
+      <div className="flex gap-3 overflow-x-auto pb-2 justify-center relative z-10">
         {videos.map((video, index) => (
           <button
             key={video.id}
