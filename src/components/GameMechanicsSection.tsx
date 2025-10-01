@@ -27,13 +27,13 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
     { name: 'Classification', bg: 'bg-gray-100', image: null }
   ];
 
-  // Auto-rotate cards every 3 seconds
+  // Auto-rotate cards every 4 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setEquipmentIndex((prev) => (prev + 1) % equipmentCards.length);
       setAttackIndex((prev) => (prev + 1) % attackCards.length);
       setClassificationIndex((prev) => (prev + 1) % classificationCards.length);
-    }, 3000);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, []);
