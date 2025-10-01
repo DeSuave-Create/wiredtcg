@@ -311,3 +311,30 @@
 .light .animate-pulse-bitcoin {
   animation: pulse-bitcoin-light 2s infinite;
 }
+
+/* Card deck animations */
+@keyframes slideToFront {
+  0% {
+    transform: translateX(1px) translateY(1px) scale(0.98);
+    opacity: 0.8;
+    z-index: 0;
+  }
+  100% {
+    transform: translateX(0) translateY(0) scale(1);
+    opacity: 1;
+    z-index: 20;
+  }
+}
+
+@keyframes slideToBack {
+  0% {
+    transform: translateX(0) translateY(0) scale(1);
+    opacity: 1;
+    z-index: 20;
+  }
+  100% {
+    transform: translateX(1px) translateY(1px) scale(0.98);
+    opacity: 0.8;
+    z-index: 0;
+  }
+}

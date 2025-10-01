@@ -65,8 +65,11 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
             
             return (
               <div
-                key={idx}
-                className={`absolute inset-0 ${card.bg} ${borderColor} border-4 rounded-xl shadow-2xl drop-shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex} ${card.image ? 'p-2' : 'flex items-center justify-center'}`}
+                key={`${idx}-${currentIndex}`}
+                className={`absolute inset-0 ${card.bg} ${borderColor} border-4 rounded-xl shadow-2xl drop-shadow-lg overflow-hidden transform ${translation} ${rotation} ${zIndex} ${card.image ? 'p-2' : 'flex items-center justify-center'}`}
+                style={{
+                  animation: offset === 0 ? 'slideToFront 0.6s ease-out' : offset === cards.length - 1 ? 'slideToBack 0.6s ease-out' : 'none',
+                }}
               >
                 {card.image ? (
                   <img src={card.image} alt={card.name} className="w-full h-full object-contain" style={{ imageRendering: 'crisp-edges' }} />
