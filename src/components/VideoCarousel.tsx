@@ -298,12 +298,6 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
         </div>
       </div>
 
-      {/* Video Info */}
-      <div className="bg-gray-100 border-green-600 border-2 rounded-3xl p-6 shadow-2xl drop-shadow-lg relative z-10">
-        <h3 className="text-2xl font-bold text-green-600 mb-3">{currentVideo.title}</h3>
-        <p className="text-muted-foreground">{currentVideo.description}</p>
-      </div>
-
       {/* Thumbnail Navigation */}
       <div className="flex gap-3 overflow-x-auto pb-2 justify-center relative z-10">
         {videos.map((video, index) => (
