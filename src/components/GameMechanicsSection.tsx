@@ -77,7 +77,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
         setTimeout(() => {
           setIsShuffling(false);
           setCycleCount({ equipment: 0, attack: 0, classification: 0 });
-        }, 4000); // Shuffle + deal animation duration
+        }, 5000); // 5 second shuffle + deal animation duration
       }
     }
   }, [cycleCount]);
