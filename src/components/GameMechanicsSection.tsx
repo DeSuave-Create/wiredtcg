@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface GameMechanicsSectionProps {
   cardBackgroundImage?: string;
@@ -26,6 +26,17 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
     { name: 'Field Tech', bg: 'bg-blue-50', image: '/lovable-uploads/classification-fieldtech.png' },
     { name: 'Classification', bg: 'bg-gray-100', image: null }
   ];
+
+  // Auto-rotate cards every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setEquipmentIndex((prev) => (prev + 1) % equipmentCards.length);
+      setAttackIndex((prev) => (prev + 1) % attackCards.length);
+      setClassificationIndex((prev) => (prev + 1) % classificationCards.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const cycleEquipment = () => {
     setEquipmentIndex((prev) => (prev + 1) % equipmentCards.length);
