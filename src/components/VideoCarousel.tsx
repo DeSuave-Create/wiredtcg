@@ -296,7 +296,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
       </div>
 
       {/* Thumbnail Navigation */}
-      <div className="flex gap-3 overflow-x-auto pb-2">
+      <div className="flex gap-3 overflow-x-auto pb-2 justify-center">
         {videos.map((video, index) => (
           <button
             key={video.id}
