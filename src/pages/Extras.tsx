@@ -97,27 +97,10 @@ const Extras = () => {
           {/* Connection Animation */}
           <ConnectionLines className="my-2" />
 
-          {/* Video Tutorials Section with Ghost Logo Container */}
-          <div className="relative overflow-y-hidden pb-6">
-            {/* Ghost Logo Background */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-20 z-0" style={{ width: '150%', height: '150%' }}>
-              <img 
-                src="/wire-logo-official.png" 
-                alt="WIRED Background Logo" 
-                className="w-full h-full object-contain"
-              />
-            </div>
-            
-            {/* Video Tutorials Title Only */}
-            <ContentSection title="Video Tutorials">
-              <div></div>
-            </ContentSection>
-            
-            {/* Video Carousel Section */}
-            <div className="relative z-10">
-              <VideoCarousel videos={tutorialVideos} />
-            </div>
-          </div>
+          {/* Video Carousel Section */}
+          <ContentSection title="Video Tutorials">
+            <VideoCarousel videos={tutorialVideos} />
+          </ContentSection>
           
           {/* Connection Animation */}
           <ConnectionLines className="my-2" />
