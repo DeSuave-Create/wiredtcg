@@ -8,6 +8,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
   const [equipmentIndex, setEquipmentIndex] = useState(0);
   const [attackIndex, setAttackIndex] = useState(0);
   const [classificationIndex, setClassificationIndex] = useState(0);
+  const [isHovering, setIsHovering] = useState(false);
 
   const equipmentCards = [
     { name: 'Computer', bg: 'bg-green-50', image: '/lovable-uploads/equipment-computer.png' },
@@ -27,8 +28,10 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
     { name: 'Classification', bg: 'bg-gray-100', image: null }
   ];
 
-  // Auto-rotate cards every 4 seconds
+  // Auto-rotate cards every 4 seconds (pause when hovering)
   useEffect(() => {
+    if (isHovering) return;
+    
     const interval = setInterval(() => {
       setEquipmentIndex((prev) => (prev + 1) % equipmentCards.length);
       setAttackIndex((prev) => (prev + 1) % attackCards.length);
@@ -36,7 +39,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
     }, 4000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isHovering]);
 
   const cycleEquipment = () => {
     setEquipmentIndex((prev) => (prev + 1) % equipmentCards.length);
@@ -51,24 +54,38 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
   };
 
   const renderCard = (cards: typeof equipmentCards, currentIndex: number, onClick: () => void, borderColor: string) => {
+    const [isHovered, setIsHovered] = useState(false);
+    
     return (
       <div className="relative">
         <div 
-          className={`relative w-48 h-64 lg:w-56 lg:h-80 group cursor-pointer transition-transform duration-300 hover:scale-110 hover:z-50`}
+          className={`relative w-48 h-64 lg:w-56 lg:h-80 group cursor-pointer transition-transform duration-300 ${!isHovered && 'hover:scale-110'} hover:z-50`}
           onClick={onClick}
+          onMouseEnter={() => {
+            setIsHovered(true);
+            setIsHovering(true);
+          }}
+          onMouseLeave={() => {
+            setIsHovered(false);
+            setIsHovering(false);
+          }}
         >
           {cards.map((card, idx) => {
             const offset = (idx - currentIndex + cards.length) % cards.length;
-            const rotation = offset === 0 ? 'group-hover:rotate-6' : offset === 1 ? '' : 'group-hover:-rotate-6';
-            const translation = offset === 0 ? 'group-hover:translate-x-1' : offset === 1 ? 'translate-x-0.5 translate-y-0.5' : 'translate-x-1 translate-y-1 group-hover:-translate-x-1';
+            const rotation = isHovered 
+              ? offset === 0 ? 'rotate-12' : offset === 1 ? 'rotate-6' : 'rotate-0'
+              : offset === 0 ? 'group-hover:rotate-6' : offset === 1 ? '' : 'group-hover:-rotate-6';
+            const translation = isHovered
+              ? offset === 0 ? '-translate-x-4 -translate-y-2' : offset === 1 ? 'translate-x-0 translate-y-0' : 'translate-x-4 translate-y-2'
+              : offset === 0 ? 'group-hover:translate-x-1' : offset === 1 ? 'translate-x-0.5 translate-y-0.5' : 'translate-x-1 translate-y-1 group-hover:-translate-x-1';
             const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
             
             return (
               <div
                 key={`${idx}-${currentIndex}`}
-                className={`absolute inset-0 ${card.bg} ${borderColor} border-4 rounded-xl shadow-2xl drop-shadow-lg overflow-hidden transform ${translation} ${rotation} ${zIndex} ${card.image ? 'p-2' : 'flex items-center justify-center'}`}
+                className={`absolute inset-0 ${card.bg} ${borderColor} border-4 rounded-xl shadow-2xl drop-shadow-lg overflow-hidden transform ${translation} ${rotation} ${zIndex} ${card.image ? 'p-2' : 'flex items-center justify-center'} transition-all duration-300`}
                 style={{
-                  animation: offset === 0 ? 'slideToFront 1s ease-in-out' : offset === cards.length - 1 ? 'slideToBack 1s ease-in-out' : 'none',
+                  animation: !isHovered && (offset === 0 ? 'slideToFront 1s ease-in-out' : offset === cards.length - 1 ? 'slideToBack 1s ease-in-out' : 'none'),
                 }}
               >
                 {card.image ? (
