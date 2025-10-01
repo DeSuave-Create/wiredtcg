@@ -217,7 +217,40 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
 
         {/* Right Card Stacks */}
         <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4 items-end">
-          {/* Top Right - Blue Classification Cards */}
+          {/* Top Right - Red Resolution Cards */}
+          <div 
+            className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
+            onClick={cycleResolutionCard}
+          >
+            {resolutionCards.map((card, idx) => {
+              const offset = (idx - resolutionCardIndex + resolutionCards.length) % resolutionCards.length;
+              const rotation = offset === 0 ? 'group-hover:-rotate-12' : offset === 1 ? '' : 'group-hover:rotate-12';
+              const translation = offset === 0 ? 'group-hover:-translate-x-2' : offset === 1 ? 'translate-x-0.5 translate-y-0.5' : 'translate-x-1 translate-y-1 group-hover:translate-x-2';
+              const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
+              
+              return (
+                <div
+                  key={idx}
+                  className={`absolute inset-0 ${card.bg} border-red-700 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
+                >
+                  {card.name}
+                </div>
+              );
+            })}
+            {/* Card indicator dots */}
+            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
+              {resolutionCards.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                    idx === resolutionCardIndex ? 'bg-red-700' : 'bg-gray-300'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+          
+          {/* Bottom Right - Blue Classification Cards */}
           <div 
             className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
             onClick={cycleClassificationCard}
@@ -248,39 +281,6 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
                   key={idx}
                   className={`w-1.5 h-1.5 rounded-full transition-colors ${
                     idx === classificationCardIndex ? 'bg-blue-600' : 'bg-gray-300'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-          
-          {/* Bottom Right - Red Resolution Cards */}
-          <div 
-            className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
-            onClick={cycleResolutionCard}
-          >
-            {resolutionCards.map((card, idx) => {
-              const offset = (idx - resolutionCardIndex + resolutionCards.length) % resolutionCards.length;
-              const rotation = offset === 0 ? 'group-hover:-rotate-12' : offset === 1 ? '' : 'group-hover:rotate-12';
-              const translation = offset === 0 ? 'group-hover:-translate-x-2' : offset === 1 ? 'translate-x-0.5 translate-y-0.5' : 'translate-x-1 translate-y-1 group-hover:translate-x-2';
-              const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
-              
-              return (
-                <div
-                  key={idx}
-                  className={`absolute inset-0 ${card.bg} border-red-700 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
-                >
-                  {card.name}
-                </div>
-              );
-            })}
-            {/* Card indicator dots */}
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
-              {resolutionCards.map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                    idx === resolutionCardIndex ? 'bg-red-700' : 'bg-gray-300'
                   }`}
                 />
               ))}
