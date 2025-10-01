@@ -30,9 +30,9 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
   ];
 
   const classificationCards = [
-    { name: 'Classification 1', bg: 'bg-gray-100' },
-    { name: 'Classification 2', bg: 'bg-gray-100' },
-    { name: 'Classification 3', bg: 'bg-gray-100' }
+    { name: 'Facilities', bg: 'bg-white', image: '/lovable-uploads/classification-facilities.png' },
+    { name: 'Field Tech', bg: 'bg-white', image: '/lovable-uploads/classification-fieldtech.png' },
+    { name: 'Classification', bg: 'bg-gray-100', image: null }
   ];
 
   const attackCards = [
@@ -136,9 +136,13 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
               return (
                 <div
                   key={idx}
-                  className={`absolute inset-0 ${card.bg} border-blue-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
+                  className={`absolute inset-0 ${card.bg} border-blue-600 border-3 rounded-xl shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex} ${card.image ? 'p-1' : 'flex items-center justify-center'}`}
                 >
-                  {card.name}
+                  {card.image ? (
+                    <img src={card.image} alt={card.name} className="w-full h-full object-contain" style={{ imageRendering: 'crisp-edges' }} />
+                  ) : (
+                    <span className="text-[10px] text-muted-foreground">{card.name}</span>
+                  )}
                 </div>
               );
             })}
