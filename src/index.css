@@ -332,15 +332,16 @@
     opacity: 1;
     z-index: 20;
   }
-  50% {
-    transform: translateX(120px) translateY(-10px) scale(1.05) rotate(8deg);
-    opacity: 0.7;
+  30% {
+    transform: translateX(80px) translateY(-10px) scale(1.05) rotate(8deg);
+    opacity: 0.3;
     z-index: 25;
   }
   100% {
     transform: translateX(1px) translateY(1px) scale(0.9) rotate(2deg);
-    opacity: 0.6;
+    opacity: 0;
     z-index: 0;
   }
 }
+
 
