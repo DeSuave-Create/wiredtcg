@@ -2,22 +2,54 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
 import ImageSection from '@/components/ImageSection';
-import VideoSection from '@/components/VideoSection';
+import VideoCarousel from '@/components/VideoCarousel';
 import ConnectionLines from '@/components/ConnectionLines';
 import TextSection from '@/components/TextSection';
 import { Button } from '@/components/ui/button';
-import { Download, Play, BookOpen, FileText } from 'lucide-react';
+import { Download, BookOpen, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const Extras = () => {
   const { toast } = useToast();
 
-  const handleWatchTutorial = () => {
-    toast({
-      title: "Tutorial Video",
-      description: "Loading the complete gameplay tutorial...",
-    });
-  };
+  // Mock video data for the carousel
+  const tutorialVideos = [
+    {
+      id: '1',
+      src: 'https://www.youtube.com/embed/Aq5WXmQQooo',
+      title: 'Official Gameplay Tutorial',
+      description: 'Learn the basics of WIRED in this comprehensive tutorial covering setup, gameplay mechanics, and winning strategies.',
+      isYouTube: true
+    },
+    {
+      id: '2',
+      src: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      title: 'Advanced Strategies',
+      description: 'Master advanced network building techniques and learn how to counter your opponents effectively.',
+      isYouTube: true
+    },
+    {
+      id: '3',
+      src: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      title: 'Card Abilities Guide',
+      description: 'Detailed breakdown of all card types, their abilities, and optimal usage scenarios for competitive play.',
+      isYouTube: true
+    },
+    {
+      id: '4',
+      src: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      title: 'Tournament Tips',
+      description: 'Pro tips for tournament play including deck optimization, timing strategies, and reading your opponents.',
+      isYouTube: true
+    },
+    {
+      id: '5',
+      src: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      title: 'Multiplayer Modes',
+      description: 'Explore different multiplayer variants and team play strategies for 3-6 players.',
+      isYouTube: true
+    }
+  ];
 
   const handleDownload = (item: string) => {
     toast({
@@ -65,37 +97,9 @@ const Extras = () => {
           {/* Connection Animation */}
           <ConnectionLines className="my-2" />
 
-          {/* Gameplay Video Section */}
-          <ContentSection title="How to Play">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div>
-              <VideoSection
-                src="https://www.youtube.com/embed/Aq5WXmQQooo"
-                title="Official Gameplay Tutorial"
-                description="Learn the basics of WIRED in this comprehensive tutorial covering setup, gameplay mechanics, and winning strategies."
-                isYouTube={true}
-                useLogoThumbnail={true}
-              />
-            </div>
-              <div className="space-y-6">
-                <TextSection title="Quick Start Guide">
-                  <ol className="list-decimal list-inside space-y-2 text-sm">
-                    <li>Dealer shuffles and deals out 6 cards to each player.</li>
-                    <li>Player to the left of Dealer goes first</li>
-                    <li>Player turn goes as follows: Trade, 3 Moves, Discard, Draw</li>
-                    <li>Players take turns building their networks and disabling other players networks.</li>
-                    <li>First player to 25 points wins</li>
-                  </ol>
-                </TextSection>
-                <Button 
-                  onClick={handleWatchTutorial}
-                  className="bg-green-600 text-white hover:bg-green-700 neon-glow"
-                >
-                  <Play className="h-4 w-4 mr-2" />
-                  Watch Full Tutorial
-                </Button>
-              </div>
-            </div>
+          {/* Video Carousel Section */}
+          <ContentSection title="Video Tutorials">
+            <VideoCarousel videos={tutorialVideos} />
           </ContentSection>
           
           {/* Connection Animation */}
