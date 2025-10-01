@@ -42,27 +42,27 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
         {/* Left Card Stacks */}
         <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4">
           {/* Top Left - Green Equipment Cards */}
-          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer bg-green-100 rounded-xl p-2">
-            <div className="absolute inset-0 bg-gray-100 border-green-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-1 translate-y-1 group-hover:-rotate-12 group-hover:-translate-x-2 m-2">
+          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer">
+            <div className="absolute inset-0 bg-gray-100 border-green-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-1 translate-y-1 group-hover:-rotate-12 group-hover:-translate-x-2">
               Equipment
             </div>
-            <div className="absolute inset-0 bg-gray-100 border-green-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-0.5 translate-y-0.5 z-10 m-2">
+            <div className="absolute inset-0 bg-gray-100 border-green-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-0.5 translate-y-0.5 z-10">
               Equipment
             </div>
-            <div className="absolute inset-0 bg-gray-100 border-green-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 z-20 group-hover:rotate-12 group-hover:translate-x-2 m-2">
+            <div className="absolute inset-0 bg-gray-100 border-green-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 z-20 group-hover:rotate-12 group-hover:translate-x-2">
               Equipment
             </div>
           </div>
           
           {/* Bottom Left - Blue Classification Cards */}
-          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer bg-blue-100 rounded-xl p-2">
-            <div className="absolute inset-0 bg-gray-100 border-blue-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-1 translate-y-1 group-hover:-rotate-12 group-hover:-translate-x-2 m-2">
+          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer">
+            <div className="absolute inset-0 bg-gray-100 border-blue-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-1 translate-y-1 group-hover:-rotate-12 group-hover:-translate-x-2">
               Classification
             </div>
-            <div className="absolute inset-0 bg-gray-100 border-blue-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-0.5 translate-y-0.5 z-10 m-2">
+            <div className="absolute inset-0 bg-gray-100 border-blue-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-0.5 translate-y-0.5 z-10">
               Classification
             </div>
-            <div className="absolute inset-0 bg-gray-100 border-blue-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 z-20 group-hover:rotate-12 group-hover:translate-x-2 m-2">
+            <div className="absolute inset-0 bg-gray-100 border-blue-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 z-20 group-hover:rotate-12 group-hover:translate-x-2">
               Classification
             </div>
           </div>
@@ -130,27 +130,27 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
         {/* Right Card Stacks */}
         <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4 items-end">
           {/* Top Right - Red Attack Cards */}
-          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer bg-red-100 rounded-xl p-2">
-            <div className="absolute inset-0 bg-gray-100 border-red-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-1 translate-y-1 group-hover:rotate-12 group-hover:translate-x-2 m-2">
+          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer">
+            <div className="absolute inset-0 bg-gray-100 border-red-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-1 translate-y-1 group-hover:rotate-12 group-hover:translate-x-2">
               Attack
             </div>
-            <div className="absolute inset-0 bg-gray-100 border-red-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-0.5 translate-y-0.5 z-10 m-2">
+            <div className="absolute inset-0 bg-gray-100 border-red-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-0.5 translate-y-0.5 z-10">
               Attack
             </div>
-            <div className="absolute inset-0 bg-gray-100 border-red-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 z-20 group-hover:-rotate-12 group-hover:-translate-x-2 m-2">
+            <div className="absolute inset-0 bg-gray-100 border-red-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 z-20 group-hover:-rotate-12 group-hover:-translate-x-2">
               Attack
             </div>
           </div>
           
           {/* Bottom Right - Red Resolution Cards */}
-          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer bg-red-100 rounded-xl p-2">
-            <div className="absolute inset-0 bg-gray-100 border-red-700 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-1 translate-y-1 group-hover:rotate-12 group-hover:translate-x-2 m-2">
+          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer">
+            <div className="absolute inset-0 bg-gray-100 border-red-700 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-1 translate-y-1 group-hover:rotate-12 group-hover:translate-x-2">
               Resolution
             </div>
-            <div className="absolute inset-0 bg-gray-100 border-red-700 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-0.5 translate-y-0.5 z-10 m-2">
+            <div className="absolute inset-0 bg-gray-100 border-red-700 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-0.5 translate-y-0.5 z-10">
               Resolution
             </div>
-            <div className="absolute inset-0 bg-gray-100 border-red-700 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 z-20 group-hover:-rotate-12 group-hover:-translate-x-2 m-2">
+            <div className="absolute inset-0 bg-gray-100 border-red-700 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 z-20 group-hover:-rotate-12 group-hover:-translate-x-2">
               Resolution
             </div>
           </div>
