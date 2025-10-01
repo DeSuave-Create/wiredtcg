@@ -157,7 +157,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
         </div>
 
         {/* Center Video Player */}
-        <div className="lg:col-span-8 relative bg-gray-100 border-green-600 border-8 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg">
+        <div className="lg:col-span-8 relative bg-gray-100 border-green-600 border-2 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg">
           {/* Navigation Buttons */}
           <button
             onClick={handlePrevious}
@@ -290,7 +290,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
       </div>
 
       {/* Video Info */}
-      <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 shadow-2xl drop-shadow-lg">
+      <div className="bg-gray-100 border-green-600 border-2 rounded-3xl p-6 shadow-2xl drop-shadow-lg">
         <h3 className="text-2xl font-bold text-green-600 mb-3">{currentVideo.title}</h3>
         <p className="text-muted-foreground">{currentVideo.description}</p>
       </div>
