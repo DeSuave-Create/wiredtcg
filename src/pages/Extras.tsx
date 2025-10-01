@@ -97,10 +97,13 @@ const Extras = () => {
           {/* Connection Animation */}
           <ConnectionLines className="my-2" />
 
-          {/* Video Carousel Section */}
+          {/* Video Tutorials Title Only */}
           <ContentSection title="Video Tutorials">
-            <VideoCarousel videos={tutorialVideos} />
+            <div></div>
           </ContentSection>
+          
+          {/* Video Carousel Section */}
+          <VideoCarousel videos={tutorialVideos} />
           
           {/* Connection Animation */}
           <ConnectionLines className="my-2" />

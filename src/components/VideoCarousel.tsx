@@ -80,7 +80,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
   const currentVideo = videos[currentIndex];
 
   return (
-    <div className={`space-y-6 ${className} relative overflow-hidden`}>
+    <div className={`space-y-6 ${className} relative`}>
       {/* Ghost Logo Background */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-20 z-0" style={{ width: '150%', height: '150%' }}>
         <img 
