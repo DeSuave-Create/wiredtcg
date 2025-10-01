@@ -24,14 +24,14 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
   const [resolutionCardIndex, setResolutionCardIndex] = useState(0);
 
   const equipmentCards = [
-    { name: 'Computer', bg: 'bg-white', image: '/lovable-uploads/equipment-computer.png' },
-    { name: 'Cabling', bg: 'bg-white', image: '/lovable-uploads/equipment-cabling.png' },
+    { name: 'Computer', bg: 'bg-green-600', image: '/lovable-uploads/equipment-computer.png' },
+    { name: 'Cabling', bg: 'bg-green-600', image: '/lovable-uploads/equipment-cabling.png' },
     { name: 'Equipment', bg: 'bg-gray-100', image: null }
   ];
 
   const classificationCards = [
-    { name: 'Facilities', bg: 'bg-white', image: '/lovable-uploads/classification-facilities.png' },
-    { name: 'Field Tech', bg: 'bg-white', image: '/lovable-uploads/classification-fieldtech.png' },
+    { name: 'Facilities', bg: 'bg-blue-600', image: '/lovable-uploads/classification-facilities.png' },
+    { name: 'Field Tech', bg: 'bg-blue-600', image: '/lovable-uploads/classification-fieldtech.png' },
     { name: 'Classification', bg: 'bg-gray-100', image: null }
   ];
 
