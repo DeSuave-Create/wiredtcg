@@ -43,14 +43,14 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
         <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4">
           {/* Top Left - Green Equipment Cards */}
           <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer">
-            <div className="absolute inset-0 bg-white border-green-600 border-3 rounded-xl shadow-lg overflow-hidden transition-all duration-300 transform translate-x-1 translate-y-1 group-hover:-rotate-12 group-hover:-translate-x-2">
-              <img src="/lovable-uploads/equipment-cabling.png" alt="Cabling Equipment" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gray-100 border-green-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-1 translate-y-1 group-hover:-rotate-12 group-hover:-translate-x-2">
+              Equipment
             </div>
             <div className="absolute inset-0 bg-white border-green-600 border-3 rounded-xl shadow-lg overflow-hidden transition-all duration-300 transform translate-x-0.5 translate-y-0.5 z-10">
-              <img src="/lovable-uploads/equipment-computer.png" alt="Computer Equipment" className="w-full h-full object-cover" />
+              <img src="/lovable-uploads/equipment-cabling.png" alt="Cabling Equipment" className="w-full h-full object-cover" />
             </div>
-            <div className="absolute inset-0 bg-gray-100 border-green-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 z-20 group-hover:rotate-12 group-hover:translate-x-2">
-              Equipment
+            <div className="absolute inset-0 bg-white border-green-600 border-3 rounded-xl shadow-lg overflow-hidden transition-all duration-300 z-20 group-hover:rotate-12 group-hover:translate-x-2">
+              <img src="/lovable-uploads/equipment-computer.png" alt="Computer Equipment" className="w-full h-full object-cover" />
             </div>
           </div>
           
