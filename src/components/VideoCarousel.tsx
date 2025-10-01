@@ -122,13 +122,13 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
             </div>
           </div>
           
-          {/* Bottom Left - Blue Classification Cards */}
+          {/* Bottom Left - Red Attack Cards */}
           <div 
             className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
-            onClick={cycleClassificationCard}
+            onClick={cycleAttackCard}
           >
-            {classificationCards.map((card, idx) => {
-              const offset = (idx - classificationCardIndex + classificationCards.length) % classificationCards.length;
+            {attackCards.map((card, idx) => {
+              const offset = (idx - attackCardIndex + attackCards.length) % attackCards.length;
               const rotation = offset === 0 ? 'group-hover:rotate-12' : offset === 1 ? '' : 'group-hover:-rotate-12';
               const translation = offset === 0 ? 'group-hover:translate-x-2' : offset === 1 ? 'translate-x-0.5 translate-y-0.5' : 'translate-x-1 translate-y-1 group-hover:-translate-x-2';
               const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
@@ -136,23 +136,19 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
               return (
                 <div
                   key={idx}
-                  className={`absolute inset-0 ${card.bg} border-blue-600 border-3 rounded-xl shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex} ${card.image ? 'p-1' : 'flex items-center justify-center'}`}
+                  className={`absolute inset-0 ${card.bg} border-red-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
                 >
-                  {card.image ? (
-                    <img src={card.image} alt={card.name} className="w-full h-full object-contain" style={{ imageRendering: 'crisp-edges' }} />
-                  ) : (
-                    <span className="text-[10px] text-muted-foreground">{card.name}</span>
-                  )}
+                  {card.name}
                 </div>
               );
             })}
             {/* Card indicator dots */}
             <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
-              {classificationCards.map((_, idx) => (
+              {attackCards.map((_, idx) => (
                 <div
                   key={idx}
                   className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                    idx === classificationCardIndex ? 'bg-blue-600' : 'bg-gray-300'
+                    idx === attackCardIndex ? 'bg-red-600' : 'bg-gray-300'
                   }`}
                 />
               ))}
@@ -221,13 +217,13 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
 
         {/* Right Card Stacks */}
         <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4 items-end">
-          {/* Top Right - Red Attack Cards */}
+          {/* Top Right - Blue Classification Cards */}
           <div 
             className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
-            onClick={cycleAttackCard}
+            onClick={cycleClassificationCard}
           >
-            {attackCards.map((card, idx) => {
-              const offset = (idx - attackCardIndex + attackCards.length) % attackCards.length;
+            {classificationCards.map((card, idx) => {
+              const offset = (idx - classificationCardIndex + classificationCards.length) % classificationCards.length;
               const rotation = offset === 0 ? 'group-hover:-rotate-12' : offset === 1 ? '' : 'group-hover:rotate-12';
               const translation = offset === 0 ? 'group-hover:-translate-x-2' : offset === 1 ? 'translate-x-0.5 translate-y-0.5' : 'translate-x-1 translate-y-1 group-hover:translate-x-2';
               const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
@@ -235,19 +231,23 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
               return (
                 <div
                   key={idx}
-                  className={`absolute inset-0 ${card.bg} border-red-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
+                  className={`absolute inset-0 ${card.bg} border-blue-600 border-3 rounded-xl shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex} ${card.image ? 'p-1' : 'flex items-center justify-center'}`}
                 >
-                  {card.name}
+                  {card.image ? (
+                    <img src={card.image} alt={card.name} className="w-full h-full object-contain" style={{ imageRendering: 'crisp-edges' }} />
+                  ) : (
+                    <span className="text-[10px] text-muted-foreground">{card.name}</span>
+                  )}
                 </div>
               );
             })}
             {/* Card indicator dots */}
             <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
-              {attackCards.map((_, idx) => (
+              {classificationCards.map((_, idx) => (
                 <div
                   key={idx}
                   className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                    idx === attackCardIndex ? 'bg-red-600' : 'bg-gray-300'
+                    idx === classificationCardIndex ? 'bg-blue-600' : 'bg-gray-300'
                   }`}
                 />
               ))}
