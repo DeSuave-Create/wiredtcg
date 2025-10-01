@@ -82,11 +82,11 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
   return (
     <div className={`space-y-6 ${className} relative`}>
       {/* Ghost Logo Background */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-20 z-0" style={{ width: '100%', height: '100%' }}>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-20 z-0" style={{ width: '100%', height: '140%' }}>
         <img 
           src="/wire-logo-official.png" 
           alt="WIRED Background Logo" 
-          className="w-full h-full object-contain"
+          className="w-full h-full object-fill"
         />
       </div>
 
