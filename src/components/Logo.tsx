@@ -9,7 +9,7 @@ const Logo = ({ className = "", size = 32 }: LogoProps) => {
     <img 
       src="/wire-logo-official.png" 
       alt="WIRED Official Logo" 
-      className={className}
+      className={`animate-neon-flicker ${className}`}
       style={{ width: size, height: size }}
     />
   );
