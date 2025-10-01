@@ -37,62 +37,85 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
 
   return (
     <div className={`space-y-6 ${className}`}>
-      {/* Video Display */}
-      <div className="relative bg-gray-100 border-green-600 border-8 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg">
-        {/* Navigation Buttons */}
-        <button
-          onClick={handlePrevious}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-green-600 hover:bg-green-700 text-white p-3 rounded-full neon-glow transition-all"
-          aria-label="Previous video"
-        >
-          <ChevronLeft className="h-6 w-6" />
-        </button>
+      {/* Video Display with Card Images */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        {/* Left Card Images */}
+        <div className="lg:col-span-2 flex lg:flex-col gap-4 justify-center">
+          <div className="bg-gray-100 border-green-600 border-4 rounded-2xl p-2 shadow-lg aspect-[2/3] w-24 lg:w-full flex items-center justify-center text-center">
+            <span className="text-xs text-muted-foreground">Card Image 1</span>
+          </div>
+          <div className="bg-gray-100 border-green-600 border-4 rounded-2xl p-2 shadow-lg aspect-[2/3] w-24 lg:w-full flex items-center justify-center text-center hidden lg:flex">
+            <span className="text-xs text-muted-foreground">Card Image 2</span>
+          </div>
+        </div>
 
-        <button
-          onClick={handleNext}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-green-600 hover:bg-green-700 text-white p-3 rounded-full neon-glow transition-all"
-          aria-label="Next video"
-        >
-          <ChevronRight className="h-6 w-6" />
-        </button>
-
-        {/* Video Container */}
-        {currentVideo.isYouTube && !isPlaying ? (
-          <div 
-            className="relative w-full h-64 md:h-96 bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
-            onClick={handlePlay}
+        {/* Center Video Player */}
+        <div className="lg:col-span-8 relative bg-gray-100 border-green-600 border-8 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg">
+          {/* Navigation Buttons */}
+          <button
+            onClick={handlePrevious}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-green-600 hover:bg-green-700 text-white p-3 rounded-full neon-glow transition-all"
+            aria-label="Previous video"
           >
-            <div className="text-center space-y-4">
-              <Logo size={100} className="mx-auto" />
-              <div className="flex items-center justify-center space-x-2 text-green-600">
-                <Play className="h-10 w-10" />
-                <span className="text-xl font-semibold">Play Video</span>
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+
+          <button
+            onClick={handleNext}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-green-600 hover:bg-green-700 text-white p-3 rounded-full neon-glow transition-all"
+            aria-label="Next video"
+          >
+            <ChevronRight className="h-6 w-6" />
+          </button>
+
+          {/* Video Container */}
+          {currentVideo.isYouTube && !isPlaying ? (
+            <div 
+              className="relative w-full h-64 md:h-96 bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+              onClick={handlePlay}
+            >
+              <div className="text-center space-y-4">
+                <Logo size={100} className="mx-auto" />
+                <div className="flex items-center justify-center space-x-2 text-green-600">
+                  <Play className="h-10 w-10" />
+                  <span className="text-xl font-semibold">Play Video</span>
+                </div>
               </div>
             </div>
-          </div>
-        ) : currentVideo.isYouTube ? (
-          <iframe
-            src={`${currentVideo.src}?autoplay=1`}
-            className="w-full h-64 md:h-96"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            title={currentVideo.title}
-          />
-        ) : (
-          <video 
-            controls 
-            className="w-full h-auto"
-            preload="metadata"
-          >
-            <source src={currentVideo.src} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        )}
+          ) : currentVideo.isYouTube ? (
+            <iframe
+              src={`${currentVideo.src}?autoplay=1`}
+              className="w-full h-64 md:h-96"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title={currentVideo.title}
+            />
+          ) : (
+            <video 
+              controls 
+              className="w-full h-auto"
+              preload="metadata"
+            >
+              <source src={currentVideo.src} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          )}
 
-        {/* Video Counter */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold neon-glow">
-          {currentIndex + 1} / {videos.length}
+          {/* Video Counter */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold neon-glow">
+            {currentIndex + 1} / {videos.length}
+          </div>
+        </div>
+
+        {/* Right Card Images */}
+        <div className="lg:col-span-2 flex lg:flex-col gap-4 justify-center">
+          <div className="bg-gray-100 border-green-600 border-4 rounded-2xl p-2 shadow-lg aspect-[2/3] w-24 lg:w-full flex items-center justify-center text-center">
+            <span className="text-xs text-muted-foreground">Card Image 3</span>
+          </div>
+          <div className="bg-gray-100 border-green-600 border-4 rounded-2xl p-2 shadow-lg aspect-[2/3] w-24 lg:w-full flex items-center justify-center text-center hidden lg:flex">
+            <span className="text-xs text-muted-foreground">Card Image 4</span>
+          </div>
         </div>
       </div>
 
