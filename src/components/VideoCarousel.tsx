@@ -42,7 +42,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
         {/* Left Card Stacks */}
         <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4">
           {/* Top Left - Green Equipment Cards */}
-          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer">
+          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50">
             <div className="absolute inset-0 bg-gray-100 border-green-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-1 translate-y-1 group-hover:-rotate-12 group-hover:-translate-x-2">
               Equipment
             </div>
@@ -55,7 +55,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
           </div>
           
           {/* Bottom Left - Blue Classification Cards */}
-          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer">
+          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50">
             <div className="absolute inset-0 bg-gray-100 border-blue-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-1 translate-y-1 group-hover:-rotate-12 group-hover:-translate-x-2">
               Classification
             </div>
@@ -130,7 +130,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
         {/* Right Card Stacks */}
         <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4 items-end">
           {/* Top Right - Red Attack Cards */}
-          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer">
+          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50">
             <div className="absolute inset-0 bg-gray-100 border-red-600 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-1 translate-y-1 group-hover:rotate-12 group-hover:translate-x-2">
               Attack
             </div>
@@ -143,7 +143,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
           </div>
           
           {/* Bottom Right - Red Resolution Cards */}
-          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer">
+          <div className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50">
             <div className="absolute inset-0 bg-gray-100 border-red-700 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform translate-x-1 translate-y-1 group-hover:rotate-12 group-hover:translate-x-2">
               Resolution
             </div>
