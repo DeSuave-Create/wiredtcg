@@ -39,13 +39,21 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
     <div className={`space-y-6 ${className}`}>
       {/* Video Display with Card Images */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Left Card Images */}
-        <div className="lg:col-span-2 flex lg:flex-col gap-4 justify-center">
-          <div className="bg-gray-100 border-green-600 border-4 rounded-2xl p-2 shadow-lg aspect-[2/3] w-24 lg:w-full flex items-center justify-center text-center">
-            <span className="text-xs text-muted-foreground">Card Image 1</span>
-          </div>
-          <div className="bg-gray-100 border-green-600 border-4 rounded-2xl p-2 shadow-lg aspect-[2/3] w-24 lg:w-full flex items-center justify-center text-center hidden lg:flex">
-            <span className="text-xs text-muted-foreground">Card Image 2</span>
+        {/* Left Card Images - Fan Layout */}
+        <div className="lg:col-span-2 flex items-center justify-center">
+          <div className="relative w-32 h-48 lg:w-40 lg:h-56">
+            {/* Card 1 - Bottom/Left */}
+            <div className="absolute inset-0 bg-gray-100 border-green-600 border-4 rounded-2xl shadow-xl aspect-[2/3] flex items-center justify-center transform -rotate-12 origin-bottom hover:scale-105 transition-transform">
+              <span className="text-xs text-muted-foreground">Card 1</span>
+            </div>
+            {/* Card 2 - Middle */}
+            <div className="absolute inset-0 bg-gray-100 border-blue-600 border-4 rounded-2xl shadow-xl aspect-[2/3] flex items-center justify-center transform hover:scale-105 transition-transform z-10">
+              <span className="text-xs text-muted-foreground">Card 2</span>
+            </div>
+            {/* Card 3 - Top/Right */}
+            <div className="absolute inset-0 bg-gray-100 border-red-600 border-4 rounded-2xl shadow-xl aspect-[2/3] flex items-center justify-center transform rotate-12 origin-bottom hover:scale-105 transition-transform">
+              <span className="text-xs text-muted-foreground">Card 3</span>
+            </div>
           </div>
         </div>
 
@@ -108,13 +116,21 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
           </div>
         </div>
 
-        {/* Right Card Images */}
-        <div className="lg:col-span-2 flex lg:flex-col gap-4 justify-center">
-          <div className="bg-gray-100 border-green-600 border-4 rounded-2xl p-2 shadow-lg aspect-[2/3] w-24 lg:w-full flex items-center justify-center text-center">
-            <span className="text-xs text-muted-foreground">Card Image 3</span>
-          </div>
-          <div className="bg-gray-100 border-green-600 border-4 rounded-2xl p-2 shadow-lg aspect-[2/3] w-24 lg:w-full flex items-center justify-center text-center hidden lg:flex">
-            <span className="text-xs text-muted-foreground">Card Image 4</span>
+        {/* Right Card Images - Fan Layout */}
+        <div className="lg:col-span-2 flex items-center justify-center">
+          <div className="relative w-32 h-48 lg:w-40 lg:h-56">
+            {/* Card 4 - Bottom/Right */}
+            <div className="absolute inset-0 bg-gray-100 border-green-600 border-4 rounded-2xl shadow-xl aspect-[2/3] flex items-center justify-center transform rotate-12 origin-bottom hover:scale-105 transition-transform">
+              <span className="text-xs text-muted-foreground">Card 4</span>
+            </div>
+            {/* Card 5 - Middle */}
+            <div className="absolute inset-0 bg-gray-100 border-blue-600 border-4 rounded-2xl shadow-xl aspect-[2/3] flex items-center justify-center transform hover:scale-105 transition-transform z-10">
+              <span className="text-xs text-muted-foreground">Card 5</span>
+            </div>
+            {/* Card 6 - Top/Left */}
+            <div className="absolute inset-0 bg-gray-100 border-red-600 border-4 rounded-2xl shadow-xl aspect-[2/3] flex items-center justify-center transform -rotate-12 origin-bottom hover:scale-105 transition-transform">
+              <span className="text-xs text-muted-foreground">Card 6</span>
+            </div>
           </div>
         </div>
       </div>
