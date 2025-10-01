@@ -114,9 +114,9 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
 
   return (
     <div className="flex flex-wrap justify-center gap-12 lg:gap-16 pb-8">
-      {renderCard(equipmentCards, equipmentIndex, cycleEquipment, 'border-green-600')}
-      {renderCard(attackCards, attackIndex, cycleAttack, 'border-red-600')}
-      {renderCard(classificationCards, classificationIndex, cycleClassification, 'border-blue-600')}
+      {renderCard(equipmentCards, equipmentIndex, cycleEquipment, 'border-green-500')}
+      {renderCard(attackCards, attackIndex, cycleAttack, 'border-red-500')}
+      {renderCard(classificationCards, classificationIndex, cycleClassification, 'border-blue-500')}
     </div>
   );
 };
