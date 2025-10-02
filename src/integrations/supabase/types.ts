@@ -46,6 +46,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_room_admin_data: {
+        Args: { _admin_token: string; _room_id: string }
+        Returns: {
+          admin_token: string
+          code: string
+          created_at: string
+          id: string
+          last_activity: string
+          updated_at: string
+        }[]
+      }
       get_room_info: {
         Args: { _room_code: string }
         Returns: {
