@@ -92,7 +92,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
 
       {/* Video Display with Card Images */}
       <div className="space-y-4 relative z-10">
-        {/* Card Decks - Above video on mobile */}
+        {/* Card Decks - Above video on mobile, 2x2 grid */}
         <div className="grid grid-cols-2 gap-4 lg:hidden">
           {/* Top Left - Green Equipment Cards */}
           <div 
@@ -195,106 +195,81 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
           </div>
         </div>
 
-        {/* Video Player - Always visible */}
-        <div className="relative bg-gray-100 border-green-600 border-2 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg">
-          {/* Navigation Buttons */}
-          <button
-            onClick={handlePrevious}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-green-600 hover:bg-green-700 text-white p-3 rounded-full neon-glow transition-all"
-            aria-label="Previous video"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </button>
-          {/* Video Counter */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold neon-glow">
-            {currentIndex + 1} / {videos.length}
-          </div>
-        </div>
-
-        {/* Desktop Layout with cards on sides - hidden on mobile */}
-        <div className="hidden lg:grid lg:grid-cols-12 gap-4 absolute inset-0 pointer-events-none">
+        {/* Desktop Layout - Grid with cards on sides and video in center */}
+        <div className="hidden lg:grid lg:grid-cols-12 gap-4">
           {/* Left Card Stacks */}
-          <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4 pointer-events-auto">
-          {/* Top Left - Green Equipment Cards */}
-          <div 
-            className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
-            onClick={cycleEquipmentCard}
-          >
-            {equipmentCards.map((card, idx) => {
-              const offset = (idx - equipmentCardIndex + equipmentCards.length) % equipmentCards.length;
-              const rotation = offset === 0 ? 'group-hover:rotate-12' : offset === 1 ? '' : 'group-hover:-rotate-12';
-              const translation = offset === 0 ? 'group-hover:translate-x-2' : offset === 1 ? 'translate-x-0.5 translate-y-0.5' : 'translate-x-1 translate-y-1 group-hover:-translate-x-2';
-              const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
-              
-              return (
-                <div
-                  key={idx}
-                  className={`absolute inset-0 ${card.image ? '' : card.bg} border-green-600 border-3 shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex} ${card.image ? '' : 'rounded-xl flex items-center justify-center'}`}
-                >
-                  {card.image ? (
-                    <img src={card.image} alt={card.name} className="w-full h-full object-contain" style={{ imageRendering: 'crisp-edges' }} />
-                  ) : (
-                    <span className="text-[10px] text-muted-foreground">{card.name}</span>
-                  )}
-                </div>
-              );
-            })}
-            {/* Card indicator dots */}
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
-              {equipmentCards.map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                    idx === equipmentCardIndex ? 'bg-green-600' : 'bg-gray-300'
-                  }`}
-                />
-              ))}
+          <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4">
+            {/* Top Left - Green Equipment Cards */}
+            <div 
+              className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
+              onClick={cycleEquipmentCard}
+            >
             </div>
           </div>
-          
-          {/* Bottom Left - Red Attack Cards */}
-          <div 
-            className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
-            onClick={cycleAttackCard}
-          >
-            {attackCards.map((card, idx) => {
-              const offset = (idx - attackCardIndex + attackCards.length) % attackCards.length;
-              const rotation = offset === 0 ? 'group-hover:rotate-12' : offset === 1 ? '' : 'group-hover:-rotate-12';
-              const translation = offset === 0 ? 'group-hover:translate-x-2' : offset === 1 ? 'translate-x-0.5 translate-y-0.5' : 'translate-x-1 translate-y-1 group-hover:-translate-x-2';
-              const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
-              
-              return (
-                <div
-                  key={idx}
-                  className={`absolute inset-0 ${card.image ? '' : card.bg} border-red-600 border-3 shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex} ${card.image ? '' : 'rounded-xl flex items-center justify-center'}`}
+
+          {/* Center - Video Player */}
+          <div className="lg:col-span-8">
+            <div className="relative bg-gray-100 border-green-600 border-2 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg">
+              {/* Navigation Buttons */}
+              <button
+                onClick={handlePrevious}
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-green-600 hover:bg-green-700 text-white p-3 rounded-full neon-glow transition-all"
+                aria-label="Previous video"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+
+              <button
+                onClick={handleNext}
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-green-600 hover:bg-green-700 text-white p-3 rounded-full neon-glow transition-all"
+                aria-label="Next video"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+
+              {/* Video Container */}
+              {currentVideo.isYouTube && !isPlaying ? (
+                <div 
+                  className="relative w-full h-64 md:h-96 bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+                  onClick={handlePlay}
                 >
-                  {card.image ? (
-                    <img src={card.image} alt={card.name} className="w-full h-full object-contain" style={{ imageRendering: 'crisp-edges' }} />
-                  ) : (
-                    <span className="text-[10px] text-muted-foreground">{card.name}</span>
-                  )}
+                  <div className="text-center space-y-4">
+                    <Logo size={100} className="mx-auto" />
+                    <div className="flex items-center justify-center space-x-2 text-green-600">
+                      <Play className="h-10 w-10" />
+                      <span className="text-xl font-semibold">Play Video</span>
+                    </div>
+                  </div>
                 </div>
-              );
-            })}
-            {/* Card indicator dots */}
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
-              {attackCards.map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                    idx === attackCardIndex ? 'bg-red-600' : 'bg-gray-300'
-                  }`}
+              ) : currentVideo.isYouTube ? (
+                <iframe
+                  src={`${currentVideo.src}?autoplay=1`}
+                  className="w-full h-64 md:h-96"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title={currentVideo.title}
                 />
-              ))}
+              ) : (
+                <video 
+                  controls 
+                  className="w-full h-auto"
+                  preload="metadata"
+                >
+                  <source src={currentVideo.src} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              )}
+
+              {/* Video Counter */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold neon-glow">
+                {currentIndex + 1} / {videos.length}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Spacer for desktop center */}
-        <div className="lg:col-span-8"></div>
-
-        {/* Right Card Stacks - Desktop only */}
-        <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4 items-end pointer-events-auto">
+          {/* Right Card Stacks */}
+          <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4 items-end">
           {/* Top Right - Red Resolution Cards */}
           <div 
             className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
@@ -363,9 +338,70 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
                 />
               ))}
             </div>
+            </div>
           </div>
         </div>
-      </div>
+
+        {/* Mobile Video Player - Below cards */}
+        <div className="lg:hidden">
+          <div className="relative bg-gray-100 border-green-600 border-2 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg">
+            {/* Navigation Buttons */}
+            <button
+              onClick={handlePrevious}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-green-600 hover:bg-green-700 text-white p-3 rounded-full neon-glow transition-all"
+              aria-label="Previous video"
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </button>
+
+            <button
+              onClick={handleNext}
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-green-600 hover:bg-green-700 text-white p-3 rounded-full neon-glow transition-all"
+              aria-label="Next video"
+            >
+              <ChevronRight className="h-6 w-6" />
+            </button>
+
+            {/* Video Container */}
+            {currentVideo.isYouTube && !isPlaying ? (
+              <div 
+                className="relative w-full h-64 md:h-96 bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+                onClick={handlePlay}
+              >
+                <div className="text-center space-y-4">
+                  <Logo size={100} className="mx-auto" />
+                  <div className="flex items-center justify-center space-x-2 text-green-600">
+                    <Play className="h-10 w-10" />
+                    <span className="text-xl font-semibold">Play Video</span>
+                  </div>
+                </div>
+              </div>
+            ) : currentVideo.isYouTube ? (
+              <iframe
+                src={`${currentVideo.src}?autoplay=1`}
+                className="w-full h-64 md:h-96"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title={currentVideo.title}
+              />
+            ) : (
+              <video 
+                controls 
+                className="w-full h-auto"
+                preload="metadata"
+              >
+                <source src={currentVideo.src} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            )}
+
+            {/* Video Counter */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold neon-glow">
+              {currentIndex + 1} / {videos.length}
+            </div>
+          </div>
+        </div>
       </div>
       
       {/* Thumbnail Navigation */}
