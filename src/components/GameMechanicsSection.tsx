@@ -98,25 +98,25 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
   }, []);
 
   return (
-    <div className="flex justify-center items-center min-h-[500px] relative py-8">
+    <div className="flex justify-center items-center min-h-[350px] sm:min-h-[400px] lg:min-h-[500px] relative py-4 sm:py-6 lg:py-8">
       {/* Ghost logo background */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
         <img 
           src="/wire-logo-official.png" 
           alt="WIRED Ghost Logo" 
-          className="w-[480px] h-[480px] lg:w-[576px] lg:h-[576px] object-contain opacity-10"
+          className="w-64 h-64 sm:w-80 sm:h-80 lg:w-[480px] lg:h-[480px] object-contain opacity-10"
         />
       </div>
 
       {/* Deck with logo */}
       {showDeck && (
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-          <div className="relative w-48 h-64 lg:w-56 lg:h-80">
-            <div className="absolute inset-0 bg-gray-100 border-4 border-primary rounded-xl shadow-2xl flex items-center justify-center animate-pulse-neon">
+          <div className="relative w-32 h-44 sm:w-40 sm:h-56 lg:w-56 lg:h-80">
+            <div className="absolute inset-0 bg-gray-100 border-4 border-primary shadow-2xl flex items-center justify-center animate-pulse-neon">
               <img 
                 src="/wire-logo-official.png" 
                 alt="WIRED Logo" 
-                className="w-32 h-32 object-contain opacity-80"
+                className="w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 object-contain opacity-80"
               />
             </div>
           </div>
@@ -129,9 +129,12 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
           const totalCards = 6;
           const centerIndex = (totalCards - 1) / 2;
           const offset = index - centerIndex;
-          const rotation = offset * 10; // 10 degrees per card for fan effect
-          const translateY = Math.abs(offset) * 15; // Slight rise for outer cards
-          const translateX = offset * 75; // Increased horizontal spread to fill more space
+          const rotation = offset * 8; // Reduced rotation for mobile
+          const translateY = Math.abs(offset) * 12; // Slight rise for outer cards
+          // Responsive horizontal spread
+          const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+          const isTablet = typeof window !== 'undefined' && window.innerWidth >= 640 && window.innerWidth < 1024;
+          const translateX = isMobile ? offset * 35 : isTablet ? offset * 50 : offset * 75;
           // Cards dealt later have higher z-index during animation
           const baseZIndex = 30 + index; // Each card gets higher z-index as it's dealt
           const hoverZIndex = 100; // Very high z-index on hover
@@ -147,7 +150,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
               }}
             >
               <div
-                className={`w-44 h-64 lg:w-52 lg:h-80 ${card.image ? '' : `${card.bg} ${card.borderColor} border-4 rounded-xl`} shadow-2xl drop-shadow-lg overflow-hidden ${card.image ? '' : 'flex items-center justify-center'} transition-all duration-300 group-hover:scale-105 group-hover:-translate-y-6 cursor-pointer`}
+                className={`w-28 h-40 sm:w-36 sm:h-52 lg:w-44 lg:h-64 xl:w-52 xl:h-80 ${card.image ? '' : `${card.bg} ${card.borderColor} border-4 rounded-xl`} shadow-2xl drop-shadow-lg overflow-hidden ${card.image ? '' : 'flex items-center justify-center'} transition-all duration-300 group-hover:scale-105 group-hover:-translate-y-6 cursor-pointer`}
                 style={{
                   transform: `translate(-50%, -50%) translateX(${translateX}px) translateY(${translateY}px) rotate(${rotation}deg)`,
                   transformOrigin: 'center bottom',
@@ -168,7 +171,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
                     style={{ imageRendering: 'crisp-edges' }} 
                   />
                 ) : (
-                  <span className="text-sm text-muted-foreground text-center">{card.name}</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground text-center">{card.name}</span>
                 )}
               </div>
             </div>
