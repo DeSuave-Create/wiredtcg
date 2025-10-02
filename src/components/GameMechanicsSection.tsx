@@ -74,7 +74,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
   };
 
   return (
-    <div className="flex justify-center items-center min-h-[400px] relative">
+    <div className="flex justify-center items-center min-h-[500px] relative py-8">
       {/* Deck with logo */}
       {showDeck && (
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
@@ -91,39 +91,38 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
       )}
 
       {/* Dealt cards fanning out with overlap */}
-      <div className="flex justify-center items-end relative" style={{ width: '600px', height: '300px' }}>
+      <div className="flex justify-center items-center relative" style={{ width: '100%', maxWidth: '900px', height: '400px' }}>
         {dealtCards.map((card, index) => {
           const totalCards = 6;
           const centerIndex = (totalCards - 1) / 2;
           const offset = index - centerIndex;
-          const rotation = offset * 12; // 12 degrees per card offset for more fan effect
-          const translateY = Math.abs(offset) * 25; // Cards at edges rise up more
-          const translateX = offset * 60; // Horizontal spread with overlap
-          const zIndex = 10 - Math.abs(offset); // Center cards appear on top
+          const rotation = offset * 10; // 10 degrees per card for fan effect
+          const translateY = Math.abs(offset) * 15; // Slight rise for outer cards
+          const translateX = offset * 45; // Reduced horizontal spread for overlap
+          const zIndex = 20 - Math.abs(offset * 2); // Center cards on top
 
           return (
             <div
               key={`${card.name}-${index}`}
-              className="absolute left-1/2"
+              className="absolute left-1/2 top-1/2"
               style={{
                 animation: 'dealCard 0.6s ease-out forwards',
                 animationDelay: `${0.2 + index * 0.4}s`,
                 opacity: 0,
                 zIndex: zIndex,
-                transform: `translateX(-50%)`,
               }}
             >
               <div
-                className={`w-32 h-44 lg:w-40 lg:h-56 ${card.bg} ${card.borderColor} border-4 rounded-xl shadow-2xl drop-shadow-lg overflow-hidden ${card.image ? 'p-2' : 'flex items-center justify-center'} transition-all duration-300 hover:scale-110 hover:-translate-y-8 hover:z-50 cursor-pointer`}
+                className={`w-48 h-64 lg:w-56 lg:h-80 ${card.bg} ${card.borderColor} border-4 rounded-xl shadow-2xl drop-shadow-lg overflow-hidden ${card.image ? 'p-2' : 'flex items-center justify-center'} transition-all duration-300 hover:scale-105 hover:-translate-y-6 cursor-pointer`}
                 style={{
-                  transform: `rotate(${rotation}deg) translateY(${translateY}px) translateX(${translateX}px)`,
-                  transformOrigin: 'bottom center',
+                  transform: `translate(-50%, -50%) translateX(${translateX}px) translateY(${translateY}px) rotate(${rotation}deg)`,
+                  transformOrigin: 'center bottom',
                 }}
               >
                 {card.image ? (
                   <img src={card.image} alt={card.name} className="w-full h-full object-contain" style={{ imageRendering: 'crisp-edges' }} />
                 ) : (
-                  <span className="text-xs text-muted-foreground text-center">{card.name}</span>
+                  <span className="text-sm text-muted-foreground text-center">{card.name}</span>
                 )}
               </div>
             </div>
