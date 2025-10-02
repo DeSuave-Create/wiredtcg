@@ -147,7 +147,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
               }}
             >
               <div
-                className={`w-48 h-64 lg:w-56 lg:h-80 ${card.image ? '' : card.bg} ${card.borderColor} border-4 shadow-2xl drop-shadow-lg overflow-hidden ${card.image ? 'relative' : 'flex items-center justify-center'} transition-all duration-300 group-hover:scale-105 group-hover:-translate-y-6 cursor-pointer`}
+                className={`w-48 h-64 lg:w-56 lg:h-80 ${card.image ? '' : `${card.bg} ${card.borderColor} border-4`} shadow-2xl drop-shadow-lg overflow-hidden ${card.image ? '' : 'flex items-center justify-center'} transition-all duration-300 group-hover:scale-105 group-hover:-translate-y-6 cursor-pointer`}
                 style={{
                   transform: `translate(-50%, -50%) translateX(${translateX}px) translateY(${translateY}px) rotate(${rotation}deg)`,
                   transformOrigin: 'center bottom',
@@ -164,7 +164,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
                   <img 
                     src={card.image} 
                     alt={card.name} 
-                    className="w-full h-full object-contain" 
+                    className="w-full h-full object-cover" 
                     style={{ imageRendering: 'crisp-edges' }} 
                   />
                 ) : (
