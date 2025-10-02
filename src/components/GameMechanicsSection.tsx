@@ -50,15 +50,14 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
     const shuffled = [...allCards].sort(() => Math.random() - 0.5);
     const selectedCards = shuffled.slice(0, 6);
 
+    // Hide deck immediately before dealing starts
+    setTimeout(() => setShowDeck(false), 100);
+
     // Deal cards one by one with delay
     selectedCards.forEach((card, index) => {
       setTimeout(() => {
         setDealtCards(prev => [...prev, card]);
-        if (index === 5) {
-          // Hide deck after last card is dealt
-          setTimeout(() => setShowDeck(false), 300);
-        }
-      }, index * 400);
+      }, 200 + index * 400);
     });
 
     // Reset and restart after all cards are shown for a while
@@ -91,28 +90,31 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
         </div>
       )}
 
-      {/* Dealt cards fanning out */}
-      <div className="flex justify-center items-end gap-2">
+      {/* Dealt cards fanning out with overlap */}
+      <div className="flex justify-center items-end relative" style={{ width: '600px', height: '300px' }}>
         {dealtCards.map((card, index) => {
           const totalCards = 6;
           const centerIndex = (totalCards - 1) / 2;
           const offset = index - centerIndex;
-          const rotation = offset * 8; // 8 degrees per card offset
-          const translateY = Math.abs(offset) * 20; // Cards at edges rise up
-          const translateX = offset * 30; // Spread cards horizontally
+          const rotation = offset * 12; // 12 degrees per card offset for more fan effect
+          const translateY = Math.abs(offset) * 25; // Cards at edges rise up more
+          const translateX = offset * 60; // Horizontal spread with overlap
+          const zIndex = 10 - Math.abs(offset); // Center cards appear on top
 
           return (
             <div
               key={`${card.name}-${index}`}
-              className="relative"
+              className="absolute left-1/2"
               style={{
                 animation: 'dealCard 0.6s ease-out forwards',
-                animationDelay: `${index * 0.4}s`,
+                animationDelay: `${0.2 + index * 0.4}s`,
                 opacity: 0,
+                zIndex: zIndex,
+                transform: `translateX(-50%)`,
               }}
             >
               <div
-                className={`w-32 h-44 lg:w-40 lg:h-56 ${card.bg} ${card.borderColor} border-4 rounded-xl shadow-2xl drop-shadow-lg overflow-hidden ${card.image ? 'p-2' : 'flex items-center justify-center'} transition-all duration-300 hover:scale-110 hover:-translate-y-4 hover:z-50 cursor-pointer`}
+                className={`w-32 h-44 lg:w-40 lg:h-56 ${card.bg} ${card.borderColor} border-4 rounded-xl shadow-2xl drop-shadow-lg overflow-hidden ${card.image ? 'p-2' : 'flex items-center justify-center'} transition-all duration-300 hover:scale-110 hover:-translate-y-8 hover:z-50 cursor-pointer`}
                 style={{
                   transform: `rotate(${rotation}deg) translateY(${translateY}px) translateX(${translateX}px)`,
                   transformOrigin: 'bottom center',
