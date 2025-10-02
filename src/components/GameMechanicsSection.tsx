@@ -51,13 +51,13 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
     const selectedCards = shuffled.slice(0, 6);
 
     // Hide deck immediately before dealing starts
-    setTimeout(() => setShowDeck(false), 100);
+    setShowDeck(false);
 
     // Deal cards one by one with delay
     selectedCards.forEach((card, index) => {
       setTimeout(() => {
         setDealtCards(prev => [...prev, card]);
-      }, 200 + index * 400);
+      }, index * 400);
     });
 
     // Reset and restart after all cards are shown for a while
@@ -70,7 +70,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
         setIsDealing(true);
         dealCards();
       }, 1000);
-    }, 8000);
+    }, 7000);
   };
 
   return (
@@ -99,24 +99,33 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
           const rotation = offset * 10; // 10 degrees per card for fan effect
           const translateY = Math.abs(offset) * 15; // Slight rise for outer cards
           const translateX = offset * 45; // Reduced horizontal spread for overlap
-          const zIndex = 20 - Math.abs(offset * 2); // Center cards on top
+          // Cards dealt later have higher z-index during animation
+          const baseZIndex = 30 + index; // Each card gets higher z-index as it's dealt
+          const hoverZIndex = 100; // Very high z-index on hover
 
           return (
             <div
               key={`${card.name}-${index}`}
-              className="absolute left-1/2 top-1/2"
+              className="absolute left-1/2 top-1/2 group"
               style={{
                 animation: 'dealCard 0.6s ease-out forwards',
-                animationDelay: `${0.2 + index * 0.4}s`,
+                animationDelay: `${index * 0.4}s`,
                 opacity: 0,
-                zIndex: zIndex,
+                zIndex: baseZIndex,
               }}
             >
               <div
-                className={`w-48 h-64 lg:w-56 lg:h-80 ${card.bg} ${card.borderColor} border-4 rounded-xl shadow-2xl drop-shadow-lg overflow-hidden ${card.image ? 'p-2' : 'flex items-center justify-center'} transition-all duration-300 hover:scale-105 hover:-translate-y-6 cursor-pointer`}
+                className={`w-48 h-64 lg:w-56 lg:h-80 ${card.bg} ${card.borderColor} border-4 rounded-xl shadow-2xl drop-shadow-lg overflow-hidden ${card.image ? 'p-2' : 'flex items-center justify-center'} transition-all duration-300 group-hover:scale-105 group-hover:-translate-y-6 cursor-pointer`}
                 style={{
                   transform: `translate(-50%, -50%) translateX(${translateX}px) translateY(${translateY}px) rotate(${rotation}deg)`,
                   transformOrigin: 'center bottom',
+                  zIndex: 'inherit',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.parentElement!.style.zIndex = hoverZIndex.toString();
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.parentElement!.style.zIndex = baseZIndex.toString();
                 }}
               >
                 {card.image ? (
