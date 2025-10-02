@@ -61,7 +61,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
       timeoutsRef.current.push(timeout);
     });
 
-    // Reset after 5 second pause (5 cards * 600ms = 3000ms + 600ms animation + 5000ms display = 8600ms)
+    // Reset after 3 second pause (5 cards * 600ms = 3000ms + 600ms animation + 3000ms display = 6600ms)
     const resetTimeout = window.setTimeout(() => {
       setDealtCards([]);
       setShowDeck(true);
@@ -72,7 +72,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
         dealCards();
       }, 1000);
       timeoutsRef.current.push(restartTimeout);
-    }, 8600);
+    }, 6600);
     timeoutsRef.current.push(resetTimeout);
   };
 
