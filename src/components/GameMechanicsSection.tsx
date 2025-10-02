@@ -84,6 +84,23 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
     timeoutsRef.current.push(resetTimeout);
   };
 
+  // Preload images
+  useEffect(() => {
+    const imagesToPreload = [
+      '/lovable-uploads/equipment-computer.png',
+      '/lovable-uploads/equipment-cabling.png',
+      '/lovable-uploads/attack-hacked.png',
+      '/lovable-uploads/classification-facilities.png',
+      '/lovable-uploads/classification-fieldtech.png',
+      '/wire-logo-official.png'
+    ];
+
+    imagesToPreload.forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
+
   // Start dealing animation after 1 second
   useEffect(() => {
     const startDelay = window.setTimeout(() => {
