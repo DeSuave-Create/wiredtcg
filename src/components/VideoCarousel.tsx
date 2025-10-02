@@ -195,10 +195,26 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
           </div>
         </div>
 
-        {/* Desktop Layout with cards on sides */}
-        <div className="hidden lg:grid lg:grid-cols-12 gap-4">
+        {/* Video Player - Always visible */}
+        <div className="relative bg-gray-100 border-green-600 border-2 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg">
+          {/* Navigation Buttons */}
+          <button
+            onClick={handlePrevious}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-green-600 hover:bg-green-700 text-white p-3 rounded-full neon-glow transition-all"
+            aria-label="Previous video"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+          {/* Video Counter */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold neon-glow">
+            {currentIndex + 1} / {videos.length}
+          </div>
+        </div>
+
+        {/* Desktop Layout with cards on sides - hidden on mobile */}
+        <div className="hidden lg:grid lg:grid-cols-12 gap-4 absolute inset-0 pointer-events-none">
           {/* Left Card Stacks */}
-          <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4">
+          <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4 pointer-events-auto">
           {/* Top Left - Green Equipment Cards */}
           <div 
             className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
@@ -274,69 +290,11 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
           </div>
         </div>
 
-        {/* Video Player - Full width on mobile, centered on desktop */}
-        <div className="lg:col-span-8">
-          <div className="relative bg-gray-100 border-green-600 border-2 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg">
-          {/* Navigation Buttons */}
-          <button
-            onClick={handlePrevious}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-green-600 hover:bg-green-700 text-white p-3 rounded-full neon-glow transition-all"
-            aria-label="Previous video"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </button>
-
-          <button
-            onClick={handleNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-green-600 hover:bg-green-700 text-white p-3 rounded-full neon-glow transition-all"
-            aria-label="Next video"
-          >
-            <ChevronRight className="h-6 w-6" />
-          </button>
-
-          {/* Video Container */}
-          {currentVideo.isYouTube && !isPlaying ? (
-            <div 
-              className="relative w-full h-64 md:h-96 bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
-              onClick={handlePlay}
-            >
-              <div className="text-center space-y-4">
-                <Logo size={100} className="mx-auto" />
-                <div className="flex items-center justify-center space-x-2 text-green-600">
-                  <Play className="h-10 w-10" />
-                  <span className="text-xl font-semibold">Play Video</span>
-                </div>
-              </div>
-            </div>
-          ) : currentVideo.isYouTube ? (
-            <iframe
-              src={`${currentVideo.src}?autoplay=1`}
-              className="w-full h-64 md:h-96"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              title={currentVideo.title}
-            />
-          ) : (
-            <video 
-              controls 
-              className="w-full h-auto"
-              preload="metadata"
-            >
-              <source src={currentVideo.src} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          )}
-
-            {/* Video Counter */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold neon-glow">
-              {currentIndex + 1} / {videos.length}
-            </div>
-          </div>
-        </div>
+        {/* Spacer for desktop center */}
+        <div className="lg:col-span-8"></div>
 
         {/* Right Card Stacks - Desktop only */}
-        <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4 items-end">
+        <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4 items-end pointer-events-auto">
           {/* Top Right - Red Resolution Cards */}
           <div 
             className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
