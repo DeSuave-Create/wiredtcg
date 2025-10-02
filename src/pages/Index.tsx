@@ -24,7 +24,7 @@ const Index = () => {
 
           {/* Game Mechanics */}
           <ContentSection 
-            title="How to Win" 
+            title="Get Connected" 
             cardBackgroundImage="/lovable-uploads/63928df8-c1b1-4e1d-8fa4-5c14c990cce7.png"
           >
             <GameMechanicsSection />
