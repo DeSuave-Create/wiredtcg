@@ -38,7 +38,7 @@ const ContentSection = ({ title, children, className = "", glowEffect = false, b
         <div className="absolute inset-0 bg-card/60 backdrop-blur-[1px] rounded-3xl"></div>
         <div className="relative z-10">
           {title && (
-            <h2 className="text-2xl font-bold font-orbitron text-primary mb-6 text-center tracking-wider animate-neon-flicker">
+            <h2 className="text-[32px] font-bold font-orbitron text-primary mb-6 text-center tracking-wider animate-neon-flicker">
               {title}
             </h2>
           )}
