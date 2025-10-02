@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import Logo from './Logo';
 
@@ -15,37 +15,91 @@ interface VideoCarouselProps {
   className?: string;
 }
 
+interface Card {
+  name: string;
+  bg: string;
+  image: string | null;
+  borderColor: string;
+  type: 'equipment' | 'attack' | 'classification';
+}
+
 const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [equipmentCardIndex, setEquipmentCardIndex] = useState(0);
-  const [classificationCardIndex, setClassificationCardIndex] = useState(0);
-  const [attackCardIndex, setAttackCardIndex] = useState(0);
-  const [resolutionCardIndex, setResolutionCardIndex] = useState(0);
+  const [dealtCards, setDealtCards] = useState<Card[]>([]);
+  const [showDeck, setShowDeck] = useState(true);
+  const isDealingRef = useRef(false);
+  const timeoutsRef = useRef<number[]>([]);
 
-  const equipmentCards = [
-    { name: 'Computer', bg: 'bg-green-50', image: '/lovable-uploads/equipment-computer.png' },
-    { name: 'Cabling', bg: 'bg-green-50', image: '/lovable-uploads/equipment-cabling.png' },
-    { name: 'Equipment', bg: 'bg-gray-100', image: null }
+  const allCards: Card[] = [
+    { name: 'Computer', bg: 'bg-green-50', image: '/lovable-uploads/equipment-computer.png', borderColor: 'border-green-500', type: 'equipment' },
+    { name: 'Cabling', bg: 'bg-green-50', image: '/lovable-uploads/equipment-cabling.png', borderColor: 'border-green-500', type: 'equipment' },
+    { name: 'Equipment 3', bg: 'bg-gray-100', image: null, borderColor: 'border-green-500', type: 'equipment' },
+    { name: 'Equipment 4', bg: 'bg-gray-100', image: null, borderColor: 'border-green-500', type: 'equipment' },
+    { name: 'Equipment 5', bg: 'bg-gray-100', image: null, borderColor: 'border-green-500', type: 'equipment' },
+    { name: 'Hacked', bg: 'bg-red-50', image: '/lovable-uploads/attack-hacked.png', borderColor: 'border-red-500', type: 'attack' },
+    { name: 'Attack 2', bg: 'bg-gray-100', image: null, borderColor: 'border-red-500', type: 'attack' },
+    { name: 'Attack 3', bg: 'bg-gray-100', image: null, borderColor: 'border-red-500', type: 'attack' },
+    { name: 'Attack 4', bg: 'bg-gray-100', image: null, borderColor: 'border-red-500', type: 'attack' },
+    { name: 'Attack 5', bg: 'bg-gray-100', image: null, borderColor: 'border-red-500', type: 'attack' },
+    { name: 'Facilities', bg: 'bg-blue-50', image: '/lovable-uploads/classification-facilities.png', borderColor: 'border-blue-500', type: 'classification' },
+    { name: 'Field Tech', bg: 'bg-blue-50', image: '/lovable-uploads/classification-fieldtech.png', borderColor: 'border-blue-500', type: 'classification' },
+    { name: 'Classification 3', bg: 'bg-gray-100', image: null, borderColor: 'border-blue-500', type: 'classification' },
+    { name: 'Classification 4', bg: 'bg-gray-100', image: null, borderColor: 'border-blue-500', type: 'classification' },
+    { name: 'Classification 5', bg: 'bg-gray-100', image: null, borderColor: 'border-blue-500', type: 'classification' },
   ];
 
-  const classificationCards = [
-    { name: 'Facilities', bg: 'bg-blue-50', image: '/lovable-uploads/classification-facilities.png' },
-    { name: 'Field Tech', bg: 'bg-blue-50', image: '/lovable-uploads/classification-fieldtech.png' },
-    { name: 'Classification', bg: 'bg-gray-100', image: null }
-  ];
+  const dealCards = () => {
+    if (isDealingRef.current) return;
+    isDealingRef.current = true;
 
-  const attackCards = [
-    { name: 'Hacked', bg: 'bg-red-50', image: '/lovable-uploads/attack-hacked.png' },
-    { name: 'Attack 2', bg: 'bg-gray-100' },
-    { name: 'Attack 3', bg: 'bg-gray-100' }
-  ];
+    timeoutsRef.current.forEach(clearTimeout);
+    timeoutsRef.current = [];
 
-  const resolutionCards = [
-    { name: 'Resolution 1', bg: 'bg-gray-100' },
-    { name: 'Resolution 2', bg: 'bg-gray-100' },
-    { name: 'Resolution 3', bg: 'bg-gray-100' }
-  ];
+    const shuffled = [...allCards].sort(() => Math.random() - 0.5);
+    const selectedCards = shuffled.slice(0, 6);
+
+    setDealtCards([]);
+    
+    const hideTimeout = window.setTimeout(() => {
+      setShowDeck(false);
+    }, 100);
+    timeoutsRef.current.push(hideTimeout);
+
+    selectedCards.forEach((card, index) => {
+      const timeout = window.setTimeout(() => {
+        setDealtCards(prev => [...prev, card]);
+      }, 200 + index * 600);
+      timeoutsRef.current.push(timeout);
+    });
+
+    const resetTimeout = window.setTimeout(() => {
+      setDealtCards([]);
+      
+      const showDeckTimeout = window.setTimeout(() => {
+        setShowDeck(true);
+        isDealingRef.current = false;
+        
+        const restartTimeout = window.setTimeout(() => {
+          dealCards();
+        }, 1000);
+        timeoutsRef.current.push(restartTimeout);
+      }, 100);
+      timeoutsRef.current.push(showDeckTimeout);
+    }, 6800);
+    timeoutsRef.current.push(resetTimeout);
+  };
+
+  useEffect(() => {
+    const startDelay = window.setTimeout(() => {
+      dealCards();
+    }, 1000);
+
+    return () => {
+      clearTimeout(startDelay);
+      timeoutsRef.current.forEach(clearTimeout);
+    };
+  }, []);
 
   const handlePrevious = () => {
     setIsPlaying(false);
@@ -61,22 +115,6 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
     setIsPlaying(true);
   };
 
-  const cycleEquipmentCard = () => {
-    setEquipmentCardIndex((prev) => (prev + 1) % equipmentCards.length);
-  };
-
-  const cycleClassificationCard = () => {
-    setClassificationCardIndex((prev) => (prev + 1) % classificationCards.length);
-  };
-
-  const cycleAttackCard = () => {
-    setAttackCardIndex((prev) => (prev + 1) % attackCards.length);
-  };
-
-  const cycleResolutionCard = () => {
-    setResolutionCardIndex((prev) => (prev + 1) % resolutionCards.length);
-  };
-
   const currentVideo = videos[currentIndex];
 
   return (
@@ -90,87 +128,83 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
         />
       </div>
 
-      {/* Video Display with Card Images */}
+      {/* Video Display with Animated Card Deck */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 relative z-10">
-        {/* Left Card Stacks */}
-        <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4">
-          {/* Top Left - Green Equipment Cards */}
-          <div 
-            className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
-            onClick={cycleEquipmentCard}
-          >
-            {equipmentCards.map((card, idx) => {
-              const offset = (idx - equipmentCardIndex + equipmentCards.length) % equipmentCards.length;
-              const rotation = offset === 0 ? 'group-hover:rotate-12' : offset === 1 ? '' : 'group-hover:-rotate-12';
-              const translation = offset === 0 ? 'group-hover:translate-x-2' : offset === 1 ? 'translate-x-0.5 translate-y-0.5' : 'translate-x-1 translate-y-1 group-hover:-translate-x-2';
-              const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
-              
-              return (
-                <div
-                  key={idx}
-                  className={`absolute inset-0 ${card.bg} border-green-600 border-3 rounded-xl shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex} ${card.image ? 'p-1' : 'flex items-center justify-center'}`}
-                >
-                  {card.image ? (
-                    <img src={card.image} alt={card.name} className="w-full h-full object-contain" style={{ imageRendering: 'crisp-edges' }} />
-                  ) : (
-                    <span className="text-[10px] text-muted-foreground">{card.name}</span>
-                  )}
+        {/* Left Side - Animated Card Deck */}
+        <div className="lg:col-span-3 flex items-center justify-center">
+          <div className="relative min-h-[300px] w-full flex items-center justify-center">
+            {/* Deck with logo */}
+            {showDeck && (
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+                <div className="relative w-32 h-44 sm:w-40 sm:h-56">
+                  <div className="absolute inset-0 bg-gray-100 border-4 border-primary shadow-2xl flex items-center justify-center animate-pulse-neon">
+                    <img 
+                      src="/wire-logo-official.png" 
+                      alt="WIRED Logo" 
+                      className="w-20 h-20 sm:w-24 sm:h-24 object-contain opacity-80"
+                    />
+                  </div>
                 </div>
-              );
-            })}
-            {/* Card indicator dots */}
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
-              {equipmentCards.map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                    idx === equipmentCardIndex ? 'bg-green-600' : 'bg-gray-300'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-          
-          {/* Bottom Left - Red Attack Cards */}
-          <div 
-            className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
-            onClick={cycleAttackCard}
-          >
-            {attackCards.map((card, idx) => {
-              const offset = (idx - attackCardIndex + attackCards.length) % attackCards.length;
-              const rotation = offset === 0 ? 'group-hover:rotate-12' : offset === 1 ? '' : 'group-hover:-rotate-12';
-              const translation = offset === 0 ? 'group-hover:translate-x-2' : offset === 1 ? 'translate-x-0.5 translate-y-0.5' : 'translate-x-1 translate-y-1 group-hover:-translate-x-2';
-              const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
-              
-              return (
-                <div
-                  key={idx}
-                  className={`absolute inset-0 ${card.bg} border-red-600 border-3 rounded-xl shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex} ${card.image ? 'p-1' : 'flex items-center justify-center'}`}
-                >
-                  {card.image ? (
-                    <img src={card.image} alt={card.name} className="w-full h-full object-contain" style={{ imageRendering: 'crisp-edges' }} />
-                  ) : (
-                    <span className="text-[10px] text-muted-foreground">{card.name}</span>
-                  )}
-                </div>
-              );
-            })}
-            {/* Card indicator dots */}
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
-              {attackCards.map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                    idx === attackCardIndex ? 'bg-red-600' : 'bg-gray-300'
-                  }`}
-                />
-              ))}
+              </div>
+            )}
+
+            {/* Dealt cards fanning out */}
+            <div className="flex justify-center items-center relative w-full" style={{ height: '300px' }}>
+              {dealtCards.map((card, index) => {
+                const totalCards = 6;
+                const centerIndex = (totalCards - 1) / 2;
+                const offset = index - centerIndex;
+                const rotation = offset * 8;
+                const translateY = Math.abs(offset) * 12;
+                const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+                const translateX = isMobile ? offset * 25 : offset * 40;
+                const baseZIndex = 30 + index;
+                const hoverZIndex = 100;
+
+                return (
+                  <div
+                    key={`${card.name}-${index}`}
+                    className="absolute left-1/2 top-1/2 group"
+                    style={{
+                      animation: 'dealCard 0.6s ease-out forwards',
+                      opacity: 0,
+                      zIndex: baseZIndex,
+                    }}
+                  >
+                    <div
+                      className={`w-24 h-36 sm:w-28 sm:h-40 ${card.image ? '' : `${card.bg} ${card.borderColor} border-4 rounded-xl`} shadow-2xl drop-shadow-lg overflow-hidden ${card.image ? '' : 'flex items-center justify-center'} transition-all duration-300 group-hover:scale-105 group-hover:-translate-y-6 cursor-pointer`}
+                      style={{
+                        transform: `translate(-50%, -50%) translateX(${translateX}px) translateY(${translateY}px) rotate(${rotation}deg)`,
+                        transformOrigin: 'center bottom',
+                        zIndex: 'inherit',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.parentElement!.style.zIndex = hoverZIndex.toString();
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.parentElement!.style.zIndex = baseZIndex.toString();
+                      }}
+                    >
+                      {card.image ? (
+                        <img 
+                          src={card.image} 
+                          alt={card.name} 
+                          className="w-full h-full object-contain" 
+                          style={{ imageRendering: 'crisp-edges' }} 
+                        />
+                      ) : (
+                        <span className="text-[10px] sm:text-xs text-muted-foreground text-center">{card.name}</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
 
         {/* Center Video Player */}
-        <div className="lg:col-span-8 relative bg-gray-100 border-green-600 border-2 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg">
+        <div className="lg:col-span-9 relative bg-gray-100 border-green-600 border-2 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg">
           {/* Navigation Buttons */}
           <button
             onClick={handlePrevious}
@@ -225,79 +259,6 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
           {/* Video Counter */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold neon-glow">
             {currentIndex + 1} / {videos.length}
-          </div>
-        </div>
-
-        {/* Right Card Stacks */}
-        <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4 items-end">
-          {/* Top Right - Red Resolution Cards */}
-          <div 
-            className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
-            onClick={cycleResolutionCard}
-          >
-            {resolutionCards.map((card, idx) => {
-              const offset = (idx - resolutionCardIndex + resolutionCards.length) % resolutionCards.length;
-              const rotation = offset === 0 ? 'group-hover:-rotate-12' : offset === 1 ? '' : 'group-hover:rotate-12';
-              const translation = offset === 0 ? 'group-hover:-translate-x-2' : offset === 1 ? 'translate-x-0.5 translate-y-0.5' : 'translate-x-1 translate-y-1 group-hover:translate-x-2';
-              const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
-              
-              return (
-                <div
-                  key={idx}
-                  className={`absolute inset-0 ${card.bg} border-red-700 border-3 rounded-xl shadow-lg flex items-center justify-center text-[10px] text-muted-foreground transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
-                >
-                  {card.name}
-                </div>
-              );
-            })}
-            {/* Card indicator dots */}
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
-              {resolutionCards.map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                    idx === resolutionCardIndex ? 'bg-red-700' : 'bg-gray-300'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-          
-          {/* Bottom Right - Blue Classification Cards */}
-          <div 
-            className="relative w-24 h-32 lg:w-28 lg:h-40 group cursor-pointer transition-transform duration-300 hover:scale-150 hover:z-50"
-            onClick={cycleClassificationCard}
-          >
-            {classificationCards.map((card, idx) => {
-              const offset = (idx - classificationCardIndex + classificationCards.length) % classificationCards.length;
-              const rotation = offset === 0 ? 'group-hover:-rotate-12' : offset === 1 ? '' : 'group-hover:rotate-12';
-              const translation = offset === 0 ? 'group-hover:-translate-x-2' : offset === 1 ? 'translate-x-0.5 translate-y-0.5' : 'translate-x-1 translate-y-1 group-hover:translate-x-2';
-              const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
-              
-              return (
-                <div
-                  key={idx}
-                  className={`absolute inset-0 ${card.bg} border-blue-600 border-3 rounded-xl shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex} ${card.image ? 'p-1' : 'flex items-center justify-center'}`}
-                >
-                  {card.image ? (
-                    <img src={card.image} alt={card.name} className="w-full h-full object-contain" style={{ imageRendering: 'crisp-edges' }} />
-                  ) : (
-                    <span className="text-[10px] text-muted-foreground">{card.name}</span>
-                  )}
-                </div>
-              );
-            })}
-            {/* Card indicator dots */}
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
-              {classificationCards.map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                    idx === classificationCardIndex ? 'bg-blue-600' : 'bg-gray-300'
-                  }`}
-                />
-              ))}
-            </div>
           </div>
         </div>
       </div>
