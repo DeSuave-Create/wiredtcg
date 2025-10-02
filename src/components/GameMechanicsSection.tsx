@@ -60,7 +60,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
       }, index * 400);
     });
 
-    // Reset and restart after all cards are shown for a while
+    // Reset after 3 second pause (last card at 2000ms + 600ms animation + 3000ms pause)
     setTimeout(() => {
       setDealtCards([]);
       setShowDeck(true);
@@ -70,7 +70,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
         setIsDealing(true);
         dealCards();
       }, 1000);
-    }, 7000);
+    }, 5600);
   };
 
   return (
