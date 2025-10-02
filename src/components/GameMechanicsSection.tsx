@@ -142,7 +142,6 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
               className="absolute left-1/2 top-1/2 group"
               style={{
                 animation: 'dealCard 0.6s ease-out forwards',
-                animationDelay: `${index * 0.6}s`, // Updated to match 600ms delay
                 opacity: 0,
                 zIndex: baseZIndex,
               }}
