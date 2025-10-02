@@ -164,8 +164,15 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
                   <img 
                     src={card.image} 
                     alt={card.name} 
-                    className="absolute inset-0 w-full h-full object-cover" 
-                    style={{ imageRendering: 'crisp-edges', margin: '-4px', width: 'calc(100% + 8px)', height: 'calc(100% + 8px)' }} 
+                    className="absolute inset-0 w-full h-full" 
+                    style={{ 
+                      imageRendering: 'crisp-edges', 
+                      objectFit: 'cover',
+                      objectPosition: 'center',
+                      width: '110%',
+                      height: '110%',
+                      margin: '-5%'
+                    }} 
                   />
                 ) : (
                   <span className="text-sm text-muted-foreground text-center">{card.name}</span>
