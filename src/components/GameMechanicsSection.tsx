@@ -51,28 +51,36 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
 
     // Reset state and hide deck
     setDealtCards([]);
-    setShowDeck(false);
+    
+    const hideTimeout = window.setTimeout(() => {
+      setShowDeck(false);
+    }, 100);
+    timeoutsRef.current.push(hideTimeout);
 
     // Deal cards one by one with delay
     selectedCards.forEach((card, index) => {
       const timeout = window.setTimeout(() => {
         setDealtCards(prev => [...prev, card]);
-      }, index * 600);
+      }, 200 + index * 600);
       timeoutsRef.current.push(timeout);
     });
 
-    // Reset after 3 second pause (5 cards * 600ms = 3000ms + 600ms animation + 3000ms display = 6600ms)
+    // Reset after 3 second display (200ms start + 5*600ms dealing + 600ms animation + 3000ms display)
     const resetTimeout = window.setTimeout(() => {
       setDealtCards([]);
-      setShowDeck(true);
-      isDealingRef.current = false;
       
-      // Restart the cycle after showing deck for 1 second
-      const restartTimeout = window.setTimeout(() => {
-        dealCards();
-      }, 1000);
-      timeoutsRef.current.push(restartTimeout);
-    }, 6600);
+      const showDeckTimeout = window.setTimeout(() => {
+        setShowDeck(true);
+        isDealingRef.current = false;
+        
+        // Restart the cycle after showing deck for 1 second
+        const restartTimeout = window.setTimeout(() => {
+          dealCards();
+        }, 1000);
+        timeoutsRef.current.push(restartTimeout);
+      }, 100);
+      timeoutsRef.current.push(showDeckTimeout);
+    }, 6800);
     timeoutsRef.current.push(resetTimeout);
   };
 
