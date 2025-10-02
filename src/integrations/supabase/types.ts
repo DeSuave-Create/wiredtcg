@@ -14,41 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      players: {
-        Row: {
-          created_at: string
-          id: string
-          name: string
-          room_id: string
-          score: number
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          name: string
-          room_id: string
-          score?: number
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          name?: string
-          room_id?: string
-          score?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "players_room_id_fkey"
-            columns: ["room_id"]
-            isOneToOne: false
-            referencedRelation: "rooms"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       rooms: {
         Row: {
           admin_token: string
