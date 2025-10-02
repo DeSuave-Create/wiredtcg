@@ -91,6 +91,15 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
 
   return (
     <div className="flex justify-center items-center min-h-[500px] relative py-8">
+      {/* Ghost logo background */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+        <img 
+          src="/wire-logo-official.png" 
+          alt="WIRED Ghost Logo" 
+          className="w-64 h-64 lg:w-80 lg:h-80 object-contain opacity-10"
+        />
+      </div>
+
       {/* Deck with logo */}
       {showDeck && (
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
