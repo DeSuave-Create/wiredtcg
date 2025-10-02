@@ -53,14 +53,14 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
     // Hide deck immediately before dealing starts
     setShowDeck(false);
 
-    // Deal cards one by one with delay
+    // Deal cards one by one with delay (slower animation)
     selectedCards.forEach((card, index) => {
       setTimeout(() => {
         setDealtCards(prev => [...prev, card]);
-      }, index * 400);
+      }, index * 600); // Increased from 400ms to 600ms
     });
 
-    // Reset after 3 second pause (last card at 2000ms + 600ms animation + 3000ms pause)
+    // Reset after 3 second pause (last card at 3000ms + 600ms animation + 3000ms pause)
     setTimeout(() => {
       setDealtCards([]);
       setShowDeck(true);
@@ -70,7 +70,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
         setIsDealing(true);
         dealCards();
       }, 1000);
-    }, 5600);
+    }, 6600);
   };
 
   return (
@@ -109,7 +109,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
               className="absolute left-1/2 top-1/2 group"
               style={{
                 animation: 'dealCard 0.6s ease-out forwards',
-                animationDelay: `${index * 0.4}s`,
+                animationDelay: `${index * 0.6}s`, // Updated to match 600ms delay
                 opacity: 0,
                 zIndex: baseZIndex,
               }}
