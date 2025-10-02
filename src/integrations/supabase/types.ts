@@ -14,73 +14,13 @@ export type Database = {
   }
   public: {
     Tables: {
-      rooms: {
-        Row: {
-          admin_token: string
-          code: string
-          created_at: string
-          id: string
-          last_activity: string | null
-          updated_at: string
-        }
-        Insert: {
-          admin_token: string
-          code: string
-          created_at?: string
-          id?: string
-          last_activity?: string | null
-          updated_at?: string
-        }
-        Update: {
-          admin_token?: string
-          code?: string
-          created_at?: string
-          id?: string
-          last_activity?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      get_room_admin_data: {
-        Args: { _admin_token: string; _room_id: string }
-        Returns: {
-          admin_token: string
-          code: string
-          created_at: string
-          id: string
-          last_activity: string
-          updated_at: string
-        }[]
-      }
-      get_room_info: {
-        Args: { _room_code: string }
-        Returns: {
-          code: string
-          created_at: string
-          id: string
-          last_activity: string
-          updated_at: string
-        }[]
-      }
-      get_room_info_by_id: {
-        Args: { _room_id: string }
-        Returns: {
-          code: string
-          created_at: string
-          id: string
-          last_activity: string
-          updated_at: string
-        }[]
-      }
-      validate_room_admin: {
-        Args: { _admin_token: string; _room_id: string }
-        Returns: boolean
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
