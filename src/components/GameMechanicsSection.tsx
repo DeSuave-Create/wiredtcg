@@ -104,7 +104,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
         <img 
           src="/wire-logo-official.png" 
           alt="WIRED Ghost Logo" 
-          className="w-80 h-80 lg:w-96 lg:h-96 object-contain opacity-10"
+          className="w-[480px] h-[480px] lg:w-[576px] lg:h-[576px] object-contain opacity-10"
         />
       </div>
 
