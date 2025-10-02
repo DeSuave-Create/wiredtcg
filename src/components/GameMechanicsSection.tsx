@@ -131,7 +131,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
           const offset = index - centerIndex;
           const rotation = offset * 10; // 10 degrees per card for fan effect
           const translateY = Math.abs(offset) * 15; // Slight rise for outer cards
-          const translateX = offset * 55; // Increased horizontal spread for more spacing
+          const translateX = offset * 75; // Increased horizontal spread to fill more space
           // Cards dealt later have higher z-index during animation
           const baseZIndex = 30 + index; // Each card gets higher z-index as it's dealt
           const hoverZIndex = 100; // Very high z-index on hover
