@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface GameMechanicsSectionProps {
   cardBackgroundImage?: string;
@@ -13,9 +13,10 @@ interface Card {
 }
 
 const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps) => {
-  const [isDealing, setIsDealing] = useState(false);
   const [dealtCards, setDealtCards] = useState<Card[]>([]);
   const [showDeck, setShowDeck] = useState(true);
+  const isDealingRef = useRef(false);
+  const timeoutsRef = useRef<number[]>([]);
 
   const allCards: Card[] = [
     { name: 'Computer', bg: 'bg-green-50', image: '/lovable-uploads/equipment-computer.png', borderColor: 'border-green-500', type: 'equipment' },
@@ -35,43 +36,58 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
     { name: 'Classification 5', bg: 'bg-gray-100', image: null, borderColor: 'border-blue-500', type: 'classification' },
   ];
 
-  // Start dealing animation after 1 second
-  useEffect(() => {
-    const startDelay = setTimeout(() => {
-      setIsDealing(true);
-      dealCards();
-    }, 1000);
-
-    return () => clearTimeout(startDelay);
-  }, []);
-
   const dealCards = () => {
+    // Prevent multiple simultaneous dealing cycles
+    if (isDealingRef.current) return;
+    isDealingRef.current = true;
+
+    // Clear any existing timeouts
+    timeoutsRef.current.forEach(clearTimeout);
+    timeoutsRef.current = [];
+
     // Shuffle and pick 6 random cards
     const shuffled = [...allCards].sort(() => Math.random() - 0.5);
     const selectedCards = shuffled.slice(0, 6);
 
-    // Hide deck immediately before dealing starts
+    // Reset state and hide deck
+    setDealtCards([]);
     setShowDeck(false);
 
-    // Deal cards one by one with delay (slower animation)
+    // Deal cards one by one with delay
     selectedCards.forEach((card, index) => {
-      setTimeout(() => {
+      const timeout = window.setTimeout(() => {
         setDealtCards(prev => [...prev, card]);
-      }, index * 600); // Increased from 400ms to 600ms
+      }, index * 600);
+      timeoutsRef.current.push(timeout);
     });
 
-    // Reset after 3 second pause (last card at 3000ms + 600ms animation + 3000ms pause)
-    setTimeout(() => {
+    // Reset after 3 second pause (5 cards * 600ms = 3000ms + 600ms animation + 3000ms pause = 6600ms)
+    const resetTimeout = window.setTimeout(() => {
       setDealtCards([]);
       setShowDeck(true);
-      setIsDealing(false);
-      // Restart the cycle
-      setTimeout(() => {
-        setIsDealing(true);
+      isDealingRef.current = false;
+      
+      // Restart the cycle after showing deck for 1 second
+      const restartTimeout = window.setTimeout(() => {
         dealCards();
       }, 1000);
+      timeoutsRef.current.push(restartTimeout);
     }, 6600);
+    timeoutsRef.current.push(resetTimeout);
   };
+
+  // Start dealing animation after 1 second
+  useEffect(() => {
+    const startDelay = window.setTimeout(() => {
+      dealCards();
+    }, 1000);
+
+    return () => {
+      // Cleanup all timeouts on unmount
+      clearTimeout(startDelay);
+      timeoutsRef.current.forEach(clearTimeout);
+    };
+  }, []);
 
   return (
     <div className="flex justify-center items-center min-h-[500px] relative py-8">
