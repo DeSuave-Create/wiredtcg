@@ -151,8 +151,8 @@ const Extras = () => {
                   >
                     {gameModes.map((card, idx) => {
                       const offset = (idx - gameModeIndex + gameModes.length) % gameModes.length;
-                      const rotation = offset === 0 ? 'group-hover:rotate-6' : offset === 1 ? '' : 'group-hover:-rotate-6';
-                      const translation = offset === 0 ? 'group-hover:translate-x-4' : offset === 1 ? 'translate-x-1 translate-y-1' : 'translate-x-2 translate-y-2 group-hover:-translate-x-4';
+                      const rotation = offset === 0 ? 'group-hover:rotate-12' : offset === 1 ? '' : 'group-hover:-rotate-12';
+                      const translation = offset === 0 ? 'group-hover:translate-x-8' : offset === 1 ? 'translate-x-2 translate-y-2' : 'translate-x-4 translate-y-4 group-hover:-translate-x-8';
                       const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
                       
                       return (
