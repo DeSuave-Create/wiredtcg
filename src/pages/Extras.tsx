@@ -140,9 +140,19 @@ const Extras = () => {
               </div>
 
               {/* Game Modes Card Deck */}
-              <div className="flex justify-center py-8">
+              <div className="flex justify-center items-center min-h-[350px] sm:min-h-[400px] lg:min-h-[500px] relative py-4 sm:py-6 lg:py-8">
+                {/* Ghost logo background */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+                  <img 
+                    src="/wire-logo-official.png" 
+                    alt="WIRED Ghost Logo" 
+                    className="w-64 h-64 sm:w-80 sm:h-80 lg:w-[480px] lg:h-[480px] object-contain opacity-10"
+                  />
+                </div>
+
+                {/* Card Deck */}
                 <div 
-                  className="relative w-64 h-96 group cursor-pointer transition-transform duration-300 hover:scale-110 hover:z-50"
+                  className="relative w-28 h-40 sm:w-36 sm:h-52 lg:w-44 lg:h-64 xl:w-52 xl:h-80 group cursor-pointer transition-transform duration-300 hover:scale-110 hover:z-50 z-10"
                   onClick={cycleGameMode}
                 >
                   {gameModes.map((card, idx) => {
@@ -156,7 +166,7 @@ const Extras = () => {
                         key={idx}
                         className={`absolute inset-0 bg-gray-100 border-green-600 border-8 rounded-3xl shadow-2xl drop-shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
                       >
-                        <div className="h-full flex flex-col p-6">
+                        <div className="h-full flex flex-col p-2 sm:p-4 lg:p-6">
                           <div className="flex-1 flex items-center justify-center">
                             <img 
                               src={card.image} 
@@ -165,16 +175,16 @@ const Extras = () => {
                               style={{ imageRendering: 'crisp-edges' }}
                             />
                           </div>
-                          <div className="text-center space-y-2 mt-4">
-                            <h3 className="text-2xl font-black text-green-600 uppercase tracking-wider">{card.name}</h3>
-                            <p className="text-sm text-black font-bold">{card.players}</p>
+                          <div className="text-center space-y-1 mt-2">
+                            <h3 className="text-sm sm:text-lg lg:text-2xl font-black text-green-600 uppercase tracking-wider">{card.name}</h3>
+                            <p className="text-xs sm:text-sm text-black font-bold">{card.players}</p>
                           </div>
                         </div>
                       </div>
                     );
                   })}
                   {/* Card indicator dots */}
-                  <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
+                  <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-30">
                     {gameModes.map((_, idx) => (
                       <div
                         key={idx}
