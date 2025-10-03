@@ -27,16 +27,16 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
     for (let i = 0; i < 40; i++) {
       deck.push({ name: 'Computer', bg: 'bg-green-50', image: '/lovable-uploads/equipment-computer-new.png', borderColor: 'border-green-500', type: 'equipment' });
     }
-    // 2-Cables: 14 cards
-    for (let i = 0; i < 14; i++) {
+    // 2-Cables: 20 cards
+    for (let i = 0; i < 20; i++) {
       deck.push({ name: 'Cabling (2x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-2cable.png', borderColor: 'border-green-500', type: 'equipment' });
     }
-    // 3-Cables: 6 cards
-    for (let i = 0; i < 6; i++) {
+    // 3-Cables: 10 cards
+    for (let i = 0; i < 10; i++) {
       deck.push({ name: 'Cabling (3x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-3cable.png', borderColor: 'border-green-500', type: 'equipment' });
     }
-    // Switches: 20 cards
-    for (let i = 0; i < 20; i++) {
+    // Switches: 10 cards
+    for (let i = 0; i < 10; i++) {
       deck.push({ name: 'Switch', bg: 'bg-green-50', image: '/lovable-uploads/equipment-switch.png', borderColor: 'border-green-500', type: 'equipment' });
     }
     
