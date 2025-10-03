@@ -58,43 +58,43 @@ const RulebookViewer = () => {
           </button>
 
           {/* Page Viewer Container */}
-          <div className="relative bg-gray-900 rounded-lg overflow-hidden p-4">
+          <div className="relative bg-gray-900 rounded-lg overflow-hidden p-2 sm:p-4">
             {/* Page Navigation */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-2 sm:mb-4 gap-2">
               <button
                 onClick={goToPrevPage}
                 disabled={pageNumber <= 1}
-                className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white p-2 rounded-lg transition-colors"
+                className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white p-3 sm:p-2 rounded-lg transition-colors touch-manipulation"
                 aria-label="Previous page"
               >
-                <ChevronLeft className="h-5 w-5" />
+                <ChevronLeft className="h-6 w-6 sm:h-5 sm:w-5" />
               </button>
               
-              <span className="text-white font-medium">
+              <span className="text-white font-medium text-sm sm:text-base">
                 Page {pageNumber} of {totalPages}
               </span>
               
               <button
                 onClick={goToNextPage}
                 disabled={pageNumber >= totalPages}
-                className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white p-2 rounded-lg transition-colors"
+                className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white p-3 sm:p-2 rounded-lg transition-colors touch-manipulation"
                 aria-label="Next page"
               >
-                <ChevronRight className="h-5 w-5" />
+                <ChevronRight className="h-6 w-6 sm:h-5 sm:w-5" />
               </button>
             </div>
 
             {/* Page Image with Watermark */}
-            <div className="relative bg-white rounded-lg overflow-hidden">
+            <div className="relative bg-white rounded-lg overflow-hidden max-w-full">
               {/* Watermark Overlay */}
               <div className="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
-                <div className="grid grid-cols-3 gap-20 opacity-10 select-none">
-                  {[...Array(9)].map((_, i) => (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-10 sm:gap-20 opacity-10 select-none">
+                  {[...Array(6)].map((_, i) => (
                     <img
                       key={i}
                       src="/wire-logo-official.png"
                       alt="WIRED Watermark"
-                      className="w-24 h-24 object-contain"
+                      className="w-16 h-16 sm:w-24 sm:h-24 object-contain"
                       draggable="false"
                     />
                   ))}
@@ -105,13 +105,16 @@ const RulebookViewer = () => {
               <img
                 src={`/rulebook/page_${pageNumber}.jpg`}
                 alt={`Rulebook page ${pageNumber}`}
-                className="w-full h-auto select-none"
+                className="w-full h-auto select-none touch-none"
                 draggable="false"
                 style={{
                   userSelect: 'none',
                   WebkitUserSelect: 'none',
                   MozUserSelect: 'none',
-                  msUserSelect: 'none'
+                  msUserSelect: 'none',
+                  WebkitTouchCallout: 'none',
+                  maxWidth: '100%',
+                  height: 'auto'
                 }}
               />
             </div>
