@@ -71,12 +71,8 @@ const Extras = () => {
   };
 
   const handleViewOnline = () => {
-    // Open the PDF in a new tab
-    window.open('/WIRED_Instructions.pdf', '_blank');
-    toast({
-      title: "Opening Rulebook",
-      description: "The rulebook is opening in a new tab.",
-    });
+    // Navigate to the protected viewer page
+    window.location.href = '/rulebook';
   };
 
   const handleJoinDiscord = () => {
