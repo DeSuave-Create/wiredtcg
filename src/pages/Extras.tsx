@@ -25,10 +25,10 @@ const Extras = () => {
     },
     {
       id: '2',
-      src: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-      title: 'Advanced Strategies',
-      description: 'Master advanced network building techniques and learn how to counter your opponents effectively.',
-      isYouTube: true
+      src: '/videos/gameplay-tutorial.mp4',
+      title: 'Gameplay Walkthrough',
+      description: 'Watch a full game in action and see how strategies unfold in real-time.',
+      isYouTube: false
     },
     {
       id: '3',
