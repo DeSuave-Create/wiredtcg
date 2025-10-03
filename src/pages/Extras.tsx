@@ -150,49 +150,43 @@ const Extras = () => {
                   />
                 </div>
 
-                {/* Card Deck */}
-                <div 
-                  className="relative w-28 h-40 sm:w-36 sm:h-52 lg:w-44 lg:h-64 xl:w-52 xl:h-80 group cursor-pointer transition-transform duration-300 hover:scale-110 hover:z-50 z-10"
-                  onClick={cycleGameMode}
-                >
-                  {gameModes.map((card, idx) => {
-                    const offset = (idx - gameModeIndex + gameModes.length) % gameModes.length;
-                    const rotation = offset === 0 ? 'group-hover:rotate-6' : offset === 1 ? '' : 'group-hover:-rotate-6';
-                    const translation = offset === 0 ? 'group-hover:translate-x-4' : offset === 1 ? 'translate-x-1 translate-y-1' : 'translate-x-2 translate-y-2 group-hover:-translate-x-4';
-                    const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
-                    
-                    return (
-                      <div
-                        key={idx}
-                        className={`absolute inset-0 bg-gray-100 border-green-600 border-8 rounded-3xl shadow-2xl drop-shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
-                      >
-                        <div className="h-full flex flex-col p-2 sm:p-4 lg:p-6">
-                          <div className="flex-1 flex items-center justify-center">
-                            <img 
-                              src={card.image} 
-                              alt={card.name} 
-                              className="w-full h-full object-contain"
-                              style={{ imageRendering: 'crisp-edges' }}
-                            />
-                          </div>
-                          <div className="text-center space-y-1 mt-2">
-                            <h3 className="text-sm sm:text-lg lg:text-2xl font-black text-green-600 uppercase tracking-wider">{card.name}</h3>
-                            <p className="text-xs sm:text-sm text-black font-bold">{card.players}</p>
-                          </div>
+                {/* Card Deck with same container as Card back */}
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+                  <div 
+                    className="relative w-28 h-40 sm:w-36 sm:h-52 lg:w-44 lg:h-64 xl:w-52 xl:h-80 shadow-2xl drop-shadow-lg overflow-hidden group cursor-pointer transition-transform duration-300 hover:scale-110"
+                    onClick={cycleGameMode}
+                  >
+                    {gameModes.map((card, idx) => {
+                      const offset = (idx - gameModeIndex + gameModes.length) % gameModes.length;
+                      const rotation = offset === 0 ? 'group-hover:rotate-6' : offset === 1 ? '' : 'group-hover:-rotate-6';
+                      const translation = offset === 0 ? 'group-hover:translate-x-4' : offset === 1 ? 'translate-x-1 translate-y-1' : 'translate-x-2 translate-y-2 group-hover:-translate-x-4';
+                      const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
+                      
+                      return (
+                        <div
+                          key={idx}
+                          className={`absolute inset-0 transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
+                        >
+                          <img 
+                            src={card.image} 
+                            alt={card.name} 
+                            className="w-full h-full object-contain"
+                            style={{ imageRendering: 'crisp-edges' }}
+                          />
                         </div>
-                      </div>
-                    );
-                  })}
-                  {/* Card indicator dots */}
-                  <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-30">
-                    {gameModes.map((_, idx) => (
-                      <div
-                        key={idx}
-                        className={`w-3 h-3 rounded-full transition-colors ${
-                          idx === gameModeIndex ? 'bg-green-600' : 'bg-gray-300'
-                        }`}
-                      />
-                    ))}
+                      );
+                    })}
+                    {/* Card indicator dots */}
+                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+                      {gameModes.map((_, idx) => (
+                        <div
+                          key={idx}
+                          className={`w-3 h-3 rounded-full transition-colors ${
+                            idx === gameModeIndex ? 'bg-green-600' : 'bg-gray-300'
+                          }`}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
