@@ -3,6 +3,7 @@ import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
 import ImageSection from '@/components/ImageSection';
 import VideoCarousel from '@/components/VideoCarousel';
+import GameModesCarousel from '@/components/GameModesCarousel';
 import ConnectionLines from '@/components/ConnectionLines';
 import TextSection from '@/components/TextSection';
 import { Button } from '@/components/ui/button';
@@ -89,6 +90,31 @@ const Extras = () => {
     });
   };
 
+  // Game modes data
+  const gameModes = [
+    {
+      id: '1',
+      name: 'Internet',
+      image: '/lovable-uploads/gamemode-internet.png',
+      players: '2-6 Players',
+      description: 'Connect and compete to build the most powerful network in this classic multiplayer mode.'
+    },
+    {
+      id: '2',
+      name: 'A.I.',
+      image: '/lovable-uploads/gamemode-ai.png',
+      players: '1-2 Players',
+      description: 'Challenge the artificial intelligence in solo or duo gameplay for a unique strategic experience.'
+    },
+    {
+      id: '3',
+      name: 'BotNet',
+      image: '/lovable-uploads/gamemode-botnet.png',
+      players: '4-6 Players',
+      description: 'One network to rule them all - compete in this intense multiplayer battle for network supremacy.'
+    }
+  ];
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -126,47 +152,8 @@ const Extras = () => {
                 </p>
               </div>
 
-              {/* Game Modes Card Deck */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                {/* Internet Mode */}
-                <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col hover:scale-105 transition-all duration-300">
-                  <div className="h-48 flex items-center justify-center">
-                    <img 
-                      src="/lovable-uploads/gamemode-internet.png" 
-                      alt="Internet Mode" 
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <h3 className="text-xl font-black text-green-600 uppercase tracking-wider">Internet</h3>
-                  <p className="text-sm text-black font-medium">2-6 Players</p>
-                </div>
-
-                {/* AI Mode */}
-                <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col hover:scale-105 transition-all duration-300">
-                  <div className="h-48 flex items-center justify-center">
-                    <img 
-                      src="/lovable-uploads/gamemode-ai.png" 
-                      alt="AI Mode" 
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <h3 className="text-xl font-black text-green-600 uppercase tracking-wider">A.I.</h3>
-                  <p className="text-sm text-black font-medium">1-2 Players</p>
-                </div>
-
-                {/* BotNet Mode */}
-                <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col hover:scale-105 transition-all duration-300">
-                  <div className="h-48 flex items-center justify-center">
-                    <img 
-                      src="/lovable-uploads/gamemode-botnet.png" 
-                      alt="BotNet Mode" 
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <h3 className="text-xl font-black text-green-600 uppercase tracking-wider">BotNet</h3>
-                  <p className="text-sm text-black font-medium">4-6 Players</p>
-                </div>
-              </div>
+              {/* Game Modes Carousel */}
+              <GameModesCarousel gameModes={gameModes} />
 
               {/* Centered Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
