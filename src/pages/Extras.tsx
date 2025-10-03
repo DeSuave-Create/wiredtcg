@@ -1,9 +1,9 @@
+import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
 import ImageSection from '@/components/ImageSection';
 import VideoCarousel from '@/components/VideoCarousel';
-import GameModesCarousel from '@/components/GameModesCarousel';
 import ConnectionLines from '@/components/ConnectionLines';
 import TextSection from '@/components/TextSection';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const Extras = () => {
   const { toast } = useToast();
+  const [gameModeIndex, setGameModeIndex] = useState(0);
 
   // Mock video data for the carousel
   const tutorialVideos = [
@@ -92,28 +93,14 @@ const Extras = () => {
 
   // Game modes data
   const gameModes = [
-    {
-      id: '1',
-      name: 'Internet',
-      image: '/lovable-uploads/gamemode-internet.png',
-      players: '2-6 Players',
-      description: 'Connect and compete to build the most powerful network in this classic multiplayer mode.'
-    },
-    {
-      id: '2',
-      name: 'A.I.',
-      image: '/lovable-uploads/gamemode-ai.png',
-      players: '1-2 Players',
-      description: 'Challenge the artificial intelligence in solo or duo gameplay for a unique strategic experience.'
-    },
-    {
-      id: '3',
-      name: 'BotNet',
-      image: '/lovable-uploads/gamemode-botnet.png',
-      players: '4-6 Players',
-      description: 'One network to rule them all - compete in this intense multiplayer battle for network supremacy.'
-    }
+    { name: 'Internet', image: '/lovable-uploads/gamemode-internet.png', players: '2-6 Players' },
+    { name: 'A.I.', image: '/lovable-uploads/gamemode-ai.png', players: '1-2 Players' },
+    { name: 'BotNet', image: '/lovable-uploads/gamemode-botnet.png', players: '4-6 Players' }
   ];
+
+  const cycleGameMode = () => {
+    setGameModeIndex((prev) => (prev + 1) % gameModes.length);
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -152,8 +139,53 @@ const Extras = () => {
                 </p>
               </div>
 
-              {/* Game Modes Carousel */}
-              <GameModesCarousel gameModes={gameModes} />
+              {/* Game Modes Card Deck */}
+              <div className="flex justify-center py-8">
+                <div 
+                  className="relative w-64 h-96 group cursor-pointer transition-transform duration-300 hover:scale-110 hover:z-50"
+                  onClick={cycleGameMode}
+                >
+                  {gameModes.map((card, idx) => {
+                    const offset = (idx - gameModeIndex + gameModes.length) % gameModes.length;
+                    const rotation = offset === 0 ? 'group-hover:rotate-6' : offset === 1 ? '' : 'group-hover:-rotate-6';
+                    const translation = offset === 0 ? 'group-hover:translate-x-4' : offset === 1 ? 'translate-x-1 translate-y-1' : 'translate-x-2 translate-y-2 group-hover:-translate-x-4';
+                    const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
+                    
+                    return (
+                      <div
+                        key={idx}
+                        className={`absolute inset-0 bg-gray-100 border-green-600 border-8 rounded-3xl shadow-2xl drop-shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
+                      >
+                        <div className="h-full flex flex-col p-6">
+                          <div className="flex-1 flex items-center justify-center">
+                            <img 
+                              src={card.image} 
+                              alt={card.name} 
+                              className="w-full h-full object-contain"
+                              style={{ imageRendering: 'crisp-edges' }}
+                            />
+                          </div>
+                          <div className="text-center space-y-2 mt-4">
+                            <h3 className="text-2xl font-black text-green-600 uppercase tracking-wider">{card.name}</h3>
+                            <p className="text-sm text-black font-bold">{card.players}</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {/* Card indicator dots */}
+                  <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
+                    {gameModes.map((_, idx) => (
+                      <div
+                        key={idx}
+                        className={`w-3 h-3 rounded-full transition-colors ${
+                          idx === gameModeIndex ? 'bg-green-600' : 'bg-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
 
               {/* Centered Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
