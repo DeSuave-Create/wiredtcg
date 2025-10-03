@@ -676,6 +676,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
           />
         ) : (
           <video 
+            key={currentVideo.src}
             ref={videoRef}
             controls 
             className="w-full h-auto"
