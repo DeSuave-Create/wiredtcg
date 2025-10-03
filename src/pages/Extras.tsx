@@ -143,22 +143,22 @@ const Extras = () => {
                   />
                 </div>
 
-                {/* Card Deck with same container as Card back */}
+                {/* Card Deck - matching VideoCarousel styling */}
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
                   <div 
-                    className="relative w-28 h-40 sm:w-36 sm:h-52 lg:w-44 lg:h-64 xl:w-52 xl:h-80 shadow-2xl drop-shadow-lg overflow-hidden group cursor-pointer transition-transform duration-300 hover:scale-110 shadow-[0_0_40px_rgba(251,191,36,0.6)] hover:shadow-[0_0_60px_rgba(251,191,36,0.8)]"
+                    className="relative w-28 h-40 sm:w-36 sm:h-52 lg:w-44 lg:h-64 xl:w-52 xl:h-80 group cursor-pointer transition-transform duration-300 hover:scale-105"
                     onClick={cycleGameMode}
                   >
                     {gameModes.map((card, idx) => {
                       const offset = (idx - gameModeIndex + gameModes.length) % gameModes.length;
                       const rotation = offset === 0 ? 'group-hover:rotate-12' : offset === 1 ? '' : 'group-hover:-rotate-12';
-                      const translation = offset === 0 ? 'group-hover:translate-x-8' : offset === 1 ? 'translate-x-2 translate-y-2' : 'translate-x-4 translate-y-4 group-hover:-translate-x-8';
+                      const translation = offset === 0 ? 'group-hover:translate-x-2' : offset === 1 ? 'translate-x-0.5 translate-y-0.5' : 'translate-x-1 translate-y-1 group-hover:-translate-x-2';
                       const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
                       
                       return (
                         <div
                           key={idx}
-                          className={`absolute inset-0 transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
+                          className={`absolute inset-0 border-3 shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
                         >
                           <img 
                             src={card.image} 
