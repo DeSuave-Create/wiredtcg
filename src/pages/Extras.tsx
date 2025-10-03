@@ -52,10 +52,22 @@ const Extras = () => {
   ];
 
   const handleDownload = (item: string) => {
-    toast({
-      title: `Downloading ${item}`,
-      description: "Your download will begin shortly.",
-    });
+    if (item === 'Rulebook PDF' || item === 'Official Rulebook') {
+      // Download the actual rulebook
+      const link = document.createElement('a');
+      link.href = '/WIRED_Instructions.pdf';
+      link.download = 'WIRED_Instructions.pdf';
+      link.click();
+      toast({
+        title: "Downloading Rulebook",
+        description: "Your download has started!",
+      });
+    } else {
+      toast({
+        title: `Downloading ${item}`,
+        description: "Your download will begin shortly.",
+      });
+    }
   };
 
   const handleViewOnline = () => {
@@ -110,21 +122,22 @@ const Extras = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
                 <ImageSection
-                  src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=600&h=400&fit=crop"
+                  src="/lovable-uploads/card-back.png"
                   alt="WIRED Rulebook Cover"
                   title="Complete Game Manual"
-                  description="The comprehensive 24-page rulebook includes advanced strategies, variant game modes, and tournament rules."
+                  description="The comprehensive 7-page rulebook includes everything you need to master WIRED."
                 />
               </div>
               <div className="space-y-6">
                 <TextSection title="What's Included">
                   <ul className="list-disc list-inside space-y-2 text-sm">
-                    <li>Basic gameplay rules and setup instructions</li>
-                    <li>Advanced strategies for network optimization</li>
-                    <li>Card reference guide with all abilities</li>
-                    <li>Tournament and competitive play rules</li>
-                    <li>Variant game modes for 1-6 players</li>
-                    <li>Troubleshooting and FAQ section</li>
+                    <li>Game play at a glance - Quick start overview</li>
+                    <li>Complete game setup instructions</li>
+                    <li>Turn phases: TRADE, 3 MOVES, DISCARD, DRAW, SCORE</li>
+                    <li>All card types explained: Equipment (Green), Action (Red), Classification (Blue)</li>
+                    <li>Network building strategies and mechanics</li>
+                    <li>House rules for variant gameplay</li>
+                    <li>Tie breakers and winning conditions</li>
                   </ul>
                 </TextSection>
                 <div className="flex flex-col sm:flex-row gap-3">
@@ -157,8 +170,8 @@ const Extras = () => {
               <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
                 <FileText className="h-12 w-12 text-green-600 mx-auto" />
                 <h3 className="text-lg font-semibold text-green-600">Official Rulebook</h3>
-                <p className="text-sm text-muted-foreground flex-grow">Complete game rules and strategies (PDF, 2.4MB)</p>
-                <button 
+                <p className="text-sm text-muted-foreground flex-grow">Complete game rules and strategies (PDF, 7 pages)</p>
+                <button
                   onClick={() => handleDownload('Official Rulebook')}
                   className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-green-600 mt-auto flex items-center justify-center"
                 >
