@@ -18,15 +18,15 @@ const Extras = () => {
   const tutorialVideos = [
     {
       id: '1',
-      src: 'https://www.youtube.com/embed/Aq5WXmQQooo',
+      src: '/videos/gameplay-tutorial.mp4',
       title: 'Official Gameplay Tutorial',
       description: 'Learn the basics of WIRED in this comprehensive tutorial covering setup, gameplay mechanics, and winning strategies.',
-      isYouTube: true
+      isYouTube: false
     },
     {
       id: '2',
-      src: '/videos/gameplay-tutorial.mp4',
-      title: 'Gameplay Walkthrough',
+      src: '/videos/Wired-Intro.mp4',
+      title: 'WIRED Intro',
       description: 'Watch a full game in action and see how strategies unfold in real-time.',
       isYouTube: false
     },
