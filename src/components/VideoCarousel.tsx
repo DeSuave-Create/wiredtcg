@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import Logo from './Logo';
 
@@ -22,6 +22,16 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
   const [classificationCardIndex, setClassificationCardIndex] = useState(0);
   const [attackCardIndex, setAttackCardIndex] = useState(0);
   const [resolutionCardIndex, setResolutionCardIndex] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Pause video when switching
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+    setIsPlaying(false);
+  }, [currentIndex]);
 
   const equipmentCards = [
     { name: 'Computer', bg: 'bg-green-50', image: '/lovable-uploads/equipment-computer-new.png' },
@@ -666,6 +676,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
           />
         ) : (
           <video 
+            ref={videoRef}
             controls 
             className="w-full h-auto"
             preload="metadata"
