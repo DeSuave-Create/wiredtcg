@@ -19,10 +19,10 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
   const timeoutsRef = useRef<number[]>([]);
 
   const allCards: Card[] = [
-    { name: 'Computer', bg: 'bg-green-50', image: '/lovable-uploads/equipment-computer.png', borderColor: 'border-green-500', type: 'equipment' },
-    { name: 'Cabling', bg: 'bg-green-50', image: '/lovable-uploads/equipment-cabling.png', borderColor: 'border-green-500', type: 'equipment' },
-    { name: 'Equipment 3', bg: 'bg-gray-100', image: null, borderColor: 'border-green-500', type: 'equipment' },
-    { name: 'Equipment 4', bg: 'bg-gray-100', image: null, borderColor: 'border-green-500', type: 'equipment' },
+    { name: 'Computer', bg: 'bg-green-50', image: '/lovable-uploads/equipment-computer-new.png', borderColor: 'border-green-500', type: 'equipment' },
+    { name: 'Cabling (3x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-3cable.png', borderColor: 'border-green-500', type: 'equipment' },
+    { name: 'Cabling (2x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-2cable.png', borderColor: 'border-green-500', type: 'equipment' },
+    { name: 'Switch', bg: 'bg-green-50', image: '/lovable-uploads/equipment-switch.png', borderColor: 'border-green-500', type: 'equipment' },
     { name: 'Equipment 5', bg: 'bg-gray-100', image: null, borderColor: 'border-green-500', type: 'equipment' },
     { name: 'Hacked', bg: 'bg-red-50', image: '/lovable-uploads/attack-hacked.png', borderColor: 'border-red-500', type: 'attack' },
     { name: 'Attack 2', bg: 'bg-gray-100', image: null, borderColor: 'border-red-500', type: 'attack' },
@@ -87,8 +87,10 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
   // Preload images
   useEffect(() => {
     const imagesToPreload = [
-      '/lovable-uploads/equipment-computer.png',
-      '/lovable-uploads/equipment-cabling.png',
+      '/lovable-uploads/equipment-computer-new.png',
+      '/lovable-uploads/equipment-3cable.png',
+      '/lovable-uploads/equipment-2cable.png',
+      '/lovable-uploads/equipment-switch.png',
       '/lovable-uploads/attack-hacked.png',
       '/lovable-uploads/classification-facilities.png',
       '/lovable-uploads/classification-fieldtech.png',

@@ -24,9 +24,10 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
   const [resolutionCardIndex, setResolutionCardIndex] = useState(0);
 
   const equipmentCards = [
-    { name: 'Computer', bg: 'bg-green-50', image: '/lovable-uploads/equipment-computer.png' },
-    { name: 'Cabling', bg: 'bg-green-50', image: '/lovable-uploads/equipment-cabling.png' },
-    { name: 'Equipment', bg: 'bg-gray-100', image: null }
+    { name: 'Computer', bg: 'bg-green-50', image: '/lovable-uploads/equipment-computer-new.png' },
+    { name: 'Cabling (3x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-3cable.png' },
+    { name: 'Cabling (2x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-2cable.png' },
+    { name: 'Switch', bg: 'bg-green-50', image: '/lovable-uploads/equipment-switch.png' }
   ];
 
   const classificationCards = [
