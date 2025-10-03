@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import Logo from './Logo';
-import { extractVideoFrame } from '@/utils/videoThumbnail';
 
 interface Video {
   id: string;
@@ -24,30 +23,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
   const [classificationCardIndex, setClassificationCardIndex] = useState(0);
   const [attackCardIndex, setAttackCardIndex] = useState(0);
   const [resolutionCardIndex, setResolutionCardIndex] = useState(0);
-  const [videoThumbnails, setVideoThumbnails] = useState<Record<string, string>>({});
   const videoRef = useRef<HTMLVideoElement>(null);
-
-  // Generate thumbnails from video frames
-  useEffect(() => {
-    const generateThumbnails = async () => {
-      const thumbnails: Record<string, string> = {};
-      
-      for (const video of videos) {
-        if (!video.isYouTube && !video.thumbnail) {
-          try {
-            const thumb = await extractVideoFrame(video.src);
-            thumbnails[video.id] = thumb;
-          } catch (error) {
-            console.error(`Failed to generate thumbnail for ${video.id}:`, error);
-          }
-        }
-      }
-      
-      setVideoThumbnails(thumbnails);
-    };
-    
-    generateThumbnails();
-  }, [videos]);
 
   // Pause video when switching
   useEffect(() => {
@@ -735,9 +711,9 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
             style={{ width: '120px', height: '80px' }}
           >
             <div className="w-full h-full flex items-center justify-center bg-gray-200">
-              {video.thumbnail || videoThumbnails[video.id] ? (
+              {video.thumbnail ? (
                 <img 
-                  src={video.thumbnail || videoThumbnails[video.id]} 
+                  src={video.thumbnail} 
                   alt={video.title}
                   className="w-full h-full object-cover"
                 />
