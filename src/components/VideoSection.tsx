@@ -14,9 +14,11 @@ interface VideoSectionProps {
 
 const VideoSection = ({ src, title, description, className = "", isYouTube = false, useLogoThumbnail = false }: VideoSectionProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [showCustomControls, setShowCustomControls] = useState(!isYouTube);
 
   const handlePlay = () => {
     setIsPlaying(true);
+    setShowCustomControls(false);
   };
 
   return (
@@ -46,14 +48,27 @@ const VideoSection = ({ src, title, description, className = "", isYouTube = fal
             title={title || "Video"}
           />
         ) : (
-          <video 
-            controls 
-            className="w-full h-auto"
-            preload="metadata"
-          >
-            <source src={src} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          <div className="relative">
+            <video 
+              controls 
+              className="w-full h-auto"
+              preload="metadata"
+              onClick={() => setShowCustomControls(false)}
+            >
+              <source src={src} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            {showCustomControls && !isPlaying && (
+              <div 
+                className="absolute inset-0 flex items-center justify-center bg-black/30 cursor-pointer hover:bg-black/40 transition-colors"
+                onClick={handlePlay}
+              >
+                <div className="bg-white/90 rounded-full p-4 hover:bg-white transition-colors">
+                  <Play className="h-12 w-12 text-primary fill-primary" />
+                </div>
+              </div>
+            )}
+          </div>
         )}
       </div>
       {description && <p className="text-muted-foreground">{description}</p>}
