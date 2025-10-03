@@ -158,7 +158,7 @@ const Extras = () => {
                       return (
                         <div
                           key={idx}
-                          className={`absolute inset-0 ${card.borderColor} border-3 shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
+                          className={`absolute inset-0 ${card.borderColor} border-4 rounded-lg shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
                         >
                           <img 
                             src={card.image} 
