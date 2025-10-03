@@ -8,6 +8,7 @@ interface Video {
   title: string;
   description: string;
   isYouTube?: boolean;
+  thumbnail?: string;
 }
 
 interface VideoCarouselProps {
@@ -710,7 +711,15 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
             style={{ width: '120px', height: '80px' }}
           >
             <div className="w-full h-full flex items-center justify-center bg-gray-200">
-              <Logo size={30} />
+              {video.thumbnail ? (
+                <img 
+                  src={video.thumbnail} 
+                  alt={video.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <Logo size={30} />
+              )}
             </div>
             <div className="absolute bottom-0 left-0 right-0 bg-green-600/90 text-white text-xs px-2 py-1 truncate">
               Video {index + 1}

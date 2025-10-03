@@ -9,6 +9,10 @@ import TextSection from '@/components/TextSection';
 import { Button } from '@/components/ui/button';
 import { Download, BookOpen, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import videoThumb1 from '@/assets/video-thumb-1.jpg';
+import videoThumb2 from '@/assets/video-thumb-2.jpg';
+import videoThumb3 from '@/assets/video-thumb-3.jpg';
+import videoThumb4 from '@/assets/video-thumb-4.jpg';
 
 const Extras = () => {
   const { toast } = useToast();
@@ -21,28 +25,32 @@ const Extras = () => {
       src: '/videos/gameplay-tutorial.mp4',
       title: 'Official Gameplay Tutorial',
       description: 'Learn the basics of WIRED in this comprehensive tutorial covering setup, gameplay mechanics, and winning strategies.',
-      isYouTube: false
+      isYouTube: false,
+      thumbnail: videoThumb1
     },
     {
       id: '2',
       src: '/videos/Wired-Intro2.mp4',
       title: 'WIRED Intro Part 2',
       description: 'Continue exploring WIRED gameplay with advanced strategies and techniques.',
-      isYouTube: false
+      isYouTube: false,
+      thumbnail: videoThumb2
     },
     {
       id: '3',
       src: '/videos/Wired-Intro3.mp4',
       title: 'WIRED Intro Part 3',
       description: 'Master the game with expert tips and winning tactics.',
-      isYouTube: false
+      isYouTube: false,
+      thumbnail: videoThumb3
     },
     {
       id: '4',
       src: '/videos/Wired-Intro.mp4',
       title: 'WIRED Intro',
       description: 'Watch a full game in action and see how strategies unfold in real-time.',
-      isYouTube: false
+      isYouTube: false,
+      thumbnail: videoThumb4
     }
   ];
 
