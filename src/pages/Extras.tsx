@@ -140,7 +140,7 @@ const Extras = () => {
               </div>
 
               {/* Game Modes Card Deck */}
-              <div className="flex justify-center items-center min-h-[350px] sm:min-h-[400px] lg:min-h-[500px] relative py-4 sm:py-6 lg:py-8">
+              <div className="flex justify-center items-center min-h-[292px] sm:min-h-[333px] lg:min-h-[417px] relative py-4 sm:py-6 lg:py-8">
                 {/* Ghost logo background */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
                   <img 
