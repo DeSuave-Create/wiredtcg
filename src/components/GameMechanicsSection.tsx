@@ -163,6 +163,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
       '/lovable-uploads/resolution-helpdesk.png',
       '/lovable-uploads/resolution-powered.png',
       '/lovable-uploads/resolution-secured.png',
+      '/lovable-uploads/card-back.png',
       '/wire-logo-official.png'
     ];
 
@@ -196,17 +197,15 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
         />
       </div>
 
-      {/* Deck with logo */}
+      {/* Deck with card back */}
       {showDeck && (
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
           <div className="relative w-32 h-44 sm:w-40 sm:h-56 lg:w-56 lg:h-80">
-            <div className="absolute inset-0 bg-gray-100 border-4 border-primary shadow-2xl flex items-center justify-center animate-pulse-neon">
-              <img 
-                src="/wire-logo-official.png" 
-                alt="WIRED Logo" 
-                className="w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 object-contain opacity-80"
-              />
-            </div>
+            <img 
+              src="/lovable-uploads/card-back.png" 
+              alt="WIRED Card Back" 
+              className="absolute inset-0 w-full h-full object-contain shadow-2xl animate-pulse-neon"
+            />
           </div>
         </div>
       )}
