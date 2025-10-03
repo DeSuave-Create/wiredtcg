@@ -25,27 +25,41 @@ const Extras = () => {
     },
     {
       id: '2',
+      src: '/videos/Wired-Intro2.mp4',
+      title: 'WIRED Intro Part 2',
+      description: 'Continue exploring WIRED gameplay with advanced strategies and techniques.',
+      isYouTube: false
+    },
+    {
+      id: '3',
+      src: '/videos/Wired-Intro3.mp4',
+      title: 'WIRED Intro Part 3',
+      description: 'Master the game with expert tips and winning tactics.',
+      isYouTube: false
+    },
+    {
+      id: '4',
       src: '/videos/Wired-Intro.mp4',
       title: 'WIRED Intro',
       description: 'Watch a full game in action and see how strategies unfold in real-time.',
       isYouTube: false
     },
     {
-      id: '3',
+      id: '5',
       src: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
       title: 'Card Abilities Guide',
       description: 'Detailed breakdown of all card types, their abilities, and optimal usage scenarios for competitive play.',
       isYouTube: true
     },
     {
-      id: '4',
+      id: '6',
       src: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
       title: 'Tournament Tips',
       description: 'Pro tips for tournament play including deck optimization, timing strategies, and reading your opponents.',
       isYouTube: true
     },
     {
-      id: '5',
+      id: '7',
       src: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
       title: 'Multiplayer Modes',
       description: 'Explore different multiplayer variants and team play strategies for 3-6 players.',
