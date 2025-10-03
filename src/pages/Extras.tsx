@@ -158,12 +158,12 @@ const Extras = () => {
                       return (
                         <div
                           key={idx}
-                          className={`absolute inset-0 ${card.borderColor} border-4 rounded-lg shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
+                          className={`absolute inset-0 ${card.borderColor} border-4 rounded-lg shadow-lg transition-all duration-300 transform ${translation} ${rotation} ${zIndex} overflow-hidden`}
                         >
                           <img 
                             src={card.image} 
                             alt={card.name} 
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-cover rounded-md"
                             style={{ imageRendering: 'crisp-edges' }}
                           />
                         </div>
