@@ -86,9 +86,9 @@ const Extras = () => {
 
   // Game modes data
   const gameModes = [
-    { name: 'Internet', image: '/lovable-uploads/gamemode-internet.png', players: '2-6 Players' },
-    { name: 'A.I.', image: '/lovable-uploads/gamemode-ai.png', players: '1-2 Players' },
-    { name: 'BotNet', image: '/lovable-uploads/gamemode-botnet.png', players: '4-6 Players' }
+    { name: 'Internet', image: '/lovable-uploads/gamemode-internet.png', players: '2-6 Players', borderColor: 'border-green-600' },
+    { name: 'A.I.', image: '/lovable-uploads/gamemode-ai.png', players: '1-2 Players', borderColor: 'border-blue-600' },
+    { name: 'BotNet', image: '/lovable-uploads/gamemode-botnet.png', players: '4-6 Players', borderColor: 'border-red-600' }
   ];
 
   const cycleGameMode = () => {
@@ -158,7 +158,7 @@ const Extras = () => {
                       return (
                         <div
                           key={idx}
-                          className={`absolute inset-0 border-3 shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
+                          className={`absolute inset-0 ${card.borderColor} border-3 shadow-lg overflow-hidden transition-all duration-300 transform ${translation} ${rotation} ${zIndex}`}
                         >
                           <img 
                             src={card.image} 
