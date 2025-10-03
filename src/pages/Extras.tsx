@@ -43,27 +43,6 @@ const Extras = () => {
       title: 'WIRED Intro',
       description: 'Watch a full game in action and see how strategies unfold in real-time.',
       isYouTube: false
-    },
-    {
-      id: '5',
-      src: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-      title: 'Card Abilities Guide',
-      description: 'Detailed breakdown of all card types, their abilities, and optimal usage scenarios for competitive play.',
-      isYouTube: true
-    },
-    {
-      id: '6',
-      src: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-      title: 'Tournament Tips',
-      description: 'Pro tips for tournament play including deck optimization, timing strategies, and reading your opponents.',
-      isYouTube: true
-    },
-    {
-      id: '7',
-      src: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-      title: 'Multiplayer Modes',
-      description: 'Explore different multiplayer variants and team play strategies for 3-6 players.',
-      isYouTube: true
     }
   ];
 
