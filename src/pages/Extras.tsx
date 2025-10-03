@@ -153,7 +153,7 @@ const Extras = () => {
                 {/* Card Deck with same container as Card back */}
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
                   <div 
-                    className="relative w-28 h-40 sm:w-36 sm:h-52 lg:w-44 lg:h-64 xl:w-52 xl:h-80 shadow-2xl drop-shadow-lg overflow-hidden group cursor-pointer transition-transform duration-300 hover:scale-110"
+                    className="relative w-28 h-40 sm:w-36 sm:h-52 lg:w-44 lg:h-64 xl:w-52 xl:h-80 shadow-2xl drop-shadow-lg overflow-hidden group cursor-pointer transition-transform duration-300 hover:scale-110 shadow-[0_0_40px_rgba(251,191,36,0.6)] hover:shadow-[0_0_60px_rgba(251,191,36,0.8)]"
                     onClick={cycleGameMode}
                   >
                     {gameModes.map((card, idx) => {
