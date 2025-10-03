@@ -1,11 +1,19 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { Document, Page, pdfjs } from 'react-pdf';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+
+// Set up PDF.js worker
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 const RulebookViewer = () => {
   const navigate = useNavigate();
+  const [numPages, setNumPages] = useState<number>(0);
+  const [pageNumber, setPageNumber] = useState<number>(1);
 
   useEffect(() => {
     // Disable right-click
@@ -32,12 +40,25 @@ const RulebookViewer = () => {
     };
   }, []);
 
+
+  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+    setNumPages(numPages);
+  };
+
+  const goToPrevPage = () => {
+    setPageNumber(prev => Math.max(prev - 1, 1));
+  };
+
+  const goToNextPage = () => {
+    setPageNumber(prev => Math.min(prev + 1, numPages));
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="container mx-auto px-4 py-8 flex-grow">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           {/* Back Button */}
           <button
             onClick={() => navigate('/extras')}
@@ -48,50 +69,64 @@ const RulebookViewer = () => {
           </button>
 
           {/* PDF Viewer Container */}
-          <div className="relative bg-gray-900 rounded-lg overflow-hidden" style={{ height: 'calc(100vh - 250px)' }}>
-            {/* Watermark Overlay */}
-            <div className="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
-              <div className="grid grid-cols-2 gap-32 opacity-10 select-none">
-                {[...Array(8)].map((_, i) => (
-                  <img
-                    key={i}
-                    src="/wire-logo-official.png"
-                    alt="WIRED Watermark"
-                    className="w-32 h-32 object-contain"
-                    draggable="false"
-                  />
-                ))}
-              </div>
+          <div className="relative bg-gray-900 rounded-lg overflow-hidden p-4">
+            {/* Page Navigation */}
+            <div className="flex items-center justify-between mb-4">
+              <button
+                onClick={goToPrevPage}
+                disabled={pageNumber <= 1}
+                className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white p-2 rounded-lg transition-colors"
+                aria-label="Previous page"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              
+              <span className="text-white font-medium">
+                Page {pageNumber} of {numPages}
+              </span>
+              
+              <button
+                onClick={goToNextPage}
+                disabled={pageNumber >= numPages}
+                className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white p-2 rounded-lg transition-colors"
+                aria-label="Next page"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
             </div>
 
-            {/* PDF Embed with fallback */}
-            <object
-              data="/WIRED_Instructions.pdf#toolbar=0&navpanes=0&scrollbar=0"
-              type="application/pdf"
-              className="w-full h-full"
-              style={{
-                border: 'none',
-                userSelect: 'none',
-                WebkitUserSelect: 'none',
-                MozUserSelect: 'none',
-                msUserSelect: 'none'
-              }}
-            >
-              <div className="flex flex-col items-center justify-center h-full text-white p-8">
-                <p className="text-lg mb-4">Unable to display PDF in browser.</p>
-                <button
-                  onClick={() => {
-                    const link = document.createElement('a');
-                    link.href = '/WIRED_Instructions.pdf';
-                    link.download = 'WIRED_Instructions.pdf';
-                    link.click();
-                  }}
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium"
-                >
-                  Download Rulebook Instead
-                </button>
+            {/* PDF Document with Watermark */}
+            <div className="relative bg-white rounded-lg overflow-hidden">
+              {/* Watermark Overlay */}
+              <div className="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
+                <div className="grid grid-cols-3 gap-20 opacity-10 select-none">
+                  {[...Array(9)].map((_, i) => (
+                    <img
+                      key={i}
+                      src="/wire-logo-official.png"
+                      alt="WIRED Watermark"
+                      className="w-24 h-24 object-contain"
+                      draggable="false"
+                    />
+                  ))}
+                </div>
               </div>
-            </object>
+
+              {/* PDF Page */}
+              <Document
+                file="/WIRED_Instructions.pdf"
+                onLoadSuccess={onDocumentLoadSuccess}
+                className="flex justify-center"
+              >
+                <Page
+                  pageNumber={pageNumber}
+                  renderTextLayer={false}
+                  renderAnnotationLayer={false}
+                  className="max-w-full"
+                  width={700}
+                />
+              </Document>
+            </div>
           </div>
 
           {/* Notice */}
