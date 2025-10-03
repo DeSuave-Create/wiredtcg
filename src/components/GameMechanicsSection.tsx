@@ -29,11 +29,12 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
     { name: 'Power Outage', bg: 'bg-red-50', image: '/lovable-uploads/attack-poweroutage.png', borderColor: 'border-red-500', type: 'attack' },
     { name: 'Audit', bg: 'bg-red-50', image: '/lovable-uploads/attack-audit.png', borderColor: 'border-red-500', type: 'attack' },
     { name: 'Attack 5', bg: 'bg-gray-100', image: null, borderColor: 'border-red-500', type: 'attack' },
-    { name: 'Facilities', bg: 'bg-blue-50', image: '/lovable-uploads/classification-facilities.png', borderColor: 'border-blue-500', type: 'classification' },
-    { name: 'Field Tech', bg: 'bg-blue-50', image: '/lovable-uploads/classification-fieldtech.png', borderColor: 'border-blue-500', type: 'classification' },
-    { name: 'Classification 3', bg: 'bg-gray-100', image: null, borderColor: 'border-blue-500', type: 'classification' },
-    { name: 'Classification 4', bg: 'bg-gray-100', image: null, borderColor: 'border-blue-500', type: 'classification' },
-    { name: 'Classification 5', bg: 'bg-gray-100', image: null, borderColor: 'border-blue-500', type: 'classification' },
+    { name: 'Facilities', bg: 'bg-blue-50', image: '/lovable-uploads/classification-facilities-new.png', borderColor: 'border-blue-500', type: 'classification' },
+    { name: 'Field Tech', bg: 'bg-blue-50', image: '/lovable-uploads/classification-fieldtech-new.png', borderColor: 'border-blue-500', type: 'classification' },
+    { name: 'Supervisor', bg: 'bg-blue-50', image: '/lovable-uploads/classification-supervisor.png', borderColor: 'border-blue-500', type: 'classification' },
+    { name: 'Security Specialist', bg: 'bg-blue-50', image: '/lovable-uploads/classification-security.png', borderColor: 'border-blue-500', type: 'classification' },
+    { name: 'Head Hunter', bg: 'bg-blue-50', image: '/lovable-uploads/classification-headhunter.png', borderColor: 'border-blue-500', type: 'classification' },
+    { name: 'Seal the Deal', bg: 'bg-blue-50', image: '/lovable-uploads/classification-sealthedeal.png', borderColor: 'border-blue-500', type: 'classification' },
   ];
 
   const dealCards = () => {
@@ -95,8 +96,12 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
       '/lovable-uploads/attack-newhire.png',
       '/lovable-uploads/attack-poweroutage.png',
       '/lovable-uploads/attack-audit.png',
-      '/lovable-uploads/classification-facilities.png',
-      '/lovable-uploads/classification-fieldtech.png',
+      '/lovable-uploads/classification-facilities-new.png',
+      '/lovable-uploads/classification-fieldtech-new.png',
+      '/lovable-uploads/classification-supervisor.png',
+      '/lovable-uploads/classification-security.png',
+      '/lovable-uploads/classification-headhunter.png',
+      '/lovable-uploads/classification-sealthedeal.png',
       '/wire-logo-official.png'
     ];
 

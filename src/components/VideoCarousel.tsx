@@ -31,9 +31,12 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
   ];
 
   const classificationCards = [
-    { name: 'Facilities', bg: 'bg-blue-50', image: '/lovable-uploads/classification-facilities.png' },
-    { name: 'Field Tech', bg: 'bg-blue-50', image: '/lovable-uploads/classification-fieldtech.png' },
-    { name: 'Classification', bg: 'bg-gray-100', image: null }
+    { name: 'Facilities', bg: 'bg-blue-50', image: '/lovable-uploads/classification-facilities-new.png' },
+    { name: 'Field Tech', bg: 'bg-blue-50', image: '/lovable-uploads/classification-fieldtech-new.png' },
+    { name: 'Supervisor', bg: 'bg-blue-50', image: '/lovable-uploads/classification-supervisor.png' },
+    { name: 'Security Specialist', bg: 'bg-blue-50', image: '/lovable-uploads/classification-security.png' },
+    { name: 'Head Hunter', bg: 'bg-blue-50', image: '/lovable-uploads/classification-headhunter.png' },
+    { name: 'Seal the Deal', bg: 'bg-blue-50', image: '/lovable-uploads/classification-sealthedeal.png' }
   ];
 
   const attackCards = [
