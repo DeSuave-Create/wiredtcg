@@ -18,24 +18,72 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
   const isDealingRef = useRef(false);
   const timeoutsRef = useRef<number[]>([]);
 
-  const allCards: Card[] = [
-    { name: 'Computer', bg: 'bg-green-50', image: '/lovable-uploads/equipment-computer-new.png', borderColor: 'border-green-500', type: 'equipment' },
-    { name: 'Cabling (3x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-3cable.png', borderColor: 'border-green-500', type: 'equipment' },
-    { name: 'Cabling (2x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-2cable.png', borderColor: 'border-green-500', type: 'equipment' },
-    { name: 'Switch', bg: 'bg-green-50', image: '/lovable-uploads/equipment-switch.png', borderColor: 'border-green-500', type: 'equipment' },
-    { name: 'Equipment 5', bg: 'bg-gray-100', image: null, borderColor: 'border-green-500', type: 'equipment' },
-    { name: 'Hacked', bg: 'bg-red-50', image: '/lovable-uploads/attack-hacked-new.png', borderColor: 'border-red-500', type: 'attack' },
-    { name: 'New Hire', bg: 'bg-red-50', image: '/lovable-uploads/attack-newhire.png', borderColor: 'border-red-500', type: 'attack' },
-    { name: 'Power Outage', bg: 'bg-red-50', image: '/lovable-uploads/attack-poweroutage.png', borderColor: 'border-red-500', type: 'attack' },
-    { name: 'Audit', bg: 'bg-red-50', image: '/lovable-uploads/attack-audit.png', borderColor: 'border-red-500', type: 'attack' },
-    { name: 'Attack 5', bg: 'bg-gray-100', image: null, borderColor: 'border-red-500', type: 'attack' },
-    { name: 'Facilities', bg: 'bg-blue-50', image: '/lovable-uploads/classification-facilities-new.png', borderColor: 'border-blue-500', type: 'classification' },
-    { name: 'Field Tech', bg: 'bg-blue-50', image: '/lovable-uploads/classification-fieldtech-new.png', borderColor: 'border-blue-500', type: 'classification' },
-    { name: 'Supervisor', bg: 'bg-blue-50', image: '/lovable-uploads/classification-supervisor.png', borderColor: 'border-blue-500', type: 'classification' },
-    { name: 'Security Specialist', bg: 'bg-blue-50', image: '/lovable-uploads/classification-security.png', borderColor: 'border-blue-500', type: 'classification' },
-    { name: 'Head Hunter', bg: 'bg-blue-50', image: '/lovable-uploads/classification-headhunter.png', borderColor: 'border-blue-500', type: 'classification' },
-    { name: 'Seal the Deal', bg: 'bg-blue-50', image: '/lovable-uploads/classification-sealthedeal.png', borderColor: 'border-blue-500', type: 'classification' },
-  ];
+  // Build the complete deck with proper quantities (143 cards total)
+  const buildDeck = (): Card[] => {
+    const deck: Card[] = [];
+    
+    // Equipment cards (80 total)
+    // Computers: 40 cards
+    for (let i = 0; i < 40; i++) {
+      deck.push({ name: 'Computer', bg: 'bg-green-50', image: '/lovable-uploads/equipment-computer-new.png', borderColor: 'border-green-500', type: 'equipment' });
+    }
+    // 2-Cables: 14 cards
+    for (let i = 0; i < 14; i++) {
+      deck.push({ name: 'Cabling (2x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-2cable.png', borderColor: 'border-green-500', type: 'equipment' });
+    }
+    // 3-Cables: 6 cards
+    for (let i = 0; i < 6; i++) {
+      deck.push({ name: 'Cabling (3x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-3cable.png', borderColor: 'border-green-500', type: 'equipment' });
+    }
+    // Switches: 20 cards
+    for (let i = 0; i < 20; i++) {
+      deck.push({ name: 'Switch', bg: 'bg-green-50', image: '/lovable-uploads/equipment-switch.png', borderColor: 'border-green-500', type: 'equipment' });
+    }
+    
+    // Audit cards (4 total)
+    for (let i = 0; i < 4; i++) {
+      deck.push({ name: 'Audit', bg: 'bg-red-50', image: '/lovable-uploads/attack-audit.png', borderColor: 'border-red-500', type: 'attack' });
+    }
+    
+    // Classification cards (13 total)
+    for (let i = 0; i < 2; i++) {
+      deck.push({ name: 'Facilities', bg: 'bg-blue-50', image: '/lovable-uploads/classification-facilities-new.png', borderColor: 'border-blue-500', type: 'classification' });
+    }
+    for (let i = 0; i < 2; i++) {
+      deck.push({ name: 'Field Tech', bg: 'bg-blue-50', image: '/lovable-uploads/classification-fieldtech-new.png', borderColor: 'border-blue-500', type: 'classification' });
+    }
+    for (let i = 0; i < 2; i++) {
+      deck.push({ name: 'Supervisor', bg: 'bg-blue-50', image: '/lovable-uploads/classification-supervisor.png', borderColor: 'border-blue-500', type: 'classification' });
+    }
+    for (let i = 0; i < 2; i++) {
+      deck.push({ name: 'Security Specialist', bg: 'bg-blue-50', image: '/lovable-uploads/classification-security.png', borderColor: 'border-blue-500', type: 'classification' });
+    }
+    for (let i = 0; i < 4; i++) {
+      deck.push({ name: 'Head Hunter', bg: 'bg-blue-50', image: '/lovable-uploads/classification-headhunter.png', borderColor: 'border-blue-500', type: 'classification' });
+    }
+    deck.push({ name: 'Seal the Deal', bg: 'bg-blue-50', image: '/lovable-uploads/classification-sealthedeal.png', borderColor: 'border-blue-500', type: 'classification' });
+    
+    // Remaining 46 cards split between attack and resolution
+    // Attack cards: 23 (Hacked, New Hire, Power Outage split evenly)
+    for (let i = 0; i < 8; i++) {
+      deck.push({ name: 'Hacked', bg: 'bg-red-50', image: '/lovable-uploads/attack-hacked-new.png', borderColor: 'border-red-500', type: 'attack' });
+    }
+    for (let i = 0; i < 8; i++) {
+      deck.push({ name: 'New Hire', bg: 'bg-red-50', image: '/lovable-uploads/attack-newhire.png', borderColor: 'border-red-500', type: 'attack' });
+    }
+    for (let i = 0; i < 7; i++) {
+      deck.push({ name: 'Power Outage', bg: 'bg-red-50', image: '/lovable-uploads/attack-poweroutage.png', borderColor: 'border-red-500', type: 'attack' });
+    }
+    
+    // Resolution/buff cards: 23 (placeholder for now)
+    for (let i = 0; i < 23; i++) {
+      deck.push({ name: 'Resolution', bg: 'bg-gray-100', image: null, borderColor: 'border-purple-500', type: 'classification' });
+    }
+    
+    return deck;
+  };
+
+  const allCards = buildDeck();
 
   const dealCards = () => {
     // Prevent multiple simultaneous dealing cycles
