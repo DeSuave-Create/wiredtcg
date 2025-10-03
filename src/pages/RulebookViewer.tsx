@@ -64,11 +64,11 @@ const RulebookViewer = () => {
               </div>
             </div>
 
-            {/* PDF Iframe */}
-            <iframe
-              src="/WIRED_Instructions.pdf"
-              className="w-full h-full select-none"
-              title="WIRED Official Rulebook"
+            {/* PDF Embed with fallback */}
+            <object
+              data="/WIRED_Instructions.pdf#toolbar=0&navpanes=0&scrollbar=0"
+              type="application/pdf"
+              className="w-full h-full"
               style={{
                 border: 'none',
                 userSelect: 'none',
@@ -76,7 +76,22 @@ const RulebookViewer = () => {
                 MozUserSelect: 'none',
                 msUserSelect: 'none'
               }}
-            />
+            >
+              <div className="flex flex-col items-center justify-center h-full text-white p-8">
+                <p className="text-lg mb-4">Unable to display PDF in browser.</p>
+                <button
+                  onClick={() => {
+                    const link = document.createElement('a');
+                    link.href = '/WIRED_Instructions.pdf';
+                    link.download = 'WIRED_Instructions.pdf';
+                    link.click();
+                  }}
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium"
+                >
+                  Download Rulebook Instead
+                </button>
+              </div>
+            </object>
           </div>
 
           {/* Notice */}
