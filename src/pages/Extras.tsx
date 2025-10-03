@@ -71,9 +71,11 @@ const Extras = () => {
   };
 
   const handleViewOnline = () => {
+    // Open the PDF in a new tab
+    window.open('/WIRED_Instructions.pdf', '_blank');
     toast({
-      title: "Online Rulebook",
-      description: "Opening the interactive rulebook...",
+      title: "Opening Rulebook",
+      description: "The rulebook is opening in a new tab.",
     });
   };
 
