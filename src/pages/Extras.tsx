@@ -117,43 +117,73 @@ const Extras = () => {
 
           {/* Rule Book Section */}
           <ContentSection title="Official Rulebook">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <ImageSection
-                  src="/lovable-uploads/card-back.png"
-                  alt="WIRED Rulebook Cover"
-                  title="Complete Game Manual"
-                  description="The comprehensive 7-page rulebook includes everything you need to master WIRED."
-                />
+            <div className="space-y-8">
+              {/* Centered Title and Description */}
+              <div className="text-center space-y-4">
+                <h3 className="text-2xl font-bold text-primary">Complete Game Manual</h3>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
+                  The comprehensive 7-page rulebook includes everything you need to master WIRED.
+                </p>
               </div>
-              <div className="space-y-6">
-                <TextSection title="What's Included">
-                  <ul className="list-disc list-inside space-y-2 text-sm">
-                    <li>Game play at a glance - Quick start overview</li>
-                    <li>Complete game setup instructions</li>
-                    <li>Turn phases: TRADE, 3 MOVES, DISCARD, DRAW, SCORE</li>
-                    <li>All card types explained: Equipment (Green), Action (Red), Classification (Blue)</li>
-                    <li>Network building strategies and mechanics</li>
-                    <li>House rules for variant gameplay</li>
-                    <li>Tie breakers and winning conditions</li>
-                  </ul>
-                </TextSection>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <button 
-                    onClick={() => handleDownload('Rulebook PDF')}
-                    className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg border-2 border-green-600 flex items-center justify-center"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Download PDF
-                  </button>
-                  <button 
-                    onClick={handleViewOnline}
-                    className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg border-2 border-green-600 flex items-center justify-center"
-                  >
-                    <BookOpen className="h-4 w-4 mr-2" />
-                    View Online
-                  </button>
+
+              {/* Game Modes Card Deck */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                {/* Internet Mode */}
+                <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col hover:scale-105 transition-all duration-300">
+                  <div className="h-48 flex items-center justify-center">
+                    <img 
+                      src="/lovable-uploads/gamemode-internet.png" 
+                      alt="Internet Mode" 
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <h3 className="text-xl font-black text-green-600 uppercase tracking-wider">Internet</h3>
+                  <p className="text-sm text-black font-medium">2-6 Players</p>
                 </div>
+
+                {/* AI Mode */}
+                <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col hover:scale-105 transition-all duration-300">
+                  <div className="h-48 flex items-center justify-center">
+                    <img 
+                      src="/lovable-uploads/gamemode-ai.png" 
+                      alt="AI Mode" 
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <h3 className="text-xl font-black text-green-600 uppercase tracking-wider">A.I.</h3>
+                  <p className="text-sm text-black font-medium">1-2 Players</p>
+                </div>
+
+                {/* BotNet Mode */}
+                <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col hover:scale-105 transition-all duration-300">
+                  <div className="h-48 flex items-center justify-center">
+                    <img 
+                      src="/lovable-uploads/gamemode-botnet.png" 
+                      alt="BotNet Mode" 
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <h3 className="text-xl font-black text-green-600 uppercase tracking-wider">BotNet</h3>
+                  <p className="text-sm text-black font-medium">4-6 Players</p>
+                </div>
+              </div>
+
+              {/* Centered Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
+                <button 
+                  onClick={() => handleDownload('Rulebook PDF')}
+                  className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-8 py-3 font-medium shadow-2xl drop-shadow-lg border-2 border-green-600 flex items-center justify-center transition-all duration-300 hover:scale-105"
+                >
+                  <Download className="h-5 w-5 mr-2" />
+                  Download PDF
+                </button>
+                <button 
+                  onClick={handleViewOnline}
+                  className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-8 py-3 font-medium shadow-2xl drop-shadow-lg border-2 border-green-600 flex items-center justify-center transition-all duration-300 hover:scale-105"
+                >
+                  <BookOpen className="h-5 w-5 mr-2" />
+                  View Online
+                </button>
               </div>
             </div>
           </ContentSection>
