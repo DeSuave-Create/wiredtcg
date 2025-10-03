@@ -682,6 +682,9 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
             controls 
             className="w-full h-auto"
             preload="metadata"
+            onError={(e) => {
+              console.error('Video failed to load:', currentVideo.src);
+            }}
           >
             <source src={currentVideo.src} type="video/mp4" />
             Your browser does not support the video tag.
