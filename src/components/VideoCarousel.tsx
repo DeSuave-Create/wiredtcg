@@ -47,9 +47,10 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
   ];
 
   const resolutionCards = [
-    { name: 'Resolution 1', bg: 'bg-gray-100', image: null },
-    { name: 'Resolution 2', bg: 'bg-gray-100', image: null },
-    { name: 'Resolution 3', bg: 'bg-gray-100', image: null }
+    { name: 'Trained', bg: 'bg-red-50', image: '/lovable-uploads/resolution-trained.png' },
+    { name: 'Helpdesk', bg: 'bg-red-50', image: '/lovable-uploads/resolution-helpdesk.png' },
+    { name: 'Powered', bg: 'bg-red-50', image: '/lovable-uploads/resolution-powered.png' },
+    { name: 'Secured', bg: 'bg-red-50', image: '/lovable-uploads/resolution-secured.png' }
   ];
 
   const handlePrevious = () => {

@@ -75,9 +75,18 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
       deck.push({ name: 'Power Outage', bg: 'bg-red-50', image: '/lovable-uploads/attack-poweroutage.png', borderColor: 'border-red-500', type: 'attack' });
     }
     
-    // Resolution/buff cards: 23 (placeholder for now)
-    for (let i = 0; i < 23; i++) {
-      deck.push({ name: 'Resolution', bg: 'bg-gray-100', image: null, borderColor: 'border-purple-500', type: 'classification' });
+    // Resolution/buff cards: 23 (split among 4 types)
+    for (let i = 0; i < 6; i++) {
+      deck.push({ name: 'Trained', bg: 'bg-red-50', image: '/lovable-uploads/resolution-trained.png', borderColor: 'border-green-500', type: 'classification' });
+    }
+    for (let i = 0; i < 6; i++) {
+      deck.push({ name: 'Helpdesk', bg: 'bg-red-50', image: '/lovable-uploads/resolution-helpdesk.png', borderColor: 'border-green-500', type: 'classification' });
+    }
+    for (let i = 0; i < 6; i++) {
+      deck.push({ name: 'Powered', bg: 'bg-red-50', image: '/lovable-uploads/resolution-powered.png', borderColor: 'border-green-500', type: 'classification' });
+    }
+    for (let i = 0; i < 5; i++) {
+      deck.push({ name: 'Secured', bg: 'bg-red-50', image: '/lovable-uploads/resolution-secured.png', borderColor: 'border-green-500', type: 'classification' });
     }
     
     return deck;
@@ -150,6 +159,10 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
       '/lovable-uploads/classification-security.png',
       '/lovable-uploads/classification-headhunter.png',
       '/lovable-uploads/classification-sealthedeal.png',
+      '/lovable-uploads/resolution-trained.png',
+      '/lovable-uploads/resolution-helpdesk.png',
+      '/lovable-uploads/resolution-powered.png',
+      '/lovable-uploads/resolution-secured.png',
       '/wire-logo-official.png'
     ];
 
