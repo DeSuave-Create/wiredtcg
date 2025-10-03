@@ -26,11 +26,11 @@ const FAQs = () => {
   const faqs = [
     {
       question: "How many players can play WIRED?",
-      answer: "WIRED supports 1-6 players. The game has different modes: 1-2 for AI, 2-6 for Internet and 4-6 for Botnet."
+      answer: "WIRED supports 2-6 players. The game has different modes: Internet mode (2-6 players), A.I. mode (1-2 players), and BotNet mode (4-6 players)."
     },
     {
       question: "How long does a typical game take?",
-      answer: "2-3 Player is 5-10 minutes, 4-6 Player is 20-30 minutes."
+      answer: "A typical 2-3 player game takes 5-10 minutes, while 4-6 player games take 20-30 minutes."
     },
     {
       question: "What's the recommended age for players?",
@@ -38,31 +38,31 @@ const FAQs = () => {
     },
     {
       question: "Do I need IT knowledge to play?",
-      answer: "Not at all! While the theme is IT-based, the game mechanics are accessible to everyone. The technology theme adds flavor, but the game is really about strategic card play and network building."
+      answer: "Not at all! While the theme is IT-based with networking concepts, the game mechanics are accessible to everyone. The technology theme adds flavor, but the game is really about strategic card play and network building."
     },
     {
       question: "Can I play WIRED online or digitally?",
-      answer: "Currently, WIRED is a physical card game only. However, you can use our online score keeper to track games, and we're exploring digital versions for the future."
+      answer: "Currently, WIRED is a physical card game only. However, you can visit WiredTCG.com to use our online score keeper to track your games digitally."
     },
     {
       question: "What comes in the base game box?",
-      answer: "146 cards plus an informational card only."
+      answer: "The base game includes 146 cards plus one informational card, giving you everything you need to start playing."
     },
     {
       question: "Are there expansion packs available?",
-      answer: "They are in development and coming soon."
+      answer: "Expansion packs are currently in development and coming soon! Stay tuned for updates on new content."
     },
     {
       question: "How do I win the game?",
-      answer: "Victory conditions depend on the game mode, but typically involve completing network connections, controlling key network nodes, or reaching a target score through successful system deployments."
+      answer: "The goal is to be the first player to mine 25 bitcoin (points). Each COMPUTER in your network that can reach the INTERNET scores one bitcoin per turn. In 2-3 player games, the first to 25 wins immediately. In 4-6 player games, once someone reaches 25, each remaining player gets one final turn to try to beat that score."
     },
     {
       question: "Can I mix different expansion packs?",
-      answer: "Absolutely! All WIRED expansions are designed to work together. Mixing expansions creates more complex and varied gameplay experiences."
+      answer: "Yes! All WIRED expansions are designed to work together. Mixing expansions creates more complex and varied gameplay experiences with additional strategies."
     },
     {
       question: "Is there a tournament scene for WIRED?",
-      answer: "We're building a competitive community! Check our Discord for local tournaments and online competitions. Official tournament rules are available in the extras section."
+      answer: "We're building a competitive community! Check our Discord for local tournaments and online competitions. Official tournament rules and additional game variants are available in the extras section."
     }
   ];
 
