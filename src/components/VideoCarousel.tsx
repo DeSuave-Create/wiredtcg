@@ -37,9 +37,10 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
   ];
 
   const attackCards = [
-    { name: 'Hacked', bg: 'bg-red-50', image: '/lovable-uploads/attack-hacked.png' },
-    { name: 'Attack 2', bg: 'bg-gray-100', image: null },
-    { name: 'Attack 3', bg: 'bg-gray-100', image: null }
+    { name: 'Hacked', bg: 'bg-red-50', image: '/lovable-uploads/attack-hacked-new.png' },
+    { name: 'New Hire', bg: 'bg-red-50', image: '/lovable-uploads/attack-newhire.png' },
+    { name: 'Power Outage', bg: 'bg-red-50', image: '/lovable-uploads/attack-poweroutage.png' },
+    { name: 'Audit', bg: 'bg-red-50', image: '/lovable-uploads/attack-audit.png' }
   ];
 
   const resolutionCards = [
