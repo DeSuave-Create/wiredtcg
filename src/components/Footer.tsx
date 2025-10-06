@@ -21,7 +21,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <Logo />
+              <Logo size={40} />
               <div className="flex flex-col">
                 <span className="text-xl font-bold font-orbitron text-primary animate-neon-flicker leading-tight">WIRED</span>
                 <span className="text-[9px] font-orbitron text-primary/70 tracking-wide leading-tight animate-neon-flicker">The Card Game</span>

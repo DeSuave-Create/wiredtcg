@@ -27,7 +27,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
-            <Logo className="" />
+            <Logo size={40} className="" />
             <div className="flex flex-col">
               <span className="text-2xl font-bold font-orbitron text-primary tracking-wider animate-neon-flicker leading-tight">WIRED</span>
               <span className="text-[10px] font-orbitron text-primary/70 tracking-wide leading-tight animate-neon-flicker">The Card Game</span>
