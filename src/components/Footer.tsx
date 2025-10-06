@@ -31,7 +31,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-semibold text-primary mb-4">Quick Links</h3>
+            <h3 className="font-semibold font-orbitron text-primary mb-4">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               <li><Link to="/extras" className="text-primary hover:text-primary/80 transition-colors">Game Rules</Link></li>
               <li><Link to="/extras" className="text-primary hover:text-primary/80 transition-colors">Tutorial Video</Link></li>
@@ -42,7 +42,7 @@ const Footer = () => {
 
           {/* Shop */}
           <div>
-            <h3 className="font-semibold text-primary mb-4">Shop</h3>
+            <h3 className="font-semibold font-orbitron text-primary mb-4">Shop</h3>
             <ul className="space-y-2 text-sm">
               <li><Link to="/" className="text-primary hover:text-primary/80 transition-colors">Base Game</Link></li>
               <li><Link to="/" className="text-primary hover:text-primary/80 transition-colors">Expansions</Link></li>
@@ -53,7 +53,7 @@ const Footer = () => {
 
           {/* Connect */}
           <div>
-            <h3 className="font-semibold text-primary mb-4">Connect</h3>
+            <h3 className="font-semibold font-orbitron text-primary mb-4">Connect</h3>
             <div className="flex space-x-4">
               <button 
                 onClick={() => handleSocialClick('Twitter')}

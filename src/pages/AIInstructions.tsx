@@ -111,7 +111,7 @@ const AIInstructions = () => {
 
             {/* Call to Action */}
             <div className="highlight-box text-center">
-              <h3 className="text-xl font-bold text-white mb-2">Stay Updated!</h3>
+              <h3 className="text-xl font-bold font-orbitron text-white mb-2">Stay Updated!</h3>
               <p className="text-muted-foreground">
                 Want to be notified when the A.I. expansion is released? Follow us on social media and join our community!
               </p>

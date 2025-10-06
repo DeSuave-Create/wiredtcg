@@ -137,7 +137,7 @@ const Extras = () => {
             <div className="space-y-8">
               {/* Centered Title and Description */}
               <div className="text-center space-y-4">
-                <h3 className="text-2xl font-bold text-primary">Complete Game Manual</h3>
+                <h3 className="text-2xl font-bold font-orbitron text-primary">Complete Game Manual</h3>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
                   The comprehensive 7-page rulebook includes everything you need to master WIRED.
                 </p>
@@ -199,7 +199,7 @@ const Extras = () => {
               <div className="flex flex-col items-center gap-6 pt-4">
                 {/* Game Mode Selection */}
                 <div className="w-full max-w-2xl">
-                  <h3 className="text-lg font-semibold text-primary text-center mb-4">Select Game Mode Instructions:</h3>
+                  <h3 className="text-lg font-semibold font-orbitron text-primary text-center mb-4">Select Game Mode Instructions:</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <button 
                       onClick={() => navigate('/internet-instructions')}
@@ -260,7 +260,7 @@ const Extras = () => {
               {/* Rulebook Download */}
               <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
                 <FileText className="h-12 w-12 text-green-600 mx-auto" />
-                <h3 className="text-lg font-semibold text-green-600">Official Rulebook</h3>
+                <h3 className="text-lg font-semibold font-orbitron text-green-600">Official Rulebook</h3>
                 <p className="text-sm text-muted-foreground flex-grow">Complete game rules and strategies (PDF, 7 pages)</p>
                 <button
                   onClick={() => handleDownload('Official Rulebook')}
@@ -274,7 +274,7 @@ const Extras = () => {
               {/* Score Sheets */}
               <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
                 <FileText className="h-12 w-12 text-green-600 mx-auto" />
-                <h3 className="text-lg font-semibold text-green-600">Score Sheets</h3>
+                <h3 className="text-lg font-semibold font-orbitron text-green-600">Score Sheets</h3>
                 <p className="text-sm text-muted-foreground flex-grow">Printable score tracking sheets (PDF, 0.5MB)</p>
                 <button 
                   onClick={() => handleDownload('Score Sheets')}
@@ -288,7 +288,7 @@ const Extras = () => {
               {/* Card Reference */}
               <div className="bg-gray-100 border-green-600 border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
                 <FileText className="h-12 w-12 text-green-600 mx-auto" />
-                <h3 className="text-lg font-semibold text-green-600">Card Reference</h3>
+                <h3 className="text-lg font-semibold font-orbitron text-green-600">Card Reference</h3>
                 <p className="text-sm text-muted-foreground flex-grow">Quick reference for all cards (PDF, 1.1MB)</p>
                 <button 
                   onClick={() => handleDownload('Card Reference')}

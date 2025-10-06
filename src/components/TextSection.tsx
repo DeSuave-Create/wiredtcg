@@ -12,7 +12,7 @@ const TextSection = ({ title, children, className = "", accent = false }: TextSe
   return (
     <div className={`space-y-4 ${className}`}>
       {title && (
-        <h3 className={`text-xl font-semibold ${accent ? 'text-secondary' : 'text-primary'}`}>
+        <h3 className={`text-xl font-semibold font-orbitron ${accent ? 'text-secondary' : 'text-primary'}`}>
           {title}
         </h3>
       )}

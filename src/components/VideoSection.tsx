@@ -23,7 +23,7 @@ const VideoSection = ({ src, title, description, className = "", isYouTube = fal
 
   return (
     <div className={`space-y-4 ${className}`}>
-      {title && <h3 className="text-xl font-semibold text-primary">{title}</h3>}
+      {title && <h3 className="text-xl font-semibold font-orbitron text-primary">{title}</h3>}
       <div className="neon-border rounded-lg overflow-hidden">
         {isYouTube && useLogoThumbnail && !isPlaying ? (
           <div 
