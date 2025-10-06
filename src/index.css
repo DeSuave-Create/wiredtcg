@@ -568,4 +568,62 @@
   }
 }
 
+/* Circuit Corner Animations */
+@keyframes crawlIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  20% {
+    opacity: 1;
+  }
+  40% {
+    transform: scale(1);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  80% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
+.circuit-crawl-tl,
+.circuit-crawl-tr,
+.circuit-crawl-bl,
+.circuit-crawl-br {
+  animation: crawlIn 4s ease-in-out infinite;
+  animation-delay: 0s;
+  transform-origin: top left;
+}
+
+.circuit-crawl-tr {
+  transform-origin: top right;
+  animation-delay: 0.5s;
+}
+
+.circuit-crawl-bl {
+  transform-origin: bottom left;
+  animation-delay: 1s;
+}
+
+.circuit-crawl-br {
+  transform-origin: bottom right;
+  animation-delay: 1.5s;
+}
+
+/* Add 10 second pause between animations */
+.circuit-crawl-tl,
+.circuit-crawl-tr,
+.circuit-crawl-bl,
+.circuit-crawl-br {
+  animation: crawlIn 4s ease-in-out 0s 1 normal forwards, 
+             crawlIn 4s ease-in-out 14s infinite;
+}
+
 
