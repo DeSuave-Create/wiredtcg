@@ -1,0 +1,84 @@
+.wired-electric-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.wired-electric-svg {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 20px rgba(124, 193, 66, 0.6));
+}
+
+/* Main text with tracing animation */
+.wired-electric-text {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: trace-text 4s ease-in-out forwards, electric-pulse 2s ease-in-out infinite;
+  animation-delay: 0s, 4s;
+}
+
+/* Electric spark that travels along the letters */
+.wired-electric-spark {
+  opacity: 0.8;
+  animation: spark-travel 3s linear infinite;
+  animation-delay: 4s;
+}
+
+/* Trace the letters animation */
+@keyframes trace-text {
+  0% {
+    stroke-dashoffset: 1000;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+/* Electric pulsing effect after tracing */
+@keyframes electric-pulse {
+  0%, 100% {
+    stroke-width: 2;
+    filter: drop-shadow(0 0 10px rgba(124, 193, 66, 0.8));
+  }
+  50% {
+    stroke-width: 2.5;
+    filter: drop-shadow(0 0 20px rgba(124, 193, 66, 1));
+  }
+}
+
+/* Traveling spark along the letters */
+@keyframes spark-travel {
+  0% {
+    stroke-dashoffset: 1000;
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.9;
+  }
+  95% {
+    opacity: 0.9;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+/* Responsive sizing */
+@media (max-width: 640px) {
+  .wired-electric-container {
+    max-width: 300px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .wired-electric-container {
+    max-width: 400px;
+  }
+}

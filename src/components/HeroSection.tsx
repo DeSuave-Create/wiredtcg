@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { ShoppingCart, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Logo from './Logo';
+import WiredElectricText from './WiredElectricText';
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -31,11 +32,11 @@ const HeroSection = () => {
 
   return (
     <div className="text-center space-y-4 sm:space-y-6">
-      <div className="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-4 mb-4 sm:mb-6">
+      <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-4 sm:mb-6">
         <Logo size={80} className="hidden sm:block" />
-        <div className="flex flex-col items-center justify-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-orbitron text-primary tracking-wider animate-neon-flicker leading-tight">WIRED</h1>
-          <p className="text-sm sm:text-base md:text-lg font-orbitron text-primary/70 tracking-wider mt-1 animate-neon-flicker">The Card Game</p>
+        <div className="flex flex-col items-center justify-center w-full">
+          <WiredElectricText />
+          <p className="text-sm sm:text-base md:text-lg font-orbitron text-primary/70 tracking-wider mt-2 animate-neon-flicker">The Card Game</p>
         </div>
         <Logo size={80} className="hidden sm:block" />
       </div>
