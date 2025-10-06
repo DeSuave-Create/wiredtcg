@@ -11,6 +11,7 @@ interface Segment {
 const ElectricProgressBar = () => {
   const [progress, setProgress] = useState(0);
   const [currentSegment, setCurrentSegment] = useState(0);
+  const [poweredSegments, setPoweredSegments] = useState<Set<number>>(new Set());
 
   const segments: Segment[] = [
     { color: 'from-green-500 to-emerald-400', icon: <Cable className="w-6 h-6" />, label: 'Connect' },
@@ -44,6 +45,7 @@ const ElectricProgressBar = () => {
           startTime = Date.now();
           setProgress(0);
           setCurrentSegment(0);
+          setPoweredSegments(new Set()); // Reset powered segments
         }
         return;
       }
@@ -57,6 +59,14 @@ const ElectricProgressBar = () => {
         segments.length - 1
       );
       setCurrentSegment(segmentIndex);
+
+      // Track which segments have been powered up
+      segments.forEach((_, index) => {
+        const segmentProgress = (index + 1) / segments.length * 100;
+        if (newProgress >= segmentProgress) {
+          setPoweredSegments(prev => new Set(prev).add(index));
+        }
+      });
 
       if (newProgress >= 100 && !isPaused) {
         isPaused = true;
@@ -107,13 +117,13 @@ const ElectricProgressBar = () => {
         {/* Segment icons */}
         {segments.map((segment, index) => {
           const segmentProgress = (index + 1) / segments.length * 100;
-          const isActive = progress >= segmentProgress;
-          const isCurrent = currentSegment === index;
+          const isPowered = poweredSegments.has(index);
+          const isCurrent = currentSegment === index && progress < 100;
 
           return (
             <div
               key={index}
-              className={`segment-icon ${isActive ? 'active' : ''} ${isCurrent ? 'current' : ''}`}
+              className={`segment-icon ${isPowered ? 'powered' : ''} ${isCurrent ? 'current' : ''}`}
               style={{ left: `${((index + 1) / segments.length) * 100}%` }}
             >
               <div className={`icon-wrapper bg-gradient-to-br ${segment.color}`}>
