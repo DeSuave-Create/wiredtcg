@@ -44,7 +44,7 @@ const InternetInstructions = () => {
 
             {/* Game Mode Title */}
             <div className="text-center">
-              <h1 className="text-3xl md:text-4xl font-bold font-orbitron text-secondary uppercase tracking-wider">
+              <h1 className="text-3xl md:text-4xl font-bold font-orbitron text-green-500 uppercase tracking-wider">
                 Game Mode: Internet
               </h1>
               <p className="text-muted-foreground mt-2">
