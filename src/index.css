@@ -259,6 +259,37 @@
   }
 }
 
+@keyframes electric-current {
+  0%, 95%, 100% {
+    text-shadow: 0 0 3px rgba(124, 195, 66, 0.6);
+    filter: brightness(1);
+  }
+  5% {
+    text-shadow: 
+      0 0 5px rgba(124, 195, 66, 1),
+      0 0 10px rgba(124, 195, 66, 0.8),
+      0 0 20px rgba(124, 195, 66, 0.6),
+      0 0 40px rgba(124, 195, 66, 0.4);
+    filter: brightness(1.5);
+  }
+  10% {
+    text-shadow: 0 0 3px rgba(124, 195, 66, 0.6);
+    filter: brightness(1);
+  }
+  15% {
+    text-shadow: 
+      0 0 5px rgba(124, 195, 66, 1),
+      0 0 10px rgba(124, 195, 66, 0.8),
+      0 0 20px rgba(124, 195, 66, 0.6),
+      0 0 40px rgba(124, 195, 66, 0.4);
+    filter: brightness(1.5);
+  }
+}
+
+.electric-pulse {
+  animation: electric-current 6s ease-in-out infinite;
+}
+
 .light .animate-pulse-neon {
   animation: pulse-neon-light 2s infinite;
 }
