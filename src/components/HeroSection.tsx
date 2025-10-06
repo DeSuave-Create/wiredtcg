@@ -32,12 +32,12 @@ const HeroSection = () => {
   return (
     <div className="text-center space-y-6 sm:space-y-8">
       <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-8 mb-6 sm:mb-8">
-        <Logo size={140} className="hidden sm:block animate-glow-pulse" />
+        <Logo size={140} className="hidden sm:block" />
         <div className="flex flex-col items-center justify-center">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold font-orbitron text-primary tracking-wider animate-neon-flicker leading-tight drop-shadow-[0_0_30px_rgba(96,165,250,0.8)]">WIRED</h1>
-          <p className="text-xl sm:text-2xl md:text-3xl font-orbitron text-primary/90 tracking-wider mt-2 animate-neon-flicker drop-shadow-[0_0_20px_rgba(96,165,250,0.6)]">The Card Game</p>
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold font-orbitron text-primary tracking-wider animate-neon-flicker leading-tight">WIRED</h1>
+          <p className="text-xl sm:text-2xl md:text-3xl font-orbitron text-primary/90 tracking-wider mt-2 animate-neon-flicker">The Card Game</p>
         </div>
-        <Logo size={140} className="hidden sm:block animate-glow-pulse" />
+        <Logo size={140} className="hidden sm:block" />
       </div>
       <p className="text-xs sm:text-sm md:text-base text-muted-foreground/80 max-w-xs sm:max-w-md md:max-w-lg mx-auto px-4 sm:px-0">
         Build your network, connect to the switch, and start mining bitcoin! Race against other players through strategic network building, cyber attacks, and cunning deals. Will you dominate through superior infrastructure or be sabotaged by your opponents?
