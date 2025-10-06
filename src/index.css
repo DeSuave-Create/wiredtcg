@@ -287,26 +287,23 @@
 }
 
 @keyframes lightning-strike {
-  0%, 90%, 100% {
+  0%, 85%, 100% {
     opacity: 0;
-    stroke-dashoffset: 100;
-    filter: drop-shadow(0 0 0px rgba(59, 130, 246, 0));
+    stroke-dashoffset: 150;
+  }
+  87%, 89% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+  88%, 90% {
+    opacity: 0.3;
+  }
+  91%, 93% {
+    opacity: 1;
+    stroke-dashoffset: 0;
   }
   92% {
-    opacity: 1;
-    stroke-dashoffset: 0;
-    filter: drop-shadow(0 0 8px rgba(59, 130, 246, 1)) drop-shadow(0 0 12px rgba(59, 130, 246, 0.8));
-  }
-  94% {
-    opacity: 0;
-  }
-  96% {
-    opacity: 1;
-    stroke-dashoffset: 0;
-    filter: drop-shadow(0 0 8px rgba(59, 130, 246, 1)) drop-shadow(0 0 12px rgba(59, 130, 246, 0.8));
-  }
-  98% {
-    opacity: 0;
+    opacity: 0.3;
   }
 }
 
@@ -315,12 +312,13 @@
 }
 
 .lightning-bolt {
-  animation: lightning-strike 5s ease-in-out infinite;
+  animation: lightning-strike 4s ease-in-out infinite;
+  z-index: 10;
 }
 
 .bolt-path {
-  stroke-dasharray: 100;
-  stroke-dashoffset: 100;
+  stroke-dasharray: 150;
+  stroke-dashoffset: 150;
 }
 
 .light .animate-pulse-neon {

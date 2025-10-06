@@ -13,19 +13,29 @@ const Logo = ({ className = "", size = 32 }: LogoProps) => {
         className={`animate-neon-flicker ${className}`}
         style={{ width: size, height: size }}
       />
-      {/* Lightning bolt effect */}
+      {/* Lightning bolt effect - overlays the logo */}
       <svg 
-        className="absolute inset-0 pointer-events-none lightning-bolt"
+        className="absolute top-0 left-0 pointer-events-none lightning-bolt"
         style={{ width: size, height: size }}
         viewBox="0 0 32 32"
       >
+        <defs>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
         <path
-          d="M18 2 L8 16 L14 16 L12 30 L24 14 L18 14 Z"
+          d="M 20 4 L 12 16 L 16 16 L 10 28 L 22 14 L 18 14 L 24 4 Z"
           fill="none"
-          stroke="#3b82f6"
-          strokeWidth="1.5"
+          stroke="#60a5fa"
+          strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
+          filter="url(#glow)"
           className="bolt-path"
         />
       </svg>
