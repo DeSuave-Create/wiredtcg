@@ -19,25 +19,30 @@ const ElectricProgressBar = () => {
     { color: 'from-yellow-500 to-amber-400', icon: <Bitcoin className="w-6 h-6" />, label: 'Mine' },
   ];
 
-  const getSegmentColor = () => {
+  const getSegmentProgress = (segmentIndex: number) => {
     const segmentWidth = 100 / segments.length;
-    if (progress <= segmentWidth) {
-      return {
-        gradient: 'linear-gradient(90deg, #10b981 0%, #34d399 100%)',
-        glow: '0 0 20px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.6), inset 0 0 10px rgba(16, 185, 129, 0.8)'
-      };
-    } else if (progress <= segmentWidth * 2) {
-      return {
-        gradient: 'linear-gradient(90deg, #dc2626 0%, #ff1a1a 100%)',
-        glow: '0 0 20px rgba(220, 38, 38, 0.8), 0 0 40px rgba(220, 38, 38, 0.6), inset 0 0 10px rgba(220, 38, 38, 0.8)'
-      };
-    } else {
-      return {
-        gradient: 'linear-gradient(90deg, #facc15 0%, #fde047 100%)',
-        glow: '0 0 20px rgba(250, 204, 21, 0.8), 0 0 40px rgba(250, 204, 21, 0.6), inset 0 0 10px rgba(250, 204, 21, 0.8)'
-      };
-    }
+    const segmentStart = segmentIndex * segmentWidth;
+    const segmentEnd = (segmentIndex + 1) * segmentWidth;
+    
+    if (progress <= segmentStart) return 0;
+    if (progress >= segmentEnd) return 100;
+    return ((progress - segmentStart) / segmentWidth) * 100;
   };
+
+  const segmentColors = [
+    {
+      gradient: 'linear-gradient(90deg, #10b981 0%, #34d399 100%)',
+      glow: '0 0 20px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.6), inset 0 0 10px rgba(16, 185, 129, 0.8)'
+    },
+    {
+      gradient: 'linear-gradient(90deg, #dc2626 0%, #ff1a1a 100%)',
+      glow: '0 0 20px rgba(220, 38, 38, 0.8), 0 0 40px rgba(220, 38, 38, 0.6), inset 0 0 10px rgba(220, 38, 38, 0.8)'
+    },
+    {
+      gradient: 'linear-gradient(90deg, #facc15 0%, #fde047 100%)',
+      glow: '0 0 20px rgba(250, 204, 21, 0.8), 0 0 40px rgba(250, 204, 21, 0.6), inset 0 0 10px rgba(250, 204, 21, 0.8)'
+    }
+  ];
 
   useEffect(() => {
     const duration = 6000; // 6 seconds total
@@ -109,20 +114,37 @@ const ElectricProgressBar = () => {
           ))}
         </div>
 
-        {/* Animated fill with electric effect */}
-        <div 
-          className="electric-fill"
-          style={{ 
-            width: `${progress}%`,
-            background: getSegmentColor().gradient,
-            boxShadow: getSegmentColor().glow
-          }}
-        >
-          <div className="lightning-overlay" />
-          <div className="electric-wave" />
-          <div className="electric-pulse" />
-          <div className="electric-sparks" />
-        </div>
+        {/* Animated fill with electric effect - Multiple segments */}
+        {segments.map((segment, index) => {
+          const segmentProgress = getSegmentProgress(index);
+          const segmentWidth = 100 / segments.length;
+          const colors = segmentColors[index];
+          
+          return segmentProgress > 0 ? (
+            <div
+              key={index}
+              className="electric-fill-segment"
+              style={{ 
+                left: `${index * segmentWidth}%`,
+                width: `${segmentWidth}%`
+              }}
+            >
+              <div
+                className="electric-fill"
+                style={{ 
+                  width: `${segmentProgress}%`,
+                  background: colors.gradient,
+                  boxShadow: colors.glow
+                }}
+              >
+                <div className="lightning-overlay" />
+                <div className="electric-wave" />
+                <div className="electric-pulse" />
+                {segmentProgress > 95 && <div className="electric-sparks" />}
+              </div>
+            </div>
+          ) : null;
+        })}
 
         {/* Segment icons */}
         {segments.map((segment, index) => {
