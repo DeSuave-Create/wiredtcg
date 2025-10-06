@@ -6,16 +6,17 @@
 .electric-progress-bar {
   position: relative;
   height: 12px;
-  width: 100%;
+  width: calc(100% - 60px);
+  margin-left: 60px;
   border-radius: 9999px;
   overflow: visible;
-  margin: 3rem 0;
-  padding-left: 60px; /* Space for logo */
+  margin-top: 3rem;
+  margin-bottom: 3rem;
 }
 
 .progress-logo {
   position: absolute;
-  left: 0;
+  left: -60px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 20;
