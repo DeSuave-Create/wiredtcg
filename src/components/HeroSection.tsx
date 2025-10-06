@@ -53,7 +53,7 @@ const HeroSection = () => {
         <Button 
           onClick={handleLearnToPlay}
           variant="outline" 
-          className="neon-border px-6 sm:px-8 py-2 sm:py-3 w-full sm:w-auto"
+          className="neon-border text-primary hover:text-primary px-6 sm:px-8 py-2 sm:py-3 w-full sm:w-auto"
         >
           <Zap className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
           Learn to Play
