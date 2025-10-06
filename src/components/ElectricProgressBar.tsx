@@ -94,21 +94,35 @@ const ElectricProgressBar: React.FC<ElectricProgressBarProps> = ({
 
       {/* Progress bar */}
       <div className="electric-progress-bar-wrapper">
-        {segments.map((segment, index) => (
-          <React.Fragment key={index}>
-            <div 
-              className="segment-wrapper"
+        <div className="progress-track">
+          {segments.map((segment, index) => (
+            <div
+              key={index}
+              className={`segment-bg segment-bg-${index}`}
               style={{
-                animationDelay: `${index * 1.2}s`
+                width: `${segment.width}%`,
+                height: `${height}px`,
+                backgroundColor: `${segment.color}20`,
+                borderLeft: index > 0 ? '1px solid rgba(255,255,255,0.1)' : 'none',
               }}
-            >
+            />
+          ))}
+        </div>
+        
+        <div className="progress-fill-container">
+          {segments.map((segment, index) => {
+            const prevWidths = segments.slice(0, index).reduce((sum, s) => sum + s.width, 0);
+            return (
               <div
-                className={`segment segment-${index}`}
+                key={index}
+                className={`segment-fill segment-fill-${index}`}
                 style={{
+                  left: `${prevWidths}%`,
                   width: `${segment.width}%`,
                   height: `${height}px`,
                   backgroundColor: segment.color,
                   boxShadow: `0 0 10px ${segment.color}, 0 0 20px ${segment.color}40`,
+                  animationDelay: `${prevWidths * 0.04}s`,
                 }}
               >
                 {/* Lightning overlay */}
@@ -133,20 +147,27 @@ const ElectricProgressBar: React.FC<ElectricProgressBarProps> = ({
                   ))}
                 </div>
               </div>
-            </div>
-            
-            {/* Icon after each segment */}
-            <div 
-              className="progress-icon" 
+            );
+          })}
+        </div>
+        
+        {/* Icons positioned at segment boundaries */}
+        {segments.map((segment, index) => {
+          const position = segments.slice(0, index + 1).reduce((sum, s) => sum + s.width, 0);
+          return (
+            <div
+              key={`icon-${index}`}
+              className={`progress-icon progress-icon-${index}`}
               style={{ 
                 color: segment.color,
-                animationDelay: `${index * 1.2 + 0.8}s`
+                left: `calc(${position}% + ${index * 28}px)`,
+                animationDelay: `${position * 0.04 + 0.3}s`,
               }}
             >
               {segment.icon}
             </div>
-          </React.Fragment>
-        ))}
+          );
+        })}
       </div>
 
       {/* Slogan */}
