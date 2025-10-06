@@ -1,6 +1,6 @@
 .electric-progress-container {
   width: 100%;
-  padding: 2rem 0;
+  padding: 1.5rem 0;
 }
 
 .electric-progress-bar {
@@ -10,8 +10,8 @@
   margin-left: 60px;
   border-radius: 9999px;
   overflow: visible;
-  margin-top: 3rem;
-  margin-bottom: 3rem;
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
 }
 
 .progress-logo {
@@ -142,7 +142,7 @@
   }
 }
 
-/* Lightning overlay effect */
+/* Lightning overlay effect - disabled on mobile for performance */
 .lightning-overlay {
   position: absolute;
   top: 0;
@@ -158,8 +158,13 @@
     transparent 100%
   );
   background-size: 200% 100%;
-  animation: lightning-slide 1.5s linear infinite;
   opacity: 0.6;
+}
+
+@media (min-width: 641px) {
+  .lightning-overlay {
+    animation: lightning-slide 1.5s linear infinite;
+  }
 }
 
 @keyframes lightning-slide {
@@ -171,7 +176,7 @@
   }
 }
 
-/* Electric wave effect - creates a traveling wave */
+/* Electric wave effect - creates a traveling wave - disabled on mobile */
 .electric-wave {
   position: absolute;
   top: -4px;
@@ -184,9 +189,14 @@
     rgba(255, 255, 255, 0.3) 10px,
     transparent 20px
   );
-  animation: wave-travel 1s linear infinite;
   border-radius: 9999px;
   mix-blend-mode: overlay;
+}
+
+@media (min-width: 641px) {
+  .electric-wave {
+    animation: wave-travel 1s linear infinite;
+  }
 }
 
 @keyframes wave-travel {

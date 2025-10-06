@@ -187,13 +187,14 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
   }, []);
 
   return (
-    <div className="flex justify-center items-center min-h-[350px] sm:min-h-[400px] lg:min-h-[500px] relative py-4 sm:py-6 lg:py-8">
+    <div className="flex justify-center items-center min-h-[300px] sm:min-h-[400px] lg:min-h-[500px] relative py-4 sm:py-6 lg:py-8">
       {/* Ghost logo background */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
         <img 
           src="/wire-logo-official.png" 
           alt="WIRED Ghost Logo" 
-          className="w-64 h-64 sm:w-80 sm:h-80 lg:w-[480px] lg:h-[480px] object-contain opacity-10"
+          className="w-48 h-48 sm:w-80 sm:h-80 lg:w-[480px] lg:h-[480px] object-contain opacity-10"
+          loading="lazy"
         />
       </div>
 
@@ -206,13 +207,14 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
               alt="WIRED Card Back" 
               className="w-full h-full object-contain animate-pulse-neon" 
               style={{ imageRendering: 'crisp-edges' }}
+              loading="lazy"
             />
           </div>
         </div>
       )}
 
       {/* Dealt cards fanning out with overlap */}
-      <div className="flex justify-center items-center relative" style={{ width: '100%', maxWidth: '900px', height: '400px' }}>
+      <div className="flex justify-center items-center relative" style={{ width: '100%', maxWidth: '900px', height: '350px' }}>
         {dealtCards.map((card, index) => {
           const totalCards = 6;
           const centerIndex = (totalCards - 1) / 2;
@@ -256,7 +258,8 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
                     src={card.image} 
                     alt={card.name} 
                     className="w-full h-full object-contain" 
-                    style={{ imageRendering: 'crisp-edges' }} 
+                    style={{ imageRendering: 'crisp-edges' }}
+                    loading="lazy"
                   />
                 ) : (
                   <span className="text-xs sm:text-sm text-muted-foreground text-center">{card.name}</span>
