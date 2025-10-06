@@ -16,10 +16,10 @@ const FAQs = () => {
     });
   };
 
-  const handleJoinDiscord = () => {
+  const handleJoinYouTube = () => {
     toast({
-      title: "Discord Community",
-      description: "Join our growing community for tips, tournaments, and more!",
+      title: "YouTube Community",
+      description: "Subscribe to our channel for tips, tutorials, and more!",
     });
   };
 
@@ -62,7 +62,7 @@ const FAQs = () => {
     },
     {
       question: "Is there a tournament scene for WIRED?",
-      answer: "We're building a competitive community! Check our Discord for local tournaments and online competitions. Official tournament rules and additional game variants are available in the extras section."
+      answer: "We're building a competitive community! Check our YouTube channel for local tournaments and online competitions. Official tournament rules and additional game variants are available in the extras section."
     }
   ];
 
@@ -122,10 +122,10 @@ const FAQs = () => {
                   Contact Support
                 </button>
                 <button 
-                  onClick={handleJoinDiscord}
+                  onClick={handleJoinYouTube}
                   className="bg-gray-100 rounded-3xl text-primary hover:bg-gray-200 px-6 py-2 font-medium shadow-2xl drop-shadow-lg"
                 >
-                  Join Discord
+                  Subscribe on YouTube
                 </button>
               </div>
             </div>

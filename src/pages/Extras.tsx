@@ -72,10 +72,10 @@ const Extras = () => {
     window.location.href = '/rulebook';
   };
 
-  const handleJoinDiscord = () => {
+  const handleJoinYouTube = () => {
     toast({
       title: "Join Our Community",
-      description: "Connect with other WIRED players on Discord!",
+      description: "Subscribe to our YouTube channel for tutorials, strategies, and gameplay!",
     });
   };
 
@@ -309,14 +309,14 @@ const Extras = () => {
             <TextSection>
               <div className="text-center space-y-4">
                 <p className="text-lg">
-                  Connect with other WIRED players, share strategies, and stay updated on tournaments and new releases.
+                  Subscribe to our YouTube channel for tutorials, strategies, and stay updated on tournaments and new releases.
                 </p>
                 <div className="flex justify-center space-x-4">
                   <Button 
-                    onClick={handleJoinDiscord}
+                    onClick={handleJoinYouTube}
                     className="bg-primary text-white hover:bg-primary/90 neon-glow"
                   >
-                    Join Discord
+                    Subscribe on YouTube
                   </Button>
                   <Button 
                     onClick={handleFollowUpdates}
