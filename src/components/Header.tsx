@@ -30,7 +30,7 @@ const Header = () => {
             <Logo className="" />
             <div className="flex flex-col">
               <span className="text-2xl font-bold font-orbitron text-primary tracking-wider animate-neon-flicker leading-tight">WIRED</span>
-              <span className="text-[10px] font-orbitron text-primary/70 tracking-wide leading-tight">The Card Game</span>
+              <span className="text-[10px] font-orbitron text-primary/70 tracking-wide leading-tight animate-neon-flicker">The Card Game</span>
             </div>
           </Link>
 

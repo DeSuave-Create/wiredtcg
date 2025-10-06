@@ -35,7 +35,7 @@ const HeroSection = () => {
         <Logo size={48} />
         <div className="flex flex-col items-center justify-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-orbitron text-primary tracking-wider animate-neon-flicker leading-tight">WIRED</h1>
-          <p className="text-sm sm:text-base md:text-lg font-orbitron text-primary/70 tracking-wider mt-1">The Card Game</p>
+          <p className="text-sm sm:text-base md:text-lg font-orbitron text-primary/70 tracking-wider mt-1 animate-neon-flicker">The Card Game</p>
         </div>
         <Logo size={48} />
       </div>

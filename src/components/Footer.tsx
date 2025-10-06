@@ -24,7 +24,7 @@ const Footer = () => {
               <Logo />
               <div className="flex flex-col">
                 <span className="text-xl font-bold font-orbitron text-primary animate-neon-flicker leading-tight">WIRED</span>
-                <span className="text-[9px] font-orbitron text-primary/70 tracking-wide leading-tight">The Card Game</span>
+                <span className="text-[9px] font-orbitron text-primary/70 tracking-wide leading-tight animate-neon-flicker">The Card Game</span>
               </div>
             </div>
             <p className="text-primary text-sm">
