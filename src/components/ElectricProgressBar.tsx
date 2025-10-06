@@ -31,25 +31,36 @@ const ElectricProgressBar = () => {
 
   useEffect(() => {
     const duration = 6000; // 6 seconds total
-    const segmentDuration = duration / segments.length;
-    const startTime = Date.now();
+    const pauseDuration = 1000; // 1 second pause before restart
+    let startTime = Date.now();
+    let isPaused = false;
+    let pauseStartTime = 0;
 
     const interval = setInterval(() => {
+      if (isPaused) {
+        if (Date.now() - pauseStartTime >= pauseDuration) {
+          // Restart
+          isPaused = false;
+          startTime = Date.now();
+          setProgress(0);
+          setCurrentSegment(0);
+        }
+        return;
+      }
+
       const elapsed = Date.now() - startTime;
       const newProgress = Math.min((elapsed / duration) * 100, 100);
       setProgress(newProgress);
       
       const segmentIndex = Math.min(
-        Math.floor(elapsed / segmentDuration),
+        Math.floor((newProgress / 100) * segments.length),
         segments.length - 1
       );
       setCurrentSegment(segmentIndex);
 
-      if (newProgress >= 100) {
-        setTimeout(() => {
-          setProgress(0);
-          setCurrentSegment(0);
-        }, 1000);
+      if (newProgress >= 100 && !isPaused) {
+        isPaused = true;
+        pauseStartTime = Date.now();
       }
     }, 16);
 
