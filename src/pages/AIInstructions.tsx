@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Logo from '@/components/Logo';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Zap } from 'lucide-react';
 
@@ -32,11 +33,9 @@ const AIInstructions = () => {
                 <h1 className="text-4xl md:text-5xl font-bold font-orbitron text-white uppercase tracking-wider">
                   WIRED: The Card Game
                 </h1>
-                <img 
-                  src="/wire-logo-official.png" 
-                  alt="WIRED Logo" 
-                  className="w-32 h-32 mx-auto my-4"
-                />
+                <div className="my-4">
+                  <Logo size={128} className="mx-auto" />
+                </div>
                 <p className="text-lg text-muted-foreground">
                   The fast paced computer networking game, challenging players to see who can become a bitcoin billionaire!
                 </p>
