@@ -32,12 +32,12 @@ const HeroSection = () => {
   return (
     <div className="text-center space-y-4 sm:space-y-6">
       <div className="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-4 mb-4 sm:mb-6">
-        <Logo size={48} />
+        <Logo size={80} className="hidden sm:block" />
         <div className="flex flex-col items-center justify-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-orbitron text-primary tracking-wider animate-neon-flicker leading-tight">WIRED</h1>
           <p className="text-sm sm:text-base md:text-lg font-orbitron text-primary/70 tracking-wider mt-1 animate-neon-flicker">The Card Game</p>
         </div>
-        <Logo size={48} />
+        <Logo size={80} className="hidden sm:block" />
       </div>
       <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-xs sm:max-w-md md:max-w-lg lg:max-w-2xl mx-auto px-4 sm:px-0">
         Build your network, connect to the switch, and start mining bitcoin! Race against other players through strategic network building, cyber attacks, and cunning deals. Will you dominate through superior infrastructure or be sabotaged by your opponents?
