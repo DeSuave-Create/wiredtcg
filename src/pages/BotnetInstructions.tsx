@@ -11,21 +11,29 @@ const BotnetInstructions = () => {
 
   return (
     <div className="min-h-screen flex flex-col relative">
-      {/* Diagonal stripe background */}
-      <div className="fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute inset-0 bg-[#2a2a3a]"></div>
-        <div 
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage: `repeating-linear-gradient(
-              45deg,
-              transparent,
-              transparent 20px,
-              rgba(0, 0, 0, 0.3) 20px,
-              rgba(0, 0, 0, 0.3) 40px
-            )`
-          }}
-        ></div>
+      {/* Gray background with ghost logo pattern */}
+      <div className="fixed inset-0 -z-10 overflow-hidden bg-[#6b7280]">
+        {/* Ghost logos scattered across background */}
+        <img 
+          src="/wire-logo-official.png" 
+          alt="" 
+          className="absolute top-[10%] left-[15%] w-64 h-64 opacity-[0.08] pointer-events-none"
+        />
+        <img 
+          src="/wire-logo-official.png" 
+          alt="" 
+          className="absolute top-[50%] right-[20%] w-72 h-72 opacity-[0.06] pointer-events-none"
+        />
+        <img 
+          src="/wire-logo-official.png" 
+          alt="" 
+          className="absolute bottom-[15%] left-[25%] w-80 h-80 opacity-[0.07] pointer-events-none"
+        />
+        <img 
+          src="/wire-logo-official.png" 
+          alt="" 
+          className="absolute top-[30%] right-[5%] w-56 h-56 opacity-[0.09] pointer-events-none"
+        />
       </div>
 
       <Header />
