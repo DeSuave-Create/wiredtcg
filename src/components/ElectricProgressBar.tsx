@@ -70,6 +70,15 @@ const ElectricProgressBar = () => {
   return (
     <div className="electric-progress-container">
       <div className="electric-progress-bar">
+        {/* WIRED Logo at start */}
+        <div className="progress-logo">
+          <img 
+            src="/wire-logo-official.png" 
+            alt="WIRED Logo" 
+            className="logo-image"
+          />
+        </div>
+
         {/* Background segments */}
         <div className="segments-background">
           {segments.map((segment, index) => (
