@@ -51,17 +51,17 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
   ];
 
   const attackCards = [
-    { name: 'Hacked', bg: 'bg-red-50', image: '/lovable-uploads/attack-hacked-new.png' },
-    { name: 'New Hire', bg: 'bg-red-50', image: '/lovable-uploads/attack-newhire.png' },
-    { name: 'Power Outage', bg: 'bg-red-50', image: '/lovable-uploads/attack-poweroutage.png' },
-    { name: 'Audit', bg: 'bg-red-50', image: '/lovable-uploads/attack-audit.png' }
+    { name: 'Hacked', bg: 'bg-red-50', image: '/lovable-uploads/attack-hacked-v2.png' },
+    { name: 'New Hire', bg: 'bg-red-50', image: '/lovable-uploads/attack-newhire-v2.png' },
+    { name: 'Power Outage', bg: 'bg-red-50', image: '/lovable-uploads/attack-poweroutage-v2.png' },
+    { name: 'Audit', bg: 'bg-red-50', image: '/lovable-uploads/attack-audit-v2.png' }
   ];
 
   const resolutionCards = [
-    { name: 'Trained', bg: 'bg-red-50', image: '/lovable-uploads/resolution-trained.png' },
-    { name: 'Helpdesk', bg: 'bg-red-50', image: '/lovable-uploads/resolution-helpdesk.png' },
-    { name: 'Powered', bg: 'bg-red-50', image: '/lovable-uploads/resolution-powered.png' },
-    { name: 'Secured', bg: 'bg-red-50', image: '/lovable-uploads/resolution-secured.png' }
+    { name: 'Trained', bg: 'bg-red-50', image: '/lovable-uploads/resolution-trained-v2.png' },
+    { name: 'Helpdesk', bg: 'bg-red-50', image: '/lovable-uploads/resolution-helpdesk-v2.png' },
+    { name: 'Powered', bg: 'bg-red-50', image: '/lovable-uploads/resolution-powered-v2.png' },
+    { name: 'Secured', bg: 'bg-red-50', image: '/lovable-uploads/resolution-secured-v2.png' }
   ];
 
   const handlePrevious = () => {
