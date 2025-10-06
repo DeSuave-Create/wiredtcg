@@ -12,8 +12,15 @@ const ThemeProviderContext = createContext<ThemeProviderContextType | undefined>
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
+    // Check localStorage first for user preference
     const stored = localStorage.getItem('theme');
-    return (stored as Theme) || 'dark';
+    if (stored) return stored as Theme;
+    
+    // Otherwise use system preference
+    if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+      return 'light';
+    }
+    return 'dark';
   });
 
   useEffect(() => {
@@ -22,6 +29,22 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     root.classList.add(theme);
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  // Listen for system theme changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+    
+    const handleChange = (e: MediaQueryListEvent) => {
+      // Only update if user hasn't set a manual preference
+      const stored = localStorage.getItem('theme');
+      if (!stored) {
+        setTheme(e.matches ? 'light' : 'dark');
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
   return (
     <ThemeProviderContext.Provider value={{ theme, setTheme }}>
