@@ -10,7 +10,24 @@ const BotnetInstructions = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
+      {/* Diagonal stripe background */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute inset-0 bg-[#2a2a3a]"></div>
+        <div 
+          className="absolute inset-0 opacity-30"
+          style={{
+            backgroundImage: `repeating-linear-gradient(
+              45deg,
+              transparent,
+              transparent 20px,
+              rgba(0, 0, 0, 0.3) 20px,
+              rgba(0, 0, 0, 0.3) 40px
+            )`
+          }}
+        ></div>
+      </div>
+
       <Header />
       
       <main className="container mx-auto px-4 py-8 flex justify-center flex-grow">
