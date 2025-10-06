@@ -42,7 +42,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
     
     // Audit cards (4 total)
     for (let i = 0; i < 4; i++) {
-      deck.push({ name: 'Audit', bg: 'bg-red-50', image: '/lovable-uploads/attack-audit.png', borderColor: 'border-red-500', type: 'attack' });
+      deck.push({ name: 'Audit', bg: 'bg-red-50', image: '/lovable-uploads/attack-audit-v2.png', borderColor: 'border-red-500', type: 'attack' });
     }
     
     // Classification cards (13 total)
@@ -66,27 +66,27 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
     // Remaining 46 cards split between attack and resolution
     // Attack cards: 23 (Hacked, New Hire, Power Outage split evenly)
     for (let i = 0; i < 8; i++) {
-      deck.push({ name: 'Hacked', bg: 'bg-red-50', image: '/lovable-uploads/attack-hacked-new.png', borderColor: 'border-red-500', type: 'attack' });
+      deck.push({ name: 'Hacked', bg: 'bg-red-50', image: '/lovable-uploads/attack-hacked-v2.png', borderColor: 'border-red-500', type: 'attack' });
     }
     for (let i = 0; i < 8; i++) {
-      deck.push({ name: 'New Hire', bg: 'bg-red-50', image: '/lovable-uploads/attack-newhire.png', borderColor: 'border-red-500', type: 'attack' });
+      deck.push({ name: 'New Hire', bg: 'bg-red-50', image: '/lovable-uploads/attack-newhire-v2.png', borderColor: 'border-red-500', type: 'attack' });
     }
     for (let i = 0; i < 7; i++) {
-      deck.push({ name: 'Power Outage', bg: 'bg-red-50', image: '/lovable-uploads/attack-poweroutage.png', borderColor: 'border-red-500', type: 'attack' });
+      deck.push({ name: 'Power Outage', bg: 'bg-red-50', image: '/lovable-uploads/attack-poweroutage-v2.png', borderColor: 'border-red-500', type: 'attack' });
     }
     
     // Resolution/buff cards: 23 (split among 4 types)
     for (let i = 0; i < 6; i++) {
-      deck.push({ name: 'Trained', bg: 'bg-red-50', image: '/lovable-uploads/resolution-trained.png', borderColor: 'border-green-500', type: 'classification' });
+      deck.push({ name: 'Trained', bg: 'bg-red-50', image: '/lovable-uploads/resolution-trained-v2.png', borderColor: 'border-green-500', type: 'classification' });
     }
     for (let i = 0; i < 6; i++) {
-      deck.push({ name: 'Helpdesk', bg: 'bg-red-50', image: '/lovable-uploads/resolution-helpdesk.png', borderColor: 'border-green-500', type: 'classification' });
+      deck.push({ name: 'Helpdesk', bg: 'bg-red-50', image: '/lovable-uploads/resolution-helpdesk-v2.png', borderColor: 'border-green-500', type: 'classification' });
     }
     for (let i = 0; i < 6; i++) {
-      deck.push({ name: 'Powered', bg: 'bg-red-50', image: '/lovable-uploads/resolution-powered.png', borderColor: 'border-green-500', type: 'classification' });
+      deck.push({ name: 'Powered', bg: 'bg-red-50', image: '/lovable-uploads/resolution-powered-v2.png', borderColor: 'border-green-500', type: 'classification' });
     }
     for (let i = 0; i < 5; i++) {
-      deck.push({ name: 'Secured', bg: 'bg-red-50', image: '/lovable-uploads/resolution-secured.png', borderColor: 'border-green-500', type: 'classification' });
+      deck.push({ name: 'Secured', bg: 'bg-red-50', image: '/lovable-uploads/resolution-secured-v2.png', borderColor: 'border-green-500', type: 'classification' });
     }
     
     return deck;
@@ -149,20 +149,20 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
       '/lovable-uploads/equipment-3cable.png',
       '/lovable-uploads/equipment-2cable.png',
       '/lovable-uploads/equipment-switch.png',
-      '/lovable-uploads/attack-hacked-new.png',
-      '/lovable-uploads/attack-newhire.png',
-      '/lovable-uploads/attack-poweroutage.png',
-      '/lovable-uploads/attack-audit.png',
+      '/lovable-uploads/attack-hacked-v2.png',
+      '/lovable-uploads/attack-newhire-v2.png',
+      '/lovable-uploads/attack-poweroutage-v2.png',
+      '/lovable-uploads/attack-audit-v2.png',
       '/lovable-uploads/classification-facilities-new.png',
       '/lovable-uploads/classification-fieldtech-new.png',
       '/lovable-uploads/classification-supervisor.png',
       '/lovable-uploads/classification-security.png',
       '/lovable-uploads/classification-headhunter.png',
       '/lovable-uploads/classification-sealthedeal.png',
-      '/lovable-uploads/resolution-trained.png',
-      '/lovable-uploads/resolution-helpdesk.png',
-      '/lovable-uploads/resolution-powered.png',
-      '/lovable-uploads/resolution-secured.png',
+      '/lovable-uploads/resolution-trained-v2.png',
+      '/lovable-uploads/resolution-helpdesk-v2.png',
+      '/lovable-uploads/resolution-powered-v2.png',
+      '/lovable-uploads/resolution-secured-v2.png',
       '/lovable-uploads/card-back.png',
       '/wire-logo-official.png'
     ];
