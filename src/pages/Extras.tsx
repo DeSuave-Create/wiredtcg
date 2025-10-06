@@ -15,6 +15,7 @@ const Extras = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [gameModeIndex, setGameModeIndex] = useState(0);
+  const [isShuffling, setIsShuffling] = useState(false);
 
   // Mock video data for the carousel
   const tutorialVideos = [
@@ -98,12 +99,15 @@ const Extras = () => {
   };
 
   const handleGameModeClick = () => {
-    const currentMode = gameModes[gameModeIndex];
-    if (currentMode.name === 'Internet') {
-      navigate('/internet-instructions');
-    } else {
+    if (isShuffling) return; // Prevent clicks during shuffle
+    
+    setIsShuffling(true);
+    
+    // Shuffle animation duration
+    setTimeout(() => {
       cycleGameMode();
-    }
+      setIsShuffling(false);
+    }, 600);
   };
 
   return (
@@ -166,10 +170,22 @@ const Extras = () => {
                       const translation = offset === 0 ? 'group-hover:translate-x-3' : offset === 1 ? '-translate-x-2 translate-y-2' : '-translate-x-4 translate-y-4 group-hover:-translate-x-3';
                       const zIndex = offset === 0 ? 'z-20' : offset === 1 ? 'z-10' : '';
                       
+                      // Shuffle animation styles
+                      const shuffleRotation = isShuffling 
+                        ? idx === 0 ? 'rotate-[360deg]' 
+                        : idx === 1 ? 'rotate-[-360deg]' 
+                        : 'rotate-[180deg]'
+                        : '';
+                      const shuffleTranslation = isShuffling
+                        ? idx === 0 ? 'translate-x-12 -translate-y-8'
+                        : idx === 1 ? '-translate-x-8 translate-y-12'
+                        : 'translate-x-8 translate-y-8'
+                        : '';
+                      
                       return (
                         <div
                           key={idx}
-                      className={`absolute inset-0 ${card.borderColor} border-4 rounded-lg shadow-lg transition-all duration-300 transform ${translation} ${rotation} ${zIndex} overflow-hidden`}
+                          className={`absolute inset-0 ${card.borderColor} border-4 rounded-lg shadow-lg transition-all ${isShuffling ? 'duration-600' : 'duration-300'} transform ${translation} ${rotation} ${zIndex} ${shuffleRotation} ${shuffleTranslation} overflow-hidden`}
                         >
                           <img 
                             src={card.image} 
