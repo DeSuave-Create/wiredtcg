@@ -115,29 +115,17 @@
   left: 0;
   height: 100%;
   border-radius: 9999px;
-  transition: width 0.1s linear, background 0.3s ease;
+  transition: width 0.1s linear, background 0.3s ease, box-shadow 0.3s ease;
   overflow: visible;
-  box-shadow: 
-    0 0 20px currentColor,
-    0 0 40px currentColor,
-    inset 0 0 10px currentColor;
   animation: electric-pulse-glow 0.8s ease-in-out infinite;
 }
 
-/* Pulsing glow effect */
+/* Pulsing glow effect - now controlled inline */
 @keyframes electric-pulse-glow {
   0%, 100% {
-    box-shadow: 
-      0 0 15px currentColor,
-      0 0 30px currentColor,
-      inset 0 0 8px currentColor;
     filter: brightness(1);
   }
   50% {
-    box-shadow: 
-      0 0 25px currentColor,
-      0 0 50px currentColor,
-      inset 0 0 15px currentColor;
     filter: brightness(1.2);
   }
 }

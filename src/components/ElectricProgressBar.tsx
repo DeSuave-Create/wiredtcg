@@ -22,11 +22,20 @@ const ElectricProgressBar = () => {
   const getSegmentColor = () => {
     const segmentWidth = 100 / segments.length;
     if (progress <= segmentWidth) {
-      return 'linear-gradient(90deg, #10b981 0%, #34d399 100%)'; // Green
+      return {
+        gradient: 'linear-gradient(90deg, #10b981 0%, #34d399 100%)',
+        glow: '0 0 20px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.6), inset 0 0 10px rgba(16, 185, 129, 0.8)'
+      };
     } else if (progress <= segmentWidth * 2) {
-      return 'linear-gradient(90deg, #dc2626 0%, #ff1a1a 100%)'; // Bright Red
+      return {
+        gradient: 'linear-gradient(90deg, #dc2626 0%, #ff1a1a 100%)',
+        glow: '0 0 20px rgba(220, 38, 38, 0.8), 0 0 40px rgba(220, 38, 38, 0.6), inset 0 0 10px rgba(220, 38, 38, 0.8)'
+      };
     } else {
-      return 'linear-gradient(90deg, #facc15 0%, #fde047 100%)'; // Bright Yellow
+      return {
+        gradient: 'linear-gradient(90deg, #facc15 0%, #fde047 100%)',
+        glow: '0 0 20px rgba(250, 204, 21, 0.8), 0 0 40px rgba(250, 204, 21, 0.6), inset 0 0 10px rgba(250, 204, 21, 0.8)'
+      };
     }
   };
 
@@ -105,7 +114,8 @@ const ElectricProgressBar = () => {
           className="electric-fill"
           style={{ 
             width: `${progress}%`,
-            background: getSegmentColor()
+            background: getSegmentColor().gradient,
+            boxShadow: getSegmentColor().glow
           }}
         >
           <div className="lightning-overlay" />
