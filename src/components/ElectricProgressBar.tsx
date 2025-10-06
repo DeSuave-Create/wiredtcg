@@ -14,8 +14,8 @@ const ElectricProgressBar = () => {
 
   const segments: Segment[] = [
     { color: 'from-green-500 to-emerald-400', icon: <Cable className="w-6 h-6" />, label: 'Connect' },
-    { color: 'from-red-500 to-rose-400', icon: <Monitor className="w-6 h-6" />, label: 'Power' },
-    { color: 'from-yellow-500 to-amber-400', icon: <Bitcoin className="w-6 h-6" />, label: 'Secure' },
+    { color: 'from-red-500 to-rose-400', icon: <Monitor className="w-6 h-6" />, label: 'Plan' },
+    { color: 'from-yellow-500 to-amber-400', icon: <Bitcoin className="w-6 h-6" />, label: 'Mine' },
   ];
 
   const getSegmentColor = () => {
