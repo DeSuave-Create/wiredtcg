@@ -28,7 +28,7 @@ const InternetInstructions = () => {
           {/* Main container */}
           <div className="glass-card p-8 md:p-12 space-y-8 relative">
             {/* Hero Section */}
-            <div className="highlight-box text-center space-y-4 relative overflow-hidden stripe-pattern">
+            <div className="highlight-box text-center space-y-4 relative overflow-hidden stripe-pattern border-l-4 border-l-accent-green">
               <div className="relative z-10">
                 <h1 className="text-4xl md:text-5xl font-bold font-orbitron text-white uppercase tracking-wider animate-neon-flicker">
                   WIRED: The Card Game
@@ -44,7 +44,7 @@ const InternetInstructions = () => {
 
             {/* Game Mode Title */}
             <div className="text-center">
-              <h1 className="text-3xl md:text-4xl font-bold font-orbitron text-green-500 uppercase tracking-wider">
+              <h1 className="text-3xl md:text-4xl font-bold font-orbitron uppercase tracking-wider" style={{ color: 'hsl(var(--accent-green))' }}>
                 Game Mode: Internet
               </h1>
               <p className="text-muted-foreground mt-2">
