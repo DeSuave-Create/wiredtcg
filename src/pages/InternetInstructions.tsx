@@ -13,7 +13,7 @@ const InternetInstructions = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="container mx-auto px-4 py-8 flex justify-center flex-grow">
+      <main className="container mx-auto px-4 py-8 flex justify-center flex-grow relative" style={{ backgroundImage: 'url(/instructions-background.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="w-full max-w-4xl">
           {/* Back button */}
           <Link 
@@ -25,7 +25,7 @@ const InternetInstructions = () => {
           </Link>
 
           {/* Main container */}
-          <div className="glass-card p-8 md:p-12 space-y-8 relative" style={{ backgroundImage: 'url(/instructions-background.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+          <div className="glass-card p-8 md:p-12 space-y-8">
             {/* Hero Section */}
             <div className="highlight-box text-center space-y-4 relative overflow-hidden stripe-pattern">
               <div className="relative z-10">
