@@ -203,7 +203,7 @@ const Extras = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <button 
                       onClick={() => navigate('/internet-instructions')}
-                      className="bg-gray-100 rounded-xl text-primary hover:bg-gray-200 neon-glow px-6 py-4 font-medium shadow-lg border-2 border-primary flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
+                      className="bg-gray-800/90 rounded-xl text-primary hover:bg-gray-700/90 neon-glow px-6 py-4 font-medium shadow-lg border-2 border-primary flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
                     >
                       <BookOpen className="h-6 w-6 mb-2" />
                       <span className="font-bold">Internet Mode</span>
@@ -212,7 +212,7 @@ const Extras = () => {
                     
                     <button 
                       onClick={() => navigate('/ai-instructions')}
-                      className="bg-gray-100 rounded-xl text-primary hover:bg-gray-200 neon-glow px-6 py-4 font-medium shadow-lg border-2 border-primary flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
+                      className="bg-gray-800/90 rounded-xl text-primary hover:bg-gray-700/90 neon-glow px-6 py-4 font-medium shadow-lg border-2 border-primary flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
                     >
                       <BookOpen className="h-6 w-6 mb-2" />
                       <span className="font-bold">A.I. Mode</span>
@@ -221,7 +221,7 @@ const Extras = () => {
                     
                     <button 
                       onClick={() => navigate('/botnet-instructions')}
-                      className="bg-gray-100 rounded-xl text-primary hover:bg-gray-200 neon-glow px-6 py-4 font-medium shadow-lg border-2 border-primary flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
+                      className="bg-gray-800/90 rounded-xl text-primary hover:bg-gray-700/90 neon-glow px-6 py-4 font-medium shadow-lg border-2 border-primary flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
                     >
                       <BookOpen className="h-6 w-6 mb-2" />
                       <span className="font-bold">BotNet Mode</span>
@@ -234,14 +234,14 @@ const Extras = () => {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                   <button 
                     onClick={() => handleDownload('Rulebook PDF')}
-                    className="bg-gray-100 rounded-3xl text-primary hover:bg-gray-200 neon-glow px-8 py-3 font-medium shadow-2xl drop-shadow-lg border-2 border-primary flex items-center justify-center transition-all duration-300 hover:scale-105"
+                    className="bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-700/90 neon-glow px-8 py-3 font-medium shadow-2xl drop-shadow-lg border-2 border-primary flex items-center justify-center transition-all duration-300 hover:scale-105"
                   >
                     <Download className="h-5 w-5 mr-2" />
                     Download PDF
                   </button>
                   <button 
                     onClick={handleViewOnline}
-                    className="bg-gray-100 rounded-3xl text-primary hover:bg-gray-200 neon-glow px-8 py-3 font-medium shadow-2xl drop-shadow-lg border-2 border-primary flex items-center justify-center transition-all duration-300 hover:scale-105"
+                    className="bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-700/90 neon-glow px-8 py-3 font-medium shadow-2xl drop-shadow-lg border-2 border-primary flex items-center justify-center transition-all duration-300 hover:scale-105"
                   >
                     <BookOpen className="h-5 w-5 mr-2" />
                     View PDF Online
@@ -258,13 +258,13 @@ const Extras = () => {
           <ContentSection title="Downloads & Resources">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Rulebook Download */}
-              <div className="bg-gray-100 border-primary border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
+              <div className="bg-gray-800/90 border-primary border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
                 <FileText className="h-12 w-12 text-primary mx-auto" />
                 <h3 className="text-lg font-semibold font-orbitron text-primary">Official Rulebook</h3>
                 <p className="text-sm text-muted-foreground flex-grow">Complete game rules and strategies (PDF, 7 pages)</p>
                 <button
                   onClick={() => handleDownload('Official Rulebook')}
-                  className="bg-gray-100 rounded-3xl text-primary hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-primary mt-auto flex items-center justify-center"
+                  className="bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-700/90 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-primary mt-auto flex items-center justify-center"
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Download
@@ -272,13 +272,13 @@ const Extras = () => {
               </div>
 
               {/* Score Sheets */}
-              <div className="bg-gray-100 border-primary border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
+              <div className="bg-gray-800/90 border-primary border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
                 <FileText className="h-12 w-12 text-primary mx-auto" />
                 <h3 className="text-lg font-semibold font-orbitron text-primary">Score Sheets</h3>
                 <p className="text-sm text-muted-foreground flex-grow">Printable score tracking sheets (PDF, 0.5MB)</p>
                 <button 
                   onClick={() => handleDownload('Score Sheets')}
-                  className="bg-gray-100 rounded-3xl text-primary hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-primary mt-auto flex items-center justify-center"
+                  className="bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-700/90 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-primary mt-auto flex items-center justify-center"
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Download
@@ -286,13 +286,13 @@ const Extras = () => {
               </div>
 
               {/* Card Reference */}
-              <div className="bg-gray-100 border-primary border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
+              <div className="bg-gray-800/90 border-primary border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
                 <FileText className="h-12 w-12 text-primary mx-auto" />
                 <h3 className="text-lg font-semibold font-orbitron text-primary">Card Reference</h3>
                 <p className="text-sm text-muted-foreground flex-grow">Quick reference for all cards (PDF, 1.1MB)</p>
                 <button 
                   onClick={() => handleDownload('Card Reference')}
-                  className="bg-gray-100 rounded-3xl text-primary hover:bg-gray-200 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-primary mt-auto flex items-center justify-center"
+                  className="bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-700/90 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-primary mt-auto flex items-center justify-center"
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Download
