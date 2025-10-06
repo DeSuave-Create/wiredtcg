@@ -42,7 +42,10 @@ export default {
 				},
 				accent: {
 					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))'
+					foreground: 'hsl(var(--accent-foreground))',
+					blue: 'hsl(var(--accent-blue))',
+					green: 'hsl(var(--accent-green))',
+					red: 'hsl(var(--accent-red))'
 				},
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',
@@ -246,7 +249,8 @@ export default {
 			},
 			fontFamily: {
 				'orbitron': ['Orbitron', 'sans-serif'],
-				'sans': ['Share Tech Mono', 'ui-sans-serif', 'system-ui'],
+				'roboto': ['Roboto', 'sans-serif'],
+				'sans': ['Roboto', 'Share Tech Mono', 'ui-sans-serif', 'system-ui'],
 				'mono': ['Share Tech Mono', 'Courier New', 'monospace']
 			}
 		}
