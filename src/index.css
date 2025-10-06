@@ -286,8 +286,41 @@
   }
 }
 
+@keyframes lightning-strike {
+  0%, 90%, 100% {
+    opacity: 0;
+    stroke-dashoffset: 100;
+    filter: drop-shadow(0 0 0px rgba(59, 130, 246, 0));
+  }
+  92% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+    filter: drop-shadow(0 0 8px rgba(59, 130, 246, 1)) drop-shadow(0 0 12px rgba(59, 130, 246, 0.8));
+  }
+  94% {
+    opacity: 0;
+  }
+  96% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+    filter: drop-shadow(0 0 8px rgba(59, 130, 246, 1)) drop-shadow(0 0 12px rgba(59, 130, 246, 0.8));
+  }
+  98% {
+    opacity: 0;
+  }
+}
+
 .electric-pulse {
   animation: electric-current 6s ease-in-out infinite;
+}
+
+.lightning-bolt {
+  animation: lightning-strike 5s ease-in-out infinite;
+}
+
+.bolt-path {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
 }
 
 .light .animate-pulse-neon {
