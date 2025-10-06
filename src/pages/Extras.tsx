@@ -203,7 +203,7 @@ const Extras = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <button 
                       onClick={() => navigate('/internet-instructions')}
-                      className="bg-gray-800/90 rounded-xl text-primary hover:bg-gray-700/90 neon-glow px-6 py-4 font-medium shadow-lg border-2 border-primary flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
+                      className="bg-gray-50 dark:bg-gray-800/90 rounded-xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-4 font-medium shadow-lg border-2 border-primary flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
                     >
                       <BookOpen className="h-6 w-6 mb-2" />
                       <span className="font-bold">Internet Mode</span>
@@ -212,7 +212,7 @@ const Extras = () => {
                     
                     <button 
                       onClick={() => navigate('/ai-instructions')}
-                      className="bg-gray-800/90 rounded-xl text-primary hover:bg-gray-700/90 neon-glow px-6 py-4 font-medium shadow-lg border-2 border-primary flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
+                      className="bg-gray-50 dark:bg-gray-800/90 rounded-xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-4 font-medium shadow-lg border-2 border-primary flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
                     >
                       <BookOpen className="h-6 w-6 mb-2" />
                       <span className="font-bold">A.I. Mode</span>
@@ -221,7 +221,7 @@ const Extras = () => {
                     
                     <button 
                       onClick={() => navigate('/botnet-instructions')}
-                      className="bg-gray-800/90 rounded-xl text-primary hover:bg-gray-700/90 neon-glow px-6 py-4 font-medium shadow-lg border-2 border-primary flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
+                      className="bg-gray-50 dark:bg-gray-800/90 rounded-xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-4 font-medium shadow-lg border-2 border-primary flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
                     >
                       <BookOpen className="h-6 w-6 mb-2" />
                       <span className="font-bold">BotNet Mode</span>
@@ -234,14 +234,14 @@ const Extras = () => {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                   <button 
                     onClick={() => handleDownload('Rulebook PDF')}
-                    className="bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-700/90 neon-glow px-8 py-3 font-medium shadow-2xl drop-shadow-lg border-2 border-primary flex items-center justify-center transition-all duration-300 hover:scale-105"
+                    className="bg-gray-50 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-8 py-3 font-medium shadow-2xl drop-shadow-lg border-2 border-primary flex items-center justify-center transition-all duration-300 hover:scale-105"
                   >
                     <Download className="h-5 w-5 mr-2" />
                     Download PDF
                   </button>
                   <button 
                     onClick={handleViewOnline}
-                    className="bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-700/90 neon-glow px-8 py-3 font-medium shadow-2xl drop-shadow-lg border-2 border-primary flex items-center justify-center transition-all duration-300 hover:scale-105"
+                    className="bg-gray-50 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-8 py-3 font-medium shadow-2xl drop-shadow-lg border-2 border-primary flex items-center justify-center transition-all duration-300 hover:scale-105"
                   >
                     <BookOpen className="h-5 w-5 mr-2" />
                     View PDF Online
