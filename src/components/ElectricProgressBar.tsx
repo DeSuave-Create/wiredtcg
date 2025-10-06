@@ -94,7 +94,7 @@ const ElectricProgressBar = () => {
                   newBouncing.delete(index);
                   return newBouncing;
                 });
-              }, 600); // Match animation duration
+              }, 800); // Increased to match smoother animation duration
             }
             
             return newSet;
