@@ -63,7 +63,7 @@ const PlayerCard = ({
   const borderColor = isLeader ? 'border-yellow-400' : getCharacterBorderColor(player.character);
 
   return (
-    <div className={`relative overflow-hidden transition-all duration-300 hover:scale-105 ${borderColor} border-2 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl`} style={{ backgroundColor: '#fffbef' }}>
+    <div className={`relative overflow-hidden transition-all duration-300 hover:scale-105 ${borderColor} border-2 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl bg-white/80 dark:bg-gray-800/90`}>
       {/* Circuit board pattern background */}
       <div className="absolute inset-0 opacity-20" style={{
         backgroundImage: `
@@ -88,8 +88,7 @@ const PlayerCard = ({
                 onClick={() => onRemove(player.id)}
                 variant="outline"
                 size="sm"
-                className={`${borderColor} border-2 text-destructive hover:bg-destructive/10 h-7 w-7 p-0 bg-gray-100 rounded-xl`}
-                style={{ backgroundColor: '#f3f4f6' }}
+                className={`${borderColor} border-2 text-destructive hover:bg-destructive/10 h-7 w-7 p-0 bg-white/80 dark:bg-gray-700/90 rounded-xl`}
                 type="button"
               >
                 <Trash2 className="h-3 w-3" />
@@ -108,11 +107,10 @@ const PlayerCard = ({
             <Input
               value={player.name}
               onChange={(e) => onUpdateName(player.id, e.target.value)}
-              className={`text-xs font-semibold ${borderColor} border-2 h-6 px-2 text-center bg-gray-100 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0`}
-              style={{ backgroundColor: '#f3f4f6' }}
+              className={`text-xs font-semibold ${borderColor} border-2 h-6 px-2 text-center bg-white/80 dark:bg-gray-700/90 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0`}
             />
             <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-              <SelectTrigger className={`${borderColor} border-2 bg-input text-xs h-5 px-2 bg-gray-100 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none text-center justify-center`} style={{ backgroundColor: '#f3f4f6' }}>
+              <SelectTrigger className={`${borderColor} border-2 bg-input text-xs h-5 px-2 bg-white/80 dark:bg-gray-700/90 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none text-center justify-center`}>
                 <SelectValue className="text-center" />
               </SelectTrigger>
               <SelectContent className="bg-popover border-primary/30">
@@ -131,8 +129,7 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, -1)}
               variant="outline"
               size="sm"
-              className={`${borderColor} border-2 text-destructive hover:bg-gray-200 hover:text-destructive h-7 w-7 p-0 bg-gray-100 rounded-xl`}
-              style={{ backgroundColor: '#f3f4f6' }}
+              className={`${borderColor} border-2 text-destructive hover:bg-gray-200 dark:hover:bg-gray-600/90 hover:text-destructive h-7 w-7 p-0 bg-white/80 dark:bg-gray-700/90 rounded-xl`}
               type="button"
             >
               <Minus className="h-3 w-3" />
@@ -149,8 +146,7 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, 1)}
               variant="outline"
               size="sm"
-              className={`${borderColor} border-2 text-primary hover:bg-gray-200 hover:text-primary h-7 w-7 p-0 bg-gray-100 rounded-xl`}
-              style={{ backgroundColor: '#f3f4f6' }}
+              className={`${borderColor} border-2 text-primary hover:bg-gray-200 dark:hover:bg-gray-600/90 hover:text-primary h-7 w-7 p-0 bg-white/80 dark:bg-gray-700/90 rounded-xl`}
               type="button"
             >
               <Plus className="h-3 w-3" />
@@ -160,15 +156,14 @@ const PlayerCard = ({
       </div>
 
       {/* Desktop Layout */}
-      <div className="hidden md:block p-6 space-y-4 relative z-10 bg-gray-100">
+      <div className="hidden md:block p-6 space-y-4 relative z-10 bg-white/80 dark:bg-gray-800/90">
         {/* Remove Button - Top Right for Desktop */}
         {canRemove && (
           <Button
             onClick={() => onRemove(player.id)}
             variant="outline"
             size="sm"
-            className={`absolute top-2 right-2 ${borderColor} border-2 text-destructive hover:bg-destructive/10 h-6 w-6 p-0 z-10 rounded-xl`}
-            style={{ backgroundColor: '#fffbef' }}
+            className={`absolute top-2 right-2 ${borderColor} border-2 text-destructive hover:bg-destructive/10 h-6 w-6 p-0 z-10 rounded-xl bg-white/80 dark:bg-gray-700/90`}
             type="button"
           >
             <Trash2 className="h-3 w-3" />
@@ -179,7 +174,7 @@ const PlayerCard = ({
         <div className="text-center">
           <div className="text-4xl mb-2">{character.icon}</div>
           <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-            <SelectTrigger className={`${borderColor} border-2 text-sm rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none text-center justify-center`} style={{ backgroundColor: '#fffbef' }}>
+            <SelectTrigger className={`${borderColor} border-2 text-sm rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none text-center justify-center bg-white/80 dark:bg-gray-700/90`}>
               <SelectValue className="text-center" />
             </SelectTrigger>
             <SelectContent className="bg-popover border-primary/30">
@@ -196,8 +191,7 @@ const PlayerCard = ({
         <Input
           value={player.name}
           onChange={(e) => onUpdateName(player.id, e.target.value)}
-          className={`text-center font-semibold text-lg ${borderColor} border-2 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0`}
-          style={{ backgroundColor: '#fffbef' }}
+          className={`text-center font-semibold text-lg ${borderColor} border-2 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0 bg-white/80 dark:bg-gray-700/90`}
         />
 
         {/* Bitcoin Score Display */}
@@ -216,8 +210,7 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, -1)}
               variant="outline"
               size="sm"
-              className={`${borderColor} border-2 text-destructive hover:bg-gray-200 hover:text-destructive w-full xs:w-auto rounded-xl`}
-              style={{ backgroundColor: '#fffbef' }}
+              className={`${borderColor} border-2 text-destructive hover:bg-gray-200 dark:hover:bg-gray-600/90 hover:text-destructive w-full xs:w-auto rounded-xl bg-white/80 dark:bg-gray-700/90`}
               type="button"
             >
               <Minus className="h-4 w-4" />
@@ -226,8 +219,7 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, 1)}
               variant="outline"
               size="sm"
-              className={`${borderColor} border-2 text-primary hover:bg-gray-200 hover:text-primary w-full xs:w-auto rounded-xl`}
-              style={{ backgroundColor: '#fffbef' }}
+              className={`${borderColor} border-2 text-primary hover:bg-gray-200 dark:hover:bg-gray-600/90 hover:text-primary w-full xs:w-auto rounded-xl bg-white/80 dark:bg-gray-700/90`}
               type="button"
             >
               <Plus className="h-4 w-4" />
