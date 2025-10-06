@@ -19,14 +19,21 @@ const AIInstructions = () => {
           {/* Back button */}
           <Link 
             to="/extras" 
-            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 mb-6 transition-colors"
+            className="inline-flex items-center gap-2 text-accent-blue hover:text-accent-blue/80 mb-6 transition-colors"
+            style={{ color: 'hsl(var(--accent-blue))' }}
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Extras
           </Link>
 
           {/* Main container */}
-          <div className="glass-card p-8 md:p-12 space-y-8 relative">
+          <div 
+            className="glass-card p-8 md:p-12 space-y-8 relative"
+            style={{ 
+              border: '1px solid hsl(var(--accent-blue) / 0.5)',
+              boxShadow: '0 0 30px hsl(var(--accent-blue) / 0.2), 0 20px 60px rgba(0, 0, 0, 0.5)'
+            }}
+          >
             {/* Hero Section */}
             <div 
               className="highlight-box text-center space-y-4 relative overflow-hidden stripe-pattern"

@@ -19,14 +19,21 @@ const InternetInstructions = () => {
           {/* Back button */}
           <Link 
             to="/extras" 
-            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 mb-6 transition-colors"
+            className="inline-flex items-center gap-2 hover:opacity-80 mb-6 transition-colors"
+            style={{ color: 'hsl(var(--accent-green))' }}
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Extras
           </Link>
 
           {/* Main container */}
-          <div className="glass-card p-8 md:p-12 space-y-8 relative">
+          <div 
+            className="glass-card p-8 md:p-12 space-y-8 relative"
+            style={{ 
+              border: '1px solid hsl(var(--accent-green) / 0.5)',
+              boxShadow: '0 0 30px hsl(var(--accent-green) / 0.2), 0 20px 60px rgba(0, 0, 0, 0.5)'
+            }}
+          >
             {/* Hero Section */}
             <div 
               className="highlight-box text-center space-y-4 relative overflow-hidden stripe-pattern"

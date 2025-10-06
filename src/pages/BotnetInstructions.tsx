@@ -19,16 +19,29 @@ const BotnetInstructions = () => {
           {/* Back button */}
           <Link 
             to="/extras" 
-            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 mb-6 transition-colors"
+            className="inline-flex items-center gap-2 hover:opacity-80 mb-6 transition-colors"
+            style={{ color: 'hsl(var(--accent-red))' }}
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Extras
           </Link>
 
           {/* Main container */}
-          <div className="glass-card p-8 md:p-12 space-y-8 relative">
+          <div 
+            className="glass-card p-8 md:p-12 space-y-8 relative"
+            style={{ 
+              border: '1px solid hsl(var(--accent-red) / 0.5)',
+              boxShadow: '0 0 30px hsl(var(--accent-red) / 0.2), 0 20px 60px rgba(0, 0, 0, 0.5)'
+            }}
+          >
             {/* Hero Section */}
-            <div className="highlight-box text-center space-y-4 relative overflow-hidden stripe-pattern">
+            <div 
+              className="highlight-box text-center space-y-4 relative overflow-hidden stripe-pattern"
+              style={{ 
+                borderLeft: '3px solid hsl(var(--accent-red))',
+                background: 'linear-gradient(90deg, rgba(220, 38, 38, 0.1) 0%, transparent 100%)'
+              }}
+            >
               <div className="relative z-10">
                 <h1 className="text-4xl md:text-5xl font-bold font-orbitron text-white uppercase tracking-wider animate-neon-flicker">
                   WIRED: The Card Game
