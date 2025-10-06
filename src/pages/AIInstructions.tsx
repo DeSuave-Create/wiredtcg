@@ -28,7 +28,13 @@ const AIInstructions = () => {
           {/* Main container */}
           <div className="glass-card p-8 md:p-12 space-y-8 relative">
             {/* Hero Section */}
-            <div className="highlight-box text-center space-y-4 relative overflow-hidden stripe-pattern">
+            <div 
+              className="highlight-box text-center space-y-4 relative overflow-hidden stripe-pattern"
+              style={{ 
+                borderLeft: '3px solid hsl(var(--accent-blue))',
+                background: 'linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%)'
+              }}
+            >
               <div className="relative z-10">
                 <h1 className="text-4xl md:text-5xl font-bold font-orbitron text-white uppercase tracking-wider animate-neon-flicker">
                   WIRED: The Card Game
