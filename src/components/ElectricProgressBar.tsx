@@ -114,11 +114,6 @@ const ElectricProgressBar = () => {
           );
         })}
       </div>
-
-      {/* Final text */}
-      <div className={`connection-text ${progress >= 100 ? 'visible' : ''}`}>
-        <span className="electric-text">GET CONNECTED</span>
-      </div>
     </div>
   );
 };
