@@ -11,18 +11,16 @@ const AIInstructions = () => {
 
   return (
     <div className="min-h-screen flex flex-col relative">
-      {/* Gray background with circuit pattern */}
+      {/* Gray background with circuit board pattern */}
       <div className="fixed inset-0 -z-10 overflow-hidden bg-[#6b7280]">
-        {/* Circuit pattern - small green dots */}
+        {/* Circuit board pattern overlay */}
         <div 
-          className="absolute inset-0"
+          className="absolute inset-0 opacity-40"
           style={{
-            backgroundImage: `
-              radial-gradient(circle at 10% 10%, rgba(124, 195, 66, 0.15) 2px, transparent 2px),
-              radial-gradient(circle at 90% 90%, rgba(124, 195, 66, 0.15) 2px, transparent 2px)
-            `,
-            backgroundSize: '100px 100px',
-            backgroundPosition: '0 0, 50px 50px'
+            backgroundImage: 'url(/circuit-background.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'repeat'
           }}
         ></div>
       </div>
