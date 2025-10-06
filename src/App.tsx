@@ -14,6 +14,7 @@ import Score from "./pages/Score";
 import Founders from "./pages/Founders";
 import Solysis from "./pages/Solysis";
 import RulebookViewer from "./pages/RulebookViewer";
+import InternetInstructions from "./pages/InternetInstructions";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/founders" element={<Founders />} />
             <Route path="/solysis" element={<Solysis />} />
             <Route path="/rulebook" element={<RulebookViewer />} />
+            <Route path="/internet-instructions" element={<InternetInstructions />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

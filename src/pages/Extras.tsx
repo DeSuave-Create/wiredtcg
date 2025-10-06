@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
@@ -12,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const Extras = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [gameModeIndex, setGameModeIndex] = useState(0);
 
   // Mock video data for the carousel
@@ -95,6 +97,15 @@ const Extras = () => {
     setGameModeIndex((prev) => (prev + 1) % gameModes.length);
   };
 
+  const handleGameModeClick = () => {
+    const currentMode = gameModes[gameModeIndex];
+    if (currentMode.name === 'Internet') {
+      navigate('/internet-instructions');
+    } else {
+      cycleGameMode();
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -147,7 +158,7 @@ const Extras = () => {
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
                   <div 
                     className="relative w-28 h-40 sm:w-36 sm:h-52 lg:w-44 lg:h-64 xl:w-52 xl:h-80 group cursor-pointer transition-transform duration-300 hover:scale-105"
-                    onClick={cycleGameMode}
+                    onClick={handleGameModeClick}
                   >
                     {gameModes.map((card, idx) => {
                       const offset = (idx - gameModeIndex + gameModes.length) % gameModes.length;
