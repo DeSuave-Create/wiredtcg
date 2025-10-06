@@ -10,21 +10,7 @@ const AIInstructions = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col relative">
-      {/* Gray background with circuit board pattern */}
-      <div className="fixed inset-0 -z-10 overflow-hidden bg-[#6b7280]">
-        {/* Circuit board pattern overlay */}
-        <div 
-          className="absolute inset-0 opacity-40"
-          style={{
-            backgroundImage: 'url(/circuit-background.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'repeat'
-          }}
-        ></div>
-      </div>
-
+    <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="container mx-auto px-4 py-8 flex justify-center flex-grow">
