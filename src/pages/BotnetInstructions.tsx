@@ -11,29 +11,20 @@ const BotnetInstructions = () => {
 
   return (
     <div className="min-h-screen flex flex-col relative">
-      {/* Gray background with ghost logo pattern */}
+      {/* Gray background with circuit pattern */}
       <div className="fixed inset-0 -z-10 overflow-hidden bg-[#6b7280]">
-        {/* Ghost logos scattered across background */}
-        <img 
-          src="/wire-logo-official.png" 
-          alt="" 
-          className="absolute top-[10%] left-[15%] w-64 h-64 opacity-[0.08] pointer-events-none"
-        />
-        <img 
-          src="/wire-logo-official.png" 
-          alt="" 
-          className="absolute top-[50%] right-[20%] w-72 h-72 opacity-[0.06] pointer-events-none"
-        />
-        <img 
-          src="/wire-logo-official.png" 
-          alt="" 
-          className="absolute bottom-[15%] left-[25%] w-80 h-80 opacity-[0.07] pointer-events-none"
-        />
-        <img 
-          src="/wire-logo-official.png" 
-          alt="" 
-          className="absolute top-[30%] right-[5%] w-56 h-56 opacity-[0.09] pointer-events-none"
-        />
+        {/* Circuit pattern - small green dots */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+              radial-gradient(circle at 10% 10%, rgba(124, 195, 66, 0.15) 2px, transparent 2px),
+              radial-gradient(circle at 90% 90%, rgba(124, 195, 66, 0.15) 2px, transparent 2px)
+            `,
+            backgroundSize: '100px 100px',
+            backgroundPosition: '0 0, 50px 50px'
+          }}
+        ></div>
       </div>
 
       <Header />
