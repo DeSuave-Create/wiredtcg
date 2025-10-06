@@ -258,7 +258,7 @@ const Extras = () => {
           <ContentSection title="Downloads & Resources">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Rulebook Download */}
-              <div className="bg-gray-50 dark:bg-gray-800/90 border-primary border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
+              <div className="bg-gray-50 dark:bg-gray-800/90 border-primary border-2 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
                 <FileText className="h-12 w-12 text-primary mx-auto" />
                 <h3 className="text-lg font-semibold font-orbitron text-primary">Official Rulebook</h3>
                 <p className="text-sm text-muted-foreground flex-grow">Complete game rules and strategies (PDF, 7 pages)</p>
@@ -272,7 +272,7 @@ const Extras = () => {
               </div>
 
               {/* Score Sheets */}
-              <div className="bg-gray-50 dark:bg-gray-800/90 border-primary border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
+              <div className="bg-gray-50 dark:bg-gray-800/90 border-primary border-2 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
                 <FileText className="h-12 w-12 text-primary mx-auto" />
                 <h3 className="text-lg font-semibold font-orbitron text-primary">Score Sheets</h3>
                 <p className="text-sm text-muted-foreground flex-grow">Printable score tracking sheets (PDF, 0.5MB)</p>
@@ -286,7 +286,7 @@ const Extras = () => {
               </div>
 
               {/* Card Reference */}
-              <div className="bg-gray-50 dark:bg-gray-800/90 border-primary border-8 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
+              <div className="bg-gray-50 dark:bg-gray-800/90 border-primary border-2 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
                 <FileText className="h-12 w-12 text-primary mx-auto" />
                 <h3 className="text-lg font-semibold font-orbitron text-primary">Card Reference</h3>
                 <p className="text-sm text-muted-foreground flex-grow">Quick reference for all cards (PDF, 1.1MB)</p>

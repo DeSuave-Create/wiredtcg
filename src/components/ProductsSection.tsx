@@ -89,7 +89,7 @@ const ProductsSection = () => {
         const cardStyles = getCardStyles();
         
         return (
-          <div key={product.id} className={`relative w-full h-[347px] overflow-hidden transition-all duration-300 hover:scale-105 ${cardStyles.border} border-8 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl bg-gray-100 group circuit-card`}>
+          <div key={product.id} className={`relative w-full h-[347px] overflow-hidden transition-all duration-300 hover:scale-105 ${cardStyles.border} border-2 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl bg-gray-100 group circuit-card`}>
             
             {/* Scan line effect on hover */}
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-green-400 to-transparent opacity-0 group-hover:opacity-100 transform translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-1500 ease-in-out z-20"></div>
