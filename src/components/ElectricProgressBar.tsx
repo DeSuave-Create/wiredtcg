@@ -23,9 +23,9 @@ const ElectricProgressBar = () => {
     if (progress <= segmentWidth) {
       return 'linear-gradient(90deg, #10b981 0%, #34d399 100%)'; // Green
     } else if (progress <= segmentWidth * 2) {
-      return 'linear-gradient(90deg, #ef4444 0%, #f87171 100%)'; // Red
+      return 'linear-gradient(90deg, #dc2626 0%, #ff1a1a 100%)'; // Bright Red
     } else {
-      return 'linear-gradient(90deg, #eab308 0%, #fbbf24 100%)'; // Yellow
+      return 'linear-gradient(90deg, #facc15 0%, #fde047 100%)'; // Bright Yellow
     }
   };
 
