@@ -351,37 +351,6 @@
   animation: icon-pulse 0.5s ease-in-out infinite;
 }
 
-.segment-icon.bouncing {
-  animation: icon-bounce 0.8s ease-out;
-}
-
-@keyframes icon-bounce {
-  0% {
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
-  15% {
-    transform: translateX(-50%) translateY(-8px) scale(1.05);
-  }
-  30% {
-    transform: translateX(-50%) translateY(-25px) scale(1.1);
-  }
-  45% {
-    transform: translateX(-50%) translateY(-15px) scale(1.08);
-  }
-  60% {
-    transform: translateX(-50%) translateY(-8px) scale(1.05);
-  }
-  75% {
-    transform: translateX(-50%) translateY(-3px) scale(1.02);
-  }
-  90% {
-    transform: translateX(-50%) translateY(-1px) scale(1.01);
-  }
-  100% {
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
-}
-
 .electric-pulse {
   position: absolute;
   top: 50%;
@@ -481,6 +450,18 @@
 
 /* Responsive */
 @media (max-width: 640px) {
+  .electric-progress-bar {
+    width: calc(100% - 50px);
+    margin-left: 50px;
+  }
+
+  .progress-logo {
+    left: -50px;
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+  }
+
   .icon-wrapper {
     width: 40px;
     height: 40px;
@@ -493,6 +474,10 @@
 
   .segment-label {
     font-size: 0.625rem;
+  }
+
+  .segment-icon {
+    margin-top: -20px;
   }
 
   .electric-text {

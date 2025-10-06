@@ -12,7 +12,6 @@ const ElectricProgressBar = () => {
   const [progress, setProgress] = useState(0);
   const [currentSegment, setCurrentSegment] = useState(0);
   const [poweredSegments, setPoweredSegments] = useState<Set<number>>(new Set());
-  const [bouncingSegments, setBouncingSegments] = useState<Set<number>>(new Set());
 
   const segments: Segment[] = [
     { color: 'from-green-500 to-emerald-400', icon: <Cable className="w-6 h-6" />, label: 'Connect' },
@@ -61,7 +60,6 @@ const ElectricProgressBar = () => {
           setProgress(0);
           setCurrentSegment(0);
           setPoweredSegments(new Set()); // Reset powered segments
-          setBouncingSegments(new Set()); // Reset bouncing segments
         }
         return;
       }
@@ -80,25 +78,7 @@ const ElectricProgressBar = () => {
       segments.forEach((_, index) => {
         const segmentProgress = (index + 1) / segments.length * 100;
         if (newProgress >= segmentProgress) {
-          setPoweredSegments(prev => {
-            const wasPowered = prev.has(index);
-            const newSet = new Set(prev).add(index);
-            
-            // Trigger bounce animation for newly powered segments
-            if (!wasPowered) {
-              setBouncingSegments(prevBouncing => new Set(prevBouncing).add(index));
-              // Remove bouncing class after animation completes
-              setTimeout(() => {
-                setBouncingSegments(prevBouncing => {
-                  const newBouncing = new Set(prevBouncing);
-                  newBouncing.delete(index);
-                  return newBouncing;
-                });
-              }, 800); // Increased to match smoother animation duration
-            }
-            
-            return newSet;
-          });
+          setPoweredSegments(prev => new Set(prev).add(index));
         }
       });
 
@@ -170,13 +150,12 @@ const ElectricProgressBar = () => {
         {segments.map((segment, index) => {
           const segmentProgress = (index + 1) / segments.length * 100;
           const isPowered = poweredSegments.has(index);
-          const isBouncing = bouncingSegments.has(index);
           const isCurrent = currentSegment === index && progress < 100;
 
           return (
             <div
               key={index}
-              className={`segment-icon ${isPowered ? 'powered' : ''} ${isCurrent ? 'current' : ''} ${isBouncing ? 'bouncing' : ''}`}
+              className={`segment-icon ${isPowered ? 'powered' : ''} ${isCurrent ? 'current' : ''}`}
               style={{ left: `${((index + 1) / segments.length) * 100}%` }}
             >
               <div className={`icon-wrapper bg-gradient-to-br ${segment.color}`}>
