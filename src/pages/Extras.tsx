@@ -196,21 +196,57 @@ const Extras = () => {
               </div>
 
               {/* Centered Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-                <button 
-                  onClick={() => handleDownload('Rulebook PDF')}
-                  className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-8 py-3 font-medium shadow-2xl drop-shadow-lg border-2 border-green-600 flex items-center justify-center transition-all duration-300 hover:scale-105"
-                >
-                  <Download className="h-5 w-5 mr-2" />
-                  Download PDF
-                </button>
-                <button 
-                  onClick={handleViewOnline}
-                  className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-8 py-3 font-medium shadow-2xl drop-shadow-lg border-2 border-green-600 flex items-center justify-center transition-all duration-300 hover:scale-105"
-                >
-                  <BookOpen className="h-5 w-5 mr-2" />
-                  View Online
-                </button>
+              <div className="flex flex-col items-center gap-6 pt-4">
+                {/* Game Mode Selection */}
+                <div className="w-full max-w-2xl">
+                  <h3 className="text-lg font-semibold text-primary text-center mb-4">Select Game Mode Instructions:</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <button 
+                      onClick={() => navigate('/internet-instructions')}
+                      className="bg-gray-100 rounded-xl text-green-600 hover:bg-gray-200 neon-glow px-6 py-4 font-medium shadow-lg border-2 border-green-600 flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
+                    >
+                      <BookOpen className="h-6 w-6 mb-2" />
+                      <span className="font-bold">Internet Mode</span>
+                      <span className="text-xs mt-1">2-6 Players</span>
+                    </button>
+                    
+                    <button 
+                      disabled
+                      className="bg-gray-100 rounded-xl text-blue-600 px-6 py-4 font-medium shadow-lg border-2 border-blue-600 flex flex-col items-center justify-center opacity-50 cursor-not-allowed"
+                    >
+                      <BookOpen className="h-6 w-6 mb-2" />
+                      <span className="font-bold">A.I. Mode</span>
+                      <span className="text-xs mt-1">Coming Soon</span>
+                    </button>
+                    
+                    <button 
+                      disabled
+                      className="bg-gray-100 rounded-xl text-red-600 px-6 py-4 font-medium shadow-lg border-2 border-red-600 flex flex-col items-center justify-center opacity-50 cursor-not-allowed"
+                    >
+                      <BookOpen className="h-6 w-6 mb-2" />
+                      <span className="font-bold">BotNet Mode</span>
+                      <span className="text-xs mt-1">Coming Soon</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* PDF Download Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                  <button 
+                    onClick={() => handleDownload('Rulebook PDF')}
+                    className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-8 py-3 font-medium shadow-2xl drop-shadow-lg border-2 border-green-600 flex items-center justify-center transition-all duration-300 hover:scale-105"
+                  >
+                    <Download className="h-5 w-5 mr-2" />
+                    Download PDF
+                  </button>
+                  <button 
+                    onClick={handleViewOnline}
+                    className="bg-gray-100 rounded-3xl text-green-600 hover:bg-gray-200 neon-glow px-8 py-3 font-medium shadow-2xl drop-shadow-lg border-2 border-green-600 flex items-center justify-center transition-all duration-300 hover:scale-105"
+                  >
+                    <BookOpen className="h-5 w-5 mr-2" />
+                    View PDF Online
+                  </button>
+                </div>
               </div>
             </div>
           </ContentSection>
