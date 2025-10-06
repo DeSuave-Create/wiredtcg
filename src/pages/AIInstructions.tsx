@@ -30,7 +30,7 @@ const AIInstructions = () => {
             {/* Hero Section */}
             <div className="highlight-box text-center space-y-4 relative overflow-hidden stripe-pattern">
               <div className="relative z-10">
-                <h1 className="text-4xl md:text-5xl font-bold font-orbitron text-white uppercase tracking-wider">
+                <h1 className="text-4xl md:text-5xl font-bold font-orbitron text-white uppercase tracking-wider animate-neon-flicker">
                   WIRED: The Card Game
                 </h1>
                 <div className="my-4">
