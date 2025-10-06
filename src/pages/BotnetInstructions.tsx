@@ -25,7 +25,7 @@ const BotnetInstructions = () => {
           </Link>
 
           {/* Main container */}
-          <div className="glass-card p-8 md:p-12 space-y-8">
+          <div className="glass-card p-8 md:p-12 space-y-8 relative" style={{ backgroundImage: 'url(/instructions-background.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
             {/* Hero Section */}
             <div className="highlight-box text-center space-y-4 relative overflow-hidden stripe-pattern">
               <div className="relative z-10">
