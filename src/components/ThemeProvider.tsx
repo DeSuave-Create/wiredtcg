@@ -12,11 +12,7 @@ const ThemeProviderContext = createContext<ThemeProviderContextType | undefined>
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
-    // Check localStorage first for user preference
-    const stored = localStorage.getItem('theme');
-    if (stored) return stored as Theme;
-    
-    // Otherwise use system preference
+    // Always use system preference (remove stored preference override)
     if (window.matchMedia('(prefers-color-scheme: light)').matches) {
       return 'light';
     }
@@ -27,7 +23,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const root = window.document.documentElement;
     root.classList.remove('light', 'dark');
     root.classList.add(theme);
-    localStorage.setItem('theme', theme);
   }, [theme]);
 
   // Listen for system theme changes
@@ -35,11 +30,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
     
     const handleChange = (e: MediaQueryListEvent) => {
-      // Only update if user hasn't set a manual preference
-      const stored = localStorage.getItem('theme');
-      if (!stored) {
-        setTheme(e.matches ? 'light' : 'dark');
-      }
+      setTheme(e.matches ? 'light' : 'dark');
     };
 
     mediaQuery.addEventListener('change', handleChange);
