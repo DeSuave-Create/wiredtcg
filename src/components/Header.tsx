@@ -27,8 +27,8 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
-            <Logo className="group-hover:animate-glow-pulse" />
-            <span className="text-2xl font-bold font-orbitron text-primary tracking-wider electric-pulse">WIRED</span>
+            <Logo className="electric-pulse" />
+            <span className="text-2xl font-bold font-orbitron text-primary tracking-wider animate-neon-flicker">WIRED</span>
           </Link>
 
           {/* Desktop Navigation */}
