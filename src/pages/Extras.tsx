@@ -211,21 +211,21 @@ const Extras = () => {
                     </button>
                     
                     <button 
-                      disabled
-                      className="bg-gray-100 rounded-xl text-blue-600 px-6 py-4 font-medium shadow-lg border-2 border-blue-600 flex flex-col items-center justify-center opacity-50 cursor-not-allowed"
+                      onClick={() => navigate('/ai-instructions')}
+                      className="bg-gray-100 rounded-xl text-blue-600 hover:bg-gray-200 neon-glow px-6 py-4 font-medium shadow-lg border-2 border-blue-600 flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
                     >
                       <BookOpen className="h-6 w-6 mb-2" />
                       <span className="font-bold">A.I. Mode</span>
-                      <span className="text-xs mt-1">Coming Soon</span>
+                      <span className="text-xs mt-1">1-2 Players</span>
                     </button>
                     
                     <button 
-                      disabled
-                      className="bg-gray-100 rounded-xl text-red-600 px-6 py-4 font-medium shadow-lg border-2 border-red-600 flex flex-col items-center justify-center opacity-50 cursor-not-allowed"
+                      onClick={() => navigate('/botnet-instructions')}
+                      className="bg-gray-100 rounded-xl text-red-600 hover:bg-gray-200 neon-glow px-6 py-4 font-medium shadow-lg border-2 border-red-600 flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
                     >
                       <BookOpen className="h-6 w-6 mb-2" />
                       <span className="font-bold">BotNet Mode</span>
-                      <span className="text-xs mt-1">Coming Soon</span>
+                      <span className="text-xs mt-1">4-6 Players</span>
                     </button>
                   </div>
                 </div>

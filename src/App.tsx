@@ -15,6 +15,8 @@ import Founders from "./pages/Founders";
 import Solysis from "./pages/Solysis";
 import RulebookViewer from "./pages/RulebookViewer";
 import InternetInstructions from "./pages/InternetInstructions";
+import AIInstructions from "./pages/AIInstructions";
+import BotnetInstructions from "./pages/BotnetInstructions";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +39,8 @@ const App = () => (
             <Route path="/solysis" element={<Solysis />} />
             <Route path="/rulebook" element={<RulebookViewer />} />
             <Route path="/internet-instructions" element={<InternetInstructions />} />
+            <Route path="/ai-instructions" element={<AIInstructions />} />
+            <Route path="/botnet-instructions" element={<BotnetInstructions />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
