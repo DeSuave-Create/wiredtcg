@@ -14,7 +14,7 @@ const ElectricProgressBar = () => {
   const [poweredSegments, setPoweredSegments] = useState<Set<number>>(new Set());
 
   const segments: Segment[] = [
-    { color: 'from-green-500 to-emerald-400', icon: <Cable className="w-6 h-6" />, label: 'Connect' },
+    { color: 'from-primary to-primary/80', icon: <Cable className="w-6 h-6" />, label: 'Connect' },
     { color: 'from-red-500 to-rose-400', icon: <Monitor className="w-6 h-6" />, label: 'Plan' },
     { color: 'from-yellow-500 to-amber-400', icon: <Bitcoin className="w-6 h-6" />, label: 'Mine' },
   ];
@@ -31,8 +31,8 @@ const ElectricProgressBar = () => {
 
   const segmentColors = [
     {
-      gradient: 'linear-gradient(90deg, #10b981 0%, #34d399 100%)',
-      glow: '0 0 20px rgba(16, 185, 129, 0.8), 0 0 40px rgba(16, 185, 129, 0.6), inset 0 0 10px rgba(16, 185, 129, 0.8)'
+      gradient: 'linear-gradient(90deg, hsl(96, 48%, 54%) 0%, hsl(96, 48%, 64%) 100%)',
+      glow: '0 0 20px hsla(96, 48%, 54%, 0.8), 0 0 40px hsla(96, 48%, 54%, 0.6), inset 0 0 10px hsla(96, 48%, 54%, 0.8)'
     },
     {
       gradient: 'linear-gradient(90deg, #dc2626 0%, #ff1a1a 100%)',
