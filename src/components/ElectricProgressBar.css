@@ -33,6 +33,37 @@
     0 0 20px hsl(var(--primary) / 0.5),
     0 4px 12px rgba(0, 0, 0, 0.3);
   animation: logo-glow 2s ease-in-out infinite;
+  overflow: hidden;
+}
+
+.progress-logo::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0.8) 55%,
+    rgba(255, 255, 255, 0.6) 60%,
+    transparent 70%,
+    transparent 100%
+  );
+  animation: shine-sweep 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shine-sweep {
+  0% {
+    transform: rotate(0deg) translateX(-100%);
+  }
+  100% {
+    transform: rotate(0deg) translateX(100%);
+  }
 }
 
 .logo-image {
@@ -265,6 +296,34 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
   background-clip: padding-box;
+  overflow: hidden;
+}
+
+.icon-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.6) 55%,
+    rgba(255, 255, 255, 0.4) 60%,
+    transparent 70%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.segment-icon.powered .icon-wrapper::before {
+  opacity: 1;
+  animation: shine-sweep 3s ease-in-out infinite;
 }
 
 .segment-icon.powered .icon-wrapper {
