@@ -64,7 +64,7 @@ const RulebookViewer = () => {
               <button
                 onClick={goToPrevPage}
                 disabled={pageNumber <= 1}
-                className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white p-3 sm:p-2 rounded-lg transition-colors touch-manipulation"
+                className="bg-primary hover:bg-primary/90 disabled:bg-gray-600 disabled:cursor-not-allowed text-white p-3 sm:p-2 rounded-lg transition-colors touch-manipulation"
                 aria-label="Previous page"
               >
                 <ChevronLeft className="h-6 w-6 sm:h-5 sm:w-5" />
@@ -77,7 +77,7 @@ const RulebookViewer = () => {
               <button
                 onClick={goToNextPage}
                 disabled={pageNumber >= totalPages}
-                className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white p-3 sm:p-2 rounded-lg transition-colors touch-manipulation"
+                className="bg-primary hover:bg-primary/90 disabled:bg-gray-600 disabled:cursor-not-allowed text-white p-3 sm:p-2 rounded-lg transition-colors touch-manipulation"
                 aria-label="Next page"
               >
                 <ChevronRight className="h-6 w-6 sm:h-5 sm:w-5" />

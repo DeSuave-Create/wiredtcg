@@ -30,7 +30,7 @@ const GameHeader = ({ playerCount, maxPlayers, onAddPlayer, onReset }: GameHeade
         {playerCount < maxPlayers && (
           <Button
             onClick={onAddPlayer}
-            className="bg-green-600 text-white hover:bg-green-700 neon-glow w-full sm:w-auto"
+            className="bg-primary text-white hover:bg-primary/90 neon-glow w-full sm:w-auto"
             type="button"
           >
             <Plus className="h-4 w-4 mr-2" />

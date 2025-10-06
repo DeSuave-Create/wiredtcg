@@ -89,7 +89,7 @@ const ShoppingCartPage = () => {
                 <p className="text-lg text-muted-foreground">Your cart is currently empty.</p>
                 <Button 
                   onClick={handleContinueShopping}
-                  className="bg-green-600 text-white hover:bg-green-700 neon-glow"
+                  className="bg-primary text-white hover:bg-primary/90 neon-glow"
                 >
                   Continue Shopping
                 </Button>
@@ -164,7 +164,7 @@ const ShoppingCartPage = () => {
 
                     <Button 
                       onClick={handleCheckout}
-                      className="w-full bg-green-600 text-white hover:bg-green-700 neon-glow py-3 flex items-center justify-center"
+                      className="w-full bg-primary text-white hover:bg-primary/90 neon-glow py-3 flex items-center justify-center"
                     >
                       <CreditCard className="h-5 w-5 mr-2" />
                       Proceed to Checkout

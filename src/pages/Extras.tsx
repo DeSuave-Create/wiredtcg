@@ -314,7 +314,7 @@ const Extras = () => {
                 <div className="flex justify-center space-x-4">
                   <Button 
                     onClick={handleJoinDiscord}
-                    className="bg-green-600 text-white hover:bg-green-700 neon-glow"
+                    className="bg-primary text-white hover:bg-primary/90 neon-glow"
                   >
                     Join Discord
                   </Button>

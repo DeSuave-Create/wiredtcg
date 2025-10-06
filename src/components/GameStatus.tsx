@@ -15,7 +15,7 @@ const GameStatus = ({ leader, highestScore }: GameStatusProps) => {
   if (highestScore === 0) return null;
 
   return (
-    <div className="relative overflow-hidden bg-gray-100 border-green-600 border-2 rounded-3xl p-4 text-center shadow-2xl drop-shadow-lg" style={{ backgroundColor: '#fffbef' }}>
+    <div className="relative overflow-hidden bg-gray-100 border-primary border-2 rounded-3xl p-4 text-center shadow-2xl drop-shadow-lg" style={{ backgroundColor: '#fffbef' }}>
       {/* Circuit board pattern background */}
       <div className="absolute inset-0 opacity-20" style={{
         backgroundImage: `
