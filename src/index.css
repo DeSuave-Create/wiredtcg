@@ -63,7 +63,7 @@
   }
 
   .light {
-    /* Light theme */
+    /* Light theme - original design */
     --background: 0 0% 88%;
     --foreground: 210 15% 15%;
 
@@ -78,6 +78,11 @@
 
     --secondary: 30 100% 50%;
     --secondary-foreground: 210 15% 8%;
+
+    /* Additional accent colors for light mode */
+    --accent-blue: 217 91% 60%;
+    --accent-green: 142 71% 45%;
+    --accent-red: 0 72% 51%;
 
     --muted: 0 0% 85%;
     --muted-foreground: 210 30% 40%;
@@ -126,7 +131,15 @@
   }
 
   .light body {
-    background-color: hsl(var(--background));
+    background-image: 
+      linear-gradient(rgba(124, 195, 66, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124, 195, 66, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    background-position: -1px -1px;
+  }
+  
+  .light body::before {
+    display: none;
   }
 }
 
