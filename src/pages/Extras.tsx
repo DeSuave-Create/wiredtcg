@@ -201,31 +201,37 @@ const Extras = () => {
                 <div className="w-full max-w-2xl">
                   <h3 className="text-lg font-semibold font-orbitron text-primary text-center mb-4">Select Game Mode Instructions:</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {/* Internet Mode - Green */}
                     <button 
                       onClick={() => navigate('/internet-instructions')}
-                      className="bg-gray-50 dark:bg-gray-800/90 rounded-xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-4 font-medium shadow-lg border-2 border-primary flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
+                      className="bg-gray-50 dark:bg-gray-800/90 rounded-xl text-green-500 hover:bg-gray-200 dark:hover:bg-gray-700/90 px-6 py-4 font-medium shadow-lg border-2 border-green-500 flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
+                      style={{ boxShadow: '0 0 20px rgba(34, 197, 94, 0.3)' }}
                     >
-                      <BookOpen className="h-6 w-6 mb-2" />
-                      <span className="font-bold">Internet Mode</span>
-                      <span className="text-xs mt-1">2-6 Players</span>
+                      <BookOpen className="h-6 w-6 mb-2 text-green-500" />
+                      <span className="font-bold text-green-500">Internet Mode</span>
+                      <span className="text-xs mt-1 text-green-500">2-6 Players</span>
                     </button>
                     
+                    {/* A.I. Mode - Blue */}
                     <button 
                       onClick={() => navigate('/ai-instructions')}
-                      className="bg-gray-50 dark:bg-gray-800/90 rounded-xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-4 font-medium shadow-lg border-2 border-primary flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
+                      className="bg-gray-50 dark:bg-gray-800/90 rounded-xl text-blue-500 hover:bg-gray-200 dark:hover:bg-gray-700/90 px-6 py-4 font-medium shadow-lg border-2 border-blue-500 flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
+                      style={{ boxShadow: '0 0 20px rgba(59, 130, 246, 0.3)' }}
                     >
-                      <BookOpen className="h-6 w-6 mb-2" />
-                      <span className="font-bold">A.I. Mode</span>
-                      <span className="text-xs mt-1">1-2 Players</span>
+                      <BookOpen className="h-6 w-6 mb-2 text-blue-500" />
+                      <span className="font-bold text-blue-500">A.I. Mode</span>
+                      <span className="text-xs mt-1 text-blue-500">1-2 Players</span>
                     </button>
                     
+                    {/* BotNet Mode - Red */}
                     <button 
                       onClick={() => navigate('/botnet-instructions')}
-                      className="bg-gray-50 dark:bg-gray-800/90 rounded-xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-4 font-medium shadow-lg border-2 border-primary flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
+                      className="bg-gray-50 dark:bg-gray-800/90 rounded-xl text-red-500 hover:bg-gray-200 dark:hover:bg-gray-700/90 px-6 py-4 font-medium shadow-lg border-2 border-red-500 flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
+                      style={{ boxShadow: '0 0 20px rgba(239, 68, 68, 0.3)' }}
                     >
-                      <BookOpen className="h-6 w-6 mb-2" />
-                      <span className="font-bold">BotNet Mode</span>
-                      <span className="text-xs mt-1">4-6 Players</span>
+                      <BookOpen className="h-6 w-6 mb-2 text-red-500" />
+                      <span className="font-bold text-red-500">BotNet Mode</span>
+                      <span className="text-xs mt-1 text-red-500">4-6 Players</span>
                     </button>
                   </div>
                 </div>
