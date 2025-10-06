@@ -5,7 +5,6 @@ import ContentSection from '@/components/ContentSection';
 import HeroSection from '@/components/HeroSection';
 import GameMechanicsSection from '@/components/GameMechanicsSection';
 import StrategySection from '@/components/StrategySection';
-import ConnectionLines from '@/components/ConnectionLines';
 import ElectricProgressBar from '@/components/ElectricProgressBar';
 
 const Index = () => {
@@ -20,9 +19,6 @@ const Index = () => {
             <HeroSection />
           </ContentSection>
 
-          {/* Connection Animation */}
-          <ConnectionLines className="my-2" />
-
           {/* Electric Progress Bar */}
           <ElectricProgressBar />
 
@@ -34,8 +30,8 @@ const Index = () => {
             <GameMechanicsSection />
           </ContentSection>
 
-          {/* Connection Animation */}
-          <ConnectionLines className="my-2" />
+          {/* Electric Progress Bar */}
+          <ElectricProgressBar />
 
 
           {/* Strategy Section */}

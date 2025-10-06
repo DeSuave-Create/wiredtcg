@@ -2,7 +2,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import ConnectionLines from '@/components/ConnectionLines';
+import ElectricProgressBar from '@/components/ElectricProgressBar';
 import { HelpCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -82,8 +82,8 @@ const FAQs = () => {
             </div>
           </ContentSection>
           
-          {/* Connection Animation */}
-          <ConnectionLines className="my-2" />
+          {/* Electric Progress Bar */}
+          <ElectricProgressBar />
 
           {/* FAQ Accordion */}
           <ContentSection>
@@ -105,8 +105,8 @@ const FAQs = () => {
             </Accordion>
           </ContentSection>
 
-          {/* Connection Animation */}
-          <ConnectionLines className="my-2" />
+          {/* Electric Progress Bar */}
+          <ElectricProgressBar />
 
           {/* Contact Section */}
           <ContentSection title="Still Have Questions?">

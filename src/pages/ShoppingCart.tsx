@@ -3,7 +3,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
 import { Button } from '@/components/ui/button';
-import ConnectionLines from '@/components/ConnectionLines';
+import ElectricProgressBar from '@/components/ElectricProgressBar';
 import { Plus, Minus, Trash2, CreditCard, ShoppingCart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -80,8 +80,8 @@ const ShoppingCartPage = () => {
             </div>
           </ContentSection>
 
-          {/* Connection Animation */}
-          <ConnectionLines className="my-2" />
+          {/* Electric Progress Bar */}
+          <ElectricProgressBar />
 
           {cartItems.length === 0 ? (
             <ContentSection>
@@ -147,8 +147,8 @@ const ShoppingCartPage = () => {
                   </div>
                 </ContentSection>
                 
-                {/* Connection Animation */}
-                <ConnectionLines className="my-2" />
+                {/* Electric Progress Bar */}
+                <ElectricProgressBar />
               </div>
 
               {/* Order Summary */}

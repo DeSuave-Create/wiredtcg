@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
 import ImageSection from '@/components/ImageSection';
 import VideoCarousel from '@/components/VideoCarousel';
-import ConnectionLines from '@/components/ConnectionLines';
+import ElectricProgressBar from '@/components/ElectricProgressBar';
 import TextSection from '@/components/TextSection';
 import { Button } from '@/components/ui/button';
 import { Download, BookOpen, FileText } from 'lucide-react';
@@ -121,16 +121,16 @@ const Extras = () => {
             </div>
           </ContentSection>
           
-          {/* Connection Animation */}
-          <ConnectionLines className="my-2" />
+          {/* Electric Progress Bar */}
+          <ElectricProgressBar />
 
           {/* Video Carousel Section */}
           <ContentSection title="Video Tutorials">
             <VideoCarousel videos={tutorialVideos} />
           </ContentSection>
           
-          {/* Connection Animation */}
-          <ConnectionLines className="my-2" />
+          {/* Electric Progress Bar */}
+          <ElectricProgressBar />
 
           {/* Rule Book Section */}
           <ContentSection title="Official Rulebook">
@@ -251,8 +251,8 @@ const Extras = () => {
             </div>
           </ContentSection>
           
-          {/* Connection Animation */}
-          <ConnectionLines className="my-2" />
+          {/* Electric Progress Bar */}
+          <ElectricProgressBar />
 
           {/* Downloads Section */}
           <ContentSection title="Downloads & Resources">
@@ -301,8 +301,8 @@ const Extras = () => {
             </div>
           </ContentSection>
           
-          {/* Connection Animation */}
-          <ConnectionLines className="my-2" />
+          {/* Electric Progress Bar */}
+          <ElectricProgressBar />
           
           {/* Community Section */}
           <ContentSection title="Join the Community">
