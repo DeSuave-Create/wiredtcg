@@ -328,7 +328,6 @@
     0 0 20px currentColor,
     0 0 40px currentColor,
     0 4px 12px rgba(0, 0, 0, 0.5);
-  transform: scale(1.1);
   animation: powered-glow 2s ease-in-out infinite;
 }
 
@@ -421,10 +420,10 @@
 
 @keyframes icon-pulse {
   0%, 100% {
-    transform: scale(1.1);
+    transform: scale(1);
   }
   50% {
-    transform: scale(1.2);
+    transform: scale(1.05);
   }
 }
 
