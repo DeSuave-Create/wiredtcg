@@ -90,6 +90,8 @@ const ElectricProgressBar = () => {
           }}
         >
           <div className="lightning-overlay" />
+          <div className="electric-wave" />
+          <div className="electric-pulse" />
           <div className="electric-sparks" />
         </div>
 
