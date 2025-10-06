@@ -114,6 +114,8 @@
   top: 0;
   height: 100%;
   overflow: visible;
+  will-change: contents;
+  transform: translateZ(0);
 }
 
 /* Electric fill with lightning effects */
@@ -126,6 +128,8 @@
   transition: width 0.1s linear;
   overflow: visible;
   animation: electric-pulse-glow 0.8s ease-in-out infinite;
+  will-change: width;
+  transform: translateZ(0);
 }
 
 /* Pulsing glow effect - now controlled inline */

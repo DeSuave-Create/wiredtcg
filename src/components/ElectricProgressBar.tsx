@@ -86,7 +86,7 @@ const ElectricProgressBar = () => {
         isPaused = true;
         pauseStartTime = Date.now();
       }
-    }, 16);
+    }, 32); // Reduced update frequency from 16ms to 32ms for better Chrome performance
 
     return () => clearInterval(interval);
   }, []);
