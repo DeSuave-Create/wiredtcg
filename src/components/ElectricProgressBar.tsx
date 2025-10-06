@@ -18,6 +18,17 @@ const ElectricProgressBar = () => {
     { color: 'from-yellow-500 to-amber-400', icon: <Bitcoin className="w-6 h-6" />, label: 'Secure' },
   ];
 
+  const getSegmentColor = () => {
+    const segmentWidth = 100 / segments.length;
+    if (progress <= segmentWidth) {
+      return 'linear-gradient(90deg, #10b981 0%, #34d399 100%)'; // Green
+    } else if (progress <= segmentWidth * 2) {
+      return 'linear-gradient(90deg, #ef4444 0%, #f87171 100%)'; // Red
+    } else {
+      return 'linear-gradient(90deg, #eab308 0%, #fbbf24 100%)'; // Yellow
+    }
+  };
+
   useEffect(() => {
     const duration = 6000; // 6 seconds total
     const segmentDuration = duration / segments.length;
@@ -62,7 +73,10 @@ const ElectricProgressBar = () => {
         {/* Animated fill with electric effect */}
         <div 
           className="electric-fill"
-          style={{ width: `${progress}%` }}
+          style={{ 
+            width: `${progress}%`,
+            background: getSegmentColor()
+          }}
         >
           <div className="lightning-overlay" />
           <div className="electric-sparks" />
