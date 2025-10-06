@@ -102,7 +102,7 @@ const ShoppingCartPage = () => {
                 <ContentSection title="Cart Items">
                   <div className="space-y-4">
                     {cartItems.map((item) => (
-                      <div key={item.id} className={`bg-white/80 dark:bg-gray-800/90 ${getItemBorderColor(item.name)} border-2 rounded-3xl p-4 shadow-2xl drop-shadow-lg`}>
+                      <div key={item.id} className={`bg-gray-50 dark:bg-gray-800/90 ${getItemBorderColor(item.name)} border-2 rounded-3xl p-4 shadow-2xl drop-shadow-lg`}>
                         <div className="flex items-center space-x-4">
                           <img
                             src={item.image}
@@ -173,7 +173,7 @@ const ShoppingCartPage = () => {
                     <Button 
                       onClick={handleContinueShopping}
                       variant="outline" 
-                      className="w-full bg-white/80 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 shadow-2xl drop-shadow-lg"
+                      className="w-full bg-gray-50 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 shadow-2xl drop-shadow-lg"
                     >
                       Continue Shopping
                     </Button>

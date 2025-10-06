@@ -92,7 +92,7 @@ const FAQs = () => {
                 <AccordionItem 
                   key={index} 
                   value={`item-${index}`}
-                  className="bg-white/80 dark:bg-gray-800/90 rounded-3xl px-6 shadow-2xl drop-shadow-lg data-[state=open]:animate-pulse-neon"
+                  className="bg-gray-50 dark:bg-gray-800/90 rounded-3xl px-6 shadow-2xl drop-shadow-lg data-[state=open]:animate-pulse-neon"
                 >
                   <AccordionTrigger className="text-left font-semibold text-primary hover:text-primary/80">
                     {faq.question}
@@ -117,13 +117,13 @@ const FAQs = () => {
               <div className="flex justify-center space-x-4">
                 <button 
                   onClick={handleContactSupport}
-                  className="bg-white/80 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg"
+                  className="bg-gray-50 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg"
                 >
                   Contact Support
                 </button>
                 <button 
                   onClick={handleJoinYouTube}
-                  className="bg-white/80 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 px-6 py-2 font-medium shadow-2xl drop-shadow-lg"
+                  className="bg-gray-50 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 px-6 py-2 font-medium shadow-2xl drop-shadow-lg"
                 >
                   Subscribe on YouTube
                 </button>
