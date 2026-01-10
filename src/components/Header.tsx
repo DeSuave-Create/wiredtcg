@@ -12,11 +12,8 @@ const Header = () => {
     { path: '/', label: 'Home' },
     { path: '/extras', label: 'Extras' },
     { path: '/faqs', label: 'FAQs' },
-    { path: '/cart', label: 'Shop' },
-    { path: '/shopping-cart', label: 'Cart' },
     { path: '/score', label: 'Score Keeper' },
-    { path: '/founders', label: 'Founders' },
-    { path: '/solysis', label: 'Solysis' }
+    { path: '/founders', label: 'Founders' }
   ];
 
   const isActive = (path: string) => location.pathname === path;
