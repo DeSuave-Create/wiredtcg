@@ -589,7 +589,26 @@
   }
 }
 
-
-
-
+@keyframes reEnable {
+  0% {
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+    transform: scale(1);
+  }
+  25% {
+    box-shadow: 0 0 20px 10px rgba(74, 222, 128, 0.5);
+    transform: scale(1.08);
+  }
+  50% {
+    box-shadow: 0 0 30px 15px rgba(74, 222, 128, 0.3);
+    transform: scale(1.05);
+  }
+  75% {
+    box-shadow: 0 0 15px 5px rgba(74, 222, 128, 0.2);
+    transform: scale(1.02);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+    transform: scale(1);
+  }
+}
 
