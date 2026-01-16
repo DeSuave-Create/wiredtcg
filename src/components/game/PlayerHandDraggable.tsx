@@ -20,14 +20,14 @@ export function PlayerHandDraggable({
   return (
     <div className={cn(
       "flex flex-wrap justify-center",
-      compact ? "gap-1 p-2" : "gap-2 p-4"
+      compact ? "gap-0.5 p-1" : "gap-2 p-4"
     )}>
       {cards.map((card, index) => (
         <div
           key={card.id}
           style={{
             transform: compact 
-              ? `rotate(${(index - cards.length / 2) * 2}deg)`
+              ? `rotate(${(index - cards.length / 2) * 1}deg)`
               : `rotate(${(index - cards.length / 2) * 3}deg)`,
           }}
         >
@@ -41,7 +41,7 @@ export function PlayerHandDraggable({
           ) : (
             <div className={cn(
               "rounded-lg border-2 border-gray-600 bg-gray-800 overflow-hidden",
-              compact ? "w-12 h-16" : "w-20 h-28 sm:w-24 sm:h-32"
+              compact ? "w-8 h-11" : "w-20 h-28 sm:w-24 sm:h-32"
             )}>
               <img 
                 src="/lovable-uploads/card-back.png"
@@ -56,8 +56,8 @@ export function PlayerHandDraggable({
       {cards.length === 0 && (
         <div className={cn(
           "text-muted-foreground",
-          compact ? "text-xs" : "text-sm"
-        )}>No cards in hand</div>
+          compact ? "text-[10px]" : "text-sm"
+        )}>No cards</div>
       )}
     </div>
   );
