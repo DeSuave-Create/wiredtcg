@@ -1576,10 +1576,10 @@ export function useGameEngine() {
         },
       }));
       
-      let movesRemaining = prev.movesRemaining;
       let gameLog = [...prev.gameLog];
       let newDiscardPile = [...prev.discardPile];
       const maxMoves = getMovesForPlayer(newPlayers[aiPlayerIndex]);
+      let movesRemaining = maxMoves; // AI gets its own moves, not leftover from human
       let movesUsed = 0;
       
       // Helper: Find best attack target on human's network (prioritize switches > cables > computers)
