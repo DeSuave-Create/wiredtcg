@@ -537,6 +537,26 @@ export function useGameEngine() {
       
       // === PLACE the item at the target ===
       
+      // Helper to recalculate disabled state based on new parent
+      const recalculateDisabledState = (item: PlacedCard, parentDisabled: boolean): PlacedCard => {
+        // Equipment is disabled if it has its own issues OR its parent is disabled
+        const hasOwnIssues = item.attachedIssues.length > 0;
+        return {
+          ...item,
+          isDisabled: hasOwnIssues || parentDisabled,
+        };
+      };
+      
+      const recalculateCableState = (cable: CableNode, switchDisabled: boolean): CableNode => {
+        const cableHasIssues = cable.attachedIssues.length > 0;
+        const cableDisabled = cableHasIssues || switchDisabled;
+        return {
+          ...cable,
+          isDisabled: cableDisabled,
+          computers: cable.computers.map(comp => recalculateDisabledState(comp, cableDisabled)),
+        };
+      };
+      
       // Computer -> Cable or Floating
       if (sourceType === 'computer' || sourceType === 'floating-computer') {
         if (targetType === 'cable' && targetId) {
@@ -548,7 +568,10 @@ export function useGameEngine() {
               if (cable.id === targetId && cable.computers.length < cable.maxComputers) {
                 placed = true;
                 logMessage = 'Moved computer to connected cable';
-                return { ...cable, computers: [...cable.computers, movedItem] };
+                // Recalculate disabled state based on new parent cable and switch
+                const parentDisabled = sw.isDisabled || cable.isDisabled;
+                const updatedComp = recalculateDisabledState(movedItem, parentDisabled);
+                return { ...cable, computers: [...cable.computers, updatedComp] };
               }
               return cable;
             }),
@@ -560,7 +583,9 @@ export function useGameEngine() {
               if (cable.id === targetId && cable.computers.length < cable.maxComputers) {
                 placed = true;
                 logMessage = 'Moved computer to floating cable';
-                return { ...cable, computers: [...cable.computers, movedItem] };
+                // Floating cables are always "disabled" in terms of scoring
+                const updatedComp = recalculateDisabledState(movedItem, true);
+                return { ...cable, computers: [...cable.computers, updatedComp] };
               }
               return cable;
             });
@@ -585,8 +610,12 @@ export function useGameEngine() {
           network.switches = network.switches.map(sw => {
             if (sw.id === targetId) {
               placed = true;
-              logMessage = 'Moved cable to switch (now connected to internet!)';
-              return { ...sw, cables: [...sw.cables, movedItem] };
+              // Recalculate cable and computer states based on new parent switch
+              const updatedCable = recalculateCableState(movedItem as CableNode, sw.isDisabled);
+              logMessage = sw.isDisabled 
+                ? 'Moved cable to disabled switch' 
+                : 'Moved cable to switch - equipment re-enabled!';
+              return { ...sw, cables: [...sw.cables, updatedCable] };
             }
             return sw;
           });
