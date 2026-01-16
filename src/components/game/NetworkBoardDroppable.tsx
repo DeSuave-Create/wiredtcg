@@ -196,7 +196,7 @@ function SwitchComponent({
   );
 }
 
-// Floating Cable Component (not connected to a switch)
+// Floating Cable Component (not connected to a switch) - DROPPABLE for computers
 interface FloatingCableComponentProps {
   cable: FloatingCable;
   isCurrentPlayer: boolean;
@@ -214,7 +214,19 @@ function FloatingCableComponent({
 }: FloatingCableComponentProps) {
   const hasSpace = cable.computers.length < cable.maxComputers;
   
-  return (
+  // Floating cables can receive computers if there's space
+  const getAccepts = (): string[] => {
+    const accepts: string[] = [];
+    if (isCurrentPlayer && hasSpace) {
+      accepts.push('computer');
+    }
+    return accepts;
+  };
+  
+  const accepts = getAccepts();
+  
+  // Wrap in DroppableZone if it can accept cards
+  const content = (
     <div className="relative bg-yellow-500/10 rounded-lg p-2 border border-dashed border-yellow-500/50">
       <div className="relative">
         <PlacedCardDisplay
@@ -229,7 +241,10 @@ function FloatingCableComponent({
       </div>
       
       {/* Capacity indicator */}
-      <div className="text-xs text-center mt-0.5 text-yellow-500">
+      <div className={cn(
+        "text-xs text-center mt-0.5",
+        hasSpace ? "text-yellow-500" : "text-red-400"
+      )}>
         {cable.computers.length}/{cable.maxComputers}
       </div>
       
@@ -249,8 +264,31 @@ function FloatingCableComponent({
           ))}
         </div>
       )}
+      
+      {/* Drop hint for empty floating cable */}
+      {hasSpace && isCurrentPlayer && cable.computers.length === 0 && (
+        <div className="text-center text-[8px] text-yellow-400 mt-1">
+          ↑ Drop PC here
+        </div>
+      )}
     </div>
   );
+  
+  // If can accept computers, wrap in DroppableZone
+  if (accepts.length > 0) {
+    return (
+      <DroppableZone
+        id={`${playerId}-floating-cable-${cable.id}`}
+        type="cable"
+        accepts={accepts}
+        className="w-fit"
+      >
+        {content}
+      </DroppableZone>
+    );
+  }
+  
+  return content;
 }
 
 interface CableComponentProps {
