@@ -857,6 +857,7 @@ export function useGameEngine() {
       return {
         ...prev,
         players: newPlayers,
+        discardPile: [...prev.discardPile, attackCard],
         movesRemaining: prev.movesRemaining - 1,
         gameLog: [...prev.gameLog.slice(-19), `⚡ ${attackCard.name} played on ${target.name}'s ${equipmentInfo.type}!`],
       };
