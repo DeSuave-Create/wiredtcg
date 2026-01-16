@@ -3,7 +3,7 @@ import { DroppableZone } from './DroppableZone';
 import { DraggablePlacedCard } from './DraggablePlacedCard';
 import { cn } from '@/lib/utils';
 import { Unplug } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface NetworkBoardDroppableProps {
   network: PlayerNetwork;
@@ -586,9 +586,11 @@ const animatedCards = new Set<string>();
 
 function PlacedCardDisplay({ card, placementId, isDisabled, className, small = false }: PlacedCardDisplayProps) {
   const [isNew, setIsNew] = useState(false);
+  const [isReEnabled, setIsReEnabled] = useState(false);
+  const prevDisabledRef = useRef(isDisabled);
   
   useEffect(() => {
-    // Check if this card hasn't been animated yet
+    // Check if this card hasn't been animated yet (new placement)
     if (!animatedCards.has(placementId)) {
       animatedCards.add(placementId);
       setIsNew(true);
@@ -599,14 +601,28 @@ function PlacedCardDisplay({ card, placementId, isDisabled, className, small = f
     }
   }, [placementId]);
   
+  // Detect when equipment becomes re-enabled
+  useEffect(() => {
+    if (prevDisabledRef.current === true && isDisabled === false) {
+      setIsReEnabled(true);
+      const timer = setTimeout(() => setIsReEnabled(false), 800);
+      return () => clearTimeout(timer);
+    }
+    prevDisabledRef.current = isDisabled;
+  }, [isDisabled]);
+  
   return (
     <div
       className={cn(
         "rounded border-2 overflow-hidden transition-all duration-300",
         isDisabled ? "border-red-500 opacity-70" : small ? "border-green-400" : "border-green-500",
         isNew && "animate-scale-in ring-2 ring-yellow-400 ring-opacity-75 shadow-lg shadow-yellow-400/30",
+        isReEnabled && "ring-2 ring-green-400 shadow-lg shadow-green-400/50 animate-pulse",
         className
       )}
+      style={isReEnabled ? {
+        animation: 'reEnable 0.8s ease-out',
+      } : undefined}
     >
       <img 
         src={card.image} 
@@ -616,6 +632,11 @@ function PlacedCardDisplay({ card, placementId, isDisabled, className, small = f
           isNew && "animate-pulse"
         )}
       />
+      
+      {/* Re-enabled glow overlay */}
+      {isReEnabled && (
+        <div className="absolute inset-0 bg-green-400/30 animate-pulse pointer-events-none" />
+      )}
     </div>
   );
 }
