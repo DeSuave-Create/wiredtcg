@@ -427,7 +427,7 @@ const Simulation = () => {
             {/* Main game board */}
             <div className="lg:col-span-3 order-1 lg:order-2 space-y-4">
               {/* Opponent's area */}
-              <div className="bg-black/20 rounded-lg p-4 border border-gray-700">
+              <div className="bg-black/20 rounded-lg p-4 border border-gray-700 overflow-visible">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-gray-400">Computer's Hand</span>
                   <span className="text-sm text-muted-foreground">{computerPlayer.hand.length} cards</span>
@@ -438,14 +438,16 @@ const Simulation = () => {
                   showCards={false}
                   disabled={true}
                 />
-                <NetworkBoardDroppable
-                  network={computerPlayer.network}
-                  isCurrentPlayer={false}
-                  label="Computer's Network"
-                  playerId="player-2"
-                  canReceiveAttacks={canPlayCards} // Human can attack during their moves phase
-                  canReceiveResolutions={false} // Can't play resolutions on opponent
-                />
+                <div className="mt-4">
+                  <NetworkBoardDroppable
+                    network={computerPlayer.network}
+                    isCurrentPlayer={false}
+                    label="Computer's Network"
+                    playerId="player-2"
+                    canReceiveAttacks={canPlayCards} // Human can attack during their moves phase
+                    canReceiveResolutions={false} // Can't play resolutions on opponent
+                  />
+                </div>
               </div>
 
               {/* Game controls */}
