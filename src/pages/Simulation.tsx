@@ -15,6 +15,7 @@ import { ScoreDisplay } from '@/components/game/ScoreDisplay';
 import { DiscardZone } from '@/components/game/DiscardZone';
 import { ConnectComputersDialog } from '@/components/game/ConnectComputersDialog';
 import { ConnectCablesDialog } from '@/components/game/ConnectCablesDialog';
+import { StealClassificationDialog } from '@/components/game/StealClassificationDialog';
 import { Card } from '@/types/game';
 import { toast } from 'sonner';
 
@@ -84,6 +85,13 @@ const Simulation = () => {
   const [cableDialog, setCableDialog] = useState<{
     isOpen: boolean;
     switchId: string;
+  } | null>(null);
+  
+  // Dialog state for stealing classifications
+  const [stealDialog, setStealDialog] = useState<{
+    isOpen: boolean;
+    cardId: string;
+    cardName: string;
   } | null>(null);
 
   // Initialize game on mount
@@ -293,6 +301,35 @@ const Simulation = () => {
 
     // Handle classification cards (on own classification zone)
     if (card.type === 'classification' && isHumanTarget && zoneType === 'classification') {
+      // Head Hunter and Seal the Deal need target selection
+      if (card.subtype === 'head-hunter' || card.subtype === 'seal-the-deal') {
+        const computerPlayer = gameState.players[1];
+        const humanPlayer = gameState.players[0];
+        
+        if (computerPlayer.classificationCards.length === 0) {
+          toast.error("Opponent has no classifications to steal!");
+          return;
+        }
+        
+        // Check if there are any stealable classifications (player doesn't already have the type)
+        const stealable = computerPlayer.classificationCards.filter(oppClass => 
+          !humanPlayer.classificationCards.some(c => c.card.subtype === oppClass.card.subtype)
+        );
+        
+        if (stealable.length === 0) {
+          toast.error("Can't steal - you already have the same classification types!");
+          return;
+        }
+        
+        // Open the steal dialog
+        setStealDialog({
+          isOpen: true,
+          cardId: card.id,
+          cardName: card.name,
+        });
+        return;
+      }
+      
       const success = playClassification(card.id);
       if (success) {
         toast.success(`${card.name} is now active!`);
@@ -315,12 +352,12 @@ const Simulation = () => {
       'powered': '🔧 Drag to YOUR disabled equipment with Power Outage issue',
       'trained': '🔧 Drag to YOUR disabled equipment with New Hire issue',
       'helpdesk': '🔧 Drag to YOUR disabled equipment to fix ALL issues',
-      'security-specialist': '🎖️ Drag to YOUR classification zone (blocks Hacked)',
-      'facilities': '🎖️ Drag to YOUR classification zone (blocks Power Outage)',
-      'supervisor': '🎖️ Drag to YOUR classification zone (blocks New Hire)',
+      'security-specialist': '🎖️ Drag to YOUR classification zone (auto-resolves Hacked)',
+      'facilities': '🎖️ Drag to YOUR classification zone (auto-resolves Power Outage)',
+      'supervisor': '🎖️ Drag to YOUR classification zone (auto-resolves New Hire)',
       'field-tech': '🎖️ Drag to YOUR classification zone (+1 move/turn)',
-      'head-hunter': '🎖️ Drag to YOUR classification zone (+1 card/turn)',
-      'seal-the-deal': '🎖️ Drag to YOUR classification zone (2x scoring)',
+      'head-hunter': '🎖️ Drag to YOUR classification zone (steals opponent classification)',
+      'seal-the-deal': '🎖️ Drag to YOUR classification zone (unblockable steal)',
     };
     
     const hint = hints[card.subtype] || `Cannot place ${card.name} here`;
@@ -585,6 +622,24 @@ const Simulation = () => {
               connectFloatingCablesToSwitch(cableDialog.switchId, selectedIds);
             }
             setCableDialog(null);
+          }}
+        />
+      )}
+      
+      {/* Steal Classification Dialog */}
+      {stealDialog && gameState && (
+        <StealClassificationDialog
+          isOpen={stealDialog.isOpen}
+          onClose={() => setStealDialog(null)}
+          opponentClassifications={gameState.players[1].classificationCards}
+          playerClassifications={gameState.players[0].classificationCards}
+          cardName={stealDialog.cardName}
+          onSteal={(targetId) => {
+            const success = playClassification(stealDialog.cardId, targetId);
+            if (success) {
+              toast.success(`${stealDialog.cardName} used!`);
+            }
+            setStealDialog(null);
           }}
         />
       )}
