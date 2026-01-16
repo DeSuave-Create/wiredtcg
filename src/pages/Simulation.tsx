@@ -57,9 +57,16 @@ const Simulation = () => {
     executeAITurn,
     countConnectedComputers,
     connectFloatingComputersToCable,
+    moveEquipment,
   } = useGameEngine();
 
   const [activeCard, setActiveCard] = useState<Card | null>(null);
+  const [activePlacedCard, setActivePlacedCard] = useState<{
+    card: Card;
+    sourceType: 'switch' | 'cable' | 'computer' | 'floating-cable' | 'floating-computer';
+    sourceId: string;
+    parentId?: string;
+  } | null>(null);
   
   // Dialog state for connecting floating computers
   const [connectDialog, setConnectDialog] = useState<{
@@ -88,44 +95,96 @@ const Simulation = () => {
   }, [gameState?.currentPlayerIndex, gameState?.phase, executeAITurn]);
 
   const handleDragStart = (event: DragStartEvent) => {
-    const card = event.active.data.current?.card as Card;
-    setActiveCard(card);
+    const data = event.active.data.current;
+    const card = data?.card as Card;
+    
+    // Check if this is a placed card being dragged
+    if (data?.isPlaced) {
+      setActivePlacedCard({
+        card,
+        sourceType: data.sourceType,
+        sourceId: data.sourceId,
+        parentId: data.parentId,
+      });
+      setActiveCard(card);
+    } else {
+      setActiveCard(card);
+      setActivePlacedCard(null);
+    }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const droppedCard = activeCard;
+    const droppedPlacedCard = activePlacedCard;
     setActiveCard(null);
+    setActivePlacedCard(null);
     
     const { active, over } = event;
     if (!over || !gameState) {
       // Dropped outside valid zone
-      if (droppedCard) {
+      if (droppedCard && !droppedPlacedCard) {
         showCardHint(droppedCard);
       }
       return;
     }
 
-    const card = active.data.current?.card as Card;
+    const data = active.data.current;
+    const card = data?.card as Card;
     const dropZoneId = over.id as string;
     const dropData = over.data.current;
 
-    if (!card || !dropData) return;
+    if (!card) return;
 
     // Parse the drop zone ID
     const parts = dropZoneId.split('-');
     const targetPlayerId = parts[0] + '-' + parts[1]; // e.g., "player-1" or "player-2"
-    const zoneType = parts[2]; // e.g., "internet", "switch", "cable", "computer", "discard"
-
-    // Check if this card type is accepted
-    const accepts = dropData.accepts as string[];
-    if (!accepts.includes(card.subtype)) {
-      showCardHint(card);
-      return;
-    }
+    const zoneType = parts[2]; // e.g., "internet", "switch", "cable", "computer", "discard", "floating", "board"
 
     const isHumanTarget = targetPlayerId === 'player-1';
     const isComputerTarget = targetPlayerId === 'player-2';
     const computerPlayerIndex = 1;
+    
+    // === Handle PLACED CARD being moved (rearranging) ===
+    if (droppedPlacedCard && isHumanTarget) {
+      const { sourceType, sourceId } = droppedPlacedCard;
+      
+      // Determine target type and ID
+      let targetType: 'switch' | 'cable' | 'floating' | 'board' = 'board';
+      let targetId: string | undefined;
+      
+      if (zoneType === 'switch') {
+        targetType = 'switch';
+        targetId = dropZoneId.replace(`${targetPlayerId}-switch-`, '');
+      } else if (zoneType === 'cable') {
+        targetType = 'cable';
+        targetId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
+      } else if (zoneType === 'floating') {
+        targetType = 'cable';
+        targetId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
+      } else if (zoneType === 'board' || zoneType === 'internet') {
+        targetType = 'floating';
+      }
+      
+      // Don't move to same location
+      if (targetId === sourceId) {
+        return;
+      }
+      
+      moveEquipment(sourceType, sourceId, targetType, targetId);
+      toast.success('Equipment moved!');
+      return;
+    }
+
+    // === Handle HAND CARD being played ===
+    
+    // Check if this card type is accepted (only for non-placed cards)
+    if (!droppedPlacedCard && dropData) {
+      const accepts = dropData.accepts as string[];
+      if (!accepts.includes(card.subtype)) {
+        showCardHint(card);
+        return;
+      }
+    }
 
     // Handle discard
     if (zoneType === 'discard') {
@@ -395,6 +454,7 @@ const Simulation = () => {
                   playerId="player-1"
                   canReceiveAttacks={false} // Can't attack yourself
                   canReceiveResolutions={canPlayCards && hasResolutionCards && playerHasDisabledEquipment}
+                  canRearrange={canPlayCards} // Allow rearranging when player has moves
                 />
                 
                 <div className="mt-4">
