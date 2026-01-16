@@ -1863,7 +1863,170 @@ export function useGameEngine() {
           }
         }
         
-        // PRIORITY 3: Attack human's network (aggressive play)
+        // PRIORITY 3: Build network - Play switches first (foundation)
+        if (!playedCard && switches.length > 0) {
+          const switchCard = switches[0];
+          const newSwitchId = generatePlacementId();
+          
+          const newSwitch: SwitchNode = {
+            card: switchCard,
+            id: newSwitchId,
+            attachedIssues: [],
+            isDisabled: false,
+            cables: [],
+          };
+          
+          currentPlayer.hand = hand.filter(c => c.id !== switchCard.id);
+          currentPlayer.network.switches = [...currentPlayer.network.switches, newSwitch];
+          
+          playedCard = true;
+          aiActions.push({ type: 'play', card: switchCard, target: 'network' });
+          gameLog = [...gameLog.slice(-19), `🔌 Computer placed a Switch`];
+        }
+        
+        // PRIORITY 4: Play cables - prefer connecting to enabled switches, else play floating
+        if (!playedCard && cables.length > 0) {
+          const cableCard = cables[0];
+          const maxComputers = cableCard.subtype === 'cable-2' ? 2 : 3;
+          const newCableId = generatePlacementId();
+          
+          const enabledSwitch = network.switches.find(sw => !sw.isDisabled);
+          
+          if (enabledSwitch) {
+            // Connect to an enabled switch
+            const newCable: CableNode = {
+              card: cableCard,
+              id: newCableId,
+              attachedIssues: [],
+              isDisabled: false,
+              maxComputers: maxComputers as 2 | 3,
+              computers: [],
+            };
+            
+            currentPlayer.hand = hand.filter(c => c.id !== cableCard.id);
+            const switchIndex = currentPlayer.network.switches.findIndex(sw => sw.id === enabledSwitch.id);
+            if (switchIndex !== -1) {
+              currentPlayer.network.switches[switchIndex].cables.push(newCable);
+            }
+            
+            playedCard = true;
+            aiActions.push({ type: 'play', card: cableCard, target: 'switch' });
+            gameLog = [...gameLog.slice(-19), `🔗 Computer connected a Cable`];
+          } else {
+            // Play as floating cable
+            const newFloatingCable: FloatingCable = {
+              card: cableCard,
+              id: newCableId,
+              attachedIssues: [],
+              isDisabled: false,
+              maxComputers: maxComputers as 2 | 3,
+              computers: [],
+            };
+            
+            currentPlayer.hand = hand.filter(c => c.id !== cableCard.id);
+            currentPlayer.network.floatingCables.push(newFloatingCable);
+            
+            playedCard = true;
+            aiActions.push({ type: 'play', card: cableCard, target: 'floating' });
+            gameLog = [...gameLog.slice(-19), `🔗 Computer placed a floating Cable`];
+          }
+        }
+        
+        // PRIORITY 5: Play computers - prefer connected cables, then floating cables, then floating
+        if (!playedCard && computers.length > 0) {
+          const computerCard = computers[0];
+          let placed = false;
+          
+          // Try connected cables first
+          for (let si = 0; si < network.switches.length && !placed; si++) {
+            const sw = network.switches[si];
+            if (sw.isDisabled) continue;
+            
+            for (let ci = 0; ci < sw.cables.length && !placed; ci++) {
+              const cable = sw.cables[ci];
+              if (cable.computers.length < cable.maxComputers && !cable.isDisabled) {
+                const newComputer: PlacedCard = {
+                  card: computerCard,
+                  id: generatePlacementId(),
+                  attachedIssues: [],
+                  isDisabled: false,
+                };
+                
+                currentPlayer.hand = hand.filter(c => c.id !== computerCard.id);
+                currentPlayer.network.switches[si].cables[ci].computers.push(newComputer);
+                
+                placed = true;
+                playedCard = true;
+                aiActions.push({ type: 'play', card: computerCard, target: 'cable' });
+                gameLog = [...gameLog.slice(-19), `💻 Computer connected a Computer`];
+              }
+            }
+          }
+          
+          // Try floating cables
+          if (!placed) {
+            for (let fi = 0; fi < currentPlayer.network.floatingCables.length && !placed; fi++) {
+              const floatingCable = currentPlayer.network.floatingCables[fi];
+              if (floatingCable.computers.length < floatingCable.maxComputers) {
+                const newComputer: PlacedCard = {
+                  card: computerCard,
+                  id: generatePlacementId(),
+                  attachedIssues: [],
+                  isDisabled: false,
+                };
+                
+                currentPlayer.hand = hand.filter(c => c.id !== computerCard.id);
+                currentPlayer.network.floatingCables[fi].computers.push(newComputer);
+                
+                placed = true;
+                playedCard = true;
+                aiActions.push({ type: 'play', card: computerCard, target: 'floating cable' });
+                gameLog = [...gameLog.slice(-19), `💻 Computer added Computer to floating Cable`];
+              }
+            }
+          }
+          
+          // Play as floating computer
+          if (!placed) {
+            const newComputer: PlacedCard = {
+              card: computerCard,
+              id: generatePlacementId(),
+              attachedIssues: [],
+              isDisabled: false,
+            };
+            
+            currentPlayer.hand = hand.filter(c => c.id !== computerCard.id);
+            currentPlayer.network.floatingComputers.push(newComputer);
+            
+            playedCard = true;
+            aiActions.push({ type: 'play', card: computerCard, target: 'floating' });
+            gameLog = [...gameLog.slice(-19), `💻 Computer placed a floating Computer`];
+          }
+        }
+        
+        // PRIORITY 6: Connect floating equipment if possible
+        if (!playedCard && hasEnabledSwitch) {
+          // Connect floating cables to switches
+          if (currentPlayer.network.floatingCables.length > 0) {
+            const floatingCable = currentPlayer.network.floatingCables[0];
+            const enabledSwitch = network.switches.find(sw => !sw.isDisabled);
+            
+            if (enabledSwitch) {
+              const switchIndex = currentPlayer.network.switches.findIndex(sw => sw.id === enabledSwitch.id);
+              if (switchIndex !== -1) {
+                // Move from floating to connected
+                currentPlayer.network.floatingCables = currentPlayer.network.floatingCables.filter(c => c.id !== floatingCable.id);
+                currentPlayer.network.switches[switchIndex].cables.push(floatingCable);
+                
+                playedCard = true;
+                aiActions.push({ type: 'play', card: floatingCable.card, target: 'connected to switch' });
+                gameLog = [...gameLog.slice(-19), `🔗 Computer connected floating Cable to Switch`];
+              }
+            }
+          }
+        }
+        
+        // PRIORITY 7: Attack human's network (after building)
         if (!playedCard && attacks.length > 0 && humanPlayer.network.switches.length > 0) {
           const target = findAttackTarget(humanPlayer.network);
           if (target) {
@@ -1894,143 +2057,6 @@ export function useGameEngine() {
               aiActions.push({ type: 'attack', card: attackCard, target: `your ${target.type}` });
               gameLog = [...gameLog.slice(-19), `⚡ Computer attacked your ${target.type} with ${attackCard.name}!`];
             }
-          }
-        }
-        
-        // PRIORITY 4: Play computers on cables FIRST if we have space (maximize scoring)
-        if (!playedCard && computers.length > 0 && hasCableWithSpace) {
-          let placed = false;
-          const computerCard = computers[0];
-          
-          for (let si = 0; si < network.switches.length && !placed; si++) {
-            const sw = network.switches[si];
-            if (sw.isDisabled) continue;
-            
-            for (let ci = 0; ci < sw.cables.length && !placed; ci++) {
-              const cable = sw.cables[ci];
-              if (cable.computers.length < cable.maxComputers && !cable.isDisabled) {
-                const newComputerId = generatePlacementId();
-                
-                const newComputer: PlacedCard = {
-                  card: computerCard,
-                  id: newComputerId,
-                  attachedIssues: [],
-                  isDisabled: false,
-                };
-                
-                currentPlayer.hand = hand.filter(c => c.id !== computerCard.id);
-                currentPlayer.network.switches[si].cables[ci].computers.push(newComputer);
-                
-                placed = true;
-                playedCard = true;
-                aiActions.push({ type: 'play', card: computerCard, target: 'cable' });
-                gameLog = [...gameLog.slice(-19), `💻 Computer connected a Computer`];
-              }
-            }
-          }
-        }
-        
-        // PRIORITY 5: Play cables if we have switches but no cable space for computers
-        if (!playedCard && cables.length > 0 && hasEnabledSwitch) {
-          const enabledSwitch = network.switches.find(sw => !sw.isDisabled);
-          if (enabledSwitch) {
-            const cableCard = cables[0];
-            const maxComputers = cableCard.subtype === 'cable-2' ? 2 : 3;
-            const newCableId = generatePlacementId();
-            
-            const newCable: CableNode = {
-              card: cableCard,
-              id: newCableId,
-              attachedIssues: [],
-              isDisabled: false,
-              maxComputers: maxComputers as 2 | 3,
-              computers: [],
-            };
-            
-            currentPlayer.hand = hand.filter(c => c.id !== cableCard.id);
-            const switchIndex = currentPlayer.network.switches.findIndex(sw => sw.id === enabledSwitch.id);
-            if (switchIndex !== -1) {
-              currentPlayer.network.switches[switchIndex].cables.push(newCable);
-            }
-            
-            playedCard = true;
-            aiActions.push({ type: 'play', card: cableCard, target: 'switch' });
-            gameLog = [...gameLog.slice(-19), `🔗 Computer connected a Cable`];
-          }
-        }
-        
-        // PRIORITY 6: Play a switch if we have none or all are disabled
-        if (!playedCard && switches.length > 0) {
-          const needsSwitch = network.switches.length === 0 || !hasEnabledSwitch;
-          
-          if (needsSwitch) {
-            const switchCard = switches[0];
-            const newSwitchId = generatePlacementId();
-            
-            const newSwitch: SwitchNode = {
-              card: switchCard,
-              id: newSwitchId,
-              attachedIssues: [],
-              isDisabled: false,
-              cables: [],
-            };
-            
-            currentPlayer.hand = hand.filter(c => c.id !== switchCard.id);
-            currentPlayer.network.switches = [...network.switches, newSwitch];
-            
-            playedCard = true;
-            aiActions.push({ type: 'play', card: switchCard, target: 'network' });
-            gameLog = [...gameLog.slice(-19), `🔌 Computer placed a Switch`];
-          }
-        }
-        
-        // PRIORITY 7: Play more switches if we have cables but no switch space
-        if (!playedCard && switches.length > 0) {
-          const switchCard = switches[0];
-          const newSwitchId = generatePlacementId();
-          
-          const newSwitch: SwitchNode = {
-            card: switchCard,
-            id: newSwitchId,
-            attachedIssues: [],
-            isDisabled: false,
-            cables: [],
-          };
-          
-          currentPlayer.hand = hand.filter(c => c.id !== switchCard.id);
-          currentPlayer.network.switches = [...currentPlayer.network.switches, newSwitch];
-          
-          playedCard = true;
-          aiActions.push({ type: 'play', card: switchCard, target: 'network' });
-          gameLog = [...gameLog.slice(-19), `🔌 Computer placed a Switch`];
-        }
-        
-        // PRIORITY 8: Play more cables if we have computers but no cable space
-        if (!playedCard && cables.length > 0 && hasEnabledSwitch) {
-          const enabledSwitch = network.switches.find(sw => !sw.isDisabled);
-          if (enabledSwitch) {
-            const cableCard = cables[0];
-            const maxComputers = cableCard.subtype === 'cable-2' ? 2 : 3;
-            const newCableId = generatePlacementId();
-            
-            const newCable: CableNode = {
-              card: cableCard,
-              id: newCableId,
-              attachedIssues: [],
-              isDisabled: false,
-              maxComputers: maxComputers as 2 | 3,
-              computers: [],
-            };
-            
-            currentPlayer.hand = hand.filter(c => c.id !== cableCard.id);
-            const switchIndex = currentPlayer.network.switches.findIndex(sw => sw.id === enabledSwitch.id);
-            if (switchIndex !== -1) {
-              currentPlayer.network.switches[switchIndex].cables.push(newCable);
-            }
-            
-            playedCard = true;
-            aiActions.push({ type: 'play', card: cableCard, target: 'switch' });
-            gameLog = [...gameLog.slice(-19), `🔗 Computer connected a Cable`];
           }
         }
         
