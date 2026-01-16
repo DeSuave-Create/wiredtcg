@@ -459,12 +459,15 @@ function CableComponent({
               sourceType="cable"
               sourceId={cable.id}
               parentId={switchId}
+              showIssueIndicator
+              isCascadeDisabled={cable.isDisabled && cable.attachedIssues.length === 0}
             />
           ) : (
             <PlacedCardDisplay
               card={cable.card}
               placementId={cable.id}
               isDisabled={cable.isDisabled}
+              isCascadeDisabled={cable.isDisabled && cable.attachedIssues.length === 0}
               className={compact ? "w-9 h-12" : "w-14 h-18"}
               small={compact}
             />
@@ -556,6 +559,9 @@ function ComputerComponent({
   const accepts = getEquipmentAccepts();
   const sizeClass = compact ? "w-6 h-8" : "w-10 h-12";
   
+  // Determine if cascade disabled (parent is attacked, not self)
+  const isCascadeDisabled = computer.isDisabled && computer.attachedIssues.length === 0;
+  
   // If player can rearrange, render draggable
   if (canRearrange) {
     const content = (
@@ -568,6 +574,8 @@ function ComputerComponent({
           sourceType="computer"
           sourceId={computer.id}
           parentId={cableId}
+          showIssueIndicator
+          isCascadeDisabled={isCascadeDisabled}
         />
       </div>
     );
@@ -597,6 +605,7 @@ function ComputerComponent({
           card={computer.card}
           placementId={computer.id}
           isDisabled={computer.isDisabled}
+          isCascadeDisabled={isCascadeDisabled}
           className={sizeClass}
           small
         />
@@ -619,6 +628,7 @@ function ComputerComponent({
           card={computer.card}
           placementId={computer.id}
           isDisabled={computer.isDisabled}
+          isCascadeDisabled={isCascadeDisabled}
           className={sizeClass}
           small
         />
@@ -635,6 +645,7 @@ interface PlacedCardDisplayProps {
   card: Card;
   placementId: string;
   isDisabled: boolean;
+  isCascadeDisabled?: boolean; // Disabled due to parent, not direct attack
   className?: string;
   small?: boolean;
 }
@@ -642,7 +653,7 @@ interface PlacedCardDisplayProps {
 // Track which cards have been animated
 const animatedCards = new Set<string>();
 
-function PlacedCardDisplay({ card, placementId, isDisabled, className, small = false }: PlacedCardDisplayProps) {
+function PlacedCardDisplay({ card, placementId, isDisabled, isCascadeDisabled = false, className, small = false }: PlacedCardDisplayProps) {
   const [isNew, setIsNew] = useState(false);
   const [isReEnabled, setIsReEnabled] = useState(false);
   const prevDisabledRef = useRef(isDisabled);
@@ -672,7 +683,7 @@ function PlacedCardDisplay({ card, placementId, isDisabled, className, small = f
   return (
     <div
       className={cn(
-        "rounded border-2 overflow-hidden transition-all duration-300 bg-black",
+        "rounded border-2 overflow-hidden transition-all duration-300 bg-black relative",
         isDisabled ? "border-red-500 opacity-70" : "border-gray-600",
         isNew && "animate-scale-in",
         isReEnabled && "animate-pulse",
@@ -687,6 +698,11 @@ function PlacedCardDisplay({ card, placementId, isDisabled, className, small = f
           isNew && "animate-pulse"
         )}
       />
+      
+      {/* Cascade disabled glow - pulsing red shadow for equipment disabled by parent attack */}
+      {isCascadeDisabled && (
+        <div className="absolute inset-0 rounded animate-pulse pointer-events-none shadow-[0_0_12px_4px_rgba(239,68,68,0.5)]" />
+      )}
       
       {/* Re-enabled glow overlay */}
       {isReEnabled && (
