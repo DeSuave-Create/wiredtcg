@@ -18,75 +18,86 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
   const isDealingRef = useRef(false);
   const timeoutsRef = useRef<number[]>([]);
 
-  // Build the complete deck with proper quantities (143 cards total)
+  // Build the complete deck with actual card quantities (144 cards total)
   const buildDeck = (): Card[] => {
     const deck: Card[] = [];
     
-    // Equipment cards (80 total)
-    // Computers: 40 cards
-    for (let i = 0; i < 40; i++) {
+    // Equipment cards (75 total)
+    // Computers: 32 cards
+    for (let i = 0; i < 32; i++) {
       deck.push({ name: 'Computer', bg: 'bg-green-50', image: '/lovable-uploads/equipment-computer-new.png', borderColor: 'border-green-500', type: 'equipment' });
     }
-    // 2-Cables: 20 cards
-    for (let i = 0; i < 20; i++) {
+    // 2-Cables: 16 cards
+    for (let i = 0; i < 16; i++) {
       deck.push({ name: 'Cabling (2x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-2cable.png', borderColor: 'border-green-500', type: 'equipment' });
     }
-    // 3-Cables: 10 cards
-    for (let i = 0; i < 10; i++) {
+    // 3-Cables: 9 cards
+    for (let i = 0; i < 9; i++) {
       deck.push({ name: 'Cabling (3x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-3cable.png', borderColor: 'border-green-500', type: 'equipment' });
     }
-    // Switches: 10 cards
-    for (let i = 0; i < 10; i++) {
+    // Switches: 18 cards
+    for (let i = 0; i < 18; i++) {
       deck.push({ name: 'Switch', bg: 'bg-green-50', image: '/lovable-uploads/equipment-switch.png', borderColor: 'border-green-500', type: 'equipment' });
     }
     
-    // Audit cards (4 total)
+    // Attack cards (27 total)
+    // Audit: 4 cards
     for (let i = 0; i < 4; i++) {
       deck.push({ name: 'Audit', bg: 'bg-red-50', image: '/lovable-uploads/attack-audit-v2.png', borderColor: 'border-red-500', type: 'attack' });
     }
-    
-    // Classification cards (13 total)
-    for (let i = 0; i < 2; i++) {
-      deck.push({ name: 'Facilities', bg: 'bg-blue-50', image: '/lovable-uploads/classification-facilities-new.png', borderColor: 'border-blue-500', type: 'classification' });
-    }
-    for (let i = 0; i < 2; i++) {
-      deck.push({ name: 'Field Tech', bg: 'bg-blue-50', image: '/lovable-uploads/classification-fieldtech-new.png', borderColor: 'border-blue-500', type: 'classification' });
-    }
-    for (let i = 0; i < 2; i++) {
-      deck.push({ name: 'Supervisor', bg: 'bg-blue-50', image: '/lovable-uploads/classification-supervisor.png', borderColor: 'border-blue-500', type: 'classification' });
-    }
-    for (let i = 0; i < 2; i++) {
-      deck.push({ name: 'Security Specialist', bg: 'bg-blue-50', image: '/lovable-uploads/classification-security.png', borderColor: 'border-blue-500', type: 'classification' });
-    }
-    for (let i = 0; i < 4; i++) {
-      deck.push({ name: 'Head Hunter', bg: 'bg-blue-50', image: '/lovable-uploads/classification-headhunter.png', borderColor: 'border-blue-500', type: 'classification' });
-    }
-    deck.push({ name: 'Seal the Deal', bg: 'bg-blue-50', image: '/lovable-uploads/classification-sealthedeal.png', borderColor: 'border-blue-500', type: 'classification' });
-    
-    // Remaining 46 cards split between attack and resolution
-    // Attack cards: 23 (Hacked, New Hire, Power Outage split evenly)
-    for (let i = 0; i < 8; i++) {
+    // Hacked: 9 cards
+    for (let i = 0; i < 9; i++) {
       deck.push({ name: 'Hacked', bg: 'bg-red-50', image: '/lovable-uploads/attack-hacked-v2.png', borderColor: 'border-red-500', type: 'attack' });
     }
-    for (let i = 0; i < 8; i++) {
+    // New Hire: 7 cards
+    for (let i = 0; i < 7; i++) {
       deck.push({ name: 'New Hire', bg: 'bg-red-50', image: '/lovable-uploads/attack-newhire-v2.png', borderColor: 'border-red-500', type: 'attack' });
     }
+    // Power Outage: 7 cards
     for (let i = 0; i < 7; i++) {
       deck.push({ name: 'Power Outage', bg: 'bg-red-50', image: '/lovable-uploads/attack-poweroutage-v2.png', borderColor: 'border-red-500', type: 'attack' });
     }
     
-    // Resolution/buff cards: 23 (split among 4 types)
-    for (let i = 0; i < 6; i++) {
-      deck.push({ name: 'Trained', bg: 'bg-red-50', image: '/lovable-uploads/resolution-trained-v2.png', borderColor: 'border-green-500', type: 'classification' });
+    // Classification cards (15 total)
+    // Facilities: 2 cards
+    for (let i = 0; i < 2; i++) {
+      deck.push({ name: 'Facilities', bg: 'bg-blue-50', image: '/lovable-uploads/classification-facilities-new.png', borderColor: 'border-blue-500', type: 'classification' });
     }
-    for (let i = 0; i < 6; i++) {
-      deck.push({ name: 'Helpdesk', bg: 'bg-red-50', image: '/lovable-uploads/resolution-helpdesk-v2.png', borderColor: 'border-green-500', type: 'classification' });
+    // Field Tech: 2 cards
+    for (let i = 0; i < 2; i++) {
+      deck.push({ name: 'Field Tech', bg: 'bg-blue-50', image: '/lovable-uploads/classification-fieldtech-new.png', borderColor: 'border-blue-500', type: 'classification' });
     }
-    for (let i = 0; i < 6; i++) {
-      deck.push({ name: 'Powered', bg: 'bg-red-50', image: '/lovable-uploads/resolution-powered-v2.png', borderColor: 'border-green-500', type: 'classification' });
+    // Supervisor: 2 cards
+    for (let i = 0; i < 2; i++) {
+      deck.push({ name: 'Supervisor', bg: 'bg-blue-50', image: '/lovable-uploads/classification-supervisor.png', borderColor: 'border-blue-500', type: 'classification' });
     }
-    for (let i = 0; i < 5; i++) {
-      deck.push({ name: 'Secured', bg: 'bg-red-50', image: '/lovable-uploads/resolution-secured-v2.png', borderColor: 'border-green-500', type: 'classification' });
+    // Security Specialist: 2 cards
+    for (let i = 0; i < 2; i++) {
+      deck.push({ name: 'Security Specialist', bg: 'bg-blue-50', image: '/lovable-uploads/classification-security.png', borderColor: 'border-blue-500', type: 'classification' });
+    }
+    // Head Hunter: 6 cards
+    for (let i = 0; i < 6; i++) {
+      deck.push({ name: 'Head Hunter', bg: 'bg-blue-50', image: '/lovable-uploads/classification-headhunter.png', borderColor: 'border-blue-500', type: 'classification' });
+    }
+    // Seal the Deal: 1 card
+    deck.push({ name: 'Seal the Deal', bg: 'bg-blue-50', image: '/lovable-uploads/classification-sealthedeal.png', borderColor: 'border-blue-500', type: 'classification' });
+    
+    // Resolution cards (27 total)
+    // Helpdesk: 4 cards
+    for (let i = 0; i < 4; i++) {
+      deck.push({ name: 'Helpdesk', bg: 'bg-purple-50', image: '/lovable-uploads/resolution-helpdesk-v2.png', borderColor: 'border-purple-500', type: 'classification' });
+    }
+    // Trained: 7 cards
+    for (let i = 0; i < 7; i++) {
+      deck.push({ name: 'Trained', bg: 'bg-purple-50', image: '/lovable-uploads/resolution-trained-v2.png', borderColor: 'border-purple-500', type: 'classification' });
+    }
+    // Powered: 7 cards
+    for (let i = 0; i < 7; i++) {
+      deck.push({ name: 'Powered', bg: 'bg-purple-50', image: '/lovable-uploads/resolution-powered-v2.png', borderColor: 'border-purple-500', type: 'classification' });
+    }
+    // Secured: 9 cards
+    for (let i = 0; i < 9; i++) {
+      deck.push({ name: 'Secured', bg: 'bg-purple-50', image: '/lovable-uploads/resolution-secured-v2.png', borderColor: 'border-purple-500', type: 'classification' });
     }
     
     return deck;
