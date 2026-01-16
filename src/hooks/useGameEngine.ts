@@ -1124,12 +1124,8 @@ export function useGameEngine() {
       }
     }
     
-    // End phases
-    endPhase(); // discard
-    await new Promise(r => setTimeout(r, 500));
-    endPhase(); // draw + score
-    await new Promise(r => setTimeout(r, 500));
-    endPhase(); // next turn
+    // End turn (draw, score, and move to next player)
+    endPhase();
   }, [gameState, playSwitch, playCable, playComputer, endPhase]);
 
   return {
