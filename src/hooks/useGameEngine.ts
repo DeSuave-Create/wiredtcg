@@ -1856,9 +1856,45 @@ export function useGameEngine() {
               
               currentPlayer.hand = hand.filter(c => c.id !== classCard.id);
               currentPlayer.classificationCards.push(newClassification);
+              
+              // Auto-resolve matching attacks when classification is played
+              const autoResolveType = getAutoResolveType(classCard.subtype);
+              let resolvedCount = 0;
+              
+              if (autoResolveType) {
+                // Resolve all matching attacks on AI's network
+                currentPlayer.network.switches.forEach(sw => {
+                  const swMatchingIssues = sw.attachedIssues.filter(i => i.subtype === autoResolveType);
+                  resolvedCount += swMatchingIssues.length;
+                  newDiscardPile.push(...swMatchingIssues);
+                  sw.attachedIssues = sw.attachedIssues.filter(i => i.subtype !== autoResolveType);
+                  sw.isDisabled = sw.attachedIssues.length > 0;
+                  
+                  sw.cables.forEach(cable => {
+                    const cableMatchingIssues = cable.attachedIssues.filter(i => i.subtype === autoResolveType);
+                    resolvedCount += cableMatchingIssues.length;
+                    newDiscardPile.push(...cableMatchingIssues);
+                    cable.attachedIssues = cable.attachedIssues.filter(i => i.subtype !== autoResolveType);
+                    cable.isDisabled = cable.attachedIssues.length > 0 || sw.isDisabled;
+                    
+                    cable.computers.forEach(comp => {
+                      const compMatchingIssues = comp.attachedIssues.filter(i => i.subtype === autoResolveType);
+                      resolvedCount += compMatchingIssues.length;
+                      newDiscardPile.push(...compMatchingIssues);
+                      comp.attachedIssues = comp.attachedIssues.filter(i => i.subtype !== autoResolveType);
+                      comp.isDisabled = comp.attachedIssues.length > 0 || cable.isDisabled;
+                    });
+                  });
+                });
+              }
+              
               playedCard = true;
               aiActions.push({ type: 'classification', card: classCard });
-              gameLog = [...gameLog.slice(-19), `🎖️ Computer activated ${classCard.name}!`];
+              if (resolvedCount > 0) {
+                gameLog = [...gameLog.slice(-19), `🎖️ Computer activated ${classCard.name} - resolved ${resolvedCount} issue(s)!`];
+              } else {
+                gameLog = [...gameLog.slice(-19), `🎖️ Computer activated ${classCard.name}!`];
+              }
             }
           }
         }
