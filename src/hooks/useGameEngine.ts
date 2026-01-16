@@ -17,14 +17,24 @@ function getMovesForPlayer(player: Player): number {
   return moves;
 }
 
-// Helper: Check if player has Head Hunter (draw extra card)
-function hasHeadHunter(player: Player): boolean {
-  return player.classificationCards.some(c => c.card.subtype === 'head-hunter');
+// Helper: Count Head Hunter cards for a player
+function countHeadHunters(player: Player): number {
+  return player.classificationCards.filter(c => c.card.subtype === 'head-hunter').length;
 }
 
-// Helper: Check if player has Seal the Deal (double scoring)
+// Helper: Check if player has Seal the Deal (unblockable Head Hunter)
 function hasSealTheDeal(player: Player): boolean {
   return player.classificationCards.some(c => c.card.subtype === 'seal-the-deal');
+}
+
+// Helper: Get the attack type that a classification auto-resolves
+function getAutoResolveType(classificationType: string): string | null {
+  const map: Record<string, string> = {
+    'security-specialist': 'hacked',
+    'facilities': 'power-outage',
+    'supervisor': 'new-hire',
+  };
+  return map[classificationType] || null;
 }
 
 let placementIdCounter = 0;
@@ -145,16 +155,18 @@ export function useGameEngine() {
     return null;
   }, []);
 
-  // Check if attack is blocked by classification
-  const isAttackBlocked = useCallback((targetPlayer: Player, attackType: string): boolean => {
-    const blockMap: Record<string, string> = {
+  // Check if attack is auto-resolved by classification (not blocked, but resolved instantly)
+  // Returns the classification type that resolves it, or null if not auto-resolved
+  const getAutoResolveClassification = useCallback((targetPlayer: Player, attackType: string): string | null => {
+    const resolveMap: Record<string, string> = {
       'hacked': 'security-specialist',
       'power-outage': 'facilities',
       'new-hire': 'supervisor',
     };
-    const blockingClass = blockMap[attackType];
-    if (!blockingClass) return false;
-    return targetPlayer.classificationCards.some(c => c.card.subtype === blockingClass);
+    const resolvingClass = resolveMap[attackType];
+    if (!resolvingClass) return null;
+    const hasClass = targetPlayer.classificationCards.some(c => c.card.subtype === resolvingClass);
+    return hasClass ? resolvingClass : null;
   }, []);
 
   // Update equipment disabled state based on issues
@@ -819,10 +831,34 @@ export function useGameEngine() {
     
     const targetPlayer = gameState.players[targetPlayerIndex];
     
-    // Check if blocked by classification
-    if (isAttackBlocked(targetPlayer, attackCard.subtype)) {
-      addLog(`Attack blocked by ${attackCard.subtype === 'hacked' ? 'Security Specialist' : attackCard.subtype === 'power-outage' ? 'Facilities' : 'Supervisor'}!`);
-      return false;
+    // Check if attack is auto-resolved by classification
+    // The attack still "hits" but is instantly resolved - attacker loses their card and move
+    const autoResolveClass = getAutoResolveClassification(targetPlayer, attackCard.subtype);
+    if (autoResolveClass) {
+      // Remove card from hand and discard it - attack is wasted
+      setGameState(prev => {
+        if (!prev) return prev;
+        
+        const newPlayers = [...prev.players];
+        const attacker = { ...newPlayers[prev.currentPlayerIndex] };
+        attacker.hand = attacker.hand.filter(c => c.id !== attackCard.id);
+        newPlayers[prev.currentPlayerIndex] = attacker;
+        
+        const classNames: Record<string, string> = {
+          'security-specialist': 'Security Specialist',
+          'facilities': 'Facilities',
+          'supervisor': 'Supervisor',
+        };
+        
+        return {
+          ...prev,
+          players: newPlayers,
+          discardPile: [...prev.discardPile, attackCard],
+          movesRemaining: prev.movesRemaining - 1,
+          gameLog: [...prev.gameLog.slice(-19), `⚡ ${attackCard.name} instantly resolved by ${classNames[autoResolveClass]}! Card wasted.`],
+        };
+      });
+      return true; // Attack was "played" but auto-resolved
     }
     
     setGameState(prev => {
@@ -913,7 +949,7 @@ export function useGameEngine() {
     });
     
     return true;
-  }, [gameState, addLog, findEquipmentById, isAttackBlocked]);
+  }, [gameState, addLog, findEquipmentById, getAutoResolveClassification]);
 
   // Play a Resolution card on your own equipment
   const playResolution = useCallback((resolutionCardId: string, targetEquipmentId: string) => {
@@ -1068,10 +1104,16 @@ export function useGameEngine() {
   }, [gameState, addLog, findEquipmentById]);
 
   // Play a Classification card (max 2 in play)
-  const playClassification = useCallback((cardId: string) => {
+  // Head Hunter: Steals opponent's classification (can be blocked by opponent's Head Hunter)
+  // Seal the Deal: Unblockable Head Hunter
+  // Supervisor/Security Specialist/Facilities: Auto-resolves matching attacks on your network when played
+  const playClassification = useCallback((cardId: string, targetClassificationId?: string) => {
     if (!gameState) return false;
     
-    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    const currentPlayerIndex = gameState.currentPlayerIndex;
+    const opponentPlayerIndex = currentPlayerIndex === 0 ? 1 : 0;
+    const currentPlayer = gameState.players[currentPlayerIndex];
+    const opponent = gameState.players[opponentPlayerIndex];
     const classCard = currentPlayer.hand.find(c => c.id === cardId);
     
     if (!classCard || classCard.type !== 'classification') {
@@ -1084,6 +1126,116 @@ export function useGameEngine() {
       return false;
     }
     
+    const isHeadHunter = classCard.subtype === 'head-hunter';
+    const isSealTheDeal = classCard.subtype === 'seal-the-deal';
+    
+    // Head Hunter and Seal the Deal MUST target opponent's classification
+    if (isHeadHunter || isSealTheDeal) {
+      if (opponent.classificationCards.length === 0) {
+        addLog("Opponent has no classifications to steal!");
+        return false;
+      }
+      
+      // For Head Hunter: check if opponent can block (has their own Head Hunter)
+      if (isHeadHunter) {
+        const opponentHeadHunters = countHeadHunters(opponent);
+        const playerHeadHunters = countHeadHunters(currentPlayer);
+        
+        // If opponent has more or equal head hunters, the steal is blocked
+        // (player is using one now, so compare player's current + 1 vs opponent's)
+        if (opponentHeadHunters > 0) {
+          addLog(`Opponent's Head Hunter blocks your steal! Both cards are discarded.`);
+          // Both players lose a Head Hunter - the attacking one and one defending one
+          setGameState(prev => {
+            if (!prev) return prev;
+            
+            const newPlayers = [...prev.players];
+            const player = { ...newPlayers[currentPlayerIndex] };
+            const opp = { ...newPlayers[opponentPlayerIndex] };
+            
+            // Remove the Head Hunter card from attacker's hand
+            player.hand = player.hand.filter(c => c.id !== classCard.id);
+            
+            // Remove one Head Hunter from opponent's classifications
+            const oppHeadHunterIndex = opp.classificationCards.findIndex(c => c.card.subtype === 'head-hunter');
+            const removedOppCard = opp.classificationCards[oppHeadHunterIndex];
+            opp.classificationCards = opp.classificationCards.filter((_, i) => i !== oppHeadHunterIndex);
+            
+            newPlayers[currentPlayerIndex] = player;
+            newPlayers[opponentPlayerIndex] = opp;
+            
+            return {
+              ...prev,
+              players: newPlayers,
+              discardPile: [...prev.discardPile, classCard, removedOppCard.card],
+              movesRemaining: prev.movesRemaining - 1,
+              gameLog: [...prev.gameLog.slice(-19), `🎖️ Head Hunter vs Head Hunter! Both cards discarded.`],
+            };
+          });
+          return true;
+        }
+      }
+      
+      // Steal a classification from opponent (Seal the Deal is unblockable)
+      setGameState(prev => {
+        if (!prev) return prev;
+        
+        const newPlayers = [...prev.players];
+        const player = { ...newPlayers[currentPlayerIndex] };
+        const opp = { ...newPlayers[opponentPlayerIndex] };
+        
+        // Remove the steal card from player's hand
+        player.hand = player.hand.filter(c => c.id !== classCard.id);
+        
+        // Choose which classification to steal (first one if not specified)
+        const targetIndex = targetClassificationId 
+          ? opp.classificationCards.findIndex(c => c.id === targetClassificationId)
+          : 0;
+        
+        if (targetIndex === -1 || opp.classificationCards.length === 0) {
+          return {
+            ...prev,
+            gameLog: [...prev.gameLog.slice(-19), 'No classification to steal!'],
+          };
+        }
+        
+        const stolenCard = opp.classificationCards[targetIndex];
+        opp.classificationCards = opp.classificationCards.filter((_, i) => i !== targetIndex);
+        
+        // Check if player already has 2 classifications
+        if (player.classificationCards.length >= 2) {
+          // Can't add stolen card, it goes to discard
+          newPlayers[currentPlayerIndex] = player;
+          newPlayers[opponentPlayerIndex] = opp;
+          
+          return {
+            ...prev,
+            players: newPlayers,
+            discardPile: [...prev.discardPile, classCard, stolenCard.card],
+            movesRemaining: prev.movesRemaining - 1,
+            gameLog: [...prev.gameLog.slice(-19), `🎖️ ${isSealTheDeal ? 'Seal the Deal' : 'Head Hunter'}! Stole ${stolenCard.card.name} (discarded - already at max)`],
+          };
+        }
+        
+        // Add stolen classification to player
+        player.classificationCards = [...player.classificationCards, stolenCard];
+        
+        newPlayers[currentPlayerIndex] = player;
+        newPlayers[opponentPlayerIndex] = opp;
+        
+        return {
+          ...prev,
+          players: newPlayers,
+          discardPile: [...prev.discardPile, classCard],
+          movesRemaining: prev.movesRemaining - 1,
+          gameLog: [...prev.gameLog.slice(-19), `🎖️ ${isSealTheDeal ? 'Seal the Deal' : 'Head Hunter'}! Stole ${stolenCard.card.name}!`],
+        };
+      });
+      
+      return true;
+    }
+    
+    // Regular classification cards (Field Tech, Supervisor, Security Specialist, Facilities)
     // Check if player already has 2 classification cards
     if (currentPlayer.classificationCards.length >= 2) {
       addLog('Maximum 2 classification cards in play!');
@@ -1117,23 +1269,76 @@ export function useGameEngine() {
       };
       player.classificationCards = [...player.classificationCards, newClassCard];
       
+      // Check if this classification auto-resolves any existing attacks
+      const autoResolveType = getAutoResolveType(classCard.subtype);
+      let resolvedCount = 0;
+      let resolvedIssues: Card[] = [];
+      
+      if (autoResolveType) {
+        // Resolve all matching attacks on player's network
+        player.network = {
+          ...player.network,
+          switches: player.network.switches.map(sw => {
+            // Check switch issues
+            const swMatchingIssues = sw.attachedIssues.filter(i => i.subtype === autoResolveType);
+            resolvedCount += swMatchingIssues.length;
+            resolvedIssues.push(...swMatchingIssues);
+            const newSwIssues = sw.attachedIssues.filter(i => i.subtype !== autoResolveType);
+            const swEnabled = newSwIssues.length === 0;
+            
+            return {
+              ...sw,
+              attachedIssues: newSwIssues,
+              isDisabled: !swEnabled,
+              cables: sw.cables.map(cable => {
+                const cableMatchingIssues = cable.attachedIssues.filter(i => i.subtype === autoResolveType);
+                resolvedCount += cableMatchingIssues.length;
+                resolvedIssues.push(...cableMatchingIssues);
+                const newCableIssues = cable.attachedIssues.filter(i => i.subtype !== autoResolveType);
+                const cableEnabled = newCableIssues.length === 0 && swEnabled;
+                
+                return {
+                  ...cable,
+                  attachedIssues: newCableIssues,
+                  isDisabled: !cableEnabled,
+                  computers: cable.computers.map(comp => {
+                    const compMatchingIssues = comp.attachedIssues.filter(i => i.subtype === autoResolveType);
+                    resolvedCount += compMatchingIssues.length;
+                    resolvedIssues.push(...compMatchingIssues);
+                    const newCompIssues = comp.attachedIssues.filter(i => i.subtype !== autoResolveType);
+                    const compEnabled = newCompIssues.length === 0 && cableEnabled;
+                    
+                    return {
+                      ...comp,
+                      attachedIssues: newCompIssues,
+                      isDisabled: !compEnabled,
+                    };
+                  }),
+                };
+              }),
+            };
+          }),
+        };
+      }
+      
       newPlayers[prev.currentPlayerIndex] = player;
       
       // Describe the ability
       const abilities: Record<string, string> = {
-        'security-specialist': 'Blocks Hacked attacks',
-        'facilities': 'Blocks Power Outage attacks',
-        'supervisor': 'Blocks New Hire attacks',
+        'security-specialist': 'Auto-resolves Hacked attacks',
+        'facilities': 'Auto-resolves Power Outage attacks',
+        'supervisor': 'Auto-resolves New Hire attacks',
         'field-tech': '+1 move per turn',
-        'head-hunter': 'Draw extra card at end of turn',
-        'seal-the-deal': 'Double scoring for this turn',
       };
+      
+      const resolveMsg = resolvedCount > 0 ? ` Resolved ${resolvedCount} existing attack(s)!` : '';
       
       return {
         ...prev,
         players: newPlayers,
+        discardPile: [...prev.discardPile, ...resolvedIssues],
         movesRemaining: prev.movesRemaining - 1,
-        gameLog: [...prev.gameLog.slice(-19), `🎖️ ${classCard.name} played! ${abilities[classCard.subtype] || ''}`],
+        gameLog: [...prev.gameLog.slice(-19), `🎖️ ${classCard.name} played! ${abilities[classCard.subtype] || ''}${resolveMsg}`],
       };
     });
     
@@ -1196,9 +1401,7 @@ export function useGameEngine() {
         
         // 1. Draw cards to refill hand
         let baseDraw = Math.max(0, MAX_HAND_SIZE - currentPlayer.hand.length);
-        // Head Hunter: draw extra card at end of turn
-        const extraDraw = hasHeadHunter(currentPlayer) ? 1 : 0;
-        const cardsToDraw = baseDraw + extraDraw;
+        const cardsToDraw = baseDraw;
         
         let newDrawPile = [...prev.drawPile];
         let newDiscardPile = [...prev.discardPile];
@@ -1213,20 +1416,14 @@ export function useGameEngine() {
         
         // 2. Score connected computers
         const connectedComputers = countConnectedComputers(currentPlayer.network);
-        // Seal the Deal: double scoring
-        const scoringMultiplier = hasSealTheDeal(currentPlayer) ? 2 : 1;
-        const scoreGained = connectedComputers * scoringMultiplier;
+        const scoreGained = connectedComputers;
         const newScore = currentPlayer.score + scoreGained;
         
         // Build score log message
-        const scoreLog = hasSealTheDeal(currentPlayer) && connectedComputers > 0
-          ? `Scored ${connectedComputers}×2 = ${scoreGained} bitcoin! (Seal the Deal) Total: ${newScore}`
-          : `Scored ${scoreGained} bitcoin (Total: ${newScore})`;
+        const scoreLog = `Scored ${scoreGained} bitcoin (Total: ${newScore})`;
         
         // Build draw log message
-        const drawLog = extraDraw > 0 && cardsToDraw > 0
-          ? `Drew ${cardsToDraw} card(s) (Head Hunter bonus!)`
-          : cardsToDraw > 0 ? `Drew ${cardsToDraw} card(s)` : '';
+        const drawLog = cardsToDraw > 0 ? `Drew ${cardsToDraw} card(s)` : '';
         
         // Update player with drawn cards and new score
         const newPlayers = [...prev.players];
@@ -1630,28 +1827,22 @@ export function useGameEngine() {
       // Now score and end turn
       const scoringPlayer = newPlayers[aiPlayerIndex];
       const connectedComputers = countConnectedComputers(scoringPlayer.network);
-      // Seal the Deal: double scoring for AI too
-      const scoringMultiplier = hasSealTheDeal(scoringPlayer) ? 2 : 1;
-      const scoreGained = connectedComputers * scoringMultiplier;
+      const scoreGained = connectedComputers;
       const newScore = scoringPlayer.score + scoreGained;
       
       // Check for win
       const isWinner = newScore >= WINNING_SCORE;
       
       // Draw cards to refill hand
-      // Head Hunter: AI draws extra card too
       const baseDraw = Math.max(0, MAX_HAND_SIZE - scoringPlayer.hand.length);
-      const extraDraw = hasHeadHunter(scoringPlayer) ? 1 : 0;
-      const cardsNeeded = baseDraw + extraDraw;
+      const cardsNeeded = baseDraw;
       const { dealt, remaining } = dealCards(prev.drawPile, cardsNeeded);
       
       scoringPlayer.score = newScore;
       scoringPlayer.hand = [...scoringPlayer.hand, ...dealt];
       
       // Build score log message for AI
-      const aiScoreLog = hasSealTheDeal(scoringPlayer) && connectedComputers > 0
-        ? `Computer scored ${connectedComputers}×2 = ${scoreGained} bitcoin! (Seal the Deal)`
-        : connectedComputers > 0 ? `Computer scored ${scoreGained} bitcoin (Total: ${newScore})` : `Computer's turn ended`;
+      const aiScoreLog = connectedComputers > 0 ? `Computer scored ${scoreGained} bitcoin (Total: ${newScore})` : `Computer's turn ended`;
       
       const nextPlayer = prev.players[(aiPlayerIndex + 1) % 2];
       
