@@ -2050,20 +2050,55 @@ export function useGameEngine() {
               cardToDiscard = unusableRes;
             }
           }
-          // Priority 4: If we still have moves but nothing else to do, discard a random card to cycle
-          // This helps the AI get out of stuck situations
+          // Priority 4: If we still have moves but nothing else to do, discard lowest-value card to cycle
+          // This helps the AI get out of stuck situations while keeping high-value cards
           else if (movesRemaining > 0 && currentPlayer.hand.length > 0) {
-            // Pick a card to discard - prefer ones that are less useful right now
-            // Discard classification cards if we already have 2
-            const classificationCards = hand.filter(c => c.type === 'classification');
-            if (classificationCards.length > 0 && currentPlayer.classificationCards.length >= 2) {
-              cardToDiscard = classificationCards[0];
-            }
-            // Or discard duplicate equipment cards we don't need
-            else {
-              // Just pick any card to cycle the hand
-              cardToDiscard = hand[0];
-            }
+            // Rank cards by value (lower = discard first)
+            // High value: Switch (essential for network), Computer (scoring), Cables (connects computers)
+            // Medium value: Attack cards (useful offense), defensive classifications
+            // Low value: Duplicate classifications, steal cards with no target, audit
+            const getCardValue = (c: Card): number => {
+              // Equipment - highest value (keep these!)
+              if (c.type === 'equipment') {
+                if (c.subtype === 'switch') return 100; // Essential foundation
+                if (c.subtype === 'computer') return 90; // Scoring
+                if (c.subtype === 'cable-3') return 80; // Better cable
+                if (c.subtype === 'cable-2') return 70; // Good cable
+              }
+              // Attack cards - medium-high value if opponent has network
+              if (c.type === 'attack') {
+                const hasTarget = findAttackTarget(humanPlayer.network) !== null;
+                return hasTarget ? 60 : 20; // Worth more if usable
+              }
+              // Resolution cards - value depends on if we have matching issues
+              if (c.type === 'resolution') {
+                const hasTarget = findResolutionTarget(network, c.subtype) !== null;
+                return hasTarget ? 65 : 15; // Worth more if usable
+              }
+              // Classification cards
+              if (c.type === 'classification') {
+                // Already have 2? Low value
+                if (currentPlayer.classificationCards.length >= 2) return 5;
+                // Already have this type? Lower value (but provides steal protection)
+                const hasSameType = currentPlayer.classificationCards.some(
+                  existing => existing.card.subtype === c.subtype
+                );
+                if (hasSameType) return 25;
+                // Field Tech is best (+1 move)
+                if (c.subtype === 'field-tech') return 55;
+                // Defensive classifications
+                if (c.subtype === 'security-specialist' || c.subtype === 'facilities' || c.subtype === 'supervisor') return 45;
+                // Steal cards - value based on if opponent has classifications
+                if (c.subtype === 'head-hunter' || c.subtype === 'seal-the-deal') {
+                  return humanPlayer.classificationCards.length > 0 ? 50 : 10;
+                }
+              }
+              return 30; // Default medium value
+            };
+            
+            // Sort hand by value (ascending) and discard lowest value card
+            const sortedHand = [...hand].sort((a, b) => getCardValue(a) - getCardValue(b));
+            cardToDiscard = sortedHand[0];
           }
           
           if (cardToDiscard && movesRemaining > 0) {
