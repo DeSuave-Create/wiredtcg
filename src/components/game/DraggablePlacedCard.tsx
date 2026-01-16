@@ -2,7 +2,6 @@ import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { Card, PlacedCard } from '@/types/game';
 import { cn } from '@/lib/utils';
-import { AlertTriangle } from 'lucide-react';
 
 interface DraggablePlacedCardProps {
   placedCard: PlacedCard;
@@ -77,31 +76,24 @@ interface IssueIndicatorProps {
 }
 
 function IssueIndicator({ issues, small = false }: IssueIndicatorProps) {
-  const issueColors: Record<string, string> = {
-    'hacked': 'bg-purple-500',
-    'power-outage': 'bg-yellow-500',
-    'new-hire': 'bg-orange-500',
-  };
-  
   return (
     <div className={cn(
-      "absolute flex gap-0.5",
-      small ? "-top-1 -right-1" : "-top-2 -right-2"
+      "absolute inset-0 flex flex-col items-center justify-center gap-0.5 pointer-events-none",
     )}>
       {issues.map((issue, idx) => (
         <div
           key={idx}
           className={cn(
-            "rounded-full flex items-center justify-center",
-            issueColors[issue.subtype] || 'bg-red-500',
-            small ? "w-3 h-3" : "w-4 h-4"
+            "transform rotate-90 border-2 border-red-500 rounded shadow-lg",
+            small ? "w-6 h-8" : "w-10 h-14"
           )}
           title={issue.name}
         >
-          <AlertTriangle className={cn(
-            "text-white",
-            small ? "w-2 h-2" : "w-2.5 h-2.5"
-          )} />
+          <img 
+            src={issue.image} 
+            alt={issue.name}
+            className="w-full h-full object-contain bg-black/80"
+          />
         </div>
       ))}
     </div>
