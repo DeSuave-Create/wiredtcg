@@ -326,7 +326,7 @@ const Simulation = () => {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
             {/* Left sidebar - Game log (sticky) */}
             <div className="lg:col-span-1 order-3 lg:order-1">
-              <div className="lg:sticky lg:top-4 space-y-4">
+              <div className="lg:sticky lg:top-20 space-y-4 z-40">
                 <GameLog messages={gameState.gameLog} />
                 
                 {/* Discard zone - always visible and active during player's turn */}
