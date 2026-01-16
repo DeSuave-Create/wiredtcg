@@ -492,7 +492,7 @@ const Simulation = () => {
                     }
                   </span>
                 </div>
-                <div className="flex items-start gap-4">
+                <div className="flex flex-col md:flex-row md:items-start gap-3 md:gap-4">
                   {/* Hand cards - 3x2 grid */}
                   <div className="flex-1">
                     <PlayerHandDraggable
@@ -503,8 +503,8 @@ const Simulation = () => {
                       gridLayout={true}
                     />
                   </div>
-                  {/* Discard + Controls stacked */}
-                  <div className="flex-shrink-0 flex flex-col gap-3">
+                  {/* Discard + Controls stacked - below on mobile, side on desktop */}
+                  <div className="flex-shrink-0 flex flex-row md:flex-col items-center md:items-start gap-3">
                     <DiscardZone 
                       discardPile={gameState.discardPile}
                       isActive={canDiscard || isDiscardPhase}
