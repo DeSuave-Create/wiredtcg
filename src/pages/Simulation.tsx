@@ -165,9 +165,18 @@ const Simulation = () => {
             <GameControls
               phase={gameState.phase}
               movesRemaining={gameState.movesRemaining}
-              onPlaySwitch={playSwitch}
+              selectedCard={selectedCard}
+              onPlaySwitch={() => {
+                playSwitch();
+                setSelectedCard(null);
+              }}
               onEndPhase={endPhase}
+              onClearSelection={() => setSelectedCard(null)}
               hasSwitch={hasSwitch}
+              hasSwitchInNetwork={humanPlayer.network.switches.length > 0}
+              hasCableWithSpace={humanPlayer.network.switches.some(sw => 
+                sw.cables.some(c => c.computers.length < c.maxComputers)
+              )}
               isCurrentPlayerHuman={isHumanTurn}
             />
 
