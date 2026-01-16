@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useGameEngine } from '@/hooks/useGameEngine';
 import { PlayerHandDraggable } from '@/components/game/PlayerHandDraggable';
 import { NetworkBoardDroppable } from '@/components/game/NetworkBoardDroppable';
+import { ClassificationSection } from '@/components/game/ClassificationSection';
 import { GameControlsSimple } from '@/components/game/GameControlsSimple';
 import { GameLog } from '@/components/game/GameLog';
 import { ScoreDisplay } from '@/components/game/ScoreDisplay';
@@ -455,6 +456,11 @@ const Simulation = () => {
                   disabled={true}
                 />
                 <div className="mt-4">
+                  <ClassificationSection
+                    classificationCards={computerPlayer.classificationCards}
+                    isCurrentPlayer={false}
+                    playerId="player-2"
+                  />
                   <NetworkBoardDroppable
                     network={computerPlayer.network}
                     isCurrentPlayer={false}
@@ -462,7 +468,6 @@ const Simulation = () => {
                     playerId="player-2"
                     canReceiveAttacks={canPlayCards} // Human can attack during their moves phase
                     canReceiveResolutions={false} // Can't play resolutions on opponent
-                    classificationCards={computerPlayer.classificationCards}
                   />
                 </div>
               </div>
@@ -477,19 +482,9 @@ const Simulation = () => {
               />
 
               {/* Player's area */}
-              <div className="bg-black/20 rounded-lg p-4 border border-accent-green/30">
-                <NetworkBoardDroppable
-                  network={humanPlayer.network}
-                  isCurrentPlayer={isHumanTurn}
-                  label="Your Network"
-                  playerId="player-1"
-                  canReceiveAttacks={false} // Can't attack yourself
-                  canReceiveResolutions={canPlayCards && hasResolutionCards && playerHasDisabledEquipment}
-                  canRearrange={canPlayCards} // Allow rearranging when player has moves
-                  classificationCards={humanPlayer.classificationCards}
-                />
-                
-                <div className="mt-4">
+              <div className="bg-black/20 rounded-lg p-4 border border-accent-green/30 space-y-4">
+                {/* Player's Hand */}
+                <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-accent-green font-medium">Your Hand</span>
                     <span className="text-xs text-muted-foreground">
@@ -520,6 +515,24 @@ const Simulation = () => {
                     </div>
                   </div>
                 </div>
+                
+                {/* Classification Cards Section - between hand and network */}
+                <ClassificationSection
+                  classificationCards={humanPlayer.classificationCards}
+                  isCurrentPlayer={isHumanTurn}
+                  playerId="player-1"
+                />
+                
+                {/* Network Board */}
+                <NetworkBoardDroppable
+                  network={humanPlayer.network}
+                  isCurrentPlayer={isHumanTurn}
+                  label="Your Network"
+                  playerId="player-1"
+                  canReceiveAttacks={false} // Can't attack yourself
+                  canReceiveResolutions={canPlayCards && hasResolutionCards && playerHasDisabledEquipment}
+                  canRearrange={canPlayCards} // Allow rearranging when player has moves
+                />
               </div>
             </div>
           </div>
