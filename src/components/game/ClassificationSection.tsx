@@ -9,12 +9,12 @@ interface ClassificationSectionProps {
 }
 
 const abilityDescriptions: Record<string, string> = {
-  'security-specialist': '🛡️ Blocks Hacked',
-  'facilities': '⚡ Blocks Power Outage',
-  'supervisor': '👔 Blocks New Hire',
+  'security-specialist': '🛡️ Auto-resolves Hacked',
+  'facilities': '⚡ Auto-resolves Power Outage',
+  'supervisor': '👔 Auto-resolves New Hire',
   'field-tech': '🔧 +1 Move/Turn',
-  'head-hunter': '🎯 +1 Card/Turn',
-  'seal-the-deal': '💰 2x Scoring',
+  'head-hunter': '🎯 Steals Classification',
+  'seal-the-deal': '💎 Unblockable Steal',
 };
 
 export function ClassificationSection({
