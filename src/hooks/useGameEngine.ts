@@ -936,59 +936,12 @@ export function useGameEngine() {
     setGameState(prev => {
       if (!prev) return prev;
       
-      const phases: GamePhase[] = ['moves', 'discard', 'draw', 'score'];
-      const currentIndex = phases.indexOf(prev.phase as GamePhase);
-      
-      if (prev.phase === 'score') {
-        // Calculate score
+      // If in moves phase, go straight to end of turn (draw, score, next player)
+      if (prev.phase === 'moves') {
         const currentPlayer = prev.players[prev.currentPlayerIndex];
-        const connectedComputers = countConnectedComputers(currentPlayer.network);
         
-        const newPlayers = [...prev.players];
-        newPlayers[prev.currentPlayerIndex] = {
-          ...currentPlayer,
-          score: currentPlayer.score + connectedComputers,
-        };
-        
-        const newScore = newPlayers[prev.currentPlayerIndex].score;
-        
-        // Check for winner
-        if (newScore >= WINNING_SCORE) {
-          return {
-            ...prev,
-            players: newPlayers,
-            phase: 'game-over',
-            winner: newPlayers[prev.currentPlayerIndex],
-            gameLog: [...prev.gameLog.slice(-19), `🎉 ${currentPlayer.name} wins with ${newScore} bitcoin!`],
-          };
-        }
-        
-        // Move to next player's turn
-        const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
-        const nextPlayer = prev.players[nextPlayerIndex];
-        
-        return {
-          ...prev,
-          players: newPlayers,
-          currentPlayerIndex: nextPlayerIndex,
-          phase: 'moves',
-          movesRemaining: MOVES_PER_TURN,
-          turnNumber: prev.turnNumber + 1,
-          gameLog: [
-            ...prev.gameLog.slice(-19),
-            `Scored ${connectedComputers} bitcoin (Total: ${newScore})`,
-            `--- ${nextPlayer.name}'s Turn ---`,
-          ],
-        };
-      }
-      
-      const nextPhase = phases[currentIndex + 1] || 'moves';
-      
-      // Auto-draw when entering draw phase
-      if (nextPhase === 'draw') {
-        const currentPlayer = prev.players[prev.currentPlayerIndex];
+        // 1. Draw cards to refill hand
         const cardsToDraw = Math.max(0, MAX_HAND_SIZE - currentPlayer.hand.length);
-        
         let newDrawPile = [...prev.drawPile];
         let newDiscardPile = [...prev.discardPile];
         
@@ -1000,27 +953,68 @@ export function useGameEngine() {
         const drawnCards = newDrawPile.slice(0, cardsToDraw);
         newDrawPile = newDrawPile.slice(cardsToDraw);
         
+        // 2. Score connected computers
+        const connectedComputers = countConnectedComputers(currentPlayer.network);
+        const newScore = currentPlayer.score + connectedComputers;
+        
+        // Update player with drawn cards and new score
         const newPlayers = [...prev.players];
         newPlayers[prev.currentPlayerIndex] = {
           ...currentPlayer,
           hand: [...currentPlayer.hand, ...drawnCards],
+          score: newScore,
         };
+        
+        // 3. Check for winner
+        if (newScore >= WINNING_SCORE) {
+          return {
+            ...prev,
+            players: newPlayers,
+            drawPile: newDrawPile,
+            discardPile: newDiscardPile,
+            phase: 'game-over',
+            winner: newPlayers[prev.currentPlayerIndex],
+            gameLog: [
+              ...prev.gameLog.slice(-19),
+              cardsToDraw > 0 ? `Drew ${cardsToDraw} card(s)` : '',
+              `Scored ${connectedComputers} bitcoin (Total: ${newScore})`,
+              `🎉 ${currentPlayer.name} wins with ${newScore} bitcoin!`,
+            ].filter(Boolean),
+          };
+        }
+        
+        // 4. Move to next player's turn
+        const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
+        const nextPlayer = prev.players[nextPlayerIndex];
         
         return {
           ...prev,
           players: newPlayers,
           drawPile: newDrawPile,
           discardPile: newDiscardPile,
-          phase: 'score',
-          gameLog: [...prev.gameLog.slice(-19), `Drew ${drawnCards.length} card(s)`, 'Scoring phase...'],
+          currentPlayerIndex: nextPlayerIndex,
+          phase: 'moves',
+          movesRemaining: MOVES_PER_TURN,
+          turnNumber: prev.turnNumber + 1,
+          gameLog: [
+            ...prev.gameLog.slice(-19),
+            cardsToDraw > 0 ? `Drew ${cardsToDraw} card(s)` : '',
+            `Scored ${connectedComputers} bitcoin (Total: ${newScore})`,
+            `--- ${nextPlayer.name}'s Turn ---`,
+          ].filter(Boolean),
         };
       }
       
-      return {
-        ...prev,
-        phase: nextPhase,
-        gameLog: [...prev.gameLog.slice(-19), `${nextPhase.charAt(0).toUpperCase() + nextPhase.slice(1)} phase`],
-      };
+      // Handle discard phase (if manually entered)
+      if (prev.phase === 'discard') {
+        return {
+          ...prev,
+          phase: 'moves',
+          gameLog: [...prev.gameLog.slice(-19), 'Discard phase ended'],
+        };
+      }
+      
+      return prev;
     });
   }, [gameState, countConnectedComputers]);
 
