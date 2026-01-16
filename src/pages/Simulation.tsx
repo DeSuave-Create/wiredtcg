@@ -53,6 +53,7 @@ const Simulation = () => {
     playComputer,
     playAttack,
     playResolution,
+    playClassification,
     discardCard,
     endPhase,
     executeAITurn,
@@ -288,6 +289,15 @@ const Simulation = () => {
       }
       return;
     }
+
+    // Handle classification cards (on own classification zone)
+    if (card.type === 'classification' && isHumanTarget && zoneType === 'classification') {
+      const success = playClassification(card.id);
+      if (success) {
+        toast.success(`${card.name} is now active!`);
+      }
+      return;
+    }
   };
 
   // Show helpful hint based on card type
@@ -304,6 +314,12 @@ const Simulation = () => {
       'powered': '🔧 Drag to YOUR disabled equipment with Power Outage issue',
       'trained': '🔧 Drag to YOUR disabled equipment with New Hire issue',
       'helpdesk': '🔧 Drag to YOUR disabled equipment to fix ALL issues',
+      'security-specialist': '🎖️ Drag to YOUR classification zone (blocks Hacked)',
+      'facilities': '🎖️ Drag to YOUR classification zone (blocks Power Outage)',
+      'supervisor': '🎖️ Drag to YOUR classification zone (blocks New Hire)',
+      'field-tech': '🎖️ Drag to YOUR classification zone (+1 move/turn)',
+      'head-hunter': '🎖️ Drag to YOUR classification zone (+1 card/turn)',
+      'seal-the-deal': '🎖️ Drag to YOUR classification zone (2x scoring)',
     };
     
     const hint = hints[card.subtype] || `Cannot place ${card.name} here`;
@@ -446,6 +462,7 @@ const Simulation = () => {
                     playerId="player-2"
                     canReceiveAttacks={canPlayCards} // Human can attack during their moves phase
                     canReceiveResolutions={false} // Can't play resolutions on opponent
+                    classificationCards={computerPlayer.classificationCards}
                   />
                 </div>
               </div>
@@ -469,6 +486,7 @@ const Simulation = () => {
                   canReceiveAttacks={false} // Can't attack yourself
                   canReceiveResolutions={canPlayCards && hasResolutionCards && playerHasDisabledEquipment}
                   canRearrange={canPlayCards} // Allow rearranging when player has moves
+                  classificationCards={humanPlayer.classificationCards}
                 />
                 
                 <div className="mt-4">
