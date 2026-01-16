@@ -1,5 +1,6 @@
 import { PlayerNetwork, SwitchNode, CableNode, PlacedCard, Card, FloatingCable } from '@/types/game';
 import { DroppableZone } from './DroppableZone';
+import { DraggablePlacedCard } from './DraggablePlacedCard';
 import { cn } from '@/lib/utils';
 import { AlertTriangle, Unplug } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -11,6 +12,7 @@ interface NetworkBoardDroppableProps {
   playerId: string;
   canReceiveAttacks?: boolean;
   canReceiveResolutions?: boolean;
+  canRearrange?: boolean; // Whether cards can be dragged to rearrange
 }
 
 export function NetworkBoardDroppable({
@@ -20,6 +22,7 @@ export function NetworkBoardDroppable({
   playerId,
   canReceiveAttacks = false,
   canReceiveResolutions = false,
+  canRearrange = false,
 }: NetworkBoardDroppableProps) {
   const hasFloatingEquipment = network.floatingCables.length > 0 || network.floatingComputers.length > 0;
   
@@ -58,6 +61,7 @@ export function NetworkBoardDroppable({
               playerId={playerId}
               canReceiveAttacks={canReceiveAttacks}
               canReceiveResolutions={canReceiveResolutions}
+              canRearrange={canRearrange}
             />
           ))}
         </div>
@@ -80,19 +84,31 @@ export function NetworkBoardDroppable({
                   playerId={playerId}
                   canReceiveAttacks={canReceiveAttacks}
                   canReceiveResolutions={canReceiveResolutions}
+                  canRearrange={canRearrange}
                 />
               ))}
               
               {/* Floating Computers */}
               {network.floatingComputers.map((comp) => (
                 <div key={comp.id} className="relative">
-                  <PlacedCardDisplay
-                    card={comp.card}
-                    placementId={comp.id}
-                    isDisabled={true}
-                    className="w-10 h-12 opacity-70"
-                    small
-                  />
+                  {canRearrange ? (
+                    <DraggablePlacedCard
+                      placedCard={comp}
+                      disabled={false}
+                      className="w-10 h-12 opacity-70"
+                      small
+                      sourceType="floating-computer"
+                      sourceId={comp.id}
+                    />
+                  ) : (
+                    <PlacedCardDisplay
+                      card={comp.card}
+                      placementId={comp.id}
+                      isDisabled={true}
+                      className="w-10 h-12 opacity-70"
+                      small
+                    />
+                  )}
                   <div className="absolute -bottom-1 left-0 right-0 text-center">
                     <span className="text-[8px] bg-yellow-500 text-black px-1 rounded">floating</span>
                   </div>
@@ -118,6 +134,7 @@ interface SwitchComponentProps {
   playerId: string;
   canReceiveAttacks: boolean;
   canReceiveResolutions: boolean;
+  canRearrange: boolean;
 }
 
 function SwitchComponent({
@@ -126,6 +143,7 @@ function SwitchComponent({
   playerId,
   canReceiveAttacks,
   canReceiveResolutions,
+  canRearrange,
 }: SwitchComponentProps) {
   // Determine what this equipment can accept
   const getEquipmentAccepts = (): string[] => {
@@ -188,6 +206,7 @@ function SwitchComponent({
               playerId={playerId}
               canReceiveAttacks={canReceiveAttacks}
               canReceiveResolutions={canReceiveResolutions}
+              canRearrange={canRearrange}
             />
           ))}
         </div>
@@ -210,6 +229,7 @@ interface FloatingCableComponentProps {
   playerId: string;
   canReceiveAttacks: boolean;
   canReceiveResolutions: boolean;
+  canRearrange: boolean;
 }
 
 function FloatingCableComponent({
@@ -218,6 +238,7 @@ function FloatingCableComponent({
   playerId,
   canReceiveAttacks,
   canReceiveResolutions,
+  canRearrange,
 }: FloatingCableComponentProps) {
   const hasSpace = cable.computers.length < cable.maxComputers;
   
@@ -236,15 +257,27 @@ function FloatingCableComponent({
   const content = (
     <div className="relative bg-yellow-500/10 rounded-lg p-2 border border-dashed border-yellow-500/50">
       <div className="relative">
-        <PlacedCardDisplay
-          card={cable.card}
-          placementId={cable.id}
-          isDisabled={true}
-          className="w-14 h-18 opacity-80"
-        />
-        <div className="absolute -bottom-1 left-0 right-0 text-center">
-          <span className="text-[8px] bg-yellow-500 text-black px-1 rounded">floating</span>
-        </div>
+        {canRearrange ? (
+          <DraggablePlacedCard
+            placedCard={cable}
+            disabled={false}
+            className="w-14 h-18 opacity-80"
+            sourceType="floating-cable"
+            sourceId={cable.id}
+          />
+        ) : (
+          <PlacedCardDisplay
+            card={cable.card}
+            placementId={cable.id}
+            isDisabled={true}
+            className="w-14 h-18 opacity-80"
+          />
+        )}
+        {!canRearrange && (
+          <div className="absolute -bottom-1 left-0 right-0 text-center">
+            <span className="text-[8px] bg-yellow-500 text-black px-1 rounded">floating</span>
+          </div>
+        )}
       </div>
       
       {/* Capacity indicator */}
@@ -260,13 +293,25 @@ function FloatingCableComponent({
         <div className="flex gap-1 mt-1 justify-center">
           {cable.computers.map((comp) => (
             <div key={comp.id} className="relative">
-              <PlacedCardDisplay
-                card={comp.card}
-                placementId={comp.id}
-                isDisabled={true}
-                className="w-8 h-10 opacity-70"
-                small
-              />
+              {canRearrange ? (
+                <DraggablePlacedCard
+                  placedCard={comp}
+                  disabled={false}
+                  className="w-8 h-10 opacity-70"
+                  small
+                  sourceType="computer"
+                  sourceId={comp.id}
+                  parentId={cable.id}
+                />
+              ) : (
+                <PlacedCardDisplay
+                  card={comp.card}
+                  placementId={comp.id}
+                  isDisabled={true}
+                  className="w-8 h-10 opacity-70"
+                  small
+                />
+              )}
             </div>
           ))}
         </div>
@@ -305,6 +350,7 @@ interface CableComponentProps {
   playerId: string;
   canReceiveAttacks: boolean;
   canReceiveResolutions: boolean;
+  canRearrange: boolean;
 }
 
 function CableComponent({
@@ -314,6 +360,7 @@ function CableComponent({
   playerId,
   canReceiveAttacks,
   canReceiveResolutions,
+  canRearrange,
 }: CableComponentProps) {
   const hasSpace = cable.computers.length < cable.maxComputers;
   
@@ -352,15 +399,26 @@ function CableComponent({
         className="w-fit"
       >
         <div className="relative">
-          <PlacedCardDisplay
-            card={cable.card}
-            placementId={cable.id}
-            isDisabled={cable.isDisabled}
-            className="w-14 h-18"
-          />
+          {canRearrange ? (
+            <DraggablePlacedCard
+              placedCard={cable}
+              disabled={false}
+              className="w-14 h-18"
+              sourceType="cable"
+              sourceId={cable.id}
+              parentId={switchId}
+            />
+          ) : (
+            <PlacedCardDisplay
+              card={cable.card}
+              placementId={cable.id}
+              isDisabled={cable.isDisabled}
+              className="w-14 h-18"
+            />
+          )}
           
           {/* Issue indicators */}
-          {cable.attachedIssues.length > 0 && (
+          {cable.attachedIssues.length > 0 && !canRearrange && (
             <IssueIndicator issues={cable.attachedIssues} />
           )}
         </div>
@@ -386,6 +444,7 @@ function CableComponent({
               playerId={playerId}
               canReceiveAttacks={canReceiveAttacks}
               canReceiveResolutions={canReceiveResolutions}
+              canRearrange={canRearrange}
             />
           ))}
         </div>
@@ -408,6 +467,7 @@ interface ComputerComponentProps {
   playerId: string;
   canReceiveAttacks: boolean;
   canReceiveResolutions: boolean;
+  canRearrange: boolean;
 }
 
 function ComputerComponent({
@@ -417,6 +477,7 @@ function ComputerComponent({
   playerId,
   canReceiveAttacks,
   canReceiveResolutions,
+  canRearrange,
 }: ComputerComponentProps) {
   // Determine what this equipment can accept
   const getEquipmentAccepts = (): string[] => {
@@ -436,6 +497,39 @@ function ComputerComponent({
   };
   
   const accepts = getEquipmentAccepts();
+  
+  // If player can rearrange, render draggable
+  if (canRearrange) {
+    const content = (
+      <div className="relative">
+        <DraggablePlacedCard
+          placedCard={computer}
+          disabled={false}
+          className="w-10 h-12"
+          small
+          sourceType="computer"
+          sourceId={computer.id}
+          parentId={cableId}
+        />
+      </div>
+    );
+    
+    // Wrap in droppable if can receive attacks/resolutions
+    if (accepts.length > 0) {
+      return (
+        <DroppableZone
+          id={`${playerId}-computer-${computer.id}`}
+          type={canReceiveAttacks ? 'opponent-equipment' : 'own-equipment'}
+          accepts={accepts}
+          className="w-fit"
+        >
+          {content}
+        </DroppableZone>
+      );
+    }
+    
+    return content;
+  }
   
   // If no interactions possible, render simple div
   if (accepts.length === 0) {
@@ -478,7 +572,7 @@ function ComputerComponent({
   );
 }
 
-// Animated card display for placed cards
+// Animated card display for placed cards (non-draggable version)
 interface PlacedCardDisplayProps {
   card: Card;
   placementId: string;

@@ -370,6 +370,184 @@ export function useGameEngine() {
     return true;
   }, [gameState]);
 
+  // Move placed equipment to a new location (FREE action - doesn't cost a move if it's rearranging)
+  const moveEquipment = useCallback((
+    sourceType: 'switch' | 'cable' | 'computer' | 'floating-cable' | 'floating-computer',
+    sourceId: string,
+    targetType: 'switch' | 'cable' | 'floating' | 'board',
+    targetId?: string
+  ) => {
+    if (!gameState) return false;
+    
+    // Only human player can rearrange
+    const humanPlayerIndex = 0;
+    
+    setGameState(prev => {
+      if (!prev) return prev;
+      
+      const newPlayers = [...prev.players];
+      const player = { ...newPlayers[humanPlayerIndex] };
+      let network = { ...player.network };
+      
+      let movedItem: any = null;
+      let logMessage = '';
+      
+      // === EXTRACT the item from its source ===
+      
+      // Extract floating computer
+      if (sourceType === 'floating-computer') {
+        const idx = network.floatingComputers.findIndex(c => c.id === sourceId);
+        if (idx !== -1) {
+          movedItem = network.floatingComputers[idx];
+          network.floatingComputers = network.floatingComputers.filter(c => c.id !== sourceId);
+        }
+      }
+      
+      // Extract floating cable (with its computers)
+      else if (sourceType === 'floating-cable') {
+        const idx = network.floatingCables.findIndex(c => c.id === sourceId);
+        if (idx !== -1) {
+          movedItem = network.floatingCables[idx];
+          network.floatingCables = network.floatingCables.filter(c => c.id !== sourceId);
+        }
+      }
+      
+      // Extract computer from a cable (connected or floating)
+      else if (sourceType === 'computer') {
+        // Check connected cables
+        let found = false;
+        network.switches = network.switches.map(sw => ({
+          ...sw,
+          cables: sw.cables.map(cable => {
+            const compIdx = cable.computers.findIndex(c => c.id === sourceId);
+            if (compIdx !== -1) {
+              movedItem = cable.computers[compIdx];
+              found = true;
+              return {
+                ...cable,
+                computers: cable.computers.filter(c => c.id !== sourceId),
+              };
+            }
+            return cable;
+          }),
+        }));
+        
+        // Check floating cables if not found
+        if (!found) {
+          network.floatingCables = network.floatingCables.map(cable => {
+            const compIdx = cable.computers.findIndex(c => c.id === sourceId);
+            if (compIdx !== -1) {
+              movedItem = cable.computers[compIdx];
+              return {
+                ...cable,
+                computers: cable.computers.filter(c => c.id !== sourceId),
+              };
+            }
+            return cable;
+          });
+        }
+      }
+      
+      // Extract cable from a switch
+      else if (sourceType === 'cable') {
+        network.switches = network.switches.map(sw => {
+          const cableIdx = sw.cables.findIndex(c => c.id === sourceId);
+          if (cableIdx !== -1) {
+            movedItem = sw.cables[cableIdx];
+            return {
+              ...sw,
+              cables: sw.cables.filter(c => c.id !== sourceId),
+            };
+          }
+          return sw;
+        });
+      }
+      
+      if (!movedItem) {
+        console.log('Could not find item to move:', sourceType, sourceId);
+        return prev;
+      }
+      
+      // === PLACE the item at the target ===
+      
+      // Computer -> Cable or Floating
+      if (sourceType === 'computer' || sourceType === 'floating-computer') {
+        if (targetType === 'cable' && targetId) {
+          // Try connected cables
+          let placed = false;
+          network.switches = network.switches.map(sw => ({
+            ...sw,
+            cables: sw.cables.map(cable => {
+              if (cable.id === targetId && cable.computers.length < cable.maxComputers) {
+                placed = true;
+                logMessage = 'Moved computer to connected cable';
+                return { ...cable, computers: [...cable.computers, movedItem] };
+              }
+              return cable;
+            }),
+          }));
+          
+          // Try floating cables if not placed
+          if (!placed) {
+            network.floatingCables = network.floatingCables.map(cable => {
+              if (cable.id === targetId && cable.computers.length < cable.maxComputers) {
+                placed = true;
+                logMessage = 'Moved computer to floating cable';
+                return { ...cable, computers: [...cable.computers, movedItem] };
+              }
+              return cable;
+            });
+          }
+          
+          if (!placed) {
+            // Put back as floating
+            network.floatingComputers = [...network.floatingComputers, movedItem];
+            logMessage = 'No space on target cable, computer is now floating';
+          }
+        } else {
+          // Make it floating
+          network.floatingComputers = [...network.floatingComputers, movedItem];
+          logMessage = 'Computer disconnected (now floating)';
+        }
+      }
+      
+      // Cable -> Switch or Floating
+      else if (sourceType === 'cable' || sourceType === 'floating-cable') {
+        if (targetType === 'switch' && targetId) {
+          let placed = false;
+          network.switches = network.switches.map(sw => {
+            if (sw.id === targetId) {
+              placed = true;
+              logMessage = 'Moved cable to switch (now connected to internet!)';
+              return { ...sw, cables: [...sw.cables, movedItem] };
+            }
+            return sw;
+          });
+          
+          if (!placed) {
+            network.floatingCables = [...network.floatingCables, movedItem];
+            logMessage = 'Cable is now floating';
+          }
+        } else {
+          // Make it floating
+          network.floatingCables = [...network.floatingCables, movedItem];
+          logMessage = 'Cable disconnected (now floating)';
+        }
+      }
+      
+      player.network = network;
+      newPlayers[humanPlayerIndex] = player;
+      
+      return {
+        ...prev,
+        players: newPlayers,
+        gameLog: logMessage ? [...prev.gameLog.slice(-19), logMessage] : prev.gameLog,
+      };
+    });
+    
+    return true;
+  }, [gameState]);
+
   // Play a Computer card - can be floating or connected to a cable
   const playComputer = useCallback((cardId?: string, targetCableId?: string) => {
     if (!gameState) return false;
@@ -913,5 +1091,6 @@ export function useGameEngine() {
     countConnectedComputers,
     findEquipmentById,
     connectFloatingComputersToCable,
+    moveEquipment,
   };
 }
