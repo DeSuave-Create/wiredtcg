@@ -35,14 +35,21 @@ export function NetworkBoardDroppable({
         className="min-h-[200px] relative"
       >
         {/* Internet connection point */}
-        <div className="flex items-center justify-center mb-4">
+        <div className="flex items-center justify-center mb-6">
           <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-blue-500/30">
             INTERNET
           </div>
         </div>
         
-        {/* Connected Switches */}
-        <div className="space-y-4">
+        {/* Connection lines from Internet to Switches */}
+        {network.switches.length > 0 && (
+          <div className="flex justify-center mb-2">
+            <div className="w-0.5 h-4 bg-accent-green/50" />
+          </div>
+        )}
+        
+        {/* Connected Switches - horizontal layout */}
+        <div className="flex flex-wrap justify-center gap-6">
           {network.switches.map((sw) => (
             <SwitchComponent
               key={sw.id}
@@ -143,16 +150,16 @@ function SwitchComponent({
   };
 
   return (
-    <div className="relative">
+    <div className="relative flex flex-col items-center min-w-[100px]">
       {/* Connection line to Internet */}
-      <div className="absolute left-1/2 -top-4 w-0.5 h-4 bg-accent-green/50" />
+      <div className="w-0.5 h-4 bg-accent-green/50 mb-1" />
       
       {/* Switch card - droppable for cables, attacks, resolutions */}
       <DroppableZone
         id={`${playerId}-switch-${switchNode.id}`}
         type={canReceiveAttacks ? 'opponent-equipment' : isCurrentPlayer ? 'switch' : 'own-equipment'}
         accepts={getEquipmentAccepts()}
-        className="w-fit mx-auto"
+        className="w-fit"
       >
         <div className="relative">
           <PlacedCardDisplay
@@ -169,9 +176,9 @@ function SwitchComponent({
         </div>
       </DroppableZone>
       
-      {/* Cables */}
+      {/* Cables - vertical stack below switch */}
       {switchNode.cables.length > 0 && (
-        <div className="flex flex-wrap justify-center gap-4 mt-2 pl-8">
+        <div className="flex flex-wrap justify-center gap-2 mt-2">
           {switchNode.cables.map((cable) => (
             <CableComponent
               key={cable.id}
@@ -189,7 +196,7 @@ function SwitchComponent({
       {/* Empty cable slot hint */}
       {switchNode.cables.length === 0 && isCurrentPlayer && (
         <div className="text-center text-xs text-muted-foreground mt-2">
-          ↑ Drag cables here
+          ↑ Drop cable
         </div>
       )}
     </div>
