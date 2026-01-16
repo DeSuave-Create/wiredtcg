@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, RotateCcw } from 'lucide-react';
-import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, pointerWithin } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, pointerWithin, CollisionDetection, DroppableContainer } from '@dnd-kit/core';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,33 @@ import { ScoreDisplay } from '@/components/game/ScoreDisplay';
 import { DiscardZone } from '@/components/game/DiscardZone';
 import { Card } from '@/types/game';
 import { toast } from 'sonner';
+
+// Custom collision detection that prefers specific targets over board zones
+const preferSpecificTargets: CollisionDetection = (args) => {
+  const collisions = pointerWithin(args);
+  
+  if (collisions.length <= 1) {
+    return collisions;
+  }
+  
+  // Sort to prefer specific targets (switch, cable, floating-cable) over board
+  const sorted = [...collisions].sort((a, b) => {
+    const aId = String(a.id);
+    const bId = String(b.id);
+    
+    // Board zones should have lowest priority
+    const aIsBoard = aId.includes('-board');
+    const bIsBoard = bId.includes('-board');
+    
+    if (aIsBoard && !bIsBoard) return 1;  // a goes after b
+    if (!aIsBoard && bIsBoard) return -1; // a goes before b
+    
+    return 0;
+  });
+  
+  // Return only the highest priority collision
+  return sorted.slice(0, 1);
+};
 
 const Simulation = () => {
   const {
@@ -213,7 +240,7 @@ const Simulation = () => {
       <DndContext 
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
-        collisionDetection={pointerWithin}
+        collisionDetection={preferSpecificTargets}
       >
         <main className="flex-grow container mx-auto px-4 py-6">
           {/* Back button and title */}
