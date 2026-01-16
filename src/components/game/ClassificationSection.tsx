@@ -107,7 +107,7 @@ export function ClassificationSection({
             classificationCards.map((classCard) => (
               <div key={classCard.id} className="relative group">
                 <div className={cn(
-                  "rounded border-2 border-blue-500 overflow-hidden transition-transform hover:scale-105",
+                  "rounded border-2 border-gray-600 overflow-hidden transition-transform hover:scale-105",
                   compact ? "w-8 h-11" : "w-14 h-20"
                 )}>
                   <img 

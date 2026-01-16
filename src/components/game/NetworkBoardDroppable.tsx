@@ -673,7 +673,7 @@ function PlacedCardDisplay({ card, placementId, isDisabled, className, small = f
     <div
       className={cn(
         "rounded border-2 overflow-hidden transition-all duration-300 bg-black",
-        isDisabled ? "border-red-500 opacity-70" : "border-green-600",
+        isDisabled ? "border-red-500 opacity-70" : "border-gray-600",
         isNew && "animate-scale-in",
         isReEnabled && "animate-pulse",
         className
