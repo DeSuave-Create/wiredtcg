@@ -198,8 +198,9 @@ export function useGameEngine() {
   }, [gameState, addLog]);
 
   // Play a Cable card - NO auto-connect, requires proximity drop
-  const playCable = useCallback((cardId?: string, targetSwitchId?: string) => {
-    if (!gameState) return false;
+  // Returns { success, cableId, maxComputers } for follow-up actions
+  const playCable = useCallback((cardId?: string, targetSwitchId?: string): { success: boolean; cableId?: string; maxComputers?: number } => {
+    if (!gameState) return { success: false };
     
     const player = gameState.players[gameState.currentPlayerIndex];
     const cableCard = cardId
@@ -208,13 +209,16 @@ export function useGameEngine() {
     
     if (!cableCard || (cableCard.subtype !== 'cable-2' && cableCard.subtype !== 'cable-3')) {
       addLog('No Cable card!');
-      return false;
+      return { success: false };
     }
     
     if (gameState.movesRemaining <= 0) {
       addLog('No moves remaining!');
-      return false;
+      return { success: false };
     }
+    
+    const maxComputers = cableCard.subtype === 'cable-2' ? 2 : 3;
+    const newCableId = generatePlacementId();
     
     setGameState(prev => {
       if (!prev) return prev;
@@ -225,12 +229,10 @@ export function useGameEngine() {
       // Remove card from hand
       currentPlayer.hand = currentPlayer.hand.filter(c => c.id !== cableCard.id);
       
-      const maxComputers = cableCard.subtype === 'cable-2' ? 2 : 3;
-      
       // Create cable node - no auto-connect
       const newCable: CableNode = {
         card: cableCard,
-        id: generatePlacementId(),
+        id: newCableId,
         attachedIssues: [],
         isDisabled: false,
         maxComputers: maxComputers as 2 | 3,
@@ -274,8 +276,86 @@ export function useGameEngine() {
       };
     });
     
-    return true;
+    return { success: true, cableId: newCableId, maxComputers };
   }, [gameState, addLog]);
+
+  // Connect floating computers to a cable (FREE action - doesn't cost a move)
+  const connectFloatingComputersToCable = useCallback((cableId: string, computerIds: string[]) => {
+    if (!gameState || computerIds.length === 0) return false;
+    
+    setGameState(prev => {
+      if (!prev) return prev;
+      
+      const newPlayers = [...prev.players];
+      const currentPlayer = { ...newPlayers[prev.currentPlayerIndex] };
+      
+      // Find the computers to connect
+      const computersToConnect = currentPlayer.network.floatingComputers.filter(
+        c => computerIds.includes(c.id)
+      );
+      
+      if (computersToConnect.length === 0) return prev;
+      
+      // Remove connected computers from floating
+      const remainingFloating = currentPlayer.network.floatingComputers.filter(
+        c => !computerIds.includes(c.id)
+      );
+      
+      // Try to find the cable in connected switches
+      let found = false;
+      const newSwitches = currentPlayer.network.switches.map(sw => ({
+        ...sw,
+        cables: sw.cables.map(cable => {
+          if (cable.id === cableId) {
+            const spaceLeft = cable.maxComputers - cable.computers.length;
+            const toAdd = computersToConnect.slice(0, spaceLeft);
+            found = true;
+            return {
+              ...cable,
+              computers: [...cable.computers, ...toAdd],
+            };
+          }
+          return cable;
+        }),
+      }));
+      
+      // Try floating cables if not found
+      let newFloatingCables = currentPlayer.network.floatingCables;
+      if (!found) {
+        newFloatingCables = currentPlayer.network.floatingCables.map(cable => {
+          if (cable.id === cableId) {
+            const spaceLeft = cable.maxComputers - cable.computers.length;
+            const toAdd = computersToConnect.slice(0, spaceLeft);
+            found = true;
+            return {
+              ...cable,
+              computers: [...cable.computers, ...toAdd],
+            };
+          }
+          return cable;
+        });
+      }
+      
+      if (!found) return prev;
+      
+      currentPlayer.network = {
+        ...currentPlayer.network,
+        switches: newSwitches,
+        floatingCables: newFloatingCables,
+        floatingComputers: remainingFloating,
+      };
+      
+      newPlayers[prev.currentPlayerIndex] = currentPlayer;
+      
+      return {
+        ...prev,
+        players: newPlayers,
+        gameLog: [...prev.gameLog.slice(-19), `Connected ${computersToConnect.length} computer(s) to cable (FREE)`],
+      };
+    });
+    
+    return true;
+  }, [gameState]);
 
   // Play a Computer card - can be floating or connected to a cable
   const playComputer = useCallback((cardId?: string, targetCableId?: string) => {
@@ -819,5 +899,6 @@ export function useGameEngine() {
     executeAITurn,
     countConnectedComputers,
     findEquipmentById,
+    connectFloatingComputersToCable,
   };
 }
