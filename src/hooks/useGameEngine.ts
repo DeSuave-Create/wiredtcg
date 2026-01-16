@@ -1047,6 +1047,79 @@ export function useGameEngine() {
     return true;
   }, [gameState, addLog, findEquipmentById]);
 
+  // Play a Classification card (max 2 in play)
+  const playClassification = useCallback((cardId: string) => {
+    if (!gameState) return false;
+    
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    const classCard = currentPlayer.hand.find(c => c.id === cardId);
+    
+    if (!classCard || classCard.type !== 'classification') {
+      addLog('Invalid classification card!');
+      return false;
+    }
+    
+    if (gameState.movesRemaining <= 0) {
+      addLog('No moves remaining!');
+      return false;
+    }
+    
+    // Check if player already has 2 classification cards
+    if (currentPlayer.classificationCards.length >= 2) {
+      addLog('Maximum 2 classification cards in play!');
+      return false;
+    }
+    
+    // Check if same type already in play
+    const sameTypeInPlay = currentPlayer.classificationCards.some(
+      c => c.card.subtype === classCard.subtype
+    );
+    if (sameTypeInPlay) {
+      addLog(`${classCard.name} already in play!`);
+      return false;
+    }
+    
+    setGameState(prev => {
+      if (!prev) return prev;
+      
+      const newPlayers = [...prev.players];
+      const player = { ...newPlayers[prev.currentPlayerIndex] };
+      
+      // Remove card from hand
+      player.hand = player.hand.filter(c => c.id !== classCard.id);
+      
+      // Add to classification cards
+      const newClassCard: PlacedCard = {
+        card: classCard,
+        id: generatePlacementId(),
+        attachedIssues: [],
+        isDisabled: false,
+      };
+      player.classificationCards = [...player.classificationCards, newClassCard];
+      
+      newPlayers[prev.currentPlayerIndex] = player;
+      
+      // Describe the ability
+      const abilities: Record<string, string> = {
+        'security-specialist': 'Blocks Hacked attacks',
+        'facilities': 'Blocks Power Outage attacks',
+        'supervisor': 'Blocks New Hire attacks',
+        'field-tech': '+1 move per turn',
+        'head-hunter': 'Draw extra card at end of turn',
+        'seal-the-deal': 'Double scoring for this turn',
+      };
+      
+      return {
+        ...prev,
+        players: newPlayers,
+        movesRemaining: prev.movesRemaining - 1,
+        gameLog: [...prev.gameLog.slice(-19), `🎖️ ${classCard.name} played! ${abilities[classCard.subtype] || ''}`],
+      };
+    });
+    
+    return true;
+  }, [gameState, addLog]);
+
   // Draw cards up to max hand size
   const drawCards = useCallback(() => {
     if (!gameState) return;
@@ -1561,6 +1634,7 @@ export function useGameEngine() {
     playComputer,
     playAttack,
     playResolution,
+    playClassification,
     discardCard,
     drawCards,
     endPhase,
