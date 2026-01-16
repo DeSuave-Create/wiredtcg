@@ -513,11 +513,11 @@ const Simulation = () => {
               </div>
             </div>
 
-            {/* Opponent Area - Right on desktop */}
-            <div className="order-1 lg:order-2 bg-black/20 rounded-lg p-3 border border-gray-700 space-y-2">
-              <h2 className="text-xs font-bold text-gray-400">OPPONENT</h2>
+            {/* Opponent Area - Right on desktop, same size as player */}
+            <div className="order-1 lg:order-2 bg-black/20 rounded-lg p-4 border border-gray-700 space-y-4">
+              <h2 className="text-sm font-bold text-gray-400">OPPONENT</h2>
               
-              {/* Computer's Network - NOT compact, same size as player */}
+              {/* Computer's Network - full size like player */}
               <NetworkBoardDroppable
                 network={computerPlayer.network}
                 isCurrentPlayer={false}
@@ -527,26 +527,24 @@ const Simulation = () => {
                 canReceiveResolutions={false}
               />
               
-              {/* Computer's Classifications - compact */}
+              {/* Computer's Classifications - full size */}
               <ClassificationSection
                 classificationCards={computerPlayer.classificationCards}
                 isCurrentPlayer={false}
                 playerId="player-2"
-                compact={true}
               />
               
-              {/* Computer's Hand - compact */}
+              {/* Computer's Hand - full size */}
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-gray-400">Hand</span>
-                  <span className="text-xs text-muted-foreground">{computerPlayer.hand.length} cards</span>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-gray-400">Computer's Hand</span>
+                  <span className="text-sm text-muted-foreground">{computerPlayer.hand.length} cards</span>
                 </div>
                 <PlayerHandDraggable
                   cards={computerPlayer.hand}
                   isCurrentPlayer={false}
                   showCards={false}
                   disabled={true}
-                  compact={true}
                 />
               </div>
             </div>
