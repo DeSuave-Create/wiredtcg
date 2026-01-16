@@ -455,128 +455,113 @@ const Simulation = () => {
             </div>
           )}
 
-          {/* Main game area */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-            {/* Left sidebar - Game log (sticky) */}
-            <div className="lg:col-span-1 order-3 lg:order-1">
-              <div className="lg:sticky lg:top-20 space-y-4 z-40">
-                <GameLog messages={gameState.gameLog} />
-                
-                {/* Quick rules reference */}
-                <div className="bg-black/40 rounded-lg border border-gray-700 p-3">
-                  <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Quick Rules</h4>
-                  <ul className="text-xs text-muted-foreground space-y-1">
-                    <li>• <span className="text-green-400">Any equipment</span> → drag to your board</li>
-                    <li>• <span className="text-yellow-400">Connect</span>: drop cable ON switch, PC ON cable</li>
-                    <li>• <span className="text-red-400">Attack</span> → drag to opponent's equipment</li>
-                    <li>• <span className="text-blue-400">Resolution</span> → drag to your disabled equipment</li>
-                    <li>• <span className="text-gray-400">Discard</span> → drag unwanted cards to trash</li>
-                    <li>• Only <span className="text-green-400">connected</span> 💻 = 1 bitcoin/turn</li>
-                    <li>• First to 25 bitcoin wins!</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Main game board */}
-            <div className="lg:col-span-3 order-1 lg:order-2 space-y-4">
-              {/* Opponent's area */}
-              <div className="bg-black/20 rounded-lg p-4 border border-gray-700 overflow-visible space-y-4">
-                {/* 1. Computer's Network */}
-                <NetworkBoardDroppable
-                  network={computerPlayer.network}
-                  isCurrentPlayer={false}
-                  label="Computer's Network"
-                  playerId="player-2"
-                  canReceiveAttacks={canPlayCards} // Human can attack during their moves phase
-                  canReceiveResolutions={false} // Can't play resolutions on opponent
-                />
-                
-                {/* 2. Classification Cards */}
-                <ClassificationSection
-                  classificationCards={computerPlayer.classificationCards}
-                  isCurrentPlayer={false}
-                  playerId="player-2"
-                />
-                
-                {/* 3. Computer's Hand */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-400">Computer's Hand</span>
-                    <span className="text-sm text-muted-foreground">{computerPlayer.hand.length} cards</span>
-                  </div>
-                  <PlayerHandDraggable
-                    cards={computerPlayer.hand}
-                    isCurrentPlayer={false}
-                    showCards={false}
-                    disabled={true}
-                  />
-                </div>
-              </div>
-
-              {/* Game controls */}
-              <GameControlsSimple
-                phase={gameState.phase}
-                movesRemaining={gameState.movesRemaining}
-                onEndPhase={endPhase}
-                isCurrentPlayerHuman={isHumanTurn}
-                isDragging={activeCard !== null}
+          {/* Main game area - side by side on desktop */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Your Area - Left on desktop */}
+            <div className="order-2 lg:order-1 bg-black/20 rounded-lg p-4 border border-accent-green/30 space-y-3">
+              <h2 className="text-sm font-bold text-accent-green">YOUR AREA</h2>
+              
+              {/* Your Network */}
+              <NetworkBoardDroppable
+                network={humanPlayer.network}
+                isCurrentPlayer={isHumanTurn}
+                label="Your Network"
+                playerId="player-1"
+                canReceiveAttacks={false}
+                canReceiveResolutions={canPlayCards && hasResolutionCards && playerHasDisabledEquipment}
+                canRearrange={canPlayCards}
               />
-
-              {/* Player's area */}
-              <div className="bg-black/20 rounded-lg p-4 border border-accent-green/30 space-y-4">
-                {/* 1. Your Network */}
-                <NetworkBoardDroppable
-                  network={humanPlayer.network}
-                  isCurrentPlayer={isHumanTurn}
-                  label="Your Network"
-                  playerId="player-1"
-                  canReceiveAttacks={false} // Can't attack yourself
-                  canReceiveResolutions={canPlayCards && hasResolutionCards && playerHasDisabledEquipment}
-                  canRearrange={canPlayCards} // Allow rearranging when player has moves
-                />
-                
-                {/* 2. Classification Cards */}
-                <ClassificationSection
-                  classificationCards={humanPlayer.classificationCards}
-                  isCurrentPlayer={isHumanTurn}
-                  playerId="player-1"
-                />
-                
-                {/* 3. Your Hand */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-accent-green font-medium">Your Hand</span>
-                    <span className="text-xs text-muted-foreground">
-                      {isDiscardPhase 
-                        ? 'Drag cards to discard pile' 
-                        : canPlayCards 
-                          ? 'Drag cards to play' 
-                          : 'Wait for your turn'
-                      }
-                    </span>
+              
+              {/* Your Classifications */}
+              <ClassificationSection
+                classificationCards={humanPlayer.classificationCards}
+                isCurrentPlayer={isHumanTurn}
+                playerId="player-1"
+              />
+              
+              {/* Your Hand */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-accent-green font-medium">Your Hand</span>
+                  <span className="text-xs text-muted-foreground">
+                    {isDiscardPhase 
+                      ? 'Drag to discard' 
+                      : canPlayCards 
+                        ? 'Drag to play' 
+                        : 'Wait for turn'
+                    }
+                  </span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="flex-1">
+                    <PlayerHandDraggable
+                      cards={humanPlayer.hand}
+                      isCurrentPlayer={isHumanTurn}
+                      showCards={true}
+                      disabled={!canPlayCards && !canDiscard && !isDiscardPhase}
+                    />
                   </div>
-                  <div className="flex items-start gap-4">
-                    <div className="flex-1">
-                      <PlayerHandDraggable
-                        cards={humanPlayer.hand}
-                        isCurrentPlayer={isHumanTurn}
-                        showCards={true}
-                        disabled={!canPlayCards && !canDiscard && !isDiscardPhase}
-                      />
-                    </div>
-                    <div className="flex-shrink-0">
-                      <DiscardZone 
-                        discardPile={gameState.discardPile}
-                        isActive={canDiscard || isDiscardPhase}
-                        isDiscardPhase={isDiscardPhase}
-                        playerId="player-1"
-                      />
-                    </div>
+                  <div className="flex-shrink-0">
+                    <DiscardZone 
+                      discardPile={gameState.discardPile}
+                      isActive={canDiscard || isDiscardPhase}
+                      isDiscardPhase={isDiscardPhase}
+                      playerId="player-1"
+                    />
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Opponent Area - Right on desktop */}
+            <div className="order-1 lg:order-2 bg-black/20 rounded-lg p-3 border border-gray-700 space-y-2">
+              <h2 className="text-xs font-bold text-gray-400">OPPONENT</h2>
+              
+              {/* Computer's Network - compact */}
+              <NetworkBoardDroppable
+                network={computerPlayer.network}
+                isCurrentPlayer={false}
+                label="Computer's Network"
+                playerId="player-2"
+                canReceiveAttacks={canPlayCards}
+                canReceiveResolutions={false}
+                compact={true}
+              />
+              
+              {/* Computer's Classifications - compact */}
+              <ClassificationSection
+                classificationCards={computerPlayer.classificationCards}
+                isCurrentPlayer={false}
+                playerId="player-2"
+                compact={true}
+              />
+              
+              {/* Computer's Hand - compact */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-gray-400">Hand</span>
+                  <span className="text-xs text-muted-foreground">{computerPlayer.hand.length} cards</span>
+                </div>
+                <PlayerHandDraggable
+                  cards={computerPlayer.hand}
+                  isCurrentPlayer={false}
+                  showCards={false}
+                  disabled={true}
+                  compact={true}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Game controls - sticky */}
+          <div className="sticky bottom-4 z-40 mt-4">
+            <GameControlsSimple
+              phase={gameState.phase}
+              movesRemaining={gameState.movesRemaining}
+              onEndPhase={endPhase}
+              isCurrentPlayerHuman={isHumanTurn}
+              isDragging={activeCard !== null}
+            />
           </div>
         </main>
 
