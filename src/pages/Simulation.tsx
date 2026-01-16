@@ -408,14 +408,6 @@ const Simulation = () => {
               <div className="lg:sticky lg:top-20 space-y-4 z-40">
                 <GameLog messages={gameState.gameLog} />
                 
-                {/* Discard zone - always visible and active during player's turn */}
-                <DiscardZone 
-                  discardPile={gameState.discardPile}
-                  isActive={canDiscard || isDiscardPhase}
-                  isDiscardPhase={isDiscardPhase}
-                  playerId="player-1"
-                />
-                
                 {/* Quick rules reference */}
                 <div className="bg-black/40 rounded-lg border border-gray-700 p-3">
                   <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Quick Rules</h4>
@@ -489,12 +481,24 @@ const Simulation = () => {
                       }
                     </span>
                   </div>
-                  <PlayerHandDraggable
-                    cards={humanPlayer.hand}
-                    isCurrentPlayer={isHumanTurn}
-                    showCards={true}
-                    disabled={!canPlayCards && !canDiscard && !isDiscardPhase}
-                  />
+                  <div className="flex items-start gap-4">
+                    <div className="flex-1">
+                      <PlayerHandDraggable
+                        cards={humanPlayer.hand}
+                        isCurrentPlayer={isHumanTurn}
+                        showCards={true}
+                        disabled={!canPlayCards && !canDiscard && !isDiscardPhase}
+                      />
+                    </div>
+                    <div className="flex-shrink-0">
+                      <DiscardZone 
+                        discardPile={gameState.discardPile}
+                        isActive={canDiscard || isDiscardPhase}
+                        isDiscardPhase={isDiscardPhase}
+                        playerId="player-1"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
