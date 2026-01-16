@@ -11,6 +11,8 @@ interface DraggablePlacedCardProps {
   sourceType: 'switch' | 'cable' | 'computer' | 'floating-cable' | 'floating-computer';
   sourceId: string; // The ID of the placed card
   parentId?: string; // Parent switch/cable ID if applicable
+  showIssueIndicator?: boolean; // Show attack cards on equipment
+  isCascadeDisabled?: boolean; // Disabled due to parent attack, not direct
 }
 
 export function DraggablePlacedCard({ 
@@ -21,6 +23,8 @@ export function DraggablePlacedCard({
   sourceType,
   sourceId,
   parentId,
+  showIssueIndicator = false,
+  isCascadeDisabled = false,
 }: DraggablePlacedCardProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `placed-${sourceId}`,
@@ -62,8 +66,13 @@ export function DraggablePlacedCard({
         draggable={false}
       />
       
-      {/* Issue indicators */}
-      {placedCard.attachedIssues.length > 0 && (
+      {/* Cascade disabled glow - pulsing red shadow for equipment disabled by parent attack */}
+      {isCascadeDisabled && (
+        <div className="absolute inset-0 rounded animate-pulse pointer-events-none shadow-[0_0_12px_4px_rgba(239,68,68,0.5)]" />
+      )}
+      
+      {/* Issue indicators - show attack cards on equipment */}
+      {showIssueIndicator && placedCard.attachedIssues.length > 0 && (
         <IssueIndicator issues={placedCard.attachedIssues} small={small} />
       )}
     </div>
