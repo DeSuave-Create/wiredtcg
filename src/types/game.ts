@@ -56,6 +56,14 @@ export interface Player {
 // Game phases
 export type GamePhase = 'trade' | 'moves' | 'discard' | 'draw' | 'score' | 'game-over';
 
+// AI Action tracking
+export interface AIAction {
+  type: 'play' | 'attack' | 'resolve' | 'discard' | 'classification' | 'steal';
+  card: Card;
+  target?: string; // Description of target
+  blocked?: boolean; // If attack was blocked
+}
+
 // Game state
 export interface GameState {
   players: Player[];
@@ -67,6 +75,7 @@ export interface GameState {
   turnNumber: number;
   winner: Player | null;
   gameLog: string[];
+  aiLastTurnActions: AIAction[]; // Track AI's last turn moves
 }
 
 // Actions

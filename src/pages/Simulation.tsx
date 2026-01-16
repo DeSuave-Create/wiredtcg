@@ -16,6 +16,7 @@ import { DiscardZone } from '@/components/game/DiscardZone';
 import { ConnectComputersDialog } from '@/components/game/ConnectComputersDialog';
 import { ConnectCablesDialog } from '@/components/game/ConnectCablesDialog';
 import { StealClassificationDialog } from '@/components/game/StealClassificationDialog';
+import { AIActionsPanel } from '@/components/game/AIActionsPanel';
 import { Card } from '@/types/game';
 import { toast } from 'sonner';
 
@@ -625,6 +626,9 @@ const Simulation = () => {
                   disabled={true}
                 />
               </div>
+              
+              {/* AI Actions Panel */}
+              <AIActionsPanel actions={gameState.aiLastTurnActions} />
             </div>
           </div>
         </main>
