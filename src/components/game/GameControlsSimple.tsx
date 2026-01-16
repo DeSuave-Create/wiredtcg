@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { GamePhase } from '@/types/game';
 import { cn } from '@/lib/utils';
+import { useState, useEffect, useRef } from 'react';
 
 interface GameControlsSimpleProps {
   phase: GamePhase;
@@ -17,6 +18,19 @@ export function GameControlsSimple({
   isCurrentPlayerHuman,
   isDragging,
 }: GameControlsSimpleProps) {
+  const [isAnimating, setIsAnimating] = useState(false);
+  const prevMovesRef = useRef(movesRemaining);
+
+  // Animate when moves decrement
+  useEffect(() => {
+    if (movesRemaining < prevMovesRef.current) {
+      setIsAnimating(true);
+      const timer = setTimeout(() => setIsAnimating(false), 400);
+      return () => clearTimeout(timer);
+    }
+    prevMovesRef.current = movesRemaining;
+  }, [movesRemaining]);
+
   if (!isCurrentPlayerHuman) {
     return (
       <div className="text-center py-4">
@@ -53,11 +67,25 @@ export function GameControlsSimple({
         ))}
       </div>
       
-      {/* Current phase info */}
-      <div className="text-lg font-semibold text-white">
+      {/* Current phase info with animated move counter */}
+      <div className="text-lg font-semibold text-white flex items-center gap-2">
         {phaseLabels[phase]}
         {phase === 'moves' && (
-          <span className="ml-2 text-accent-green">({movesRemaining} moves left)</span>
+          <span className="flex items-center gap-1">
+            <span className="text-muted-foreground">(</span>
+            <span 
+              className={cn(
+                "inline-flex items-center justify-center min-w-[2rem] px-2 py-0.5 rounded-full font-bold transition-all duration-300",
+                movesRemaining > 0 
+                  ? "bg-accent-green/20 text-accent-green" 
+                  : "bg-red-500/20 text-red-400",
+                isAnimating && "animate-bounce scale-125 bg-yellow-500/30 text-yellow-300 ring-2 ring-yellow-400"
+              )}
+            >
+              {movesRemaining}
+            </span>
+            <span className="text-muted-foreground">moves left)</span>
+          </span>
         )}
       </div>
 
