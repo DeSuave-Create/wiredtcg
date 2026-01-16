@@ -2,6 +2,7 @@ import { PlayerNetwork, SwitchNode, CableNode, PlacedCard, Card } from '@/types/
 import { DroppableZone } from './DroppableZone';
 import { cn } from '@/lib/utils';
 import { AlertTriangle } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 interface NetworkBoardDroppableProps {
   network: PlayerNetwork;
@@ -109,18 +110,12 @@ function SwitchComponent({
         className="w-fit mx-auto"
       >
         <div className="relative">
-          <div
-            className={cn(
-              "w-16 h-20 rounded border-2 overflow-hidden",
-              switchNode.isDisabled ? "border-red-500 opacity-70" : "border-green-500"
-            )}
-          >
-            <img 
-              src={switchNode.card.image} 
-              alt="Switch"
-              className="w-full h-full object-contain"
-            />
-          </div>
+          <PlacedCardDisplay
+            card={switchNode.card}
+            placementId={switchNode.id}
+            isDisabled={switchNode.isDisabled}
+            className="w-16 h-20"
+          />
           
           {/* Issue indicators */}
           {switchNode.attachedIssues.length > 0 && (
@@ -210,18 +205,12 @@ function CableComponent({
         className="w-fit"
       >
         <div className="relative">
-          <div
-            className={cn(
-              "w-14 h-18 rounded border-2 overflow-hidden",
-              cable.isDisabled ? "border-red-500 opacity-70" : "border-green-500"
-            )}
-          >
-            <img 
-              src={cable.card.image} 
-              alt={`Cable (${cable.maxComputers}x)`}
-              className="w-full h-full object-contain"
-            />
-          </div>
+          <PlacedCardDisplay
+            card={cable.card}
+            placementId={cable.id}
+            isDisabled={cable.isDisabled}
+            className="w-14 h-18"
+          />
           
           {/* Issue indicators */}
           {cable.attachedIssues.length > 0 && (
@@ -304,16 +293,13 @@ function ComputerComponent({
   // If no interactions possible, render simple div
   if (accepts.length === 0) {
     return (
-      <div
-        className={cn(
-          "w-10 h-12 rounded border overflow-hidden relative",
-          computer.isDisabled ? "border-red-500 opacity-70" : "border-green-400"
-        )}
-      >
-        <img 
-          src={computer.card.image} 
-          alt="Computer"
-          className="w-full h-full object-contain"
+      <div className="relative">
+        <PlacedCardDisplay
+          card={computer.card}
+          placementId={computer.id}
+          isDisabled={computer.isDisabled}
+          className="w-10 h-12"
+          small
         />
         {computer.attachedIssues.length > 0 && (
           <IssueIndicator issues={computer.attachedIssues} small />
@@ -329,22 +315,67 @@ function ComputerComponent({
       accepts={accepts}
       className="w-fit"
     >
-      <div
-        className={cn(
-          "w-10 h-12 rounded border overflow-hidden relative",
-          computer.isDisabled ? "border-red-500 opacity-70" : "border-green-400"
-        )}
-      >
-        <img 
-          src={computer.card.image} 
-          alt="Computer"
-          className="w-full h-full object-contain"
+      <div className="relative">
+        <PlacedCardDisplay
+          card={computer.card}
+          placementId={computer.id}
+          isDisabled={computer.isDisabled}
+          className="w-10 h-12"
+          small
         />
         {computer.attachedIssues.length > 0 && (
           <IssueIndicator issues={computer.attachedIssues} small />
         )}
       </div>
     </DroppableZone>
+  );
+}
+
+// Animated card display for placed cards
+interface PlacedCardDisplayProps {
+  card: Card;
+  placementId: string;
+  isDisabled: boolean;
+  className?: string;
+  small?: boolean;
+}
+
+// Track which cards have been animated
+const animatedCards = new Set<string>();
+
+function PlacedCardDisplay({ card, placementId, isDisabled, className, small = false }: PlacedCardDisplayProps) {
+  const [isNew, setIsNew] = useState(false);
+  
+  useEffect(() => {
+    // Check if this card hasn't been animated yet
+    if (!animatedCards.has(placementId)) {
+      animatedCards.add(placementId);
+      setIsNew(true);
+      
+      // Remove animation class after animation completes
+      const timer = setTimeout(() => setIsNew(false), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [placementId]);
+  
+  return (
+    <div
+      className={cn(
+        "rounded border-2 overflow-hidden transition-all duration-300",
+        isDisabled ? "border-red-500 opacity-70" : small ? "border-green-400" : "border-green-500",
+        isNew && "animate-scale-in ring-2 ring-yellow-400 ring-opacity-75 shadow-lg shadow-yellow-400/30",
+        className
+      )}
+    >
+      <img 
+        src={card.image} 
+        alt={card.name}
+        className={cn(
+          "w-full h-full object-contain",
+          isNew && "animate-pulse"
+        )}
+      />
+    </div>
   );
 }
 
