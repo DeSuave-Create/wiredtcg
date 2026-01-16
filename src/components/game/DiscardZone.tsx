@@ -5,57 +5,64 @@ import { Trash2 } from 'lucide-react';
 
 interface DiscardZoneProps {
   discardPile: Card[];
-  isActive: boolean; // Only active during discard phase
+  isActive: boolean; // Active during player's turn
   playerId: string;
+  isDiscardPhase?: boolean; // Specifically during discard phase
 }
 
-export function DiscardZone({ discardPile, isActive, playerId }: DiscardZoneProps) {
+const ALL_CARD_TYPES = [
+  'switch', 'cable-2', 'cable-3', 'computer', 
+  'hacked', 'power-outage', 'new-hire', 'audit', 
+  'secured', 'powered', 'trained', 'helpdesk', 
+  'security-specialist', 'facilities', 'supervisor', 'field-tech', 'head-hunter', 'seal-the-deal'
+];
+
+export function DiscardZone({ discardPile, isActive, playerId, isDiscardPhase = false }: DiscardZoneProps) {
   const { isOver, setNodeRef, active } = useDroppable({
     id: `${playerId}-discard`,
     data: { 
       type: 'discard', 
-      accepts: isActive ? ['switch', 'cable-2', 'cable-3', 'computer', 'hacked', 'power-outage', 'new-hire', 'audit', 'secured', 'powered', 'trained', 'helpdesk', 'security-specialist', 'facilities', 'supervisor', 'field-tech', 'head-hunter', 'seal-the-deal'] : [] 
+      accepts: isActive ? ALL_CARD_TYPES : [] 
     },
   });
 
   const canDrop = isActive && active?.data?.current?.card;
   const isValidDrop = isOver && canDrop;
 
-  if (!isActive) {
-    return (
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        <div className="w-8 h-10 bg-black/40 rounded border border-gray-700 flex items-center justify-center">
-          <span className="text-xs">{discardPile.length}</span>
-        </div>
-        <span>Discard</span>
-      </div>
-    );
-  }
-
   return (
     <div
       ref={setNodeRef}
       className={cn(
-        "relative flex flex-col items-center p-4 rounded-lg border-2 border-dashed transition-all duration-200",
+        "relative flex flex-col items-center p-4 rounded-lg border-2 transition-all duration-200",
+        isActive ? "border-dashed" : "border-solid border-gray-700/50",
         canDrop && "ring-2 ring-yellow-400 ring-opacity-50 border-yellow-400",
         isValidDrop && "ring-4 ring-red-400 ring-opacity-100 bg-red-400/20 border-red-400",
-        !canDrop && "border-gray-600 bg-black/20"
+        !isActive && "border-gray-700 bg-black/20 opacity-60",
+        isActive && !canDrop && "border-gray-600 bg-black/30",
+        isDiscardPhase && "border-orange-500 bg-orange-500/10"
       )}
     >
       <Trash2 className={cn(
         "w-8 h-8 mb-2",
-        isValidDrop ? "text-red-400" : "text-gray-500"
+        isValidDrop ? "text-red-400" : isDiscardPhase ? "text-orange-400" : isActive ? "text-gray-400" : "text-gray-600"
       )} />
       
       <span className={cn(
         "text-sm font-medium",
-        isValidDrop ? "text-red-400" : "text-gray-400"
+        isValidDrop ? "text-red-400" : isDiscardPhase ? "text-orange-400" : isActive ? "text-gray-300" : "text-gray-500"
       )}>
-        {isValidDrop ? "Release to discard" : "Drag cards here to discard"}
+        {isValidDrop 
+          ? "Release to discard" 
+          : isDiscardPhase 
+            ? "Must discard to 6 cards" 
+            : isActive 
+              ? "Drag here to discard" 
+              : "Discard Pile"
+        }
       </span>
       
       <span className="text-xs text-muted-foreground mt-1">
-        {discardPile.length} cards in pile
+        {discardPile.length} cards
       </span>
     </div>
   );

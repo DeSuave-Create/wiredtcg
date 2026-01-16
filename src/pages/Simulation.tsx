@@ -328,11 +328,12 @@ const Simulation = () => {
             <div className="lg:col-span-1 order-3 lg:order-1">
               <GameLog messages={gameState.gameLog} />
               
-              {/* Discard zone */}
+              {/* Discard zone - always visible and active during player's turn */}
               <div className="mt-4">
                 <DiscardZone 
                   discardPile={gameState.discardPile}
-                  isActive={isDiscardPhase}
+                  isActive={isHumanTurn && (canPlayCards || isDiscardPhase)}
+                  isDiscardPhase={isDiscardPhase}
                   playerId="player-1"
                 />
               </div>
@@ -341,10 +342,11 @@ const Simulation = () => {
               <div className="mt-4 bg-black/40 rounded-lg border border-gray-700 p-3">
                 <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Quick Rules</h4>
                 <ul className="text-xs text-muted-foreground space-y-1">
-                <li>• <span className="text-green-400">Any equipment</span> → drag to your board</li>
+                  <li>• <span className="text-green-400">Any equipment</span> → drag to your board</li>
                   <li>• <span className="text-yellow-400">Connect</span>: drop cable ON switch, PC ON cable</li>
                   <li>• <span className="text-red-400">Attack</span> → drag to opponent's equipment</li>
                   <li>• <span className="text-blue-400">Resolution</span> → drag to your disabled equipment</li>
+                  <li>• <span className="text-gray-400">Discard</span> → drag unwanted cards to trash</li>
                   <li>• Only <span className="text-green-400">connected</span> 💻 = 1 bitcoin/turn</li>
                   <li>• First to 25 bitcoin wins!</li>
                 </ul>
