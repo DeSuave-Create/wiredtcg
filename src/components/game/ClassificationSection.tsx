@@ -6,6 +6,7 @@ interface ClassificationSectionProps {
   classificationCards: PlacedCard[];
   isCurrentPlayer: boolean;
   playerId: string;
+  compact?: boolean;
 }
 
 const abilityDescriptions: Record<string, string> = {
@@ -17,10 +18,20 @@ const abilityDescriptions: Record<string, string> = {
   'seal-the-deal': '💎 Unblockable Steal',
 };
 
+const compactAbilityLabels: Record<string, string> = {
+  'security-specialist': '🛡️',
+  'facilities': '⚡',
+  'supervisor': '👔',
+  'field-tech': '🔧+1',
+  'head-hunter': '🎯',
+  'seal-the-deal': '💎',
+};
+
 export function ClassificationSection({
   classificationCards,
   isCurrentPlayer,
   playerId,
+  compact = false,
 }: ClassificationSectionProps) {
   return (
     <DroppableZone
@@ -29,14 +40,28 @@ export function ClassificationSection({
       accepts={isCurrentPlayer ? ['security-specialist', 'facilities', 'supervisor', 'field-tech', 'head-hunter', 'seal-the-deal'] : []}
       className="w-full"
     >
-      <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 rounded-lg p-3 border border-purple-500/30">
-        <div className="flex items-center justify-between mb-2">
+      <div className={cn(
+        "bg-gradient-to-r from-purple-900/30 to-blue-900/30 rounded-lg border border-purple-500/30",
+        compact ? "p-2" : "p-3"
+      )}>
+        <div className={cn(
+          "flex items-center justify-between",
+          compact ? "mb-1" : "mb-2"
+        )}>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-purple-300">🎖️ CLASSIFICATIONS</span>
-            <span className="text-xs text-muted-foreground">({classificationCards.length}/2)</span>
+            <span className={cn(
+              "font-semibold text-purple-300",
+              compact ? "text-[10px]" : "text-xs"
+            )}>
+              {compact ? "🎖️ CLASS" : "🎖️ CLASSIFICATIONS"}
+            </span>
+            <span className={cn(
+              "text-muted-foreground",
+              compact ? "text-[10px]" : "text-xs"
+            )}>({classificationCards.length}/2)</span>
           </div>
           {/* Show active bonuses */}
-          {classificationCards.length > 0 && (
+          {classificationCards.length > 0 && !compact && (
             <div className="flex gap-2">
               {classificationCards.map((classCard) => (
                 <span 
@@ -58,25 +83,45 @@ export function ClassificationSection({
           )}
         </div>
         
-        <div className="flex gap-3 min-h-[70px] items-center">
+        <div className={cn(
+          "flex items-center",
+          compact ? "gap-2 min-h-[40px]" : "gap-3 min-h-[70px]"
+        )}>
           {classificationCards.length === 0 ? (
-            <div className="text-xs text-muted-foreground italic">
-              {isCurrentPlayer ? 'Drag classification cards here (max 2)' : 'No classifications in play'}
+            <div className={cn(
+              "text-muted-foreground italic",
+              compact ? "text-[10px]" : "text-xs"
+            )}>
+              {isCurrentPlayer 
+                ? (compact ? 'Drop here' : 'Drag classification cards here (max 2)') 
+                : (compact ? 'None' : 'No classifications in play')
+              }
             </div>
           ) : (
             classificationCards.map((classCard) => (
               <div key={classCard.id} className="relative group">
-                <div className="w-14 h-20 rounded border-2 border-purple-500 overflow-hidden shadow-lg shadow-purple-500/20 transition-transform hover:scale-105">
+                <div className={cn(
+                  "rounded border-2 border-purple-500 overflow-hidden shadow-lg shadow-purple-500/20 transition-transform hover:scale-105",
+                  compact ? "w-8 h-11" : "w-14 h-20"
+                )}>
                   <img 
                     src={classCard.card.image} 
                     alt={classCard.card.name}
                     className="w-full h-full object-contain"
                   />
                 </div>
-                {/* Ability tooltip */}
-                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] bg-purple-900/90 text-purple-200 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                  {classCard.card.name}
-                </div>
+                {/* Compact ability indicator */}
+                {compact && (
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[8px] bg-purple-900/90 text-purple-200 px-1 rounded">
+                    {compactAbilityLabels[classCard.card.subtype]}
+                  </div>
+                )}
+                {/* Full ability tooltip */}
+                {!compact && (
+                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] bg-purple-900/90 text-purple-200 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                    {classCard.card.name}
+                  </div>
+                )}
               </div>
             ))
           )}

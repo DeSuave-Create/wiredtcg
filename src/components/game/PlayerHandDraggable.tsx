@@ -1,11 +1,13 @@
 import { Card } from '@/types/game';
 import { DraggableCard } from './DraggableCard';
+import { cn } from '@/lib/utils';
 
 interface PlayerHandDraggableProps {
   cards: Card[];
   isCurrentPlayer: boolean;
   showCards: boolean;
   disabled?: boolean;
+  compact?: boolean;
 }
 
 export function PlayerHandDraggable({ 
@@ -13,14 +15,20 @@ export function PlayerHandDraggable({
   isCurrentPlayer,
   showCards,
   disabled = false,
+  compact = false,
 }: PlayerHandDraggableProps) {
   return (
-    <div className="flex flex-wrap justify-center gap-2 p-4">
+    <div className={cn(
+      "flex flex-wrap justify-center",
+      compact ? "gap-1 p-2" : "gap-2 p-4"
+    )}>
       {cards.map((card, index) => (
         <div
           key={card.id}
           style={{
-            transform: `rotate(${(index - cards.length / 2) * 3}deg)`,
+            transform: compact 
+              ? `rotate(${(index - cards.length / 2) * 2}deg)`
+              : `rotate(${(index - cards.length / 2) * 3}deg)`,
           }}
         >
           {showCards ? (
@@ -28,9 +36,13 @@ export function PlayerHandDraggable({
               card={card} 
               disabled={disabled || !isCurrentPlayer}
               showFace={true}
+              compact={compact}
             />
           ) : (
-            <div className="w-20 h-28 sm:w-24 sm:h-32 rounded-lg border-2 border-gray-600 bg-gray-800 overflow-hidden">
+            <div className={cn(
+              "rounded-lg border-2 border-gray-600 bg-gray-800 overflow-hidden",
+              compact ? "w-12 h-16" : "w-20 h-28 sm:w-24 sm:h-32"
+            )}>
               <img 
                 src="/lovable-uploads/card-back.png"
                 alt="Card back"
@@ -42,7 +54,10 @@ export function PlayerHandDraggable({
       ))}
       
       {cards.length === 0 && (
-        <div className="text-muted-foreground text-sm">No cards in hand</div>
+        <div className={cn(
+          "text-muted-foreground",
+          compact ? "text-xs" : "text-sm"
+        )}>No cards in hand</div>
       )}
     </div>
   );

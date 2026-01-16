@@ -3,13 +3,14 @@ import { CSS } from '@dnd-kit/utilities';
 import { Card } from '@/types/game';
 import { cn } from '@/lib/utils';
 
-interface DraggableCardProps {
+export interface DraggableCardProps {
   card: Card;
   disabled?: boolean;
   showFace?: boolean;
+  compact?: boolean;
 }
 
-export function DraggableCard({ card, disabled = false, showFace = true }: DraggableCardProps) {
+export function DraggableCard({ card, disabled = false, showFace = true, compact = false }: DraggableCardProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: card.id,
     data: { card },
@@ -38,7 +39,8 @@ export function DraggableCard({ card, disabled = false, showFace = true }: Dragg
       {...listeners}
       {...attributes}
       className={cn(
-        "relative w-20 h-28 sm:w-24 sm:h-32 rounded-lg border-2 overflow-hidden transition-all duration-200 touch-none",
+        "relative rounded-lg border-2 overflow-hidden transition-all duration-200 touch-none",
+        compact ? "w-12 h-16" : "w-20 h-28 sm:w-24 sm:h-32",
         showFace ? getCardTypeColor(card.type) : 'border-gray-600 bg-gray-800',
         !disabled && "cursor-grab active:cursor-grabbing hover:scale-105 hover:-translate-y-2",
         disabled && "opacity-60 cursor-not-allowed",
