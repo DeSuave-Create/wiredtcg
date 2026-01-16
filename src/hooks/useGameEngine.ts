@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { GameState, Player, Card, GamePhase, PlayerNetwork, SwitchNode, CableNode, PlacedCard, FloatingCable } from '@/types/game';
+import { GameState, Player, Card, GamePhase, PlayerNetwork, SwitchNode, CableNode, PlacedCard, FloatingCable, AIAction } from '@/types/game';
 import { buildDeck, shuffleDeck, dealCards } from '@/utils/deckBuilder';
 
 const STARTING_HAND_SIZE = 6;
@@ -93,6 +93,7 @@ export function useGameEngine() {
       turnNumber: 1,
       winner: null,
       gameLog: ['Game started! You go first.', 'Build your network: Switch → Cable → Computer'],
+      aiLastTurnActions: [],
     };
     
     setGameState(initialState);
@@ -1581,6 +1582,7 @@ export function useGameEngine() {
       const maxMoves = getMovesForPlayer(newPlayers[aiPlayerIndex]);
       let movesRemaining = maxMoves; // AI gets its own moves, not leftover from human
       let movesUsed = 0;
+      const aiActions: AIAction[] = []; // Track AI actions this turn
       
       // Helper: Find best attack target on human's network (prioritize switches > cables > computers)
       const findAttackTarget = (humanNetwork: PlayerNetwork): { type: 'switch' | 'cable' | 'computer', switchIndex: number, cableIndex?: number, computerIndex?: number } | null => {
@@ -1776,6 +1778,7 @@ export function useGameEngine() {
               applyResolution(network, target, resCard, isHelpdesk);
               currentPlayer.hand = hand.filter(c => c.id !== resCard.id);
               playedCard = true;
+              aiActions.push({ type: 'resolve', card: resCard, target: `${issueBeingFixed} on ${target.type}` });
               gameLog = [...gameLog.slice(-19), `🔧 Computer used ${resCard.name} to fix ${issueBeingFixed} on ${target.type}!`];
               break;
             }
@@ -1811,10 +1814,12 @@ export function useGameEngine() {
               // Add to AI's classifications if space and not duplicate type
               if (currentPlayer.classificationCards.length < 2 && !alreadyHasType) {
                 currentPlayer.classificationCards.push(targetClass);
+                aiActions.push({ type: 'steal', card: stealCard, target: targetClass.card.name });
                 gameLog = [...gameLog.slice(-19), `🎖️ Computer used ${stealCard.name} to steal ${targetClass.card.name}!`];
               } else {
                 // Discard if can't keep
                 newDiscardPile.push(targetClass.card);
+                aiActions.push({ type: 'steal', card: stealCard, target: `${targetClass.card.name} (discarded)` });
                 gameLog = [...gameLog.slice(-19), `🎖️ Computer used ${stealCard.name} - ${targetClass.card.name} discarded!`];
               }
               
@@ -1852,6 +1857,7 @@ export function useGameEngine() {
               currentPlayer.hand = hand.filter(c => c.id !== classCard.id);
               currentPlayer.classificationCards.push(newClassification);
               playedCard = true;
+              aiActions.push({ type: 'classification', card: classCard });
               gameLog = [...gameLog.slice(-19), `🎖️ Computer activated ${classCard.name}!`];
             }
           }
@@ -1877,12 +1883,15 @@ export function useGameEngine() {
               currentPlayer.hand = hand.filter(c => c.id !== attackCard.id);
               newDiscardPile.push(attackCard);
               playedCard = true;
-              gameLog = [...gameLog.slice(-19), `⚡ Computer's ${attackCard.name} was blocked by your ${blockingClass === 'security-specialist' ? 'Security Specialist' : blockingClass === 'facilities' ? 'Facilities' : 'Supervisor'}!`];
+              const blockerName = blockingClass === 'security-specialist' ? 'Security Specialist' : blockingClass === 'facilities' ? 'Facilities' : 'Supervisor';
+              aiActions.push({ type: 'attack', card: attackCard, target: `your ${target.type}`, blocked: true });
+              gameLog = [...gameLog.slice(-19), `⚡ Computer's ${attackCard.name} was blocked by your ${blockerName}!`];
             } else {
               // Attack succeeds
               applyAttack(humanPlayer.network, target, attackCard);
               currentPlayer.hand = hand.filter(c => c.id !== attackCard.id);
               playedCard = true;
+              aiActions.push({ type: 'attack', card: attackCard, target: `your ${target.type}` });
               gameLog = [...gameLog.slice(-19), `⚡ Computer attacked your ${target.type} with ${attackCard.name}!`];
             }
           }
@@ -1914,6 +1923,7 @@ export function useGameEngine() {
                 
                 placed = true;
                 playedCard = true;
+                aiActions.push({ type: 'play', card: computerCard, target: 'cable' });
                 gameLog = [...gameLog.slice(-19), `💻 Computer connected a Computer`];
               }
             }
@@ -1944,6 +1954,7 @@ export function useGameEngine() {
             }
             
             playedCard = true;
+            aiActions.push({ type: 'play', card: cableCard, target: 'switch' });
             gameLog = [...gameLog.slice(-19), `🔗 Computer connected a Cable`];
           }
         }
@@ -1968,6 +1979,7 @@ export function useGameEngine() {
             currentPlayer.network.switches = [...network.switches, newSwitch];
             
             playedCard = true;
+            aiActions.push({ type: 'play', card: switchCard, target: 'network' });
             gameLog = [...gameLog.slice(-19), `🔌 Computer placed a Switch`];
           }
         }
@@ -1989,6 +2001,7 @@ export function useGameEngine() {
           currentPlayer.network.switches = [...currentPlayer.network.switches, newSwitch];
           
           playedCard = true;
+          aiActions.push({ type: 'play', card: switchCard, target: 'network' });
           gameLog = [...gameLog.slice(-19), `🔌 Computer placed a Switch`];
         }
         
@@ -2016,6 +2029,7 @@ export function useGameEngine() {
             }
             
             playedCard = true;
+            aiActions.push({ type: 'play', card: cableCard, target: 'switch' });
             gameLog = [...gameLog.slice(-19), `🔗 Computer connected a Cable`];
           }
         }
@@ -2118,6 +2132,7 @@ export function useGameEngine() {
           if (cardToDiscard && movesRemaining > 0) {
             currentPlayer.hand = hand.filter(c => c.id !== cardToDiscard!.id);
             newDiscardPile.push(cardToDiscard);
+            aiActions.push({ type: 'discard', card: cardToDiscard });
             gameLog = [...gameLog.slice(-19), `🗑️ Computer discarded ${cardToDiscard.name}`];
             movesUsed++;
             movesRemaining--;
@@ -2165,6 +2180,7 @@ export function useGameEngine() {
           ...gameLog.slice(-19), 
           aiScoreLog,
         ],
+        aiLastTurnActions: aiActions,
       };
     });
   }, [gameState, countConnectedComputers]);
