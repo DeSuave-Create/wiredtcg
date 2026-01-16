@@ -368,9 +368,26 @@ const Simulation = () => {
         return;
       }
       
+      // Check if already at max classifications
+      if (humanPlayer.classificationCards.length >= 2) {
+        toast.error("Maximum 2 classification cards in play!");
+        return;
+      }
+      
+      // Check if same type already in play
+      const sameTypeInPlay = humanPlayer.classificationCards.some(
+        c => c.card.subtype === card.subtype
+      );
+      if (sameTypeInPlay) {
+        toast.error(`${card.name} already in play! Can't have duplicates.`);
+        return;
+      }
+      
       const success = playClassification(card.id);
       if (success) {
         toast.success(`${card.name} is now active!`);
+      } else {
+        toast.error(`Failed to play ${card.name}!`);
       }
       return;
     }
