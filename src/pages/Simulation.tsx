@@ -299,10 +299,15 @@ const Simulation = () => {
       return;
     }
 
-    // Handle classification cards (on own classification zone)
-    if (card.type === 'classification' && isHumanTarget && zoneType === 'classification') {
-      // Head Hunter and Seal the Deal need target selection
+    // Handle classification cards
+    if (card.type === 'classification' && zoneType === 'classification') {
+      // Head Hunter and Seal the Deal - must target OPPONENT's classification zone
       if (card.subtype === 'head-hunter' || card.subtype === 'seal-the-deal') {
+        if (!isComputerTarget) {
+          toast.error(`${card.name} must be used on opponent's classifications!`);
+          return;
+        }
+        
         const computerPlayer = gameState.players[1];
         const humanPlayer = gameState.players[0];
         
@@ -327,6 +332,12 @@ const Simulation = () => {
           cardId: card.id,
           cardName: card.name,
         });
+        return;
+      }
+      
+      // Regular classifications (Field Tech, Supervisor, etc.) - on OWN zone only
+      if (!isHumanTarget) {
+        toast.error(`${card.name} must be placed on your own classification zone!`);
         return;
       }
       
@@ -356,8 +367,8 @@ const Simulation = () => {
       'facilities': '🎖️ Drag to YOUR classification zone (auto-resolves Power Outage)',
       'supervisor': '🎖️ Drag to YOUR classification zone (auto-resolves New Hire)',
       'field-tech': '🎖️ Drag to YOUR classification zone (+1 move/turn)',
-      'head-hunter': '🎖️ Drag to YOUR classification zone (steals opponent classification)',
-      'seal-the-deal': '🎖️ Drag to YOUR classification zone (unblockable steal)',
+      'head-hunter': '🎯 Drag to OPPONENT\'s classification zone to steal!',
+      'seal-the-deal': '💎 Drag to OPPONENT\'s classification zone (unblockable steal)!',
     };
     
     const hint = hints[card.subtype] || `Cannot place ${card.name} here`;

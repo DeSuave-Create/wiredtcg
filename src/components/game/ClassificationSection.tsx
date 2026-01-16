@@ -33,11 +33,17 @@ export function ClassificationSection({
   playerId,
   compact = false,
 }: ClassificationSectionProps) {
+  // Player zone accepts placeable classifications (not Head Hunter/Seal the Deal)
+  // Opponent zone accepts steal cards (Head Hunter, Seal the Deal)
+  const acceptedCards = isCurrentPlayer 
+    ? ['security-specialist', 'facilities', 'supervisor', 'field-tech'] // Cards you place on your own zone
+    : ['head-hunter', 'seal-the-deal']; // Cards you use to steal from opponent
+
   return (
     <DroppableZone
       id={`${playerId}-classification`}
       type="classification"
-      accepts={isCurrentPlayer ? ['security-specialist', 'facilities', 'supervisor', 'field-tech', 'head-hunter', 'seal-the-deal'] : []}
+      accepts={acceptedCards}
       className="w-full"
     >
       <div className={cn(
