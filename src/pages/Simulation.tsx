@@ -108,14 +108,14 @@ const Simulation = () => {
           ? dropZoneId.replace(`${targetPlayerId}-switch-`, '')
           : undefined;
         playCable(card.id, switchId);
-        toast.success(switchId ? 'Cable connected to switch!' : 'Cable placed (will auto-connect when switch is placed)');
+        toast.success(switchId ? 'Cable connected to switch!' : 'Cable placed (floating - drag onto a switch to connect)');
       } else if (card.subtype === 'computer') {
         // If dropped on a cable, connect to it; otherwise floating
         const cableId = zoneType === 'cable'
           ? dropZoneId.replace(`${targetPlayerId}-cable-`, '')
           : undefined;
         playComputer(card.id, cableId);
-        toast.success(cableId ? 'Computer connected!' : 'Computer placed (will auto-connect when cable is placed)');
+        toast.success(cableId ? 'Computer connected!' : 'Computer placed (floating - drag onto a cable to connect)');
       }
       return;
     }
@@ -161,9 +161,9 @@ const Simulation = () => {
   const showCardHint = (card: Card) => {
     const hints: Record<string, string> = {
       'switch': '🔌 Drag Switch to your network board',
-      'cable-2': '🔗 Drag Cable to your network board (auto-connects to switch)',
-      'cable-3': '🔗 Drag Cable to your network board (auto-connects to switch)',
-      'computer': '💻 Drag Computer to your network board (auto-connects to cable)',
+      'cable-2': '🔗 Drag Cable to the board OR drop on a Switch to connect',
+      'cable-3': '🔗 Drag Cable to the board OR drop on a Switch to connect',
+      'computer': '💻 Drag Computer to the board OR drop on a Cable to connect',
       'hacked': '⚡ Drag attack cards to OPPONENT\'s equipment',
       'power-outage': '⚡ Drag attack cards to OPPONENT\'s equipment',
       'new-hire': '⚡ Drag attack cards to OPPONENT\'s equipment',
@@ -286,8 +286,8 @@ const Simulation = () => {
               <div className="mt-4 bg-black/40 rounded-lg border border-gray-700 p-3">
                 <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Quick Rules</h4>
                 <ul className="text-xs text-muted-foreground space-y-1">
-                  <li>• <span className="text-green-400">Any equipment</span> → drag to your board</li>
-                  <li>• <span className="text-yellow-400">Auto-connect</span>: cables connect to switches, PCs to cables</li>
+                <li>• <span className="text-green-400">Any equipment</span> → drag to your board</li>
+                  <li>• <span className="text-yellow-400">Connect</span>: drop cable ON switch, PC ON cable</li>
                   <li>• <span className="text-red-400">Attack</span> → drag to opponent's equipment</li>
                   <li>• <span className="text-blue-400">Resolution</span> → drag to your disabled equipment</li>
                   <li>• Only <span className="text-green-400">connected</span> 💻 = 1 bitcoin/turn</li>

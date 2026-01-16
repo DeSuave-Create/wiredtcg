@@ -142,7 +142,7 @@ export function useGameEngine() {
     return node.attachedIssues.length > 0;
   }, []);
 
-  // Play a Switch card - auto-connects floating cables
+  // Play a Switch card - NO auto-connect, requires manual proximity drop
   const playSwitch = useCallback((cardId?: string) => {
     if (!gameState) return false;
     
@@ -170,7 +170,7 @@ export function useGameEngine() {
       // Remove card from hand
       currentPlayer.hand = currentPlayer.hand.filter(c => c.id !== switchCard.id);
       
-      // Create new switch
+      // Create new switch - no auto-connect
       const newSwitch: SwitchNode = {
         card: switchCard,
         id: generatePlacementId(),
@@ -179,40 +179,25 @@ export function useGameEngine() {
         cables: [],
       };
       
-      // Auto-connect floating cables to this switch (FREE action)
-      const cablesConnected: FloatingCable[] = [];
-      const remainingFloatingCables = currentPlayer.network.floatingCables.filter(cable => {
-        cablesConnected.push(cable);
-        return false; // Move all floating cables to the switch
-      });
-      
-      newSwitch.cables = cablesConnected;
-      
       currentPlayer.network = {
         ...currentPlayer.network,
         switches: [...currentPlayer.network.switches, newSwitch],
-        floatingCables: remainingFloatingCables,
       };
       
       newPlayers[prev.currentPlayerIndex] = currentPlayer;
-      
-      const autoConnectMsg = cablesConnected.length > 0 
-        ? ` (${cablesConnected.length} cable(s) auto-connected!)`
-        : '';
       
       return {
         ...prev,
         players: newPlayers,
         movesRemaining: prev.movesRemaining - 1,
-        gameLog: [...prev.gameLog.slice(-19), `Played Switch${autoConnectMsg} (${prev.movesRemaining - 1} moves left)`],
+        gameLog: [...prev.gameLog.slice(-19), `Played Switch (${prev.movesRemaining - 1} moves left)`],
       };
     });
     
     return true;
   }, [gameState, addLog]);
 
-  // Play a Cable card - can be floating or connected to a switch
-  // Auto-connects floating computers
+  // Play a Cable card - NO auto-connect, requires proximity drop
   const playCable = useCallback((cardId?: string, targetSwitchId?: string) => {
     if (!gameState) return false;
     
@@ -242,18 +227,14 @@ export function useGameEngine() {
       
       const maxComputers = cableCard.subtype === 'cable-2' ? 2 : 3;
       
-      // Auto-connect floating computers to this cable (FREE action)
-      const computersToConnect = currentPlayer.network.floatingComputers.slice(0, maxComputers);
-      const remainingFloatingComputers = currentPlayer.network.floatingComputers.slice(maxComputers);
-      
-      // Create cable node
+      // Create cable node - no auto-connect
       const newCable: CableNode = {
         card: cableCard,
         id: generatePlacementId(),
         attachedIssues: [],
         isDisabled: false,
         maxComputers: maxComputers as 2 | 3,
-        computers: computersToConnect,
+        computers: [],
       };
       
       // If a switch is specified and exists, connect to it
@@ -272,29 +253,24 @@ export function useGameEngine() {
         currentPlayer.network = {
           ...currentPlayer.network,
           switches: newSwitches,
-          floatingComputers: remainingFloatingComputers,
         };
       } else {
         // Add as floating cable
         currentPlayer.network = {
           ...currentPlayer.network,
           floatingCables: [...currentPlayer.network.floatingCables, newCable as FloatingCable],
-          floatingComputers: remainingFloatingComputers,
         };
       }
       
       newPlayers[prev.currentPlayerIndex] = currentPlayer;
       
-      const autoConnectMsg = computersToConnect.length > 0 
-        ? ` (${computersToConnect.length} PC(s) auto-connected!)`
-        : '';
       const floatingMsg = switchIndex === -1 ? ' [floating]' : '';
       
       return {
         ...prev,
         players: newPlayers,
         movesRemaining: prev.movesRemaining - 1,
-        gameLog: [...prev.gameLog.slice(-19), `Played ${maxComputers}-Cable${floatingMsg}${autoConnectMsg} (${prev.movesRemaining - 1} moves left)`],
+        gameLog: [...prev.gameLog.slice(-19), `Played ${maxComputers}-Cable${floatingMsg} (${prev.movesRemaining - 1} moves left)`],
       };
     });
     
