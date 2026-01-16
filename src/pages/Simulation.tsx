@@ -486,7 +486,7 @@ const Simulation = () => {
               {/* Your Classifications */}
               <ClassificationSection
                 classificationCards={humanPlayer.classificationCards}
-                isCurrentPlayer={isHumanTurn}
+                isCurrentPlayer={true}
                 playerId="player-1"
               />
               
