@@ -1759,10 +1759,24 @@ export function useGameEngine() {
             const target = findResolutionTarget(network, resCard.subtype);
             if (target) {
               const isHelpdesk = resCard.subtype === 'helpdesk';
+              
+              // Get the issue type being resolved for better logging
+              let issueBeingFixed = '';
+              if (target.type === 'switch') {
+                const sw = network.switches[target.switchIndex];
+                issueBeingFixed = sw.attachedIssues[0]?.name || 'issue';
+              } else if (target.type === 'cable' && target.cableIndex !== undefined) {
+                const cable = network.switches[target.switchIndex].cables[target.cableIndex];
+                issueBeingFixed = cable.attachedIssues[0]?.name || 'issue';
+              } else if (target.type === 'computer' && target.cableIndex !== undefined && target.computerIndex !== undefined) {
+                const comp = network.switches[target.switchIndex].cables[target.cableIndex].computers[target.computerIndex];
+                issueBeingFixed = comp.attachedIssues[0]?.name || 'issue';
+              }
+              
               applyResolution(network, target, resCard, isHelpdesk);
               currentPlayer.hand = hand.filter(c => c.id !== resCard.id);
               playedCard = true;
-              gameLog = [...gameLog.slice(-19), `🔧 Computer used ${resCard.name} to fix ${target.type}!`];
+              gameLog = [...gameLog.slice(-19), `🔧 Computer used ${resCard.name} to fix ${issueBeingFixed} on ${target.type}!`];
               break;
             }
           }
