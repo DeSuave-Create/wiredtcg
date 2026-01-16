@@ -22,15 +22,8 @@ export function DraggableCard({ card, disabled = false, showFace = true, compact
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const getCardTypeColor = (type: Card['type']) => {
-    switch (type) {
-      case 'equipment': return 'border-green-600';
-      case 'attack': return 'border-red-600';
-      case 'resolution': return 'border-purple-600';
-      case 'classification': return 'border-blue-600';
-      default: return 'border-gray-600';
-    }
-  };
+  // All cards use neutral gray border
+  const cardBorderColor = 'border-gray-600';
 
   return (
     <div
@@ -41,7 +34,7 @@ export function DraggableCard({ card, disabled = false, showFace = true, compact
       className={cn(
         "relative rounded-lg border-2 overflow-hidden transition-all duration-200 touch-none bg-black",
         compact ? "w-8 h-11" : "w-20 h-28 sm:w-24 sm:h-32",
-        showFace ? getCardTypeColor(card.type) : 'border-gray-600',
+        cardBorderColor,
         !disabled && "cursor-grab active:cursor-grabbing hover:scale-105 hover:-translate-y-2",
         disabled && "opacity-60 cursor-not-allowed",
         isDragging && "z-50 scale-110 shadow-2xl"
