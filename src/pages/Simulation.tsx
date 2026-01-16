@@ -13,6 +13,7 @@ import { GameLog } from '@/components/game/GameLog';
 import { ScoreDisplay } from '@/components/game/ScoreDisplay';
 import { DiscardZone } from '@/components/game/DiscardZone';
 import { ConnectComputersDialog } from '@/components/game/ConnectComputersDialog';
+import { ConnectCablesDialog } from '@/components/game/ConnectCablesDialog';
 import { Card } from '@/types/game';
 import { toast } from 'sonner';
 
@@ -57,6 +58,7 @@ const Simulation = () => {
     executeAITurn,
     countConnectedComputers,
     connectFloatingComputersToCable,
+    connectFloatingCablesToSwitch,
     moveEquipment,
   } = useGameEngine();
 
@@ -74,6 +76,12 @@ const Simulation = () => {
     cableId: string;
     maxConnections: number;
     cableType: string;
+  } | null>(null);
+  
+  // Dialog state for connecting floating cables to a new switch
+  const [cableDialog, setCableDialog] = useState<{
+    isOpen: boolean;
+    switchId: string;
   } | null>(null);
 
   // Initialize game on mount
@@ -196,8 +204,19 @@ const Simulation = () => {
     // Handle equipment cards (only on own network)
     if (card.type === 'equipment' && isHumanTarget) {
       if (card.subtype === 'switch') {
-        playSwitch(card.id);
-        toast.success('Switch placed!');
+        const result = playSwitch(card.id);
+        if (result.success) {
+          toast.success('Switch placed!');
+          
+          // Check if there are floating cables to connect
+          const humanPlayer = gameState!.players[0];
+          if (humanPlayer.network.floatingCables.length > 0 && result.switchId) {
+            setCableDialog({
+              isOpen: true,
+              switchId: result.switchId,
+            });
+          }
+        }
       } else if (card.subtype === 'cable-2' || card.subtype === 'cable-3') {
         // If dropped on a switch, connect to it; otherwise floating
         const switchId = zoneType === 'switch' 
@@ -509,6 +528,21 @@ const Simulation = () => {
               connectFloatingComputersToCable(connectDialog.cableId, selectedIds);
             }
             setConnectDialog(null);
+          }}
+        />
+      )}
+      
+      {/* Connect Cables Dialog */}
+      {cableDialog && gameState && (
+        <ConnectCablesDialog
+          isOpen={cableDialog.isOpen}
+          onClose={() => setCableDialog(null)}
+          floatingCables={gameState.players[0].network.floatingCables}
+          onConfirm={(selectedIds) => {
+            if (selectedIds.length > 0) {
+              connectFloatingCablesToSwitch(cableDialog.switchId, selectedIds);
+            }
+            setCableDialog(null);
           }}
         />
       )}

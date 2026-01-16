@@ -143,8 +143,9 @@ export function useGameEngine() {
   }, []);
 
   // Play a Switch card - NO auto-connect, requires manual proximity drop
-  const playSwitch = useCallback((cardId?: string) => {
-    if (!gameState) return false;
+  // Returns { success, switchId } for follow-up actions
+  const playSwitch = useCallback((cardId?: string): { success: boolean; switchId?: string } => {
+    if (!gameState) return { success: false };
     
     const player = gameState.players[gameState.currentPlayerIndex];
     const switchCard = cardId 
@@ -153,13 +154,15 @@ export function useGameEngine() {
     
     if (!switchCard || switchCard.subtype !== 'switch') {
       addLog('No Switch card!');
-      return false;
+      return { success: false };
     }
     
     if (gameState.movesRemaining <= 0) {
       addLog('No moves remaining!');
-      return false;
+      return { success: false };
     }
+    
+    const newSwitchId = generatePlacementId();
     
     setGameState(prev => {
       if (!prev) return prev;
@@ -173,7 +176,7 @@ export function useGameEngine() {
       // Create new switch - no auto-connect
       const newSwitch: SwitchNode = {
         card: switchCard,
-        id: generatePlacementId(),
+        id: newSwitchId,
         attachedIssues: [],
         isDisabled: false,
         cables: [],
@@ -194,7 +197,7 @@ export function useGameEngine() {
       };
     });
     
-    return true;
+    return { success: true, switchId: newSwitchId };
   }, [gameState, addLog]);
 
   // Play a Cable card - NO auto-connect, requires proximity drop
@@ -364,6 +367,70 @@ export function useGameEngine() {
         ...prev,
         players: newPlayers,
         gameLog: [...prev.gameLog.slice(-19), `Connected ${computersToConnect.length} computer(s)${locationMsg}`],
+      };
+    });
+    
+    return true;
+  }, [gameState]);
+
+  // Connect floating cables to a switch (FREE action - doesn't cost a move)
+  // Works for HUMAN player specifically (player index 0)
+  const connectFloatingCablesToSwitch = useCallback((switchId: string, cableIds: string[]) => {
+    if (!gameState || cableIds.length === 0) return false;
+    
+    setGameState(prev => {
+      if (!prev) return prev;
+      
+      const newPlayers = [...prev.players];
+      // Always use human player (index 0) for this action since it's triggered by dialog
+      const humanPlayerIndex = 0;
+      const currentPlayer = { ...newPlayers[humanPlayerIndex] };
+      
+      // Find the cables to connect from human player's floating cables
+      const cablesToConnect = currentPlayer.network.floatingCables.filter(
+        c => cableIds.includes(c.id)
+      );
+      
+      if (cablesToConnect.length === 0) {
+        console.log('No cables found to connect');
+        return prev;
+      }
+      
+      // Find the target switch
+      const switchIndex = currentPlayer.network.switches.findIndex(s => s.id === switchId);
+      if (switchIndex === -1) {
+        console.log('Switch not found:', switchId);
+        return prev;
+      }
+      
+      // Remove connected cables from floating
+      const remainingFloating = currentPlayer.network.floatingCables.filter(
+        c => !cableIds.includes(c.id)
+      );
+      
+      // Add cables to the switch
+      const newSwitches = [...currentPlayer.network.switches];
+      newSwitches[switchIndex] = {
+        ...newSwitches[switchIndex],
+        cables: [...newSwitches[switchIndex].cables, ...cablesToConnect],
+      };
+      
+      currentPlayer.network = {
+        ...currentPlayer.network,
+        switches: newSwitches,
+        floatingCables: remainingFloating,
+      };
+      
+      newPlayers[humanPlayerIndex] = currentPlayer;
+      
+      // Count total computers connected
+      const totalComputers = cablesToConnect.reduce((sum, c) => sum + c.computers.length, 0);
+      const computerMsg = totalComputers > 0 ? ` with ${totalComputers} computer(s)` : '';
+      
+      return {
+        ...prev,
+        players: newPlayers,
+        gameLog: [...prev.gameLog.slice(-19), `Connected ${cablesToConnect.length} cable(s)${computerMsg} to switch!`],
       };
     });
     
@@ -1085,6 +1152,7 @@ export function useGameEngine() {
     countConnectedComputers,
     findEquipmentById,
     connectFloatingComputersToCable,
+    connectFloatingCablesToSwitch,
     moveEquipment,
   };
 }
