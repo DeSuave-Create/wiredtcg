@@ -99,6 +99,9 @@ const Simulation = () => {
     initializeGame('You');
   }, [initializeGame]);
 
+  // Track previous classifications to detect steals
+  const [prevHumanClassCount, setPrevHumanClassCount] = useState<number>(0);
+
   // Execute AI turn when it's computer's turn
   useEffect(() => {
     if (!gameState) return;
@@ -111,6 +114,30 @@ const Simulation = () => {
       return () => clearTimeout(timer);
     }
   }, [gameState?.currentPlayerIndex, gameState?.phase, executeAITurn]);
+
+  // Detect when AI steals a classification and show visual feedback
+  useEffect(() => {
+    if (!gameState) return;
+    
+    const humanClassCount = gameState.players[0].classificationCards.length;
+    
+    // Check if human lost a classification (AI stole it)
+    if (prevHumanClassCount > 0 && humanClassCount < prevHumanClassCount) {
+      const lastLog = gameState.gameLog[gameState.gameLog.length - 1];
+      if (lastLog?.includes('steal') || lastLog?.includes('Steal')) {
+        toast.error('🎯 Your classification was stolen!', {
+          duration: 3000,
+          style: {
+            background: '#7c2d12',
+            border: '2px solid #f97316',
+            color: '#fed7aa',
+          },
+        });
+      }
+    }
+    
+    setPrevHumanClassCount(humanClassCount);
+  }, [gameState?.players[0].classificationCards.length]);
 
   const handleDragStart = (event: DragStartEvent) => {
     const data = event.active.data.current;
