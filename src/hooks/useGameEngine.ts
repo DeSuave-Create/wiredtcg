@@ -2035,19 +2035,34 @@ export function useGameEngine() {
           // Find a card to discard
           let cardToDiscard: Card | null = null;
           
-          // Priority: Discard steal cards if no target
+          // Priority 1: Discard steal cards if no target
           if (!hasStealTarget && stealCards.length > 0) {
             cardToDiscard = stealCards[0];
           }
-          // Discard attack cards ONLY if no valid target AND opponent unlikely to build soon
+          // Priority 2: Discard attack cards ONLY if no valid target AND opponent unlikely to build soon
           else if (!hasAttackTarget && attackCards.length > 0 && !shouldHoldAttacks) {
             cardToDiscard = attackCards[0];
           }
-          // Discard resolution cards that have no matching issues
+          // Priority 3: Discard resolution cards that have no matching issues
           else if (resolutionCards.length > 0) {
             const unusableRes = resolutionCards.find(c => !findResolutionTarget(network, c.subtype));
             if (unusableRes) {
               cardToDiscard = unusableRes;
+            }
+          }
+          // Priority 4: If we still have moves but nothing else to do, discard a random card to cycle
+          // This helps the AI get out of stuck situations
+          else if (movesRemaining > 0 && currentPlayer.hand.length > 0) {
+            // Pick a card to discard - prefer ones that are less useful right now
+            // Discard classification cards if we already have 2
+            const classificationCards = hand.filter(c => c.type === 'classification');
+            if (classificationCards.length > 0 && currentPlayer.classificationCards.length >= 2) {
+              cardToDiscard = classificationCards[0];
+            }
+            // Or discard duplicate equipment cards we don't need
+            else {
+              // Just pick any card to cycle the hand
+              cardToDiscard = hand[0];
             }
           }
           
