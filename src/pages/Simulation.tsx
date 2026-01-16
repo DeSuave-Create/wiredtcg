@@ -374,18 +374,16 @@ const Simulation = () => {
         return;
       }
       
-      // Check if same type already in play
-      const sameTypeInPlay = humanPlayer.classificationCards.some(
-        c => c.card.subtype === card.subtype
-      );
-      if (sameTypeInPlay) {
-        toast.error(`${card.name} already in play! Can't have duplicates.`);
-        return;
-      }
-      
       const success = playClassification(card.id);
       if (success) {
-        toast.success(`${card.name} is now active!`);
+        // Check if this creates a duplicate pair (steal protection)
+        const updatedClassifications = [...humanPlayer.classificationCards, { card }];
+        const hasDuplicate = updatedClassifications.filter(c => c.card.subtype === card.subtype).length >= 2;
+        if (hasDuplicate) {
+          toast.success(`${card.name} is now active! 🛡️ Duplicate protection active!`);
+        } else {
+          toast.success(`${card.name} is now active!`);
+        }
       } else {
         toast.error(`Failed to play ${card.name}!`);
       }

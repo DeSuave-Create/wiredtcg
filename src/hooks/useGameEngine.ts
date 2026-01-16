@@ -1265,14 +1265,7 @@ export function useGameEngine() {
       return false;
     }
     
-    // Check if same type already in play
-    const sameTypeInPlay = currentPlayer.classificationCards.some(
-      c => c.card.subtype === classCard.subtype
-    );
-    if (sameTypeInPlay) {
-      addLog(`${classCard.name} already in play!`);
-      return false;
-    }
+    // Duplicates ARE allowed - having 2 of the same type provides steal protection
     
     setGameState(prev => {
       if (!prev) return prev;
