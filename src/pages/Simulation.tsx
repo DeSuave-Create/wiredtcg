@@ -110,12 +110,16 @@ const Simulation = () => {
         playCable(card.id, switchId);
         toast.success(switchId ? 'Cable connected to switch!' : 'Cable placed (floating - drag onto a switch to connect)');
       } else if (card.subtype === 'computer') {
-        // If dropped on a cable, connect to it; otherwise floating
-        const cableId = zoneType === 'cable'
-          ? dropZoneId.replace(`${targetPlayerId}-cable-`, '')
-          : undefined;
+        // If dropped on a cable (connected or floating), connect to it; otherwise floating
+        let cableId: string | undefined;
+        if (zoneType === 'cable') {
+          cableId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
+        } else if (zoneType === 'floating') {
+          // Dropped on floating cable
+          cableId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
+        }
         playComputer(card.id, cableId);
-        toast.success(cableId ? 'Computer connected!' : 'Computer placed (floating - drag onto a cable to connect)');
+        toast.success(cableId ? 'Computer connected to cable!' : 'Computer placed (floating - drag onto a cable to connect)');
       }
       return;
     }
