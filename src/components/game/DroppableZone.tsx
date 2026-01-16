@@ -2,7 +2,7 @@ import { useDroppable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
 import { ReactNode } from 'react';
 
-export type DropZoneType = 'internet' | 'switch' | 'cable';
+export type DropZoneType = 'internet' | 'switch' | 'cable' | 'discard' | 'opponent-equipment' | 'own-equipment';
 
 interface DroppableZoneProps {
   id: string;

@@ -11,6 +11,7 @@ import { NetworkBoardDroppable } from '@/components/game/NetworkBoardDroppable';
 import { GameControlsSimple } from '@/components/game/GameControlsSimple';
 import { GameLog } from '@/components/game/GameLog';
 import { ScoreDisplay } from '@/components/game/ScoreDisplay';
+import { DiscardZone } from '@/components/game/DiscardZone';
 import { Card } from '@/types/game';
 
 const Simulation = () => {
@@ -20,6 +21,8 @@ const Simulation = () => {
     playSwitch,
     playCable,
     playComputer,
+    playAttack,
+    playResolution,
     discardCard,
     endPhase,
     executeAITurn,
@@ -64,26 +67,72 @@ const Simulation = () => {
     if (!card || !dropData) return;
 
     // Parse the drop zone ID
-    const [playerId, zoneType, zoneId] = dropZoneId.split('-');
-    
-    // Only allow drops on the human player's network
-    if (playerId !== 'player-1') return;
+    const parts = dropZoneId.split('-');
+    const targetPlayerId = parts[0] + '-' + parts[1]; // e.g., "player-1" or "player-2"
+    const zoneType = parts[2]; // e.g., "internet", "switch", "cable", "computer", "discard"
+    const zoneId = parts.slice(3).join('-'); // The rest is the equipment ID
 
     // Check if this card type is accepted
     const accepts = dropData.accepts as string[];
     if (!accepts.includes(card.subtype)) return;
 
-    // Execute the appropriate action
-    if (card.subtype === 'switch' && zoneType === 'internet') {
-      playSwitch();
-    } else if ((card.subtype === 'cable-2' || card.subtype === 'cable-3') && zoneType === 'switch') {
-      // zoneId contains the switch placement ID
-      const switchId = dropZoneId.replace(`${playerId}-switch-`, '');
-      playCable(switchId, card.subtype);
-    } else if (card.subtype === 'computer' && zoneType === 'cable') {
-      // zoneId contains the cable placement ID
-      const cableId = dropZoneId.replace(`${playerId}-cable-`, '');
-      playComputer(cableId);
+    const isHumanTarget = targetPlayerId === 'player-1';
+    const isComputerTarget = targetPlayerId === 'player-2';
+    const humanPlayerIndex = 0;
+    const computerPlayerIndex = 1;
+
+    // Handle discard
+    if (zoneType === 'discard') {
+      discardCard(card.id);
+      return;
+    }
+
+    // Handle equipment cards (only on own network)
+    if (card.type === 'equipment' && isHumanTarget) {
+      if (card.subtype === 'switch' && zoneType === 'internet') {
+        playSwitch();
+      } else if ((card.subtype === 'cable-2' || card.subtype === 'cable-3') && zoneType === 'switch') {
+        const switchId = dropZoneId.replace(`${targetPlayerId}-switch-`, '');
+        playCable(switchId, card.subtype);
+      } else if (card.subtype === 'computer' && zoneType === 'cable') {
+        const cableId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
+        playComputer(cableId);
+      }
+      return;
+    }
+
+    // Handle attack cards (on opponent's network)
+    if (card.type === 'attack' && isComputerTarget) {
+      let equipmentId = '';
+      if (zoneType === 'switch') {
+        equipmentId = dropZoneId.replace(`${targetPlayerId}-switch-`, '');
+      } else if (zoneType === 'cable') {
+        equipmentId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
+      } else if (zoneType === 'computer') {
+        equipmentId = dropZoneId.replace(`${targetPlayerId}-computer-`, '');
+      }
+      
+      if (equipmentId) {
+        playAttack(card.id, equipmentId, computerPlayerIndex);
+      }
+      return;
+    }
+
+    // Handle resolution cards (on own network)
+    if (card.type === 'resolution' && isHumanTarget) {
+      let equipmentId = '';
+      if (zoneType === 'switch') {
+        equipmentId = dropZoneId.replace(`${targetPlayerId}-switch-`, '');
+      } else if (zoneType === 'cable') {
+        equipmentId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
+      } else if (zoneType === 'computer') {
+        equipmentId = dropZoneId.replace(`${targetPlayerId}-computer-`, '');
+      }
+      
+      if (equipmentId) {
+        playResolution(card.id, equipmentId);
+      }
+      return;
     }
   };
 
@@ -100,6 +149,16 @@ const Simulation = () => {
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
   const isHumanTurn = currentPlayer.isHuman;
   const canPlayCards = isHumanTurn && gameState.phase === 'moves' && gameState.movesRemaining > 0;
+  const isDiscardPhase = isHumanTurn && gameState.phase === 'discard';
+  
+  // Check if player has resolution cards
+  const hasResolutionCards = humanPlayer.hand.some(c => c.type === 'resolution');
+  
+  // Check if opponent has equipment with issues that need resolving
+  const playerHasDisabledEquipment = humanPlayer.network.switches.some(sw => 
+    sw.attachedIssues.length > 0 || 
+    sw.cables.some(c => c.attachedIssues.length > 0 || c.computers.some(comp => comp.attachedIssues.length > 0))
+  );
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -172,6 +231,15 @@ const Simulation = () => {
             <div className="lg:col-span-1 order-3 lg:order-1">
               <GameLog messages={gameState.gameLog} />
               
+              {/* Discard zone */}
+              <div className="mt-4">
+                <DiscardZone 
+                  discardPile={gameState.discardPile}
+                  isActive={isDiscardPhase}
+                  playerId="player-1"
+                />
+              </div>
+              
               {/* Quick rules reference */}
               <div className="mt-4 bg-black/40 rounded-lg border border-gray-700 p-3">
                 <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Quick Rules</h4>
@@ -179,6 +247,8 @@ const Simulation = () => {
                   <li>• <span className="text-green-400">Switch</span> → drag to Internet</li>
                   <li>• <span className="text-green-400">Cable</span> → drag to a Switch</li>
                   <li>• <span className="text-green-400">Computer</span> → drag to a Cable</li>
+                  <li>• <span className="text-red-400">Attack</span> → drag to opponent's equipment</li>
+                  <li>• <span className="text-blue-400">Resolution</span> → drag to your disabled equipment</li>
                   <li>• Each connected 💻 = 1 bitcoin/turn</li>
                   <li>• First to 25 bitcoin wins!</li>
                 </ul>
@@ -204,6 +274,8 @@ const Simulation = () => {
                   isCurrentPlayer={false}
                   label="Computer's Network"
                   playerId="player-2"
+                  canReceiveAttacks={canPlayCards} // Human can attack during their moves phase
+                  canReceiveResolutions={false} // Can't play resolutions on opponent
                 />
               </div>
 
@@ -223,20 +295,27 @@ const Simulation = () => {
                   isCurrentPlayer={isHumanTurn}
                   label="Your Network"
                   playerId="player-1"
+                  canReceiveAttacks={false} // Can't attack yourself
+                  canReceiveResolutions={canPlayCards && hasResolutionCards && playerHasDisabledEquipment}
                 />
                 
                 <div className="mt-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-accent-green font-medium">Your Hand</span>
                     <span className="text-xs text-muted-foreground">
-                      {canPlayCards ? 'Drag cards to your network' : 'Wait for your turn'}
+                      {isDiscardPhase 
+                        ? 'Drag cards to discard pile' 
+                        : canPlayCards 
+                          ? 'Drag cards to play' 
+                          : 'Wait for your turn'
+                      }
                     </span>
                   </div>
                   <PlayerHandDraggable
                     cards={humanPlayer.hand}
                     isCurrentPlayer={isHumanTurn}
                     showCards={true}
-                    disabled={!canPlayCards}
+                    disabled={!canPlayCards && !isDiscardPhase}
                   />
                 </div>
               </div>
