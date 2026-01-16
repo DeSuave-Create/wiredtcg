@@ -12,6 +12,7 @@ import { GameControlsSimple } from '@/components/game/GameControlsSimple';
 import { GameLog } from '@/components/game/GameLog';
 import { ScoreDisplay } from '@/components/game/ScoreDisplay';
 import { DiscardZone } from '@/components/game/DiscardZone';
+import { ConnectComputersDialog } from '@/components/game/ConnectComputersDialog';
 import { Card } from '@/types/game';
 import { toast } from 'sonner';
 
@@ -55,9 +56,18 @@ const Simulation = () => {
     endPhase,
     executeAITurn,
     countConnectedComputers,
+    connectFloatingComputersToCable,
   } = useGameEngine();
 
   const [activeCard, setActiveCard] = useState<Card | null>(null);
+  
+  // Dialog state for connecting floating computers
+  const [connectDialog, setConnectDialog] = useState<{
+    isOpen: boolean;
+    cableId: string;
+    maxConnections: number;
+    cableType: string;
+  } | null>(null);
 
   // Initialize game on mount
   useEffect(() => {
@@ -134,8 +144,22 @@ const Simulation = () => {
         const switchId = zoneType === 'switch' 
           ? dropZoneId.replace(`${targetPlayerId}-switch-`, '')
           : undefined;
-        playCable(card.id, switchId);
-        toast.success(switchId ? 'Cable connected to switch!' : 'Cable placed (floating - drag onto a switch to connect)');
+        const result = playCable(card.id, switchId);
+        
+        if (result.success) {
+          toast.success(switchId ? 'Cable connected to switch!' : 'Cable placed (floating - drag onto a switch to connect)');
+          
+          // Check if there are floating computers to connect
+          const humanPlayer = gameState!.players[0];
+          if (humanPlayer.network.floatingComputers.length > 0 && result.cableId && result.maxComputers) {
+            setConnectDialog({
+              isOpen: true,
+              cableId: result.cableId,
+              maxConnections: result.maxComputers,
+              cableType: card.subtype,
+            });
+          }
+        }
       } else if (card.subtype === 'computer') {
         // If dropped on a cable (connected or floating), connect to it; otherwise floating
         let cableId: string | undefined;
@@ -408,6 +432,24 @@ const Simulation = () => {
           )}
         </DragOverlay>
       </DndContext>
+
+      {/* Connect Computers Dialog */}
+      {connectDialog && gameState && (
+        <ConnectComputersDialog
+          isOpen={connectDialog.isOpen}
+          onClose={() => setConnectDialog(null)}
+          floatingComputers={gameState.players[0].network.floatingComputers}
+          maxConnections={connectDialog.maxConnections}
+          cableType={connectDialog.cableType}
+          onConfirm={(selectedIds) => {
+            if (selectedIds.length > 0) {
+              connectFloatingComputersToCable(connectDialog.cableId, selectedIds);
+              toast.success(`Connected ${selectedIds.length} computer(s)!`);
+            }
+            setConnectDialog(null);
+          }}
+        />
+      )}
 
       <Footer />
     </div>
