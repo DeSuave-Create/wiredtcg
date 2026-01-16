@@ -470,8 +470,8 @@ function CableComponent({
             />
           )}
           
-          {/* Issue indicators */}
-          {cable.attachedIssues.length > 0 && !canRearrange && (
+          {/* Issue indicators - always show when there are issues */}
+          {cable.attachedIssues.length > 0 && (
             <IssueIndicator issues={cable.attachedIssues} small={compact} />
           )}
         </div>
