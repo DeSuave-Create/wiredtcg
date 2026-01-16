@@ -517,7 +517,7 @@ const Simulation = () => {
             <div className="order-1 lg:order-2 bg-black/20 rounded-lg p-3 border border-gray-700 space-y-2">
               <h2 className="text-xs font-bold text-gray-400">OPPONENT</h2>
               
-              {/* Computer's Network - compact */}
+              {/* Computer's Network - NOT compact, same size as player */}
               <NetworkBoardDroppable
                 network={computerPlayer.network}
                 isCurrentPlayer={false}
@@ -525,7 +525,6 @@ const Simulation = () => {
                 playerId="player-2"
                 canReceiveAttacks={canPlayCards}
                 canReceiveResolutions={false}
-                compact={true}
               />
               
               {/* Computer's Classifications - compact */}

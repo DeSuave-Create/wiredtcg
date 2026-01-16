@@ -1698,10 +1698,34 @@ export function useGameEngine() {
         const computers = hand.filter(c => c.subtype === 'computer');
         const attacks = hand.filter(c => c.type === 'attack' && c.subtype !== 'audit'); // Exclude audit for now
         const resolutions = hand.filter(c => c.type === 'resolution');
+        const classifications = hand.filter(c => c.type === 'classification');
         
         let playedCard = false;
         
-        // PRIORITY 1: Resolve own disabled equipment (if it would restore scoring)
+        // PRIORITY 1: Play classification cards first (they provide bonuses)
+        if (!playedCard && classifications.length > 0 && currentPlayer.classificationCards.length < 2) {
+          // Prioritize: Field Tech (+1 move), then others
+          const sortedClass = [...classifications].sort((a, b) => {
+            if (a.subtype === 'field-tech') return -1;
+            if (b.subtype === 'field-tech') return 1;
+            return 0;
+          });
+          const classCard = sortedClass[0];
+          
+          const newClassification: PlacedCard = {
+            card: classCard,
+            id: generatePlacementId(),
+            attachedIssues: [],
+            isDisabled: false,
+          };
+          
+          currentPlayer.hand = hand.filter(c => c.id !== classCard.id);
+          currentPlayer.classificationCards.push(newClassification);
+          playedCard = true;
+          gameLog = [...gameLog.slice(-19), `🎖️ Computer activated ${classCard.name}!`];
+        }
+        
+        // PRIORITY 2: Resolve own disabled equipment (if it would restore scoring)
         if (!playedCard && resolutions.length > 0) {
           for (const resCard of resolutions) {
             const target = findResolutionTarget(network, resCard.subtype);
@@ -1716,7 +1740,7 @@ export function useGameEngine() {
           }
         }
         
-        // PRIORITY 2: Attack human's network (if they have scoring equipment)
+        // PRIORITY 3: Attack human's network (if they have scoring equipment)
         if (!playedCard && attacks.length > 0 && humanPlayer.network.switches.length > 0) {
           const target = findAttackTarget(humanPlayer.network);
           if (target) {
@@ -1728,27 +1752,33 @@ export function useGameEngine() {
           }
         }
         
-        // PRIORITY 3: Build network - play a switch if we have none
-        if (!playedCard && network.switches.length === 0 && switches.length > 0) {
-          const switchCard = switches[0];
-          const newSwitchId = generatePlacementId();
+        // PRIORITY 4: Build network - play a switch if we have none or need more capacity
+        if (!playedCard && switches.length > 0) {
+          // Play switch if we have no switches, OR if all cables are full
+          const needsSwitch = network.switches.length === 0 || 
+            network.switches.every(sw => sw.isDisabled);
           
-          const newSwitch: SwitchNode = {
-            card: switchCard,
-            id: newSwitchId,
-            attachedIssues: [],
-            isDisabled: false,
-            cables: [],
-          };
-          
-          currentPlayer.hand = hand.filter(c => c.id !== switchCard.id);
-          currentPlayer.network.switches = [...network.switches, newSwitch];
-          
-          playedCard = true;
-          gameLog = [...gameLog.slice(-19), `Computer played Switch`];
+          if (needsSwitch) {
+            const switchCard = switches[0];
+            const newSwitchId = generatePlacementId();
+            
+            const newSwitch: SwitchNode = {
+              card: switchCard,
+              id: newSwitchId,
+              attachedIssues: [],
+              isDisabled: false,
+              cables: [],
+            };
+            
+            currentPlayer.hand = hand.filter(c => c.id !== switchCard.id);
+            currentPlayer.network.switches = [...network.switches, newSwitch];
+            
+            playedCard = true;
+            gameLog = [...gameLog.slice(-19), `Computer played Switch`];
+          }
         }
         
-        // PRIORITY 4: Play a cable on an existing enabled switch
+        // PRIORITY 5: Play a cable on an existing enabled switch
         if (!playedCard && cables.length > 0) {
           const enabledSwitch = network.switches.find(sw => !sw.isDisabled);
           if (enabledSwitch) {
@@ -1776,7 +1806,7 @@ export function useGameEngine() {
           }
         }
         
-        // PRIORITY 5: Play a computer on a cable with space
+        // PRIORITY 6: Play a computer on a cable with space
         if (!playedCard && computers.length > 0) {
           let placed = false;
           const computerCard = computers[0];
@@ -1808,7 +1838,7 @@ export function useGameEngine() {
           }
         }
         
-        // PRIORITY 6: Play another switch if we have switches but no valid moves
+        // PRIORITY 7: Play more switches if we have them and nothing else to do
         if (!playedCard && switches.length > 0) {
           const switchCard = switches[0];
           const newSwitchId = generatePlacementId();
@@ -1826,6 +1856,34 @@ export function useGameEngine() {
           
           playedCard = true;
           gameLog = [...gameLog.slice(-19), `Computer played Switch`];
+        }
+        
+        // PRIORITY 8: Play more cables if available
+        if (!playedCard && cables.length > 0) {
+          const enabledSwitch = network.switches.find(sw => !sw.isDisabled);
+          if (enabledSwitch) {
+            const cableCard = cables[0];
+            const maxComputers = cableCard.subtype === 'cable-2' ? 2 : 3;
+            const newCableId = generatePlacementId();
+            
+            const newCable: CableNode = {
+              card: cableCard,
+              id: newCableId,
+              attachedIssues: [],
+              isDisabled: false,
+              maxComputers: maxComputers as 2 | 3,
+              computers: [],
+            };
+            
+            currentPlayer.hand = hand.filter(c => c.id !== cableCard.id);
+            const switchIndex = currentPlayer.network.switches.findIndex(sw => sw.id === enabledSwitch.id);
+            if (switchIndex !== -1) {
+              currentPlayer.network.switches[switchIndex].cables.push(newCable);
+            }
+            
+            playedCard = true;
+            gameLog = [...gameLog.slice(-19), `Computer played Cable`];
+          }
         }
         
         if (playedCard) {
