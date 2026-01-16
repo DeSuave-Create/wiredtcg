@@ -479,7 +479,7 @@ const Simulation = () => {
                 playerId="player-1"
               />
               
-              {/* Your Hand */}
+              {/* Your Hand + Discard + Controls */}
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-accent-green font-medium">Your Hand</span>
@@ -492,21 +492,32 @@ const Simulation = () => {
                     }
                   </span>
                 </div>
-                <div className="flex items-start gap-2">
+                <div className="flex items-start gap-4">
+                  {/* Hand cards - 3x2 grid */}
                   <div className="flex-1">
                     <PlayerHandDraggable
                       cards={humanPlayer.hand}
                       isCurrentPlayer={isHumanTurn}
                       showCards={true}
                       disabled={!canPlayCards && !canDiscard && !isDiscardPhase}
+                      gridLayout={true}
                     />
                   </div>
-                  <div className="flex-shrink-0">
+                  {/* Discard + Controls stacked */}
+                  <div className="flex-shrink-0 flex flex-col gap-3">
                     <DiscardZone 
                       discardPile={gameState.discardPile}
                       isActive={canDiscard || isDiscardPhase}
                       isDiscardPhase={isDiscardPhase}
                       playerId="player-1"
+                    />
+                    <GameControlsSimple
+                      phase={gameState.phase}
+                      movesRemaining={gameState.movesRemaining}
+                      onEndPhase={endPhase}
+                      isCurrentPlayerHuman={isHumanTurn}
+                      isDragging={activeCard !== null}
+                      compact={true}
                     />
                   </div>
                 </div>
@@ -548,17 +559,6 @@ const Simulation = () => {
                 />
               </div>
             </div>
-          </div>
-
-          {/* Game controls - sticky */}
-          <div className="sticky bottom-4 z-40 mt-4">
-            <GameControlsSimple
-              phase={gameState.phase}
-              movesRemaining={gameState.movesRemaining}
-              onEndPhase={endPhase}
-              isCurrentPlayerHuman={isHumanTurn}
-              isDragging={activeCard !== null}
-            />
           </div>
         </main>
 

@@ -8,6 +8,7 @@ interface PlayerHandDraggableProps {
   showCards: boolean;
   disabled?: boolean;
   compact?: boolean;
+  gridLayout?: boolean;
 }
 
 export function PlayerHandDraggable({ 
@@ -16,7 +17,39 @@ export function PlayerHandDraggable({
   showCards,
   disabled = false,
   compact = false,
+  gridLayout = false,
 }: PlayerHandDraggableProps) {
+  // Grid layout: 3 cards per row
+  if (gridLayout) {
+    return (
+      <div className="grid grid-cols-3 gap-2 p-2">
+        {cards.map((card) => (
+          <div key={card.id}>
+            {showCards ? (
+              <DraggableCard 
+                card={card} 
+                disabled={disabled || !isCurrentPlayer}
+                showFace={true}
+              />
+            ) : (
+              <div className="w-20 h-28 sm:w-24 sm:h-32 rounded-lg border-2 border-gray-600 bg-gray-800 overflow-hidden">
+                <img 
+                  src="/lovable-uploads/card-back.png"
+                  alt="Card back"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            )}
+          </div>
+        ))}
+        
+        {cards.length === 0 && (
+          <div className="col-span-3 text-muted-foreground text-sm text-center py-4">No cards in hand</div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className={cn(
       "flex flex-wrap justify-center",

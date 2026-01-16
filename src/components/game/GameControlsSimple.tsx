@@ -9,6 +9,7 @@ interface GameControlsSimpleProps {
   onEndPhase: () => void;
   isCurrentPlayerHuman: boolean;
   isDragging: boolean;
+  compact?: boolean;
 }
 
 export function GameControlsSimple({
@@ -17,6 +18,7 @@ export function GameControlsSimple({
   onEndPhase,
   isCurrentPlayerHuman,
   isDragging,
+  compact = false,
 }: GameControlsSimpleProps) {
   const [isAnimating, setIsAnimating] = useState(false);
   const prevMovesRef = useRef(movesRemaining);
@@ -33,20 +35,74 @@ export function GameControlsSimple({
 
   if (!isCurrentPlayerHuman) {
     return (
-      <div className="text-center py-4">
-        <div className="animate-pulse text-accent-green">Computer is thinking...</div>
+      <div className={cn("text-center", compact ? "py-2" : "py-4")}>
+        <div className="animate-pulse text-accent-green text-sm">Computer thinking...</div>
       </div>
     );
   }
 
   const phaseLabels: Record<GamePhase, string> = {
-    'trade': 'Trade Phase',
-    'moves': 'Play Cards',
-    'discard': 'Discard Phase',
-    'draw': 'Draw Cards',
-    'score': 'Scoring',
+    'trade': 'Trade',
+    'moves': 'Play',
+    'discard': 'Discard',
+    'draw': 'Draw',
+    'score': 'Score',
     'game-over': 'Game Over',
   };
+
+  // Compact version for sidebar
+  if (compact) {
+    return (
+      <div className="flex flex-col items-center gap-2 p-3 bg-black/40 rounded-lg border border-accent-green/30">
+        {/* Compact phase indicator */}
+        <div className="flex flex-wrap justify-center gap-1">
+          {(['moves', 'discard', 'draw', 'score'] as GamePhase[]).map((p) => (
+            <div
+              key={p}
+              className={cn(
+                "px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider transition-colors",
+                phase === p 
+                  ? "bg-accent-green text-black" 
+                  : "bg-gray-700 text-gray-500"
+              )}
+            >
+              {phaseLabels[p]}
+            </div>
+          ))}
+        </div>
+        
+        {/* Moves counter */}
+        {phase === 'moves' && (
+          <div className="flex items-center gap-1 text-sm">
+            <span 
+              className={cn(
+                "inline-flex items-center justify-center w-6 h-6 rounded-full font-bold transition-all duration-300",
+                movesRemaining > 0 
+                  ? "bg-accent-green/20 text-accent-green" 
+                  : "bg-red-500/20 text-red-400",
+                isAnimating && "animate-bounce scale-125 bg-yellow-500/30 text-yellow-300"
+              )}
+            >
+              {movesRemaining}
+            </span>
+            <span className="text-muted-foreground text-xs">moves</span>
+          </div>
+        )}
+        
+        {/* Action button */}
+        <Button
+          onClick={onEndPhase}
+          size="sm"
+          className="w-full bg-accent-green hover:bg-accent-green/80 text-black text-xs"
+        >
+          {phase === 'moves' && 'End Moves'}
+          {phase === 'discard' && 'Done'}
+          {phase === 'draw' && 'Draw'}
+          {phase === 'score' && 'End Turn'}
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center gap-3 p-4 bg-black/20 rounded-lg">
