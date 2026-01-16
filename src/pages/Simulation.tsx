@@ -13,6 +13,7 @@ import { GameLog } from '@/components/game/GameLog';
 import { ScoreDisplay } from '@/components/game/ScoreDisplay';
 import { DiscardZone } from '@/components/game/DiscardZone';
 import { Card } from '@/types/game';
+import { toast } from 'sonner';
 
 const Simulation = () => {
   const {
@@ -55,10 +56,17 @@ const Simulation = () => {
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
+    const droppedCard = activeCard;
     setActiveCard(null);
     
     const { active, over } = event;
-    if (!over || !gameState) return;
+    if (!over || !gameState) {
+      // Dropped outside valid zone
+      if (droppedCard) {
+        showCardHint(droppedCard);
+      }
+      return;
+    }
 
     const card = active.data.current?.card as Card;
     const dropZoneId = over.id as string;
@@ -70,20 +78,22 @@ const Simulation = () => {
     const parts = dropZoneId.split('-');
     const targetPlayerId = parts[0] + '-' + parts[1]; // e.g., "player-1" or "player-2"
     const zoneType = parts[2]; // e.g., "internet", "switch", "cable", "computer", "discard"
-    const zoneId = parts.slice(3).join('-'); // The rest is the equipment ID
 
     // Check if this card type is accepted
     const accepts = dropData.accepts as string[];
-    if (!accepts.includes(card.subtype)) return;
+    if (!accepts.includes(card.subtype)) {
+      showCardHint(card);
+      return;
+    }
 
     const isHumanTarget = targetPlayerId === 'player-1';
     const isComputerTarget = targetPlayerId === 'player-2';
-    const humanPlayerIndex = 0;
     const computerPlayerIndex = 1;
 
     // Handle discard
     if (zoneType === 'discard') {
       discardCard(card.id);
+      toast.success('Card discarded');
       return;
     }
 
@@ -91,12 +101,15 @@ const Simulation = () => {
     if (card.type === 'equipment' && isHumanTarget) {
       if (card.subtype === 'switch' && zoneType === 'internet') {
         playSwitch();
+        toast.success('Switch placed!');
       } else if ((card.subtype === 'cable-2' || card.subtype === 'cable-3') && zoneType === 'switch') {
         const switchId = dropZoneId.replace(`${targetPlayerId}-switch-`, '');
         playCable(switchId, card.subtype);
+        toast.success('Cable connected!');
       } else if (card.subtype === 'computer' && zoneType === 'cable') {
         const cableId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
         playComputer(cableId);
+        toast.success('Computer connected!');
       }
       return;
     }
@@ -114,6 +127,7 @@ const Simulation = () => {
       
       if (equipmentId) {
         playAttack(card.id, equipmentId, computerPlayerIndex);
+        toast.success(`${card.name} attack played!`);
       }
       return;
     }
@@ -131,10 +145,32 @@ const Simulation = () => {
       
       if (equipmentId) {
         playResolution(card.id, equipmentId);
+        toast.success('Issue resolved!');
       }
       return;
     }
   };
+
+  // Show helpful hint based on card type
+  const showCardHint = (card: Card) => {
+    const hints: Record<string, string> = {
+      'switch': '🔌 Drag Switch to the INTERNET zone to start building',
+      'cable-2': '🔗 First place a Switch, then drag Cable to it',
+      'cable-3': '🔗 First place a Switch, then drag Cable to it',
+      'computer': '💻 First place a Switch & Cable, then drag Computer to a Cable',
+      'hacked': '⚡ Drag attack cards to OPPONENT\'s equipment',
+      'power-outage': '⚡ Drag attack cards to OPPONENT\'s equipment',
+      'new-hire': '⚡ Drag attack cards to OPPONENT\'s equipment',
+      'secured': '🔧 Drag to YOUR disabled equipment with Hacked issue',
+      'powered': '🔧 Drag to YOUR disabled equipment with Power Outage issue',
+      'trained': '🔧 Drag to YOUR disabled equipment with New Hire issue',
+      'helpdesk': '🔧 Drag to YOUR disabled equipment to fix ALL issues',
+    };
+    
+    const hint = hints[card.subtype] || `Cannot place ${card.name} here`;
+    toast.error(hint, { duration: 3000 });
+  };
+
 
   if (!gameState) {
     return (
