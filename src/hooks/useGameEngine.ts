@@ -1848,10 +1848,29 @@ export function useGameEngine() {
           const target = findAttackTarget(humanPlayer.network);
           if (target) {
             const attackCard = attacks[0];
-            applyAttack(humanPlayer.network, target, attackCard);
-            currentPlayer.hand = hand.filter(c => c.id !== attackCard.id);
-            playedCard = true;
-            gameLog = [...gameLog.slice(-19), `⚡ Computer attacked your ${target.type} with ${attackCard.name}!`];
+            
+            // Check if human has classification that blocks this attack
+            const resolveMap: Record<string, string> = {
+              'hacked': 'security-specialist',
+              'power-outage': 'facilities',
+              'new-hire': 'supervisor',
+            };
+            const blockingClass = resolveMap[attackCard.subtype];
+            const isBlocked = blockingClass && humanPlayer.classificationCards.some(c => c.card.subtype === blockingClass);
+            
+            if (isBlocked) {
+              // Attack is blocked - card is wasted but still use it
+              currentPlayer.hand = hand.filter(c => c.id !== attackCard.id);
+              newDiscardPile.push(attackCard);
+              playedCard = true;
+              gameLog = [...gameLog.slice(-19), `⚡ Computer's ${attackCard.name} was blocked by your ${blockingClass === 'security-specialist' ? 'Security Specialist' : blockingClass === 'facilities' ? 'Facilities' : 'Supervisor'}!`];
+            } else {
+              // Attack succeeds
+              applyAttack(humanPlayer.network, target, attackCard);
+              currentPlayer.hand = hand.filter(c => c.id !== attackCard.id);
+              playedCard = true;
+              gameLog = [...gameLog.slice(-19), `⚡ Computer attacked your ${target.type} with ${attackCard.name}!`];
+            }
           }
         }
         
