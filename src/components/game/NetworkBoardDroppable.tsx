@@ -1,12 +1,15 @@
-import { PlayerNetwork, SwitchNode, CableNode, PlacedCard } from '@/types/game';
+import { PlayerNetwork, SwitchNode, CableNode, PlacedCard, Card } from '@/types/game';
 import { DroppableZone } from './DroppableZone';
 import { cn } from '@/lib/utils';
+import { AlertTriangle } from 'lucide-react';
 
 interface NetworkBoardDroppableProps {
   network: PlayerNetwork;
   isCurrentPlayer: boolean;
   label: string;
   playerId: string;
+  canReceiveAttacks?: boolean; // True when opponent is playing during moves phase
+  canReceiveResolutions?: boolean; // True when current player has resolution cards
 }
 
 export function NetworkBoardDroppable({
@@ -14,6 +17,8 @@ export function NetworkBoardDroppable({
   isCurrentPlayer,
   label,
   playerId,
+  canReceiveAttacks = false,
+  canReceiveResolutions = false,
 }: NetworkBoardDroppableProps) {
   return (
     <div className="bg-black/30 rounded-lg p-4 border border-accent-green/30">
@@ -39,6 +44,8 @@ export function NetworkBoardDroppable({
             switchNode={sw}
             isCurrentPlayer={isCurrentPlayer}
             playerId={playerId}
+            canReceiveAttacks={canReceiveAttacks}
+            canReceiveResolutions={canReceiveResolutions}
           />
         ))}
         
@@ -56,36 +63,69 @@ interface SwitchComponentProps {
   switchNode: SwitchNode;
   isCurrentPlayer: boolean;
   playerId: string;
+  canReceiveAttacks: boolean;
+  canReceiveResolutions: boolean;
 }
 
 function SwitchComponent({
   switchNode,
   isCurrentPlayer,
   playerId,
+  canReceiveAttacks,
+  canReceiveResolutions,
 }: SwitchComponentProps) {
+  // Determine what this equipment can accept
+  const getEquipmentAccepts = (): string[] => {
+    const accepts: string[] = [];
+    
+    // Equipment cards for current player
+    if (isCurrentPlayer) {
+      accepts.push('cable-2', 'cable-3');
+    }
+    
+    // Attack cards for opponent's equipment
+    if (canReceiveAttacks) {
+      accepts.push('hacked', 'power-outage', 'new-hire');
+    }
+    
+    // Resolution cards for own equipment with issues
+    if (canReceiveResolutions && switchNode.attachedIssues.length > 0) {
+      accepts.push('secured', 'powered', 'trained', 'helpdesk');
+    }
+    
+    return accepts;
+  };
+
   return (
     <div className="relative">
       {/* Connection line to Internet */}
       <div className="absolute left-1/2 -top-4 w-0.5 h-4 bg-accent-green/50" />
       
-      {/* Switch card - droppable for cables */}
+      {/* Switch card - droppable for cables, attacks, resolutions */}
       <DroppableZone
         id={`${playerId}-switch-${switchNode.id}`}
-        type="switch"
-        accepts={isCurrentPlayer ? ['cable-2', 'cable-3'] : []}
+        type={canReceiveAttacks ? 'opponent-equipment' : isCurrentPlayer ? 'switch' : 'own-equipment'}
+        accepts={getEquipmentAccepts()}
         className="w-fit mx-auto"
       >
-        <div
-          className={cn(
-            "w-16 h-20 rounded border-2 overflow-hidden",
-            switchNode.isDisabled ? "border-red-500 opacity-50" : "border-green-500"
+        <div className="relative">
+          <div
+            className={cn(
+              "w-16 h-20 rounded border-2 overflow-hidden",
+              switchNode.isDisabled ? "border-red-500 opacity-70" : "border-green-500"
+            )}
+          >
+            <img 
+              src={switchNode.card.image} 
+              alt="Switch"
+              className="w-full h-full object-contain"
+            />
+          </div>
+          
+          {/* Issue indicators */}
+          {switchNode.attachedIssues.length > 0 && (
+            <IssueIndicator issues={switchNode.attachedIssues} />
           )}
-        >
-          <img 
-            src={switchNode.card.image} 
-            alt="Switch"
-            className="w-full h-full object-contain"
-          />
         </div>
       </DroppableZone>
       
@@ -99,6 +139,8 @@ function SwitchComponent({
               switchId={switchNode.id}
               isCurrentPlayer={isCurrentPlayer}
               playerId={playerId}
+              canReceiveAttacks={canReceiveAttacks}
+              canReceiveResolutions={canReceiveResolutions}
             />
           ))}
         </div>
@@ -119,6 +161,8 @@ interface CableComponentProps {
   switchId: string;
   isCurrentPlayer: boolean;
   playerId: string;
+  canReceiveAttacks: boolean;
+  canReceiveResolutions: boolean;
 }
 
 function CableComponent({
@@ -126,32 +170,63 @@ function CableComponent({
   switchId,
   isCurrentPlayer,
   playerId,
+  canReceiveAttacks,
+  canReceiveResolutions,
 }: CableComponentProps) {
   const hasSpace = cable.computers.length < cable.maxComputers;
+  
+  // Determine what this equipment can accept
+  const getEquipmentAccepts = (): string[] => {
+    const accepts: string[] = [];
+    
+    // Computer cards for current player with space
+    if (isCurrentPlayer && hasSpace) {
+      accepts.push('computer');
+    }
+    
+    // Attack cards for opponent's equipment
+    if (canReceiveAttacks) {
+      accepts.push('hacked', 'power-outage', 'new-hire');
+    }
+    
+    // Resolution cards for own equipment with issues
+    if (canReceiveResolutions && cable.attachedIssues.length > 0) {
+      accepts.push('secured', 'powered', 'trained', 'helpdesk');
+    }
+    
+    return accepts;
+  };
   
   return (
     <div className="relative">
       {/* Connection line to Switch */}
       <div className="absolute left-1/2 -top-2 w-0.5 h-2 bg-green-500/50" />
       
-      {/* Cable card - droppable for computers */}
+      {/* Cable card - droppable for computers, attacks, resolutions */}
       <DroppableZone
         id={`${playerId}-cable-${cable.id}`}
-        type="cable"
-        accepts={isCurrentPlayer && hasSpace ? ['computer'] : []}
+        type={canReceiveAttacks ? 'opponent-equipment' : isCurrentPlayer ? 'cable' : 'own-equipment'}
+        accepts={getEquipmentAccepts()}
         className="w-fit"
       >
-        <div
-          className={cn(
-            "w-14 h-18 rounded border-2 overflow-hidden",
-            cable.isDisabled ? "border-red-500 opacity-50" : "border-green-500"
+        <div className="relative">
+          <div
+            className={cn(
+              "w-14 h-18 rounded border-2 overflow-hidden",
+              cable.isDisabled ? "border-red-500 opacity-70" : "border-green-500"
+            )}
+          >
+            <img 
+              src={cable.card.image} 
+              alt={`Cable (${cable.maxComputers}x)`}
+              className="w-full h-full object-contain"
+            />
+          </div>
+          
+          {/* Issue indicators */}
+          {cable.attachedIssues.length > 0 && (
+            <IssueIndicator issues={cable.attachedIssues} />
           )}
-        >
-          <img 
-            src={cable.card.image} 
-            alt={`Cable (${cable.maxComputers}x)`}
-            className="w-full h-full object-contain"
-          />
         </div>
       </DroppableZone>
       
@@ -167,19 +242,15 @@ function CableComponent({
       {cable.computers.length > 0 && (
         <div className="flex gap-1 mt-1 justify-center">
           {cable.computers.map((comp) => (
-            <div
+            <ComputerComponent
               key={comp.id}
-              className={cn(
-                "w-10 h-12 rounded border overflow-hidden",
-                comp.isDisabled ? "border-red-500 opacity-50" : "border-green-400"
-              )}
-            >
-              <img 
-                src={comp.card.image} 
-                alt="Computer"
-                className="w-full h-full object-contain"
-              />
-            </div>
+              computer={comp}
+              cableId={cable.id}
+              isCurrentPlayer={isCurrentPlayer}
+              playerId={playerId}
+              canReceiveAttacks={canReceiveAttacks}
+              canReceiveResolutions={canReceiveResolutions}
+            />
           ))}
         </div>
       )}
@@ -190,6 +261,126 @@ function CableComponent({
           ↑ Drag PC
         </div>
       )}
+    </div>
+  );
+}
+
+interface ComputerComponentProps {
+  computer: PlacedCard;
+  cableId: string;
+  isCurrentPlayer: boolean;
+  playerId: string;
+  canReceiveAttacks: boolean;
+  canReceiveResolutions: boolean;
+}
+
+function ComputerComponent({
+  computer,
+  cableId,
+  isCurrentPlayer,
+  playerId,
+  canReceiveAttacks,
+  canReceiveResolutions,
+}: ComputerComponentProps) {
+  // Determine what this equipment can accept
+  const getEquipmentAccepts = (): string[] => {
+    const accepts: string[] = [];
+    
+    // Attack cards for opponent's equipment
+    if (canReceiveAttacks) {
+      accepts.push('hacked', 'power-outage', 'new-hire');
+    }
+    
+    // Resolution cards for own equipment with issues
+    if (canReceiveResolutions && computer.attachedIssues.length > 0) {
+      accepts.push('secured', 'powered', 'trained', 'helpdesk');
+    }
+    
+    return accepts;
+  };
+  
+  const accepts = getEquipmentAccepts();
+  
+  // If no interactions possible, render simple div
+  if (accepts.length === 0) {
+    return (
+      <div
+        className={cn(
+          "w-10 h-12 rounded border overflow-hidden relative",
+          computer.isDisabled ? "border-red-500 opacity-70" : "border-green-400"
+        )}
+      >
+        <img 
+          src={computer.card.image} 
+          alt="Computer"
+          className="w-full h-full object-contain"
+        />
+        {computer.attachedIssues.length > 0 && (
+          <IssueIndicator issues={computer.attachedIssues} small />
+        )}
+      </div>
+    );
+  }
+  
+  return (
+    <DroppableZone
+      id={`${playerId}-computer-${computer.id}`}
+      type={canReceiveAttacks ? 'opponent-equipment' : 'own-equipment'}
+      accepts={accepts}
+      className="w-fit"
+    >
+      <div
+        className={cn(
+          "w-10 h-12 rounded border overflow-hidden relative",
+          computer.isDisabled ? "border-red-500 opacity-70" : "border-green-400"
+        )}
+      >
+        <img 
+          src={computer.card.image} 
+          alt="Computer"
+          className="w-full h-full object-contain"
+        />
+        {computer.attachedIssues.length > 0 && (
+          <IssueIndicator issues={computer.attachedIssues} small />
+        )}
+      </div>
+    </DroppableZone>
+  );
+}
+
+interface IssueIndicatorProps {
+  issues: Card[];
+  small?: boolean;
+}
+
+function IssueIndicator({ issues, small = false }: IssueIndicatorProps) {
+  const issueColors: Record<string, string> = {
+    'hacked': 'bg-purple-500',
+    'power-outage': 'bg-yellow-500',
+    'new-hire': 'bg-orange-500',
+  };
+  
+  return (
+    <div className={cn(
+      "absolute flex gap-0.5",
+      small ? "-top-1 -right-1" : "-top-2 -right-2"
+    )}>
+      {issues.map((issue, idx) => (
+        <div
+          key={idx}
+          className={cn(
+            "rounded-full flex items-center justify-center",
+            issueColors[issue.subtype] || 'bg-red-500',
+            small ? "w-3 h-3" : "w-4 h-4"
+          )}
+          title={issue.name}
+        >
+          <AlertTriangle className={cn(
+            "text-white",
+            small ? "w-2 h-2" : "w-2.5 h-2.5"
+          )} />
+        </div>
+      ))}
     </div>
   );
 }

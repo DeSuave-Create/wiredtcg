@@ -101,6 +101,46 @@ export function useGameEngine() {
     return count;
   }, []);
 
+  // Helper: Find equipment by ID across network
+  const findEquipmentById = useCallback((network: PlayerNetwork, equipmentId: string): { type: 'switch' | 'cable' | 'computer'; node: PlacedCard; switchIndex?: number; cableIndex?: number; computerIndex?: number } | null => {
+    for (let si = 0; si < network.switches.length; si++) {
+      const sw = network.switches[si];
+      if (sw.id === equipmentId) {
+        return { type: 'switch', node: sw, switchIndex: si };
+      }
+      for (let ci = 0; ci < sw.cables.length; ci++) {
+        const cable = sw.cables[ci];
+        if (cable.id === equipmentId) {
+          return { type: 'cable', node: cable, switchIndex: si, cableIndex: ci };
+        }
+        for (let coi = 0; coi < cable.computers.length; coi++) {
+          const comp = cable.computers[coi];
+          if (comp.id === equipmentId) {
+            return { type: 'computer', node: comp, switchIndex: si, cableIndex: ci, computerIndex: coi };
+          }
+        }
+      }
+    }
+    return null;
+  }, []);
+
+  // Check if attack is blocked by classification
+  const isAttackBlocked = useCallback((targetPlayer: Player, attackType: string): boolean => {
+    const blockMap: Record<string, string> = {
+      'hacked': 'security-specialist',
+      'power-outage': 'facilities',
+      'new-hire': 'supervisor',
+    };
+    const blockingClass = blockMap[attackType];
+    if (!blockingClass) return false;
+    return targetPlayer.classificationCards.some(c => c.card.subtype === blockingClass);
+  }, []);
+
+  // Update equipment disabled state based on issues
+  const updateDisabledState = useCallback((node: PlacedCard): boolean => {
+    return node.attachedIssues.length > 0;
+  }, []);
+
   // Play a Switch card
   const playSwitch = useCallback(() => {
     if (!gameState) return false;
@@ -325,6 +365,214 @@ export function useGameEngine() {
     return true;
   }, [gameState]);
 
+  // Play an Attack card on opponent's equipment
+  const playAttack = useCallback((attackCardId: string, targetEquipmentId: string, targetPlayerIndex: number) => {
+    if (!gameState) return false;
+    
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    const attackCard = currentPlayer.hand.find(c => c.id === attackCardId);
+    
+    if (!attackCard || attackCard.type !== 'attack') {
+      addLog('Invalid attack card!');
+      return false;
+    }
+    
+    if (gameState.movesRemaining <= 0) {
+      addLog('No moves remaining!');
+      return false;
+    }
+    
+    // Can't attack yourself
+    if (targetPlayerIndex === gameState.currentPlayerIndex) {
+      addLog("Can't attack your own equipment!");
+      return false;
+    }
+    
+    const targetPlayer = gameState.players[targetPlayerIndex];
+    
+    // Check if blocked by classification
+    if (isAttackBlocked(targetPlayer, attackCard.subtype)) {
+      addLog(`Attack blocked by ${attackCard.subtype === 'hacked' ? 'Security Specialist' : attackCard.subtype === 'power-outage' ? 'Facilities' : 'Supervisor'}!`);
+      return false;
+    }
+    
+    setGameState(prev => {
+      if (!prev) return prev;
+      
+      const newPlayers = [...prev.players];
+      const attacker = { ...newPlayers[prev.currentPlayerIndex] };
+      const target = { ...newPlayers[targetPlayerIndex] };
+      
+      // Find target equipment
+      const equipmentInfo = findEquipmentById(target.network, targetEquipmentId);
+      if (!equipmentInfo) {
+        return {
+          ...prev,
+          gameLog: [...prev.gameLog.slice(-19), 'Target equipment not found!'],
+        };
+      }
+      
+      // Remove attack card from attacker's hand
+      attacker.hand = attacker.hand.filter(c => c.id !== attackCard.id);
+      
+      // Apply attack to target equipment - create deep copy of network
+      const newSwitches = target.network.switches.map((sw, si) => {
+        if (equipmentInfo.type === 'switch' && si === equipmentInfo.switchIndex) {
+          const updatedSwitch = { ...sw, attachedIssues: [...sw.attachedIssues, attackCard], isDisabled: true };
+          return updatedSwitch;
+        }
+        
+        return {
+          ...sw,
+          cables: sw.cables.map((cable, ci) => {
+            if (equipmentInfo.type === 'cable' && si === equipmentInfo.switchIndex && ci === equipmentInfo.cableIndex) {
+              return { ...cable, attachedIssues: [...cable.attachedIssues, attackCard], isDisabled: true };
+            }
+            
+            return {
+              ...cable,
+              computers: cable.computers.map((comp, coi) => {
+                if (equipmentInfo.type === 'computer' && si === equipmentInfo.switchIndex && ci === equipmentInfo.cableIndex && coi === equipmentInfo.computerIndex) {
+                  return { ...comp, attachedIssues: [...comp.attachedIssues, attackCard], isDisabled: true };
+                }
+                return comp;
+              }),
+            };
+          }),
+        };
+      });
+      
+      target.network = { ...target.network, switches: newSwitches };
+      
+      newPlayers[prev.currentPlayerIndex] = attacker;
+      newPlayers[targetPlayerIndex] = target;
+      
+      return {
+        ...prev,
+        players: newPlayers,
+        movesRemaining: prev.movesRemaining - 1,
+        gameLog: [...prev.gameLog.slice(-19), `⚡ ${attackCard.name} played on ${target.name}'s ${equipmentInfo.type}!`],
+      };
+    });
+    
+    return true;
+  }, [gameState, addLog, findEquipmentById, isAttackBlocked]);
+
+  // Play a Resolution card on your own equipment
+  const playResolution = useCallback((resolutionCardId: string, targetEquipmentId: string) => {
+    if (!gameState) return false;
+    
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    const resolutionCard = currentPlayer.hand.find(c => c.id === resolutionCardId);
+    
+    if (!resolutionCard || resolutionCard.type !== 'resolution') {
+      addLog('Invalid resolution card!');
+      return false;
+    }
+    
+    if (gameState.movesRemaining <= 0) {
+      addLog('No moves remaining!');
+      return false;
+    }
+    
+    // Find target equipment in your own network
+    const equipmentInfo = findEquipmentById(currentPlayer.network, targetEquipmentId);
+    if (!equipmentInfo) {
+      addLog('Target equipment not found!');
+      return false;
+    }
+    
+    // Check if equipment has matching issues
+    const targetNode = equipmentInfo.node;
+    const resolutionMap: Record<string, string> = {
+      'secured': 'hacked',
+      'powered': 'power-outage',
+      'trained': 'new-hire',
+    };
+    
+    const targetIssueType = resolutionMap[resolutionCard.subtype];
+    const isHelpdesk = resolutionCard.subtype === 'helpdesk';
+    
+    if (!isHelpdesk && targetIssueType) {
+      const hasMatchingIssue = targetNode.attachedIssues.some(i => i.subtype === targetIssueType);
+      if (!hasMatchingIssue) {
+        addLog(`No ${targetIssueType} issue to resolve!`);
+        return false;
+      }
+    } else if (!isHelpdesk) {
+      addLog('Unknown resolution card type!');
+      return false;
+    }
+    
+    if (targetNode.attachedIssues.length === 0) {
+      addLog('No issues to resolve on this equipment!');
+      return false;
+    }
+    
+    setGameState(prev => {
+      if (!prev) return prev;
+      
+      const newPlayers = [...prev.players];
+      const player = { ...newPlayers[prev.currentPlayerIndex] };
+      
+      // Remove resolution card from hand
+      player.hand = player.hand.filter(c => c.id !== resolutionCard.id);
+      
+      // Apply resolution - create deep copy of network
+      const newSwitches = player.network.switches.map((sw, si) => {
+        const processIssues = (issues: Card[]): Card[] => {
+          if (isHelpdesk) return []; // Helpdesk removes ALL issues
+          return issues.filter(i => i.subtype !== targetIssueType); // Remove one matching issue type
+        };
+        
+        if (equipmentInfo.type === 'switch' && si === equipmentInfo.switchIndex) {
+          const newIssues = isHelpdesk ? [] : sw.attachedIssues.filter((i, idx) => 
+            i.subtype !== targetIssueType || sw.attachedIssues.findIndex(x => x.subtype === targetIssueType) !== idx
+          );
+          return { ...sw, attachedIssues: newIssues, isDisabled: newIssues.length > 0 };
+        }
+        
+        return {
+          ...sw,
+          cables: sw.cables.map((cable, ci) => {
+            if (equipmentInfo.type === 'cable' && si === equipmentInfo.switchIndex && ci === equipmentInfo.cableIndex) {
+              const newIssues = isHelpdesk ? [] : cable.attachedIssues.filter((i, idx) =>
+                i.subtype !== targetIssueType || cable.attachedIssues.findIndex(x => x.subtype === targetIssueType) !== idx
+              );
+              return { ...cable, attachedIssues: newIssues, isDisabled: newIssues.length > 0 };
+            }
+            
+            return {
+              ...cable,
+              computers: cable.computers.map((comp, coi) => {
+                if (equipmentInfo.type === 'computer' && si === equipmentInfo.switchIndex && ci === equipmentInfo.cableIndex && coi === equipmentInfo.computerIndex) {
+                  const newIssues = isHelpdesk ? [] : comp.attachedIssues.filter((i, idx) =>
+                    i.subtype !== targetIssueType || comp.attachedIssues.findIndex(x => x.subtype === targetIssueType) !== idx
+                  );
+                  return { ...comp, attachedIssues: newIssues, isDisabled: newIssues.length > 0 };
+                }
+                return comp;
+              }),
+            };
+          }),
+        };
+      });
+      
+      player.network = { ...player.network, switches: newSwitches };
+      newPlayers[prev.currentPlayerIndex] = player;
+      
+      return {
+        ...prev,
+        players: newPlayers,
+        discardPile: [...prev.discardPile, resolutionCard],
+        movesRemaining: prev.movesRemaining - 1,
+        gameLog: [...prev.gameLog.slice(-19), `🔧 ${resolutionCard.name} resolved issue on ${equipmentInfo.type}!`],
+      };
+    });
+    
+    return true;
+  }, [gameState, addLog, findEquipmentById]);
+
   // Draw cards up to max hand size
   const drawCards = useCallback(() => {
     if (!gameState) return;
@@ -521,10 +769,13 @@ export function useGameEngine() {
     playSwitch,
     playCable,
     playComputer,
+    playAttack,
+    playResolution,
     discardCard,
     drawCards,
     endPhase,
     executeAITurn,
     countConnectedComputers,
+    findEquipmentById,
   };
 }
