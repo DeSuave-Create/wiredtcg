@@ -1536,6 +1536,7 @@ export function useGameEngine() {
       
       let movesRemaining = prev.movesRemaining;
       let gameLog = [...prev.gameLog];
+      let newDiscardPile = [...prev.discardPile];
       const maxMoves = getMovesForPlayer(newPlayers[aiPlayerIndex]);
       let movesUsed = 0;
       
@@ -1726,32 +1727,78 @@ export function useGameEngine() {
         }
         
         // PRIORITY 2: Play classification cards (they provide bonuses)
-        if (!playedCard && classifications.length > 0 && currentPlayer.classificationCards.length < 2) {
-          // Prioritize: Field Tech (+1 move), then defensive ones, then offensive
-          const sortedClass = [...classifications].sort((a, b) => {
-            const priority: Record<string, number> = {
-              'field-tech': 1,
-              'security-specialist': 2,
-              'facilities': 3,
-              'supervisor': 4,
-              'head-hunter': 5,
-              'seal-the-deal': 6,
-            };
-            return (priority[a.subtype] || 10) - (priority[b.subtype] || 10);
-          });
-          const classCard = sortedClass[0];
+        if (!playedCard && classifications.length > 0) {
+          // Separate steal cards from placeable cards
+          const stealCards = classifications.filter(c => c.subtype === 'head-hunter' || c.subtype === 'seal-the-deal');
+          const placeableCards = classifications.filter(c => c.subtype !== 'head-hunter' && c.subtype !== 'seal-the-deal');
           
-          const newClassification: PlacedCard = {
-            card: classCard,
-            id: generatePlacementId(),
-            attachedIssues: [],
-            isDisabled: false,
-          };
+          // First, try to use steal cards if opponent has classifications
+          if (stealCards.length > 0 && humanPlayer.classificationCards.length > 0) {
+            // Prefer Seal the Deal (unblockable) over Head Hunter
+            const stealCard = stealCards.find(c => c.subtype === 'seal-the-deal') || stealCards[0];
+            
+            // Pick a target classification to steal
+            const targetClass = humanPlayer.classificationCards[0];
+            
+            // Check if AI already has this classification type
+            const alreadyHasType = currentPlayer.classificationCards.some(
+              c => c.card.subtype === targetClass.card.subtype
+            );
+            
+            if (!alreadyHasType || currentPlayer.classificationCards.length < 2) {
+              // Remove steal card from hand
+              currentPlayer.hand = hand.filter(c => c.id !== stealCard.id);
+              
+              // Remove target from human
+              humanPlayer.classificationCards = humanPlayer.classificationCards.filter(c => c.id !== targetClass.id);
+              
+              // Add to AI's classifications if space and not duplicate type
+              if (currentPlayer.classificationCards.length < 2 && !alreadyHasType) {
+                currentPlayer.classificationCards.push(targetClass);
+                gameLog = [...gameLog.slice(-19), `🎖️ Computer used ${stealCard.name} to steal ${targetClass.card.name}!`];
+              } else {
+                // Discard if can't keep
+                newDiscardPile.push(targetClass.card);
+                gameLog = [...gameLog.slice(-19), `🎖️ Computer used ${stealCard.name} - ${targetClass.card.name} discarded!`];
+              }
+              
+              newDiscardPile.push(stealCard);
+              playedCard = true;
+            }
+          }
           
-          currentPlayer.hand = hand.filter(c => c.id !== classCard.id);
-          currentPlayer.classificationCards.push(newClassification);
-          playedCard = true;
-          gameLog = [...gameLog.slice(-19), `🎖️ Computer activated ${classCard.name}!`];
+          // Then, try to place regular classification cards
+          if (!playedCard && placeableCards.length > 0 && currentPlayer.classificationCards.length < 2) {
+            // Prioritize: Field Tech (+1 move), then defensive ones
+            const sortedClass = [...placeableCards].sort((a, b) => {
+              const priority: Record<string, number> = {
+                'field-tech': 1,
+                'security-specialist': 2,
+                'facilities': 3,
+                'supervisor': 4,
+              };
+              return (priority[a.subtype] || 10) - (priority[b.subtype] || 10);
+            });
+            
+            // Check if we already have this type
+            const classCard = sortedClass.find(c => 
+              !currentPlayer.classificationCards.some(existing => existing.card.subtype === c.subtype)
+            );
+            
+            if (classCard) {
+              const newClassification: PlacedCard = {
+                card: classCard,
+                id: generatePlacementId(),
+                attachedIssues: [],
+                isDisabled: false,
+              };
+              
+              currentPlayer.hand = hand.filter(c => c.id !== classCard.id);
+              currentPlayer.classificationCards.push(newClassification);
+              playedCard = true;
+              gameLog = [...gameLog.slice(-19), `🎖️ Computer activated ${classCard.name}!`];
+            }
+          }
         }
         
         // PRIORITY 3: Attack human's network (aggressive play)
@@ -1933,6 +1980,7 @@ export function useGameEngine() {
         ...prev,
         players: newPlayers,
         drawPile: remaining,
+        discardPile: newDiscardPile,
         currentPlayerIndex: isWinner ? aiPlayerIndex : (aiPlayerIndex + 1) % 2,
         phase: isWinner ? 'game-over' : 'moves',
         movesRemaining: getMovesForPlayer(nextPlayer),
