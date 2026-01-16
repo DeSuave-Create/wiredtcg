@@ -57,6 +57,7 @@ const Simulation = () => {
     playResolution,
     playClassification,
     discardCard,
+    discardClassification,
     endPhase,
     executeAITurn,
     countConnectedComputers,
@@ -189,6 +190,18 @@ const Simulation = () => {
     const isComputerTarget = targetPlayerId === 'player-2';
     const computerPlayerIndex = 1;
     
+    // === Handle PLACED CLASSIFICATION being discarded ===
+    if (data?.isPlacedClassification && zoneType === 'discard' && isHumanTarget) {
+      const classificationId = data.classificationId as string;
+      const success = discardClassification(classificationId);
+      if (success) {
+        toast.success(`${card.name} discarded from board`);
+      } else {
+        toast.error('Failed to discard classification');
+      }
+      return;
+    }
+    
     // === Handle PLACED CARD being moved (rearranging) ===
     if (droppedPlacedCard && isHumanTarget) {
       const { sourceType, sourceId } = droppedPlacedCard;
@@ -231,8 +244,8 @@ const Simulation = () => {
       }
     }
 
-    // Handle discard
-    if (zoneType === 'discard') {
+    // Handle discard from hand
+    if (zoneType === 'discard' && !data?.isPlacedClassification) {
       discardCard(card.id);
       toast.success('Card discarded');
       return;
@@ -530,6 +543,7 @@ const Simulation = () => {
                 classificationCards={humanPlayer.classificationCards}
                 isCurrentPlayer={true}
                 playerId="player-1"
+                canDrag={canPlayCards}
               />
               
               {/* Your Hand + Discard + Controls */}

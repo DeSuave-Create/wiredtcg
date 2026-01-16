@@ -779,7 +779,7 @@ export function useGameEngine() {
     return true;
   }, [gameState, addLog]);
 
-  // Discard a card
+  // Discard a card from hand
   const discardCard = useCallback((cardId: string) => {
     if (!gameState) return false;
     
@@ -800,6 +800,45 @@ export function useGameEngine() {
         players: newPlayers,
         discardPile: [...prev.discardPile, cardToDiscard],
         gameLog: [...prev.gameLog.slice(-19), `Discarded ${cardToDiscard.name}`],
+      };
+    });
+    
+    return true;
+  }, [gameState]);
+
+  // Discard a classification from the board
+  const discardClassification = useCallback((classificationId: string) => {
+    if (!gameState) return false;
+    
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    const classCard = currentPlayer.classificationCards.find(c => c.id === classificationId);
+    
+    if (!classCard) {
+      addLog('Classification not found!');
+      return false;
+    }
+    
+    if (gameState.movesRemaining <= 0) {
+      addLog('No moves remaining!');
+      return false;
+    }
+    
+    setGameState(prev => {
+      if (!prev) return prev;
+      
+      const newPlayers = [...prev.players];
+      const player = { ...newPlayers[prev.currentPlayerIndex] };
+      
+      // Remove from classification cards
+      player.classificationCards = player.classificationCards.filter(c => c.id !== classificationId);
+      newPlayers[prev.currentPlayerIndex] = player;
+      
+      return {
+        ...prev,
+        players: newPlayers,
+        discardPile: [...prev.discardPile, classCard.card],
+        movesRemaining: prev.movesRemaining - 1,
+        gameLog: [...prev.gameLog.slice(-19), `🗑️ Discarded ${classCard.card.name} from board`],
       };
     });
     
@@ -2062,6 +2101,7 @@ export function useGameEngine() {
     playResolution,
     playClassification,
     discardCard,
+    discardClassification,
     drawCards,
     endPhase,
     executeAITurn,
