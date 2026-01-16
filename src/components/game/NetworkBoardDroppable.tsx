@@ -30,11 +30,22 @@ export function NetworkBoardDroppable({
   
   return (
     <div className={cn(
-      "bg-black/30 rounded-lg border border-accent-green/30",
+      "bg-black/30 rounded-lg border border-accent-green/30 relative overflow-hidden",
       compact ? "p-2" : "p-4"
     )}>
+      {/* Background logo */}
+      <div 
+        className="absolute inset-0 opacity-5 pointer-events-none"
+        style={{
+          backgroundImage: `url('/wire-logo-official.png')`,
+          backgroundSize: '60%',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      />
+      
       <h3 className={cn(
-        "font-semibold text-accent-green",
+        "font-semibold text-accent-green relative z-10",
         compact ? "text-xs mb-2" : "text-sm mb-3"
       )}>{label}</h3>
       
@@ -43,7 +54,7 @@ export function NetworkBoardDroppable({
         id={`${playerId}-board`}
         type="internet"
         accepts={isCurrentPlayer ? ['switch', 'cable-2', 'cable-3', 'computer'] : []}
-        className={cn("relative", compact ? "min-h-[120px]" : "min-h-[200px]")}
+        className={cn("relative z-10", compact ? "min-h-[120px]" : "min-h-[200px]")}
       >
         {/* Internet connection point */}
         <div className={cn("flex items-center justify-center", compact ? "mb-3" : "mb-6")}>
@@ -661,15 +672,12 @@ function PlacedCardDisplay({ card, placementId, isDisabled, className, small = f
   return (
     <div
       className={cn(
-        "rounded border-2 overflow-hidden transition-all duration-300",
-        isDisabled ? "border-red-500 opacity-70" : small ? "border-green-400" : "border-green-500",
-        isNew && "animate-scale-in ring-2 ring-yellow-400 ring-opacity-75 shadow-lg shadow-yellow-400/30",
-        isReEnabled && "ring-2 ring-green-400 shadow-lg shadow-green-400/50 animate-pulse",
+        "rounded border-2 overflow-hidden transition-all duration-300 bg-black",
+        isDisabled ? "border-red-500 opacity-70" : "border-green-600",
+        isNew && "animate-scale-in",
+        isReEnabled && "animate-pulse",
         className
       )}
-      style={isReEnabled ? {
-        animation: 'reEnable 0.8s ease-out',
-      } : undefined}
     >
       <img 
         src={card.image} 

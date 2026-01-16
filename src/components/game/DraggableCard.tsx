@@ -24,11 +24,11 @@ export function DraggableCard({ card, disabled = false, showFace = true, compact
 
   const getCardTypeColor = (type: Card['type']) => {
     switch (type) {
-      case 'equipment': return 'border-green-500 bg-green-500/10';
-      case 'attack': return 'border-red-500 bg-red-500/10';
-      case 'resolution': return 'border-purple-500 bg-purple-500/10';
-      case 'classification': return 'border-blue-500 bg-blue-500/10';
-      default: return 'border-gray-500 bg-gray-500/10';
+      case 'equipment': return 'border-green-600';
+      case 'attack': return 'border-red-600';
+      case 'resolution': return 'border-purple-600';
+      case 'classification': return 'border-blue-600';
+      default: return 'border-gray-600';
     }
   };
 
@@ -39,12 +39,12 @@ export function DraggableCard({ card, disabled = false, showFace = true, compact
       {...listeners}
       {...attributes}
       className={cn(
-        "relative rounded-lg border-2 overflow-hidden transition-all duration-200 touch-none",
+        "relative rounded-lg border-2 overflow-hidden transition-all duration-200 touch-none bg-black",
         compact ? "w-8 h-11" : "w-20 h-28 sm:w-24 sm:h-32",
-        showFace ? getCardTypeColor(card.type) : 'border-gray-600 bg-gray-800',
+        showFace ? getCardTypeColor(card.type) : 'border-gray-600',
         !disabled && "cursor-grab active:cursor-grabbing hover:scale-105 hover:-translate-y-2",
         disabled && "opacity-60 cursor-not-allowed",
-        isDragging && "z-50 scale-110 shadow-2xl ring-2 ring-yellow-400"
+        isDragging && "z-50 scale-110 shadow-2xl"
       )}
     >
       {showFace ? (

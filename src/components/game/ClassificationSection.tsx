@@ -47,7 +47,7 @@ export function ClassificationSection({
       className="w-full"
     >
       <div className={cn(
-        "bg-gradient-to-r from-purple-900/30 to-blue-900/30 rounded-lg border border-purple-500/30",
+        "bg-gradient-to-r from-blue-900/40 to-blue-800/30 rounded-lg border border-blue-500/40",
         compact ? "p-2" : "p-3"
       )}>
         <div className={cn(
@@ -56,7 +56,7 @@ export function ClassificationSection({
         )}>
           <div className="flex items-center gap-2">
             <span className={cn(
-              "font-semibold text-purple-300",
+              "font-semibold text-blue-300",
               compact ? "text-[10px]" : "text-xs"
             )}>
               {compact ? "🎖️ CLASS" : "🎖️ CLASSIFICATIONS"}
@@ -107,7 +107,7 @@ export function ClassificationSection({
             classificationCards.map((classCard) => (
               <div key={classCard.id} className="relative group">
                 <div className={cn(
-                  "rounded border-2 border-purple-500 overflow-hidden shadow-lg shadow-purple-500/20 transition-transform hover:scale-105",
+                  "rounded border-2 border-blue-500 overflow-hidden transition-transform hover:scale-105",
                   compact ? "w-8 h-11" : "w-14 h-20"
                 )}>
                   <img 
@@ -118,13 +118,13 @@ export function ClassificationSection({
                 </div>
                 {/* Compact ability indicator */}
                 {compact && (
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[8px] bg-purple-900/90 text-purple-200 px-1 rounded">
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[8px] bg-blue-900/90 text-blue-200 px-1 rounded">
                     {compactAbilityLabels[classCard.card.subtype]}
                   </div>
                 )}
                 {/* Full ability tooltip */}
                 {!compact && (
-                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] bg-purple-900/90 text-purple-200 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] bg-blue-900/90 text-blue-200 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10">
                     {classCard.card.name}
                   </div>
                 )}
