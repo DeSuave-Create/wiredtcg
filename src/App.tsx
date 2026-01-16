@@ -17,6 +17,7 @@ import RulebookViewer from "./pages/RulebookViewer";
 import InternetInstructions from "./pages/InternetInstructions";
 import AIInstructions from "./pages/AIInstructions";
 import BotnetInstructions from "./pages/BotnetInstructions";
+import Simulation from "./pages/Simulation";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/internet-instructions" element={<InternetInstructions />} />
             <Route path="/ai-instructions" element={<AIInstructions />} />
             <Route path="/botnet-instructions" element={<BotnetInstructions />} />
+            <Route path="/simulation" element={<Simulation />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
