@@ -305,6 +305,7 @@ const Simulation = () => {
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
   const isHumanTurn = currentPlayer.isHuman;
   const canPlayCards = isHumanTurn && gameState.phase === 'moves' && gameState.movesRemaining > 0;
+  const canDiscard = isHumanTurn && gameState.phase === 'moves'; // Can always discard during your turn
   const isDiscardPhase = isHumanTurn && gameState.phase === 'discard';
   
   // Check if player has resolution cards
@@ -391,7 +392,7 @@ const Simulation = () => {
                 {/* Discard zone - always visible and active during player's turn */}
                 <DiscardZone 
                   discardPile={gameState.discardPile}
-                  isActive={isHumanTurn && (canPlayCards || isDiscardPhase)}
+                  isActive={canDiscard || isDiscardPhase}
                   isDiscardPhase={isDiscardPhase}
                   playerId="player-1"
                 />
@@ -473,7 +474,7 @@ const Simulation = () => {
                     cards={humanPlayer.hand}
                     isCurrentPlayer={isHumanTurn}
                     showCards={true}
-                    disabled={!canPlayCards && !isDiscardPhase}
+                    disabled={!canPlayCards && !canDiscard && !isDiscardPhase}
                   />
                 </div>
               </div>
