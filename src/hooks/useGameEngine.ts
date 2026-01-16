@@ -1962,6 +1962,12 @@ export function useGameEngine() {
           const attackCards = hand.filter(c => c.type === 'attack');
           const hasAttackTarget = findAttackTarget(humanPlayer.network) !== null;
           
+          // Smart attack card retention: Hold attacks if opponent might build equipment soon
+          // Keep attacks if: opponent has cards in hand OR has any network (even if disabled)
+          const opponentHasNetwork = humanPlayer.network.switches.length > 0;
+          const opponentHasCards = humanPlayer.hand.length > 0;
+          const shouldHoldAttacks = opponentHasNetwork || opponentHasCards;
+          
           const resolutionCards = hand.filter(c => c.type === 'resolution');
           const hasResolutionTarget = resolutionCards.some(c => findResolutionTarget(network, c.subtype) !== null);
           
@@ -1972,8 +1978,8 @@ export function useGameEngine() {
           if (!hasStealTarget && stealCards.length > 0) {
             cardToDiscard = stealCards[0];
           }
-          // Discard attack cards if no valid target
-          else if (!hasAttackTarget && attackCards.length > 0) {
+          // Discard attack cards ONLY if no valid target AND opponent unlikely to build soon
+          else if (!hasAttackTarget && attackCards.length > 0 && !shouldHoldAttacks) {
             cardToDiscard = attackCards[0];
           }
           // Discard resolution cards that have no matching issues
