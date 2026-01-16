@@ -99,17 +99,23 @@ const Simulation = () => {
 
     // Handle equipment cards (only on own network)
     if (card.type === 'equipment' && isHumanTarget) {
-      if (card.subtype === 'switch' && zoneType === 'internet') {
-        playSwitch();
+      if (card.subtype === 'switch') {
+        playSwitch(card.id);
         toast.success('Switch placed!');
-      } else if ((card.subtype === 'cable-2' || card.subtype === 'cable-3') && zoneType === 'switch') {
-        const switchId = dropZoneId.replace(`${targetPlayerId}-switch-`, '');
-        playCable(switchId, card.subtype);
-        toast.success('Cable connected!');
-      } else if (card.subtype === 'computer' && zoneType === 'cable') {
-        const cableId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
-        playComputer(cableId);
-        toast.success('Computer connected!');
+      } else if (card.subtype === 'cable-2' || card.subtype === 'cable-3') {
+        // If dropped on a switch, connect to it; otherwise floating
+        const switchId = zoneType === 'switch' 
+          ? dropZoneId.replace(`${targetPlayerId}-switch-`, '')
+          : undefined;
+        playCable(card.id, switchId);
+        toast.success(switchId ? 'Cable connected to switch!' : 'Cable placed (will auto-connect when switch is placed)');
+      } else if (card.subtype === 'computer') {
+        // If dropped on a cable, connect to it; otherwise floating
+        const cableId = zoneType === 'cable'
+          ? dropZoneId.replace(`${targetPlayerId}-cable-`, '')
+          : undefined;
+        playComputer(card.id, cableId);
+        toast.success(cableId ? 'Computer connected!' : 'Computer placed (will auto-connect when cable is placed)');
       }
       return;
     }
@@ -154,10 +160,10 @@ const Simulation = () => {
   // Show helpful hint based on card type
   const showCardHint = (card: Card) => {
     const hints: Record<string, string> = {
-      'switch': '🔌 Drag Switch to the INTERNET zone to start building',
-      'cable-2': '🔗 First place a Switch, then drag Cable to it',
-      'cable-3': '🔗 First place a Switch, then drag Cable to it',
-      'computer': '💻 First place a Switch & Cable, then drag Computer to a Cable',
+      'switch': '🔌 Drag Switch to your network board',
+      'cable-2': '🔗 Drag Cable to your network board (auto-connects to switch)',
+      'cable-3': '🔗 Drag Cable to your network board (auto-connects to switch)',
+      'computer': '💻 Drag Computer to your network board (auto-connects to cable)',
       'hacked': '⚡ Drag attack cards to OPPONENT\'s equipment',
       'power-outage': '⚡ Drag attack cards to OPPONENT\'s equipment',
       'new-hire': '⚡ Drag attack cards to OPPONENT\'s equipment',
@@ -168,7 +174,7 @@ const Simulation = () => {
     };
     
     const hint = hints[card.subtype] || `Cannot place ${card.name} here`;
-    toast.error(hint, { duration: 3000 });
+    toast.info(hint, { duration: 3000 });
   };
 
 
@@ -280,12 +286,11 @@ const Simulation = () => {
               <div className="mt-4 bg-black/40 rounded-lg border border-gray-700 p-3">
                 <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Quick Rules</h4>
                 <ul className="text-xs text-muted-foreground space-y-1">
-                  <li>• <span className="text-green-400">Switch</span> → drag to Internet</li>
-                  <li>• <span className="text-green-400">Cable</span> → drag to a Switch</li>
-                  <li>• <span className="text-green-400">Computer</span> → drag to a Cable</li>
+                  <li>• <span className="text-green-400">Any equipment</span> → drag to your board</li>
+                  <li>• <span className="text-yellow-400">Auto-connect</span>: cables connect to switches, PCs to cables</li>
                   <li>• <span className="text-red-400">Attack</span> → drag to opponent's equipment</li>
                   <li>• <span className="text-blue-400">Resolution</span> → drag to your disabled equipment</li>
-                  <li>• Each connected 💻 = 1 bitcoin/turn</li>
+                  <li>• Only <span className="text-green-400">connected</span> 💻 = 1 bitcoin/turn</li>
                   <li>• First to 25 bitcoin wins!</li>
                 </ul>
               </div>

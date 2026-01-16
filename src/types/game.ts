@@ -31,9 +31,15 @@ export interface SwitchNode extends PlacedCard {
   cables: CableNode[];
 }
 
+// Floating equipment types (not yet connected to internet)
+export interface FloatingCable extends CableNode {
+  // Inherits maxComputers and computers - cables can have computers even when floating
+}
+
 export interface PlayerNetwork {
-  switches: SwitchNode[];
-  floatingEquipment: PlacedCard[]; // Equipment not yet connected
+  switches: SwitchNode[]; // Connected to internet
+  floatingCables: FloatingCable[]; // Cables not connected to any switch
+  floatingComputers: PlacedCard[]; // Computers not connected to any cable
 }
 
 // Player state

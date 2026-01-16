@@ -1,7 +1,7 @@
-import { PlayerNetwork, SwitchNode, CableNode, PlacedCard, Card } from '@/types/game';
+import { PlayerNetwork, SwitchNode, CableNode, PlacedCard, Card, FloatingCable } from '@/types/game';
 import { DroppableZone } from './DroppableZone';
 import { cn } from '@/lib/utils';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Unplug } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface NetworkBoardDroppableProps {
@@ -9,8 +9,8 @@ interface NetworkBoardDroppableProps {
   isCurrentPlayer: boolean;
   label: string;
   playerId: string;
-  canReceiveAttacks?: boolean; // True when opponent is playing during moves phase
-  canReceiveResolutions?: boolean; // True when current player has resolution cards
+  canReceiveAttacks?: boolean;
+  canReceiveResolutions?: boolean;
 }
 
 export function NetworkBoardDroppable({
@@ -21,41 +21,86 @@ export function NetworkBoardDroppable({
   canReceiveAttacks = false,
   canReceiveResolutions = false,
 }: NetworkBoardDroppableProps) {
+  const hasFloatingEquipment = network.floatingCables.length > 0 || network.floatingComputers.length > 0;
+  
   return (
     <div className="bg-black/30 rounded-lg p-4 border border-accent-green/30">
       <h3 className="text-sm font-semibold text-accent-green mb-3">{label}</h3>
       
-      {/* Internet connection point - droppable for switches */}
+      {/* Board drop zone - accepts any equipment */}
       <DroppableZone
-        id={`${playerId}-internet`}
+        id={`${playerId}-board`}
         type="internet"
-        accepts={isCurrentPlayer ? ['switch'] : []}
-        className="flex items-center justify-center mb-4"
+        accepts={isCurrentPlayer ? ['switch', 'cable-2', 'cable-3', 'computer'] : []}
+        className="min-h-[200px] relative"
       >
-        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-blue-500/30">
-          INTERNET
+        {/* Internet connection point */}
+        <div className="flex items-center justify-center mb-4">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-blue-500/30">
+            INTERNET
+          </div>
         </div>
-      </DroppableZone>
-      
-      {/* Switches */}
-      <div className="space-y-4">
-        {network.switches.map((sw) => (
-          <SwitchComponent
-            key={sw.id}
-            switchNode={sw}
-            isCurrentPlayer={isCurrentPlayer}
-            playerId={playerId}
-            canReceiveAttacks={canReceiveAttacks}
-            canReceiveResolutions={canReceiveResolutions}
-          />
-        ))}
         
-        {network.switches.length === 0 && (
-          <div className="text-center text-muted-foreground text-sm py-8 border-2 border-dashed border-gray-600 rounded-lg">
-            {isCurrentPlayer ? 'Drag a Switch card here to start building!' : 'No network yet'}
+        {/* Connected Switches */}
+        <div className="space-y-4">
+          {network.switches.map((sw) => (
+            <SwitchComponent
+              key={sw.id}
+              switchNode={sw}
+              isCurrentPlayer={isCurrentPlayer}
+              playerId={playerId}
+              canReceiveAttacks={canReceiveAttacks}
+              canReceiveResolutions={canReceiveResolutions}
+            />
+          ))}
+        </div>
+        
+        {/* Floating Equipment Section */}
+        {(hasFloatingEquipment || (network.switches.length === 0 && isCurrentPlayer)) && (
+          <div className="mt-4 pt-4 border-t border-dashed border-yellow-500/50">
+            <div className="flex items-center gap-2 text-yellow-500 text-xs mb-2">
+              <Unplug className="w-3 h-3" />
+              <span>Unconnected Equipment</span>
+            </div>
+            
+            <div className="flex flex-wrap gap-3">
+              {/* Floating Cables with their computers */}
+              {network.floatingCables.map((cable) => (
+                <FloatingCableComponent
+                  key={cable.id}
+                  cable={cable}
+                  isCurrentPlayer={isCurrentPlayer}
+                  playerId={playerId}
+                  canReceiveAttacks={canReceiveAttacks}
+                  canReceiveResolutions={canReceiveResolutions}
+                />
+              ))}
+              
+              {/* Floating Computers */}
+              {network.floatingComputers.map((comp) => (
+                <div key={comp.id} className="relative">
+                  <PlacedCardDisplay
+                    card={comp.card}
+                    placementId={comp.id}
+                    isDisabled={true}
+                    className="w-10 h-12 opacity-70"
+                    small
+                  />
+                  <div className="absolute -bottom-1 left-0 right-0 text-center">
+                    <span className="text-[8px] bg-yellow-500 text-black px-1 rounded">floating</span>
+                  </div>
+                </div>
+              ))}
+              
+              {!hasFloatingEquipment && network.switches.length === 0 && (
+                <div className="text-center text-muted-foreground text-sm py-4 w-full">
+                  Drag any equipment card here to place it
+                </div>
+              )}
+            </div>
           </div>
         )}
-      </div>
+      </DroppableZone>
     </div>
   );
 }
@@ -145,6 +190,63 @@ function SwitchComponent({
       {switchNode.cables.length === 0 && isCurrentPlayer && (
         <div className="text-center text-xs text-muted-foreground mt-2">
           ↑ Drag cables here
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Floating Cable Component (not connected to a switch)
+interface FloatingCableComponentProps {
+  cable: FloatingCable;
+  isCurrentPlayer: boolean;
+  playerId: string;
+  canReceiveAttacks: boolean;
+  canReceiveResolutions: boolean;
+}
+
+function FloatingCableComponent({
+  cable,
+  isCurrentPlayer,
+  playerId,
+  canReceiveAttacks,
+  canReceiveResolutions,
+}: FloatingCableComponentProps) {
+  const hasSpace = cable.computers.length < cable.maxComputers;
+  
+  return (
+    <div className="relative bg-yellow-500/10 rounded-lg p-2 border border-dashed border-yellow-500/50">
+      <div className="relative">
+        <PlacedCardDisplay
+          card={cable.card}
+          placementId={cable.id}
+          isDisabled={true}
+          className="w-14 h-18 opacity-80"
+        />
+        <div className="absolute -bottom-1 left-0 right-0 text-center">
+          <span className="text-[8px] bg-yellow-500 text-black px-1 rounded">floating</span>
+        </div>
+      </div>
+      
+      {/* Capacity indicator */}
+      <div className="text-xs text-center mt-0.5 text-yellow-500">
+        {cable.computers.length}/{cable.maxComputers}
+      </div>
+      
+      {/* Computers attached to this floating cable */}
+      {cable.computers.length > 0 && (
+        <div className="flex gap-1 mt-1 justify-center">
+          {cable.computers.map((comp) => (
+            <div key={comp.id} className="relative">
+              <PlacedCardDisplay
+                card={comp.card}
+                placementId={comp.id}
+                isDisabled={true}
+                className="w-8 h-10 opacity-70"
+                small
+              />
+            </div>
+          ))}
         </div>
       )}
     </div>
