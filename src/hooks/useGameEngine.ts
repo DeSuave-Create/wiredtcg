@@ -1949,7 +1949,52 @@ export function useGameEngine() {
           movesUsed++;
           movesRemaining--;
         } else {
-          // No valid moves available
+          // No valid play found - try to discard unusable cards before ending
+          const hand = currentPlayer.hand;
+          
+          // Find cards that can't be played:
+          // - Head Hunter/Seal the Deal with no opponent classifications to steal
+          // - Attack cards with no valid targets on opponent's network
+          // - Resolution cards with no matching issues on own network
+          const stealCards = hand.filter(c => c.subtype === 'head-hunter' || c.subtype === 'seal-the-deal');
+          const hasStealTarget = humanPlayer.classificationCards.length > 0;
+          
+          const attackCards = hand.filter(c => c.type === 'attack');
+          const hasAttackTarget = findAttackTarget(humanPlayer.network) !== null;
+          
+          const resolutionCards = hand.filter(c => c.type === 'resolution');
+          const hasResolutionTarget = resolutionCards.some(c => findResolutionTarget(network, c.subtype) !== null);
+          
+          // Find a card to discard
+          let cardToDiscard: Card | null = null;
+          
+          // Priority: Discard steal cards if no target
+          if (!hasStealTarget && stealCards.length > 0) {
+            cardToDiscard = stealCards[0];
+          }
+          // Discard attack cards if no valid target
+          else if (!hasAttackTarget && attackCards.length > 0) {
+            cardToDiscard = attackCards[0];
+          }
+          // Discard resolution cards that have no matching issues
+          else if (resolutionCards.length > 0) {
+            const unusableRes = resolutionCards.find(c => !findResolutionTarget(network, c.subtype));
+            if (unusableRes) {
+              cardToDiscard = unusableRes;
+            }
+          }
+          
+          if (cardToDiscard && movesRemaining > 0) {
+            currentPlayer.hand = hand.filter(c => c.id !== cardToDiscard!.id);
+            newDiscardPile.push(cardToDiscard);
+            gameLog = [...gameLog.slice(-19), `🗑️ Computer discarded ${cardToDiscard.name}`];
+            movesUsed++;
+            movesRemaining--;
+            // Continue the loop to try another action
+            continue;
+          }
+          
+          // No valid moves and nothing to discard
           break;
         }
       }
