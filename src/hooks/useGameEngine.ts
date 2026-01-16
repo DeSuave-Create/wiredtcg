@@ -1163,14 +1163,34 @@ export function useGameEngine() {
     setGameState(prev => {
       if (!prev) return prev;
       
-      let state = { ...prev };
+      // Deep clone the state to work with
+      let newPlayers = prev.players.map(p => ({
+        ...p,
+        hand: [...p.hand],
+        network: {
+          ...p.network,
+          switches: p.network.switches.map(sw => ({
+            ...sw,
+            cables: sw.cables.map(c => ({
+              ...c,
+              computers: [...c.computers],
+            })),
+          })),
+          floatingCables: [...p.network.floatingCables],
+          floatingComputers: [...p.network.floatingComputers],
+        },
+      }));
+      
+      let movesRemaining = prev.movesRemaining;
+      let gameLog = [...prev.gameLog];
       const maxMoves = MOVES_PER_TURN;
       let movesUsed = 0;
       
-      while (movesUsed < maxMoves && state.movesRemaining > 0) {
-        const currentPlayer = { ...state.players[aiPlayerIndex] };
-        const hand = [...currentPlayer.hand];
-        const network = { ...currentPlayer.network };
+      while (movesUsed < maxMoves && movesRemaining > 0) {
+        // Always read fresh state from our working copy
+        const currentPlayer = newPlayers[aiPlayerIndex];
+        const hand = currentPlayer.hand;
+        const network = currentPlayer.network;
         
         const switches = hand.filter(c => c.subtype === 'switch');
         const cables = hand.filter(c => c.subtype === 'cable-2' || c.subtype === 'cable-3');
@@ -1192,17 +1212,14 @@ export function useGameEngine() {
           };
           
           currentPlayer.hand = hand.filter(c => c.id !== switchCard.id);
-          currentPlayer.network = {
-            ...network,
-            switches: [...network.switches, newSwitch],
-          };
+          currentPlayer.network.switches = [...network.switches, newSwitch];
           
           playedCard = true;
-          state.gameLog = [...state.gameLog.slice(-19), `Computer played Switch`];
+          gameLog = [...gameLog.slice(-19), `Computer played Switch`];
         }
         // Strategy 2: Play a cable on an existing switch
         else if (network.switches.length > 0 && cables.length > 0) {
-          const targetSwitch = network.switches[Math.floor(Math.random() * network.switches.length)];
+          const targetSwitch = network.switches[0]; // Pick first switch
           const cableCard = cables[0];
           const maxComputers = cableCard.subtype === 'cable-2' ? 2 : 3;
           const newCableId = generatePlacementId();
@@ -1217,25 +1234,24 @@ export function useGameEngine() {
           };
           
           currentPlayer.hand = hand.filter(c => c.id !== cableCard.id);
-          currentPlayer.network = {
-            ...network,
-            switches: network.switches.map(sw => 
-              sw.id === targetSwitch.id 
-                ? { ...sw, cables: [...sw.cables, newCable] }
-                : sw
-            ),
-          };
+          // Find the switch and add the cable
+          const switchIndex = currentPlayer.network.switches.findIndex(sw => sw.id === targetSwitch.id);
+          if (switchIndex !== -1) {
+            currentPlayer.network.switches[switchIndex].cables.push(newCable);
+          }
           
           playedCard = true;
-          state.gameLog = [...state.gameLog.slice(-19), `Computer played Cable on Switch`];
+          gameLog = [...gameLog.slice(-19), `Computer played Cable on Switch`];
         }
         // Strategy 3: Play a computer on a cable with space
         else if (computers.length > 0) {
           let placed = false;
           const computerCard = computers[0];
           
-          for (const sw of network.switches) {
-            for (const cable of sw.cables) {
+          for (let si = 0; si < network.switches.length && !placed; si++) {
+            const sw = network.switches[si];
+            for (let ci = 0; ci < sw.cables.length && !placed; ci++) {
+              const cable = sw.cables[ci];
               if (cable.computers.length < cable.maxComputers && !cable.isDisabled) {
                 const newComputerId = generatePlacementId();
                 
@@ -1247,29 +1263,13 @@ export function useGameEngine() {
                 };
                 
                 currentPlayer.hand = hand.filter(c => c.id !== computerCard.id);
-                currentPlayer.network = {
-                  ...network,
-                  switches: network.switches.map(s => 
-                    s.id === sw.id 
-                      ? {
-                          ...s,
-                          cables: s.cables.map(c => 
-                            c.id === cable.id 
-                              ? { ...c, computers: [...c.computers, newComputer] }
-                              : c
-                          ),
-                        }
-                      : s
-                  ),
-                };
+                currentPlayer.network.switches[si].cables[ci].computers.push(newComputer);
                 
                 placed = true;
                 playedCard = true;
-                state.gameLog = [...state.gameLog.slice(-19), `Computer played Computer`];
-                break;
+                gameLog = [...gameLog.slice(-19), `Computer played Computer`];
               }
             }
-            if (placed) break;
           }
           
           // If no cable has space but we have cables, play another cable
@@ -1289,17 +1289,13 @@ export function useGameEngine() {
             };
             
             currentPlayer.hand = hand.filter(c => c.id !== cableCard.id);
-            currentPlayer.network = {
-              ...network,
-              switches: network.switches.map(sw => 
-                sw.id === targetSwitch.id 
-                  ? { ...sw, cables: [...sw.cables, newCable] }
-                  : sw
-              ),
-            };
+            const switchIndex = currentPlayer.network.switches.findIndex(sw => sw.id === targetSwitch.id);
+            if (switchIndex !== -1) {
+              currentPlayer.network.switches[switchIndex].cables.push(newCable);
+            }
             
             playedCard = true;
-            state.gameLog = [...state.gameLog.slice(-19), `Computer played Cable`];
+            gameLog = [...gameLog.slice(-19), `Computer played Cable`];
           }
         }
         // Strategy 4: Play another switch if we have switches
@@ -1316,23 +1312,15 @@ export function useGameEngine() {
           };
           
           currentPlayer.hand = hand.filter(c => c.id !== switchCard.id);
-          currentPlayer.network = {
-            ...network,
-            switches: [...network.switches, newSwitch],
-          };
+          currentPlayer.network.switches = [...currentPlayer.network.switches, newSwitch];
           
           playedCard = true;
-          state.gameLog = [...state.gameLog.slice(-19), `Computer played Switch`];
+          gameLog = [...gameLog.slice(-19), `Computer played Switch`];
         }
         
         if (playedCard) {
           movesUsed++;
-          state.movesRemaining = state.movesRemaining - 1;
-          
-          // Update the player in state
-          const newPlayers = [...state.players];
-          newPlayers[aiPlayerIndex] = currentPlayer;
-          state = { ...state, players: newPlayers };
+          movesRemaining--;
         } else {
           // No valid moves available
           break;
@@ -1340,7 +1328,7 @@ export function useGameEngine() {
       }
       
       // Now score and end turn
-      const scoringPlayer = state.players[aiPlayerIndex];
+      const scoringPlayer = newPlayers[aiPlayerIndex];
       const connectedComputers = countConnectedComputers(scoringPlayer.network);
       const newScore = scoringPlayer.score + connectedComputers;
       
@@ -1349,27 +1337,21 @@ export function useGameEngine() {
       
       // Draw cards to refill hand
       const cardsNeeded = Math.max(0, MAX_HAND_SIZE - scoringPlayer.hand.length);
-      const { dealt, remaining } = dealCards(state.drawPile, cardsNeeded);
+      const { dealt, remaining } = dealCards(prev.drawPile, cardsNeeded);
       
-      const updatedPlayer = {
-        ...scoringPlayer,
-        score: newScore,
-        hand: [...scoringPlayer.hand, ...dealt],
-      };
-      
-      const finalPlayers = [...state.players];
-      finalPlayers[aiPlayerIndex] = updatedPlayer;
+      scoringPlayer.score = newScore;
+      scoringPlayer.hand = [...scoringPlayer.hand, ...dealt];
       
       return {
-        ...state,
-        players: finalPlayers,
+        ...prev,
+        players: newPlayers,
         drawPile: remaining,
         currentPlayerIndex: isWinner ? aiPlayerIndex : (aiPlayerIndex + 1) % 2,
         phase: isWinner ? 'game-over' : 'moves',
         movesRemaining: MOVES_PER_TURN,
-        winner: isWinner ? updatedPlayer : undefined,
+        winner: isWinner ? scoringPlayer : undefined,
         gameLog: [
-          ...state.gameLog.slice(-19), 
+          ...gameLog.slice(-19), 
           connectedComputers > 0 ? `Computer scored ${connectedComputers} bitcoin (Total: ${newScore})` : `Computer's turn ended`,
         ],
       };
