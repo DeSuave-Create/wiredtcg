@@ -1149,17 +1149,15 @@ export function useGameEngine() {
     });
   }, [gameState, countConnectedComputers]);
 
-  // Simple AI turn - uses all 3 moves like the human player
-  // Uses setGameState callback pattern to always work with fresh state
+  // AI turn with full strategy: attacks, resolutions, and equipment
   const executeAITurn = useCallback(async () => {
     if (!gameState) return;
     
     const aiPlayerIndex = gameState.currentPlayerIndex;
+    const humanPlayerIndex = aiPlayerIndex === 0 ? 1 : 0;
     const player = gameState.players[aiPlayerIndex];
     if (player.isHuman) return;
     
-    // Execute AI moves by directly manipulating state
-    // We do this in a single setGameState call to avoid stale closure issues
     setGameState(prev => {
       if (!prev) return prev;
       
@@ -1171,9 +1169,14 @@ export function useGameEngine() {
           ...p.network,
           switches: p.network.switches.map(sw => ({
             ...sw,
+            attachedIssues: [...sw.attachedIssues],
             cables: sw.cables.map(c => ({
               ...c,
-              computers: [...c.computers],
+              attachedIssues: [...c.attachedIssues],
+              computers: c.computers.map(comp => ({
+                ...comp,
+                attachedIssues: [...comp.attachedIssues],
+              })),
             })),
           })),
           floatingCables: [...p.network.floatingCables],
@@ -1186,20 +1189,197 @@ export function useGameEngine() {
       const maxMoves = MOVES_PER_TURN;
       let movesUsed = 0;
       
+      // Helper: Find best attack target on human's network (prioritize switches > cables > computers)
+      const findAttackTarget = (humanNetwork: PlayerNetwork): { type: 'switch' | 'cable' | 'computer', switchIndex: number, cableIndex?: number, computerIndex?: number } | null => {
+        // Priority 1: Attack an enabled switch (disables everything below it)
+        for (let si = 0; si < humanNetwork.switches.length; si++) {
+          if (!humanNetwork.switches[si].isDisabled) {
+            return { type: 'switch', switchIndex: si };
+          }
+        }
+        // Priority 2: Attack an enabled cable
+        for (let si = 0; si < humanNetwork.switches.length; si++) {
+          for (let ci = 0; ci < humanNetwork.switches[si].cables.length; ci++) {
+            if (!humanNetwork.switches[si].cables[ci].isDisabled) {
+              return { type: 'cable', switchIndex: si, cableIndex: ci };
+            }
+          }
+        }
+        // Priority 3: Attack an enabled computer
+        for (let si = 0; si < humanNetwork.switches.length; si++) {
+          for (let ci = 0; ci < humanNetwork.switches[si].cables.length; ci++) {
+            for (let coi = 0; coi < humanNetwork.switches[si].cables[ci].computers.length; coi++) {
+              if (!humanNetwork.switches[si].cables[ci].computers[coi].isDisabled) {
+                return { type: 'computer', switchIndex: si, cableIndex: ci, computerIndex: coi };
+              }
+            }
+          }
+        }
+        return null;
+      };
+      
+      // Helper: Find disabled equipment on AI's network that can be resolved
+      const findResolutionTarget = (aiNetwork: PlayerNetwork, resolutionSubtype: string): { type: 'switch' | 'cable' | 'computer', switchIndex: number, cableIndex?: number, computerIndex?: number } | null => {
+        const resolutionMap: Record<string, string> = {
+          'secured': 'hacked',
+          'powered': 'power-outage',
+          'trained': 'new-hire',
+          'helpdesk': 'any', // Helpdesk resolves any issue
+        };
+        const targetIssueType = resolutionMap[resolutionSubtype];
+        
+        // Check switches
+        for (let si = 0; si < aiNetwork.switches.length; si++) {
+          const sw = aiNetwork.switches[si];
+          if (sw.attachedIssues.length > 0) {
+            if (targetIssueType === 'any' || sw.attachedIssues.some(i => i.subtype === targetIssueType)) {
+              return { type: 'switch', switchIndex: si };
+            }
+          }
+          // Check cables
+          for (let ci = 0; ci < sw.cables.length; ci++) {
+            const cable = sw.cables[ci];
+            if (cable.attachedIssues.length > 0) {
+              if (targetIssueType === 'any' || cable.attachedIssues.some(i => i.subtype === targetIssueType)) {
+                return { type: 'cable', switchIndex: si, cableIndex: ci };
+              }
+            }
+            // Check computers
+            for (let coi = 0; coi < cable.computers.length; coi++) {
+              const comp = cable.computers[coi];
+              if (comp.attachedIssues.length > 0) {
+                if (targetIssueType === 'any' || comp.attachedIssues.some(i => i.subtype === targetIssueType)) {
+                  return { type: 'computer', switchIndex: si, cableIndex: ci, computerIndex: coi };
+                }
+              }
+            }
+          }
+        }
+        return null;
+      };
+      
+      // Helper: Apply attack with cascading disable
+      const applyAttack = (targetNetwork: PlayerNetwork, target: { type: string, switchIndex: number, cableIndex?: number, computerIndex?: number }, attackCard: Card) => {
+        if (target.type === 'switch') {
+          const sw = targetNetwork.switches[target.switchIndex];
+          sw.attachedIssues.push(attackCard);
+          sw.isDisabled = true;
+          // Cascade disable
+          sw.cables.forEach(cable => {
+            cable.isDisabled = true;
+            cable.computers.forEach(comp => comp.isDisabled = true);
+          });
+        } else if (target.type === 'cable' && target.cableIndex !== undefined) {
+          const cable = targetNetwork.switches[target.switchIndex].cables[target.cableIndex];
+          cable.attachedIssues.push(attackCard);
+          cable.isDisabled = true;
+          // Cascade disable computers
+          cable.computers.forEach(comp => comp.isDisabled = true);
+        } else if (target.type === 'computer' && target.cableIndex !== undefined && target.computerIndex !== undefined) {
+          const comp = targetNetwork.switches[target.switchIndex].cables[target.cableIndex].computers[target.computerIndex];
+          comp.attachedIssues.push(attackCard);
+          comp.isDisabled = true;
+        }
+      };
+      
+      // Helper: Apply resolution with cascading enable
+      const applyResolution = (aiNetwork: PlayerNetwork, target: { type: string, switchIndex: number, cableIndex?: number, computerIndex?: number }, resolutionCard: Card, isHelpdesk: boolean) => {
+        const targetIssueType = isHelpdesk ? null : ({
+          'secured': 'hacked',
+          'powered': 'power-outage',
+          'trained': 'new-hire',
+        } as Record<string, string>)[resolutionCard.subtype];
+        
+        const removeIssue = (issues: Card[]): Card[] => {
+          if (isHelpdesk) return [];
+          let removed = false;
+          return issues.filter(i => {
+            if (!removed && i.subtype === targetIssueType) {
+              removed = true;
+              return false;
+            }
+            return true;
+          });
+        };
+        
+        if (target.type === 'switch') {
+          const sw = aiNetwork.switches[target.switchIndex];
+          sw.attachedIssues = removeIssue(sw.attachedIssues);
+          sw.isDisabled = sw.attachedIssues.length > 0;
+          // Cascade enable if switch is now enabled
+          if (!sw.isDisabled) {
+            sw.cables.forEach(cable => {
+              cable.isDisabled = cable.attachedIssues.length > 0;
+              if (!cable.isDisabled) {
+                cable.computers.forEach(comp => {
+                  comp.isDisabled = comp.attachedIssues.length > 0;
+                });
+              }
+            });
+          }
+        } else if (target.type === 'cable' && target.cableIndex !== undefined) {
+          const sw = aiNetwork.switches[target.switchIndex];
+          const cable = sw.cables[target.cableIndex];
+          cable.attachedIssues = removeIssue(cable.attachedIssues);
+          cable.isDisabled = cable.attachedIssues.length > 0 || sw.isDisabled;
+          // Cascade enable computers
+          if (!cable.isDisabled) {
+            cable.computers.forEach(comp => {
+              comp.isDisabled = comp.attachedIssues.length > 0;
+            });
+          }
+        } else if (target.type === 'computer' && target.cableIndex !== undefined && target.computerIndex !== undefined) {
+          const sw = aiNetwork.switches[target.switchIndex];
+          const cable = sw.cables[target.cableIndex];
+          const comp = cable.computers[target.computerIndex];
+          comp.attachedIssues = removeIssue(comp.attachedIssues);
+          comp.isDisabled = comp.attachedIssues.length > 0 || cable.isDisabled || sw.isDisabled;
+        }
+      };
+      
       while (movesUsed < maxMoves && movesRemaining > 0) {
-        // Always read fresh state from our working copy
         const currentPlayer = newPlayers[aiPlayerIndex];
+        const humanPlayer = newPlayers[humanPlayerIndex];
         const hand = currentPlayer.hand;
         const network = currentPlayer.network;
         
         const switches = hand.filter(c => c.subtype === 'switch');
         const cables = hand.filter(c => c.subtype === 'cable-2' || c.subtype === 'cable-3');
         const computers = hand.filter(c => c.subtype === 'computer');
+        const attacks = hand.filter(c => c.type === 'attack' && c.subtype !== 'audit'); // Exclude audit for now
+        const resolutions = hand.filter(c => c.type === 'resolution');
         
         let playedCard = false;
         
-        // Strategy 1: Play a switch if we have none
-        if (network.switches.length === 0 && switches.length > 0) {
+        // PRIORITY 1: Resolve own disabled equipment (if it would restore scoring)
+        if (!playedCard && resolutions.length > 0) {
+          for (const resCard of resolutions) {
+            const target = findResolutionTarget(network, resCard.subtype);
+            if (target) {
+              const isHelpdesk = resCard.subtype === 'helpdesk';
+              applyResolution(network, target, resCard, isHelpdesk);
+              currentPlayer.hand = hand.filter(c => c.id !== resCard.id);
+              playedCard = true;
+              gameLog = [...gameLog.slice(-19), `🔧 Computer used ${resCard.name} to fix ${target.type}!`];
+              break;
+            }
+          }
+        }
+        
+        // PRIORITY 2: Attack human's network (if they have scoring equipment)
+        if (!playedCard && attacks.length > 0 && humanPlayer.network.switches.length > 0) {
+          const target = findAttackTarget(humanPlayer.network);
+          if (target) {
+            const attackCard = attacks[0];
+            applyAttack(humanPlayer.network, target, attackCard);
+            currentPlayer.hand = hand.filter(c => c.id !== attackCard.id);
+            playedCard = true;
+            gameLog = [...gameLog.slice(-19), `⚡ Computer attacked your ${target.type} with ${attackCard.name}!`];
+          }
+        }
+        
+        // PRIORITY 3: Build network - play a switch if we have none
+        if (!playedCard && network.switches.length === 0 && switches.length > 0) {
           const switchCard = switches[0];
           const newSwitchId = generatePlacementId();
           
@@ -1217,39 +1397,44 @@ export function useGameEngine() {
           playedCard = true;
           gameLog = [...gameLog.slice(-19), `Computer played Switch`];
         }
-        // Strategy 2: Play a cable on an existing switch
-        else if (network.switches.length > 0 && cables.length > 0) {
-          const targetSwitch = network.switches[0]; // Pick first switch
-          const cableCard = cables[0];
-          const maxComputers = cableCard.subtype === 'cable-2' ? 2 : 3;
-          const newCableId = generatePlacementId();
-          
-          const newCable: CableNode = {
-            card: cableCard,
-            id: newCableId,
-            attachedIssues: [],
-            isDisabled: false,
-            maxComputers: maxComputers as 2 | 3,
-            computers: [],
-          };
-          
-          currentPlayer.hand = hand.filter(c => c.id !== cableCard.id);
-          // Find the switch and add the cable
-          const switchIndex = currentPlayer.network.switches.findIndex(sw => sw.id === targetSwitch.id);
-          if (switchIndex !== -1) {
-            currentPlayer.network.switches[switchIndex].cables.push(newCable);
+        
+        // PRIORITY 4: Play a cable on an existing enabled switch
+        if (!playedCard && cables.length > 0) {
+          const enabledSwitch = network.switches.find(sw => !sw.isDisabled);
+          if (enabledSwitch) {
+            const cableCard = cables[0];
+            const maxComputers = cableCard.subtype === 'cable-2' ? 2 : 3;
+            const newCableId = generatePlacementId();
+            
+            const newCable: CableNode = {
+              card: cableCard,
+              id: newCableId,
+              attachedIssues: [],
+              isDisabled: false,
+              maxComputers: maxComputers as 2 | 3,
+              computers: [],
+            };
+            
+            currentPlayer.hand = hand.filter(c => c.id !== cableCard.id);
+            const switchIndex = currentPlayer.network.switches.findIndex(sw => sw.id === enabledSwitch.id);
+            if (switchIndex !== -1) {
+              currentPlayer.network.switches[switchIndex].cables.push(newCable);
+            }
+            
+            playedCard = true;
+            gameLog = [...gameLog.slice(-19), `Computer played Cable on Switch`];
           }
-          
-          playedCard = true;
-          gameLog = [...gameLog.slice(-19), `Computer played Cable on Switch`];
         }
-        // Strategy 3: Play a computer on a cable with space
-        else if (computers.length > 0) {
+        
+        // PRIORITY 5: Play a computer on a cable with space
+        if (!playedCard && computers.length > 0) {
           let placed = false;
           const computerCard = computers[0];
           
           for (let si = 0; si < network.switches.length && !placed; si++) {
             const sw = network.switches[si];
+            if (sw.isDisabled) continue;
+            
             for (let ci = 0; ci < sw.cables.length && !placed; ci++) {
               const cable = sw.cables[ci];
               if (cable.computers.length < cable.maxComputers && !cable.isDisabled) {
@@ -1271,35 +1456,10 @@ export function useGameEngine() {
               }
             }
           }
-          
-          // If no cable has space but we have cables, play another cable
-          if (!placed && cables.length > 0 && network.switches.length > 0) {
-            const targetSwitch = network.switches[0];
-            const cableCard = cables[0];
-            const maxComps = cableCard.subtype === 'cable-2' ? 2 : 3;
-            const newCableId = generatePlacementId();
-            
-            const newCable: CableNode = {
-              card: cableCard,
-              id: newCableId,
-              attachedIssues: [],
-              isDisabled: false,
-              maxComputers: maxComps as 2 | 3,
-              computers: [],
-            };
-            
-            currentPlayer.hand = hand.filter(c => c.id !== cableCard.id);
-            const switchIndex = currentPlayer.network.switches.findIndex(sw => sw.id === targetSwitch.id);
-            if (switchIndex !== -1) {
-              currentPlayer.network.switches[switchIndex].cables.push(newCable);
-            }
-            
-            playedCard = true;
-            gameLog = [...gameLog.slice(-19), `Computer played Cable`];
-          }
         }
-        // Strategy 4: Play another switch if we have switches
-        else if (switches.length > 0) {
+        
+        // PRIORITY 6: Play another switch if we have switches but no valid moves
+        if (!playedCard && switches.length > 0) {
           const switchCard = switches[0];
           const newSwitchId = generatePlacementId();
           
