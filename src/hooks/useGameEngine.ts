@@ -280,6 +280,7 @@ export function useGameEngine() {
   }, [gameState, addLog]);
 
   // Connect floating computers to a cable (FREE action - doesn't cost a move)
+  // Works for HUMAN player specifically (player index 0)
   const connectFloatingComputersToCable = useCallback((cableId: string, computerIds: string[]) => {
     if (!gameState || computerIds.length === 0) return false;
     
@@ -287,22 +288,28 @@ export function useGameEngine() {
       if (!prev) return prev;
       
       const newPlayers = [...prev.players];
-      const currentPlayer = { ...newPlayers[prev.currentPlayerIndex] };
+      // Always use human player (index 0) for this action since it's triggered by dialog
+      const humanPlayerIndex = 0;
+      const currentPlayer = { ...newPlayers[humanPlayerIndex] };
       
-      // Find the computers to connect
+      // Find the computers to connect from human player's floating computers
       const computersToConnect = currentPlayer.network.floatingComputers.filter(
         c => computerIds.includes(c.id)
       );
       
-      if (computersToConnect.length === 0) return prev;
+      if (computersToConnect.length === 0) {
+        console.log('No computers found to connect');
+        return prev;
+      }
       
       // Remove connected computers from floating
       const remainingFloating = currentPlayer.network.floatingComputers.filter(
         c => !computerIds.includes(c.id)
       );
       
-      // Try to find the cable in connected switches
+      // Try to find the cable in connected switches first
       let found = false;
+      let connectedToSwitch = false;
       const newSwitches = currentPlayer.network.switches.map(sw => ({
         ...sw,
         cables: sw.cables.map(cable => {
@@ -310,6 +317,7 @@ export function useGameEngine() {
             const spaceLeft = cable.maxComputers - cable.computers.length;
             const toAdd = computersToConnect.slice(0, spaceLeft);
             found = true;
+            connectedToSwitch = true;
             return {
               ...cable,
               computers: [...cable.computers, ...toAdd],
@@ -319,8 +327,8 @@ export function useGameEngine() {
         }),
       }));
       
-      // Try floating cables if not found
-      let newFloatingCables = currentPlayer.network.floatingCables;
+      // Try floating cables if not found in switches
+      let newFloatingCables = [...currentPlayer.network.floatingCables];
       if (!found) {
         newFloatingCables = currentPlayer.network.floatingCables.map(cable => {
           if (cable.id === cableId) {
@@ -336,7 +344,10 @@ export function useGameEngine() {
         });
       }
       
-      if (!found) return prev;
+      if (!found) {
+        console.log('Cable not found:', cableId);
+        return prev;
+      }
       
       currentPlayer.network = {
         ...currentPlayer.network,
@@ -345,12 +356,14 @@ export function useGameEngine() {
         floatingComputers: remainingFloating,
       };
       
-      newPlayers[prev.currentPlayerIndex] = currentPlayer;
+      newPlayers[humanPlayerIndex] = currentPlayer;
+      
+      const locationMsg = connectedToSwitch ? ' (connected to internet!)' : ' (floating cable)';
       
       return {
         ...prev,
         players: newPlayers,
-        gameLog: [...prev.gameLog.slice(-19), `Connected ${computersToConnect.length} computer(s) to cable (FREE)`],
+        gameLog: [...prev.gameLog.slice(-19), `Connected ${computersToConnect.length} computer(s)${locationMsg}`],
       };
     });
     
