@@ -446,7 +446,6 @@ const Simulation = () => {
           onConfirm={(selectedIds) => {
             if (selectedIds.length > 0) {
               connectFloatingComputersToCable(connectDialog.cableId, selectedIds);
-              toast.success(`Connected ${selectedIds.length} computer(s)!`);
             }
             setConnectDialog(null);
           }}
