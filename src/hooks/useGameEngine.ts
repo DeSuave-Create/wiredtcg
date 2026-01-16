@@ -795,23 +795,50 @@ export function useGameEngine() {
       // Remove attack card from attacker's hand
       attacker.hand = attacker.hand.filter(c => c.id !== attackCard.id);
       
-      // Apply attack to target equipment - create deep copy of network
+      // Apply attack to target equipment - CASCADING DISABLE
+      // Switch attack → disables switch + all cables + all computers
+      // Cable attack → disables cable + all computers on it
+      // Computer attack → disables only that computer
       const newSwitches = target.network.switches.map((sw, si) => {
+        // Attack on SWITCH - cascade to all cables and computers
         if (equipmentInfo.type === 'switch' && si === equipmentInfo.switchIndex) {
-          const updatedSwitch = { ...sw, attachedIssues: [...sw.attachedIssues, attackCard], isDisabled: true };
-          return updatedSwitch;
+          return {
+            ...sw,
+            attachedIssues: [...sw.attachedIssues, attackCard],
+            isDisabled: true,
+            // Disable all cables and their computers
+            cables: sw.cables.map(cable => ({
+              ...cable,
+              isDisabled: true,
+              computers: cable.computers.map(comp => ({
+                ...comp,
+                isDisabled: true,
+              })),
+            })),
+          };
         }
         
         return {
           ...sw,
           cables: sw.cables.map((cable, ci) => {
+            // Attack on CABLE - cascade to all computers on it
             if (equipmentInfo.type === 'cable' && si === equipmentInfo.switchIndex && ci === equipmentInfo.cableIndex) {
-              return { ...cable, attachedIssues: [...cable.attachedIssues, attackCard], isDisabled: true };
+              return {
+                ...cable,
+                attachedIssues: [...cable.attachedIssues, attackCard],
+                isDisabled: true,
+                // Disable all computers on this cable
+                computers: cable.computers.map(comp => ({
+                  ...comp,
+                  isDisabled: true,
+                })),
+              };
             }
             
             return {
               ...cable,
               computers: cable.computers.map((comp, coi) => {
+                // Attack on COMPUTER - only disable that computer
                 if (equipmentInfo.type === 'computer' && si === equipmentInfo.switchIndex && ci === equipmentInfo.cableIndex && coi === equipmentInfo.computerIndex) {
                   return { ...comp, attachedIssues: [...comp.attachedIssues, attackCard], isDisabled: true };
                 }
@@ -898,38 +925,75 @@ export function useGameEngine() {
       // Remove resolution card from hand
       player.hand = player.hand.filter(c => c.id !== resolutionCard.id);
       
-      // Apply resolution - create deep copy of network
+      // Apply resolution - CASCADING ENABLE
+      // Resolving switch → enables switch + all cables + all computers (if they have no other issues)
+      // Resolving cable → enables cable + all computers on it (if they have no other issues)
+      // Resolving computer → enables only that computer
       const newSwitches = player.network.switches.map((sw, si) => {
-        const processIssues = (issues: Card[]): Card[] => {
+        // Helper to remove matching issue
+        const removeIssue = (issues: Card[]): Card[] => {
           if (isHelpdesk) return []; // Helpdesk removes ALL issues
-          return issues.filter(i => i.subtype !== targetIssueType); // Remove one matching issue type
+          // Remove only ONE matching issue
+          let removed = false;
+          return issues.filter(i => {
+            if (!removed && i.subtype === targetIssueType) {
+              removed = true;
+              return false;
+            }
+            return true;
+          });
         };
         
+        // Resolution on SWITCH - cascade enable to all cables and computers
         if (equipmentInfo.type === 'switch' && si === equipmentInfo.switchIndex) {
-          const newIssues = isHelpdesk ? [] : sw.attachedIssues.filter((i, idx) => 
-            i.subtype !== targetIssueType || sw.attachedIssues.findIndex(x => x.subtype === targetIssueType) !== idx
-          );
-          return { ...sw, attachedIssues: newIssues, isDisabled: newIssues.length > 0 };
+          const newSwitchIssues = removeIssue(sw.attachedIssues);
+          const switchEnabled = newSwitchIssues.length === 0;
+          
+          return {
+            ...sw,
+            attachedIssues: newSwitchIssues,
+            isDisabled: !switchEnabled,
+            // Re-enable cables and computers if switch is now enabled
+            cables: sw.cables.map(cable => ({
+              ...cable,
+              isDisabled: !switchEnabled || cable.attachedIssues.length > 0,
+              computers: cable.computers.map(comp => ({
+                ...comp,
+                isDisabled: !switchEnabled || cable.attachedIssues.length > 0 || comp.attachedIssues.length > 0,
+              })),
+            })),
+          };
         }
         
         return {
           ...sw,
           cables: sw.cables.map((cable, ci) => {
+            // Resolution on CABLE - cascade enable to all computers on it
             if (equipmentInfo.type === 'cable' && si === equipmentInfo.switchIndex && ci === equipmentInfo.cableIndex) {
-              const newIssues = isHelpdesk ? [] : cable.attachedIssues.filter((i, idx) =>
-                i.subtype !== targetIssueType || cable.attachedIssues.findIndex(x => x.subtype === targetIssueType) !== idx
-              );
-              return { ...cable, attachedIssues: newIssues, isDisabled: newIssues.length > 0 };
+              const newCableIssues = removeIssue(cable.attachedIssues);
+              const cableEnabled = newCableIssues.length === 0 && !sw.isDisabled;
+              
+              return {
+                ...cable,
+                attachedIssues: newCableIssues,
+                isDisabled: !cableEnabled,
+                // Re-enable computers if cable is now enabled
+                computers: cable.computers.map(comp => ({
+                  ...comp,
+                  isDisabled: !cableEnabled || comp.attachedIssues.length > 0,
+                })),
+              };
             }
             
             return {
               ...cable,
               computers: cable.computers.map((comp, coi) => {
+                // Resolution on COMPUTER - only enable that computer
                 if (equipmentInfo.type === 'computer' && si === equipmentInfo.switchIndex && ci === equipmentInfo.cableIndex && coi === equipmentInfo.computerIndex) {
-                  const newIssues = isHelpdesk ? [] : comp.attachedIssues.filter((i, idx) =>
-                    i.subtype !== targetIssueType || comp.attachedIssues.findIndex(x => x.subtype === targetIssueType) !== idx
-                  );
-                  return { ...comp, attachedIssues: newIssues, isDisabled: newIssues.length > 0 };
+                  const newCompIssues = removeIssue(comp.attachedIssues);
+                  // Computer can only be enabled if cable and switch are also enabled
+                  const canBeEnabled = newCompIssues.length === 0 && !cable.isDisabled && !sw.isDisabled;
+                  return { ...comp, attachedIssues: newCompIssues, isDisabled: !canBeEnabled };
                 }
                 return comp;
               }),
