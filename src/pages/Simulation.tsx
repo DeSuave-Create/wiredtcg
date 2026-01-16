@@ -483,7 +483,25 @@ const Simulation = () => {
 
               {/* Player's area */}
               <div className="bg-black/20 rounded-lg p-4 border border-accent-green/30 space-y-4">
-                {/* Player's Hand */}
+                {/* 1. Your Network */}
+                <NetworkBoardDroppable
+                  network={humanPlayer.network}
+                  isCurrentPlayer={isHumanTurn}
+                  label="Your Network"
+                  playerId="player-1"
+                  canReceiveAttacks={false} // Can't attack yourself
+                  canReceiveResolutions={canPlayCards && hasResolutionCards && playerHasDisabledEquipment}
+                  canRearrange={canPlayCards} // Allow rearranging when player has moves
+                />
+                
+                {/* 2. Classification Cards */}
+                <ClassificationSection
+                  classificationCards={humanPlayer.classificationCards}
+                  isCurrentPlayer={isHumanTurn}
+                  playerId="player-1"
+                />
+                
+                {/* 3. Your Hand */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-accent-green font-medium">Your Hand</span>
@@ -515,24 +533,6 @@ const Simulation = () => {
                     </div>
                   </div>
                 </div>
-                
-                {/* Classification Cards Section - between hand and network */}
-                <ClassificationSection
-                  classificationCards={humanPlayer.classificationCards}
-                  isCurrentPlayer={isHumanTurn}
-                  playerId="player-1"
-                />
-                
-                {/* Network Board */}
-                <NetworkBoardDroppable
-                  network={humanPlayer.network}
-                  isCurrentPlayer={isHumanTurn}
-                  label="Your Network"
-                  playerId="player-1"
-                  canReceiveAttacks={false} // Can't attack yourself
-                  canReceiveResolutions={canPlayCards && hasResolutionCards && playerHasDisabledEquipment}
-                  canRearrange={canPlayCards} // Allow rearranging when player has moves
-                />
               </div>
             </div>
           </div>
