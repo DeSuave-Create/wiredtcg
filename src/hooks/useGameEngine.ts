@@ -4,8 +4,28 @@ import { buildDeck, shuffleDeck, dealCards } from '@/utils/deckBuilder';
 
 const STARTING_HAND_SIZE = 6;
 const MAX_HAND_SIZE = 6;
-const MOVES_PER_TURN = 3;
+const BASE_MOVES_PER_TURN = 3;
 const WINNING_SCORE = 25;
+
+// Helper: Calculate moves per turn based on classification cards
+function getMovesForPlayer(player: Player): number {
+  let moves = BASE_MOVES_PER_TURN;
+  // Field Tech gives +1 move per turn
+  if (player.classificationCards.some(c => c.card.subtype === 'field-tech')) {
+    moves += 1;
+  }
+  return moves;
+}
+
+// Helper: Check if player has Head Hunter (draw extra card)
+function hasHeadHunter(player: Player): boolean {
+  return player.classificationCards.some(c => c.card.subtype === 'head-hunter');
+}
+
+// Helper: Check if player has Seal the Deal (double scoring)
+function hasSealTheDeal(player: Player): boolean {
+  return player.classificationCards.some(c => c.card.subtype === 'seal-the-deal');
+}
 
 let placementIdCounter = 0;
 function generatePlacementId(): string {
@@ -57,7 +77,7 @@ export function useGameEngine() {
       players: [human, computer],
       currentPlayerIndex: 0,
       phase: 'moves',
-      movesRemaining: MOVES_PER_TURN,
+      movesRemaining: BASE_MOVES_PER_TURN, // Human starts without classification cards
       drawPile,
       discardPile: [],
       turnNumber: 1,
@@ -1175,7 +1195,11 @@ export function useGameEngine() {
         const currentPlayer = prev.players[prev.currentPlayerIndex];
         
         // 1. Draw cards to refill hand
-        const cardsToDraw = Math.max(0, MAX_HAND_SIZE - currentPlayer.hand.length);
+        let baseDraw = Math.max(0, MAX_HAND_SIZE - currentPlayer.hand.length);
+        // Head Hunter: draw extra card at end of turn
+        const extraDraw = hasHeadHunter(currentPlayer) ? 1 : 0;
+        const cardsToDraw = baseDraw + extraDraw;
+        
         let newDrawPile = [...prev.drawPile];
         let newDiscardPile = [...prev.discardPile];
         
@@ -1189,7 +1213,20 @@ export function useGameEngine() {
         
         // 2. Score connected computers
         const connectedComputers = countConnectedComputers(currentPlayer.network);
-        const newScore = currentPlayer.score + connectedComputers;
+        // Seal the Deal: double scoring
+        const scoringMultiplier = hasSealTheDeal(currentPlayer) ? 2 : 1;
+        const scoreGained = connectedComputers * scoringMultiplier;
+        const newScore = currentPlayer.score + scoreGained;
+        
+        // Build score log message
+        const scoreLog = hasSealTheDeal(currentPlayer) && connectedComputers > 0
+          ? `Scored ${connectedComputers}×2 = ${scoreGained} bitcoin! (Seal the Deal) Total: ${newScore}`
+          : `Scored ${scoreGained} bitcoin (Total: ${newScore})`;
+        
+        // Build draw log message
+        const drawLog = extraDraw > 0 && cardsToDraw > 0
+          ? `Drew ${cardsToDraw} card(s) (Head Hunter bonus!)`
+          : cardsToDraw > 0 ? `Drew ${cardsToDraw} card(s)` : '';
         
         // Update player with drawn cards and new score
         const newPlayers = [...prev.players];
@@ -1210,8 +1247,8 @@ export function useGameEngine() {
             winner: newPlayers[prev.currentPlayerIndex],
             gameLog: [
               ...prev.gameLog.slice(-19),
-              cardsToDraw > 0 ? `Drew ${cardsToDraw} card(s)` : '',
-              `Scored ${connectedComputers} bitcoin (Total: ${newScore})`,
+              drawLog,
+              scoreLog,
               `🎉 ${currentPlayer.name} wins with ${newScore} bitcoin!`,
             ].filter(Boolean),
           };
@@ -1228,12 +1265,12 @@ export function useGameEngine() {
           discardPile: newDiscardPile,
           currentPlayerIndex: nextPlayerIndex,
           phase: 'moves',
-          movesRemaining: MOVES_PER_TURN,
+          movesRemaining: getMovesForPlayer(nextPlayer),
           turnNumber: prev.turnNumber + 1,
           gameLog: [
             ...prev.gameLog.slice(-19),
-            cardsToDraw > 0 ? `Drew ${cardsToDraw} card(s)` : '',
-            `Scored ${connectedComputers} bitcoin (Total: ${newScore})`,
+            drawLog,
+            scoreLog,
             `--- ${nextPlayer.name}'s Turn ---`,
           ].filter(Boolean),
         };
@@ -1289,7 +1326,7 @@ export function useGameEngine() {
       
       let movesRemaining = prev.movesRemaining;
       let gameLog = [...prev.gameLog];
-      const maxMoves = MOVES_PER_TURN;
+      const maxMoves = getMovesForPlayer(newPlayers[aiPlayerIndex]);
       let movesUsed = 0;
       
       // Helper: Find best attack target on human's network (prioritize switches > cables > computers)
@@ -1593,17 +1630,30 @@ export function useGameEngine() {
       // Now score and end turn
       const scoringPlayer = newPlayers[aiPlayerIndex];
       const connectedComputers = countConnectedComputers(scoringPlayer.network);
-      const newScore = scoringPlayer.score + connectedComputers;
+      // Seal the Deal: double scoring for AI too
+      const scoringMultiplier = hasSealTheDeal(scoringPlayer) ? 2 : 1;
+      const scoreGained = connectedComputers * scoringMultiplier;
+      const newScore = scoringPlayer.score + scoreGained;
       
       // Check for win
       const isWinner = newScore >= WINNING_SCORE;
       
       // Draw cards to refill hand
-      const cardsNeeded = Math.max(0, MAX_HAND_SIZE - scoringPlayer.hand.length);
+      // Head Hunter: AI draws extra card too
+      const baseDraw = Math.max(0, MAX_HAND_SIZE - scoringPlayer.hand.length);
+      const extraDraw = hasHeadHunter(scoringPlayer) ? 1 : 0;
+      const cardsNeeded = baseDraw + extraDraw;
       const { dealt, remaining } = dealCards(prev.drawPile, cardsNeeded);
       
       scoringPlayer.score = newScore;
       scoringPlayer.hand = [...scoringPlayer.hand, ...dealt];
+      
+      // Build score log message for AI
+      const aiScoreLog = hasSealTheDeal(scoringPlayer) && connectedComputers > 0
+        ? `Computer scored ${connectedComputers}×2 = ${scoreGained} bitcoin! (Seal the Deal)`
+        : connectedComputers > 0 ? `Computer scored ${scoreGained} bitcoin (Total: ${newScore})` : `Computer's turn ended`;
+      
+      const nextPlayer = prev.players[(aiPlayerIndex + 1) % 2];
       
       return {
         ...prev,
@@ -1611,11 +1661,11 @@ export function useGameEngine() {
         drawPile: remaining,
         currentPlayerIndex: isWinner ? aiPlayerIndex : (aiPlayerIndex + 1) % 2,
         phase: isWinner ? 'game-over' : 'moves',
-        movesRemaining: MOVES_PER_TURN,
+        movesRemaining: getMovesForPlayer(nextPlayer),
         winner: isWinner ? scoringPlayer : undefined,
         gameLog: [
           ...gameLog.slice(-19), 
-          connectedComputers > 0 ? `Computer scored ${connectedComputers} bitcoin (Total: ${newScore})` : `Computer's turn ended`,
+          aiScoreLog,
         ],
       };
     });
