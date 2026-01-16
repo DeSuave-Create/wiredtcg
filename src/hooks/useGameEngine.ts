@@ -1136,6 +1136,16 @@ export function useGameEngine() {
         return false;
       }
       
+      // Check if opponent has 2 of the same classification type - protected from stealing
+      const opponentClassTypes = opponent.classificationCards.map(c => c.card.subtype);
+      const hasDuplicateType = opponentClassTypes.some((type, i) => 
+        opponentClassTypes.indexOf(type) !== i
+      );
+      if (hasDuplicateType) {
+        addLog("Opponent's duplicate classifications are protected from stealing!");
+        return false;
+      }
+      
       // For Head Hunter: check if opponent can block (has their own Head Hunter)
       if (isHeadHunter) {
         const opponentHeadHunters = countHeadHunters(opponent);
