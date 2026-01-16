@@ -1200,6 +1200,19 @@ export function useGameEngine() {
         }
         
         const stolenCard = opp.classificationCards[targetIndex];
+        
+        // Check if player already has this classification type (can't steal duplicates)
+        const playerHasSameType = player.classificationCards.some(
+          c => c.card.subtype === stolenCard.card.subtype
+        );
+        
+        if (playerHasSameType) {
+          return {
+            ...prev,
+            gameLog: [...prev.gameLog.slice(-19), `Can't steal ${stolenCard.card.name} - you already have this type!`],
+          };
+        }
+        
         opp.classificationCards = opp.classificationCards.filter((_, i) => i !== targetIndex);
         
         // Check if player already has 2 classifications
