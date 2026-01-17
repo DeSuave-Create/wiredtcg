@@ -19,12 +19,18 @@ export function PlayerHandDraggable({
   compact = false,
   gridLayout = false,
 }: PlayerHandDraggableProps) {
-  // Grid layout: 3 cards per row
+  // Grid layout: 3 cards per row (used for both players now)
   if (gridLayout) {
     return (
-      <div className="grid grid-cols-3 gap-2 p-2">
-        {cards.map((card) => (
-          <div key={card.id}>
+      <div className="grid grid-cols-3 gap-2">
+        {cards.map((card, index) => (
+          <div 
+            key={card.id}
+            className="flex justify-center"
+            style={{
+              transform: showCards ? 'none' : `rotate(${(index - 2.5) * 3}deg)`,
+            }}
+          >
             {showCards ? (
               <DraggableCard 
                 card={card} 
@@ -32,7 +38,7 @@ export function PlayerHandDraggable({
                 showFace={true}
               />
             ) : (
-              <div className="w-20 h-28 sm:w-24 sm:h-32 rounded-lg border-2 border-gray-600 bg-gray-800 overflow-hidden">
+              <div className="w-16 h-22 rounded-lg border-2 border-gray-600 bg-gray-800 overflow-hidden">
                 <img 
                   src="/lovable-uploads/card-back.png"
                   alt="Card back"
