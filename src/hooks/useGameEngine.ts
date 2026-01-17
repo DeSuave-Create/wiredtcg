@@ -1387,7 +1387,8 @@ export function useGameEngine() {
   // Head Hunter: Steals opponent's classification (can be blocked by opponent's Head Hunter)
   // Seal the Deal: Unblockable Head Hunter
   // Supervisor/Security Specialist/Facilities: Auto-resolves matching attacks on your network when played
-  const playClassification = useCallback((cardId: string, targetClassificationId?: string) => {
+  // discardClassificationId: If player has 2 classifications, they can optionally discard one to play the stolen card
+  const playClassification = useCallback((cardId: string, targetClassificationId?: string, discardClassificationId?: string) => {
     if (!gameState) return false;
     
     const currentPlayerIndex = gameState.currentPlayerIndex;
@@ -1507,7 +1508,122 @@ export function useGameEngine() {
         
         // Check if player already has 2 classifications
         if (player.classificationCards.length >= 2) {
-          // Can't add stolen card, it goes to discard
+          // Check if player wants to swap (discard one of their own)
+          if (discardClassificationId) {
+            // Find and remove the classification to discard
+            const discardIndex = player.classificationCards.findIndex(c => c.id === discardClassificationId);
+            if (discardIndex !== -1) {
+              const discardedCard = player.classificationCards[discardIndex];
+              player.classificationCards = player.classificationCards.filter((_, i) => i !== discardIndex);
+              
+              // Now add the stolen card
+              player.classificationCards = [...player.classificationCards, stolenCard];
+              
+              // Check if this stolen classification auto-resolves any existing attacks
+              const autoResolveType = getAutoResolveType(stolenCard.card.subtype);
+              let resolvedCount = 0;
+              let resolvedIssues: Card[] = [];
+              
+              if (autoResolveType) {
+                // Resolve all matching attacks on player's network
+                player.network = {
+                  ...player.network,
+                  switches: player.network.switches.map(sw => {
+                    const swMatchingIssues = sw.attachedIssues.filter(i => i.subtype === autoResolveType);
+                    resolvedCount += swMatchingIssues.length;
+                    resolvedIssues.push(...swMatchingIssues);
+                    const newSwIssues = sw.attachedIssues.filter(i => i.subtype !== autoResolveType);
+                    const swEnabled = newSwIssues.length === 0;
+                    
+                    return {
+                      ...sw,
+                      attachedIssues: newSwIssues,
+                      isDisabled: !swEnabled,
+                      cables: sw.cables.map(cable => {
+                        const cableMatchingIssues = cable.attachedIssues.filter(i => i.subtype === autoResolveType);
+                        resolvedCount += cableMatchingIssues.length;
+                        resolvedIssues.push(...cableMatchingIssues);
+                        const newCableIssues = cable.attachedIssues.filter(i => i.subtype !== autoResolveType);
+                        const cableEnabled = newCableIssues.length === 0 && swEnabled;
+                        
+                        return {
+                          ...cable,
+                          attachedIssues: newCableIssues,
+                          isDisabled: !cableEnabled,
+                          computers: cable.computers.map(comp => {
+                            const compMatchingIssues = comp.attachedIssues.filter(i => i.subtype === autoResolveType);
+                            resolvedCount += compMatchingIssues.length;
+                            resolvedIssues.push(...compMatchingIssues);
+                            const newCompIssues = comp.attachedIssues.filter(i => i.subtype !== autoResolveType);
+                            const compEnabled = newCompIssues.length === 0 && cableEnabled;
+                            
+                            return {
+                              ...comp,
+                              attachedIssues: newCompIssues,
+                              isDisabled: !compEnabled,
+                            };
+                          }),
+                        };
+                      }),
+                    };
+                  }),
+                  floatingCables: player.network.floatingCables.map(cable => {
+                    const cableMatchingIssues = cable.attachedIssues.filter(i => i.subtype === autoResolveType);
+                    resolvedCount += cableMatchingIssues.length;
+                    resolvedIssues.push(...cableMatchingIssues);
+                    const newCableIssues = cable.attachedIssues.filter(i => i.subtype !== autoResolveType);
+                    const cableEnabled = newCableIssues.length === 0;
+                    
+                    return {
+                      ...cable,
+                      attachedIssues: newCableIssues,
+                      isDisabled: !cableEnabled,
+                      computers: cable.computers.map(comp => {
+                        const compMatchingIssues = comp.attachedIssues.filter(i => i.subtype === autoResolveType);
+                        resolvedCount += compMatchingIssues.length;
+                        resolvedIssues.push(...compMatchingIssues);
+                        const newCompIssues = comp.attachedIssues.filter(i => i.subtype !== autoResolveType);
+                        const compEnabled = newCompIssues.length === 0 && cableEnabled;
+                        
+                        return {
+                          ...comp,
+                          attachedIssues: newCompIssues,
+                          isDisabled: !compEnabled,
+                        };
+                      }),
+                    };
+                  }),
+                  floatingComputers: player.network.floatingComputers.map(comp => {
+                    const compMatchingIssues = comp.attachedIssues.filter(i => i.subtype === autoResolveType);
+                    resolvedCount += compMatchingIssues.length;
+                    resolvedIssues.push(...compMatchingIssues);
+                    const newCompIssues = comp.attachedIssues.filter(i => i.subtype !== autoResolveType);
+                    
+                    return {
+                      ...comp,
+                      attachedIssues: newCompIssues,
+                      isDisabled: newCompIssues.length > 0,
+                    };
+                  }),
+                };
+              }
+              
+              newPlayers[currentPlayerIndex] = player;
+              newPlayers[opponentPlayerIndex] = opp;
+              
+              const resolveMsg = resolvedCount > 0 ? ` Resolved ${resolvedCount} attack(s)!` : '';
+              
+              return {
+                ...prev,
+                players: newPlayers,
+                discardPile: [...prev.discardPile, classCard, discardedCard.card, ...resolvedIssues],
+                movesRemaining: prev.movesRemaining - 1,
+                gameLog: [...prev.gameLog.slice(-19), `🎖️ ${isSealTheDeal ? 'Seal the Deal' : 'Head Hunter'}! Stole ${stolenCard.card.name}, discarded ${discardedCard.card.name}!${resolveMsg}`],
+              };
+            }
+          }
+          
+          // No swap requested - stolen card goes to discard
           newPlayers[currentPlayerIndex] = player;
           newPlayers[opponentPlayerIndex] = opp;
           
