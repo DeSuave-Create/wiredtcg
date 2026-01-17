@@ -54,22 +54,34 @@ export function ClassificationSection({
       className="w-full h-full"
     >
       <div className={cn(
-        "bg-gradient-to-r from-blue-900/40 to-blue-800/30 rounded-lg border border-blue-500/40 p-2 h-full flex flex-col",
-        hasDuplicateProtection && "ring-2 ring-yellow-500/50"
+        "bg-gradient-to-r from-blue-900/40 to-blue-800/30 rounded-lg border border-blue-500/40 p-2 h-full flex flex-col relative overflow-hidden",
+        hasDuplicateProtection && "ring-2 ring-yellow-400 border-yellow-500/60"
       )}>
-        <div className="flex items-center justify-between mb-1">
+        {/* Animated shield overlay for duplicate protection */}
+        {hasDuplicateProtection && (
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 via-yellow-400/5 to-yellow-500/10 animate-pulse" />
+            <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-yellow-400 to-transparent animate-pulse" />
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-yellow-400 to-transparent animate-pulse" />
+          </div>
+        )}
+        
+        <div className="flex items-center justify-between mb-1 relative z-10">
           <div className="flex items-center gap-2">
             <span className="font-semibold text-blue-300 text-[10px]">
               🎖️ CLASSIFICATIONS
             </span>
             <span className="text-[10px] text-muted-foreground">({classificationCards.length}/2)</span>
-            {hasDuplicateProtection && (
-              <span className="text-[8px] text-yellow-400">🛡️ Protected</span>
-            )}
           </div>
+          {hasDuplicateProtection && (
+            <div className="flex items-center gap-1 bg-yellow-500/20 px-2 py-0.5 rounded-full border border-yellow-500/50 animate-pulse">
+              <span className="text-yellow-400 text-lg">🛡️</span>
+              <span className="text-[10px] text-yellow-300 font-semibold">STEAL PROTECTED</span>
+            </div>
+          )}
         </div>
         
-        <div className="flex items-center gap-2 flex-1 min-h-0">
+        <div className="flex items-center gap-2 flex-1 min-h-0 relative z-10">
           {classificationCards.length === 0 ? (
             <div className="text-muted-foreground italic text-[10px]">
               {isCurrentPlayer 
@@ -88,7 +100,10 @@ export function ClassificationSection({
                 />
               ) : (
               <div key={classCard.id} className="relative group">
-                  <div className="rounded border-2 border-gray-600 overflow-hidden transition-transform hover:scale-105 w-24 h-32">
+                  <div className={cn(
+                    "rounded border-2 overflow-hidden transition-transform hover:scale-105 w-24 h-32",
+                    hasDuplicateProtection ? "border-yellow-500/70 shadow-lg shadow-yellow-500/20" : "border-gray-600"
+                  )}>
                     <img 
                       src={classCard.card.image} 
                       alt={classCard.card.name}
