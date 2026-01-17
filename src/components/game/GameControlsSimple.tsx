@@ -48,6 +48,7 @@ export function GameControlsSimple({
     'draw': 'Draw',
     'score': 'Score',
     'game-over': 'Game Over',
+    'audit': 'Audit',
   };
 
   // Compact version for sidebar

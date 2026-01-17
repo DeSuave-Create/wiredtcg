@@ -54,7 +54,17 @@ export interface Player {
 }
 
 // Game phases
-export type GamePhase = 'trade' | 'moves' | 'discard' | 'draw' | 'score' | 'game-over';
+export type GamePhase = 'trade' | 'moves' | 'discard' | 'draw' | 'score' | 'game-over' | 'audit';
+
+// Audit battle state (for the back-and-forth blocking)
+export interface AuditBattle {
+  auditorIndex: number; // Player who initiated audit
+  targetIndex: number; // Player being audited
+  auditCardId: string; // The audit card being used
+  chain: { playerId: number; card: Card }[]; // Chain of Hacked/Secured cards played
+  currentTurn: number; // Which player needs to respond (0 = target can block, 1 = auditor can counter, etc.)
+  computersToReturn: number; // How many computers will be returned if audit succeeds
+}
 
 // AI Action tracking
 export interface AIAction {
@@ -76,6 +86,7 @@ export interface GameState {
   winner: Player | null;
   gameLog: string[];
   aiLastTurnActions: AIAction[]; // Track AI's last turn moves
+  auditBattle?: AuditBattle; // Active audit battle state
 }
 
 // Actions
