@@ -87,8 +87,8 @@ export function ClassificationSection({
                   abilityLabel={compactAbilityLabels[classCard.card.subtype]}
                 />
               ) : (
-                <div key={classCard.id} className="relative group">
-                  <div className="rounded border-2 border-gray-600 overflow-hidden transition-transform hover:scale-105 w-10 h-14">
+              <div key={classCard.id} className="relative group">
+                  <div className="rounded border-2 border-gray-600 overflow-hidden transition-transform hover:scale-105 w-24 h-32">
                     <img 
                       src={classCard.card.image} 
                       alt={classCard.card.name}
