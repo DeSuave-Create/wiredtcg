@@ -47,6 +47,7 @@ export interface Player {
   id: string;
   name: string;
   hand: Card[];
+  auditedComputers: Card[]; // Computers returned via audit - shown separately, allow overflow
   network: PlayerNetwork;
   classificationCards: PlacedCard[]; // Max 2 in play
   score: number;
@@ -64,6 +65,9 @@ export interface AuditBattle {
   chain: { playerId: number; card: Card }[]; // Chain of Hacked/Secured cards played
   currentTurn: number; // Which player needs to respond (0 = target can block, 1 = auditor can counter, etc.)
   computersToReturn: number; // How many computers will be returned if audit succeeds
+  phase: 'counter' | 'selection'; // 'counter' = back-and-forth, 'selection' = attacker picks computers
+  availableComputers?: { id: string; card: Card; location: string }[]; // Computers available for selection
+  selectedComputerIds?: string[]; // IDs of computers selected for removal
 }
 
 // AI Action tracking

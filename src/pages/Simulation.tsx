@@ -18,6 +18,7 @@ import { ConnectCablesDialog } from '@/components/game/ConnectCablesDialog';
 import { StealClassificationDialog } from '@/components/game/StealClassificationDialog';
 import { AIActionsPanel } from '@/components/game/AIActionsPanel';
 import { AuditDialog } from '@/components/game/AuditDialog';
+import { AuditComputerSelectionDialog } from '@/components/game/AuditComputerSelectionDialog';
 import { Card } from '@/types/game';
 import { toast } from 'sonner';
 
@@ -69,6 +70,8 @@ const Simulation = () => {
     startAudit,
     respondToAudit,
     passAudit,
+    toggleAuditComputerSelection,
+    confirmAuditSelection,
   } = useGameEngine();
 
   const [activeCard, setActiveCard] = useState<Card | null>(null);
@@ -121,9 +124,10 @@ const Simulation = () => {
     }
   }, [gameState?.currentPlayerIndex, gameState?.phase, executeAITurn]);
 
-  // Handle AI response in audit battles
+  // Handle AI response in audit battles (counter phase)
   useEffect(() => {
     if (!gameState || gameState.phase !== 'audit' || !gameState.auditBattle) return;
+    if (gameState.auditBattle.phase !== 'counter') return;
     
     const battle = gameState.auditBattle;
     const isTargetTurn = battle.chain.length % 2 === 0;
@@ -153,7 +157,44 @@ const Simulation = () => {
       
       return () => clearTimeout(timer);
     }
-  }, [gameState?.phase, gameState?.auditBattle?.chain.length, respondToAudit, passAudit]);
+  }, [gameState?.phase, gameState?.auditBattle?.phase, gameState?.auditBattle?.chain.length, respondToAudit, passAudit]);
+
+  // Handle AI computer selection during audit selection phase
+  useEffect(() => {
+    if (!gameState || gameState.phase !== 'audit' || !gameState.auditBattle) return;
+    if (gameState.auditBattle.phase !== 'selection') return;
+    
+    const battle = gameState.auditBattle;
+    const auditor = gameState.players[battle.auditorIndex];
+    
+    // Only act if AI is the auditor (selects computers)
+    if (!auditor.isHuman) {
+      const availableComputers = battle.availableComputers || [];
+      const neededCount = battle.computersToReturn;
+      const selectedCount = (battle.selectedComputerIds || []).length;
+      
+      const timer = setTimeout(() => {
+        if (selectedCount < neededCount && availableComputers.length > selectedCount) {
+          // AI selects next computer (prioritize connected computers first)
+          const unselectedComputers = availableComputers.filter(
+            c => !(battle.selectedComputerIds || []).includes(c.id)
+          );
+          if (unselectedComputers.length > 0) {
+            // Prioritize connected computers (Switch → Cable) over floating
+            const connected = unselectedComputers.find(c => c.location.includes('Switch'));
+            const toSelect = connected || unselectedComputers[0];
+            toggleAuditComputerSelection(toSelect.id);
+          }
+        } else if (selectedCount === neededCount) {
+          // All selected, confirm
+          confirmAuditSelection();
+          toast.info(`🤖 Computer selected ${neededCount} computer(s) to return!`);
+        }
+      }, 800);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [gameState?.phase, gameState?.auditBattle?.phase, gameState?.auditBattle?.selectedComputerIds?.length, toggleAuditComputerSelection, confirmAuditSelection]);
 
   // Detect when AI steals a classification and show visual feedback
   useEffect(() => {
@@ -641,6 +682,30 @@ const Simulation = () => {
                     />
                   </div>
                 </div>
+                
+                {/* Audited Computers Section - shown when player has computers returned from audit */}
+                {humanPlayer.auditedComputers.length > 0 && (
+                  <div className="mt-3 pt-3 border-t border-yellow-500/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-xs text-yellow-400 font-medium">📋 Audited Computers</span>
+                      <span className="text-xs text-gray-500">({humanPlayer.auditedComputers.length} - overflow allowed)</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {humanPlayer.auditedComputers.map((card, index) => (
+                        <div 
+                          key={`audited-${card.id}-${index}`}
+                          className="w-16 h-22 rounded border-2 border-yellow-500/50 bg-yellow-500/10 overflow-hidden"
+                        >
+                          <img 
+                            src={card.image} 
+                            alt={card.name}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -749,8 +814,8 @@ const Simulation = () => {
         />
       )}
       
-      {/* Audit Battle Dialog */}
-      {gameState && gameState.phase === 'audit' && gameState.auditBattle && (
+      {/* Audit Battle Counter Dialog - shown during counter phase */}
+      {gameState && gameState.phase === 'audit' && gameState.auditBattle && gameState.auditBattle.phase === 'counter' && (
         <AuditDialog
           isOpen={true}
           auditBattle={gameState.auditBattle}
@@ -761,6 +826,22 @@ const Simulation = () => {
           }}
           onPass={() => {
             passAudit();
+          }}
+        />
+      )}
+      
+      {/* Audit Computer Selection Dialog - shown during selection phase */}
+      {gameState && gameState.phase === 'audit' && gameState.auditBattle && gameState.auditBattle.phase === 'selection' && (
+        <AuditComputerSelectionDialog
+          isOpen={true}
+          auditBattle={gameState.auditBattle}
+          players={gameState.players}
+          currentPlayerId={humanPlayer.id}
+          onToggleSelection={(computerId) => {
+            toggleAuditComputerSelection(computerId);
+          }}
+          onConfirm={() => {
+            confirmAuditSelection();
           }}
         />
       )}
