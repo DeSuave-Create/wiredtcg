@@ -133,8 +133,9 @@ export function useGameEngine() {
     return count;
   }, []);
 
-  // Helper: Find equipment by ID across network
-  const findEquipmentById = useCallback((network: PlayerNetwork, equipmentId: string): { type: 'switch' | 'cable' | 'computer'; node: PlacedCard; switchIndex?: number; cableIndex?: number; computerIndex?: number } | null => {
+  // Helper: Find equipment by ID across network (including floating equipment)
+  const findEquipmentById = useCallback((network: PlayerNetwork, equipmentId: string): { type: 'switch' | 'cable' | 'computer'; node: PlacedCard; switchIndex?: number; cableIndex?: number; computerIndex?: number; floatingCableIndex?: number; floatingComputerIndex?: number; isFloating?: boolean } | null => {
+    // Check connected switches and their cables/computers
     for (let si = 0; si < network.switches.length; si++) {
       const sw = network.switches[si];
       if (sw.id === equipmentId) {
@@ -153,6 +154,29 @@ export function useGameEngine() {
         }
       }
     }
+    
+    // Check floating cables and computers on them
+    for (let fci = 0; fci < network.floatingCables.length; fci++) {
+      const floatingCable = network.floatingCables[fci];
+      if (floatingCable.id === equipmentId) {
+        return { type: 'cable', node: floatingCable, floatingCableIndex: fci, isFloating: true };
+      }
+      for (let coi = 0; coi < floatingCable.computers.length; coi++) {
+        const comp = floatingCable.computers[coi];
+        if (comp.id === equipmentId) {
+          return { type: 'computer', node: comp, floatingCableIndex: fci, computerIndex: coi, isFloating: true };
+        }
+      }
+    }
+    
+    // Check floating computers
+    for (let fcoi = 0; fcoi < network.floatingComputers.length; fcoi++) {
+      const floatingComp = network.floatingComputers[fcoi];
+      if (floatingComp.id === equipmentId) {
+        return { type: 'computer', node: floatingComp, floatingComputerIndex: fcoi, isFloating: true };
+      }
+    }
+    
     return null;
   }, []);
 
@@ -924,57 +948,106 @@ export function useGameEngine() {
       // Switch attack → disables switch + all cables + all computers
       // Cable attack → disables cable + all computers on it
       // Computer attack → disables only that computer
-      const newSwitches = target.network.switches.map((sw, si) => {
-        // Attack on SWITCH - cascade to all cables and computers
-        if (equipmentInfo.type === 'switch' && si === equipmentInfo.switchIndex) {
-          return {
-            ...sw,
-            attachedIssues: [...sw.attachedIssues, attackCard],
+      
+      let newNetwork = { ...target.network };
+      
+      // Handle floating equipment attacks
+      if (equipmentInfo.isFloating) {
+        if (equipmentInfo.type === 'cable' && equipmentInfo.floatingCableIndex !== undefined) {
+          // Attack on floating cable - cascade to computers on it
+          const newFloatingCables = [...newNetwork.floatingCables];
+          const cable = newFloatingCables[equipmentInfo.floatingCableIndex];
+          newFloatingCables[equipmentInfo.floatingCableIndex] = {
+            ...cable,
+            attachedIssues: [...cable.attachedIssues, attackCard],
             isDisabled: true,
-            // Disable all cables and their computers
-            cables: sw.cables.map(cable => ({
-              ...cable,
+            computers: cable.computers.map(comp => ({
+              ...comp,
               isDisabled: true,
-              computers: cable.computers.map(comp => ({
-                ...comp,
-                isDisabled: true,
-              })),
             })),
           };
+          newNetwork = { ...newNetwork, floatingCables: newFloatingCables };
+        } else if (equipmentInfo.type === 'computer' && equipmentInfo.floatingCableIndex !== undefined && equipmentInfo.computerIndex !== undefined) {
+          // Attack on computer attached to floating cable
+          const newFloatingCables = [...newNetwork.floatingCables];
+          const cable = newFloatingCables[equipmentInfo.floatingCableIndex];
+          const newComputers = [...cable.computers];
+          newComputers[equipmentInfo.computerIndex] = {
+            ...newComputers[equipmentInfo.computerIndex],
+            attachedIssues: [...newComputers[equipmentInfo.computerIndex].attachedIssues, attackCard],
+            isDisabled: true,
+          };
+          newFloatingCables[equipmentInfo.floatingCableIndex] = {
+            ...cable,
+            computers: newComputers,
+          };
+          newNetwork = { ...newNetwork, floatingCables: newFloatingCables };
+        } else if (equipmentInfo.type === 'computer' && equipmentInfo.floatingComputerIndex !== undefined) {
+          // Attack on floating computer (not attached to any cable)
+          const newFloatingComputers = [...newNetwork.floatingComputers];
+          newFloatingComputers[equipmentInfo.floatingComputerIndex] = {
+            ...newFloatingComputers[equipmentInfo.floatingComputerIndex],
+            attachedIssues: [...newFloatingComputers[equipmentInfo.floatingComputerIndex].attachedIssues, attackCard],
+            isDisabled: true,
+          };
+          newNetwork = { ...newNetwork, floatingComputers: newFloatingComputers };
         }
-        
-        return {
-          ...sw,
-          cables: sw.cables.map((cable, ci) => {
-            // Attack on CABLE - cascade to all computers on it
-            if (equipmentInfo.type === 'cable' && si === equipmentInfo.switchIndex && ci === equipmentInfo.cableIndex) {
-              return {
+      } else {
+        // Handle connected equipment attacks (original logic)
+        const newSwitches = target.network.switches.map((sw, si) => {
+          // Attack on SWITCH - cascade to all cables and computers
+          if (equipmentInfo.type === 'switch' && si === equipmentInfo.switchIndex) {
+            return {
+              ...sw,
+              attachedIssues: [...sw.attachedIssues, attackCard],
+              isDisabled: true,
+              // Disable all cables and their computers
+              cables: sw.cables.map(cable => ({
                 ...cable,
-                attachedIssues: [...cable.attachedIssues, attackCard],
                 isDisabled: true,
-                // Disable all computers on this cable
                 computers: cable.computers.map(comp => ({
                   ...comp,
                   isDisabled: true,
                 })),
-              };
-            }
-            
-            return {
-              ...cable,
-              computers: cable.computers.map((comp, coi) => {
-                // Attack on COMPUTER - only disable that computer
-                if (equipmentInfo.type === 'computer' && si === equipmentInfo.switchIndex && ci === equipmentInfo.cableIndex && coi === equipmentInfo.computerIndex) {
-                  return { ...comp, attachedIssues: [...comp.attachedIssues, attackCard], isDisabled: true };
-                }
-                return comp;
-              }),
+              })),
             };
-          }),
-        };
-      });
+          }
+          
+          return {
+            ...sw,
+            cables: sw.cables.map((cable, ci) => {
+              // Attack on CABLE - cascade to all computers on it
+              if (equipmentInfo.type === 'cable' && si === equipmentInfo.switchIndex && ci === equipmentInfo.cableIndex) {
+                return {
+                  ...cable,
+                  attachedIssues: [...cable.attachedIssues, attackCard],
+                  isDisabled: true,
+                  // Disable all computers on this cable
+                  computers: cable.computers.map(comp => ({
+                    ...comp,
+                    isDisabled: true,
+                  })),
+                };
+              }
+              
+              return {
+                ...cable,
+                computers: cable.computers.map((comp, coi) => {
+                  // Attack on COMPUTER - only disable that computer
+                  if (equipmentInfo.type === 'computer' && si === equipmentInfo.switchIndex && ci === equipmentInfo.cableIndex && coi === equipmentInfo.computerIndex) {
+                    return { ...comp, attachedIssues: [...comp.attachedIssues, attackCard], isDisabled: true };
+                  }
+                  return comp;
+                }),
+              };
+            }),
+          };
+        });
+        
+        newNetwork = { ...newNetwork, switches: newSwitches };
+      }
       
-      target.network = { ...target.network, switches: newSwitches };
+      target.network = newNetwork;
       
       newPlayers[prev.currentPlayerIndex] = attacker;
       newPlayers[targetPlayerIndex] = target;
