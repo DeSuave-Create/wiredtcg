@@ -1,25 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, RotateCcw } from 'lucide-react';
-import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, pointerWithin, CollisionDetection, DroppableContainer } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, pointerWithin, CollisionDetection } from '@dnd-kit/core';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { useGameEngine } from '@/hooks/useGameEngine';
-import { PlayerHandDraggable } from '@/components/game/PlayerHandDraggable';
-import { NetworkBoardDroppable } from '@/components/game/NetworkBoardDroppable';
-import { ClassificationSection } from '@/components/game/ClassificationSection';
-import { GameControlsSimple } from '@/components/game/GameControlsSimple';
-import { GameLog } from '@/components/game/GameLog';
-import { ScoreDisplay } from '@/components/game/ScoreDisplay';
-import { DiscardZone } from '@/components/game/DiscardZone';
+import { PlayerSection } from '@/components/game/PlayerSection';
+import { AILogPanel } from '@/components/game/AILogPanel';
+import { GameControlsCenter } from '@/components/game/GameControlsCenter';
 import { ConnectComputersDialog } from '@/components/game/ConnectComputersDialog';
 import { ConnectCablesDialog } from '@/components/game/ConnectCablesDialog';
 import { StealClassificationDialog } from '@/components/game/StealClassificationDialog';
-import { AIActionsPanel } from '@/components/game/AIActionsPanel';
 import { AuditDialog } from '@/components/game/AuditDialog';
 import { AuditComputerSelectionDialog } from '@/components/game/AuditComputerSelectionDialog';
-import { AuditedComputersSection } from '@/components/game/AuditedComputersSection';
 import { GameEventAnimation, useGameEventAnimation } from '@/components/game/GameEventAnimations';
 import { Card } from '@/types/game';
 import { toast } from 'sonner';
@@ -516,6 +510,8 @@ const Simulation = () => {
         return;
       }
       
+      const humanPlayer = gameState.players[0];
+      
       // Check if already at max classifications
       if (humanPlayer.classificationCards.length >= 2) {
         toast.error("Maximum 2 classification cards in play!");
@@ -601,16 +597,16 @@ const Simulation = () => {
         onDragEnd={handleDragEnd}
         collisionDetection={preferSpecificTargets}
       >
-        <main className="flex-grow container mx-auto px-4 py-6">
-          {/* Back button and title */}
+        <main className="flex-grow container mx-auto px-4 py-4">
+          {/* Header with title and controls */}
           <div className="flex items-center justify-between mb-4">
             <Link 
               to="/" 
-              className="inline-flex items-center gap-2 hover:opacity-80 transition-colors"
+              className="inline-flex items-center gap-2 hover:opacity-80 transition-colors text-sm"
               style={{ color: 'hsl(var(--accent-green))' }}
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to Home
+              Back
             </Link>
             
             <h1 className="text-2xl font-bold font-orbitron text-accent-green">
@@ -626,15 +622,6 @@ const Simulation = () => {
               <RotateCcw className="w-4 h-4 mr-2" />
               New Game
             </Button>
-          </div>
-
-          {/* Score display */}
-          <div className="mb-4">
-            <ScoreDisplay 
-              players={gameState.players}
-              currentPlayerIndex={gameState.currentPlayerIndex}
-              countConnectedComputers={countConnectedComputers}
-            />
           </div>
 
           {/* Game Over overlay */}
@@ -657,122 +644,59 @@ const Simulation = () => {
             </div>
           )}
 
-          {/* Main game area - side by side on desktop */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* Your Area - Left on desktop */}
-            <div className="order-2 lg:order-1 bg-black/20 rounded-lg p-4 border border-accent-green/30 space-y-3">
-              <h2 className="text-sm font-bold text-accent-green">YOUR AREA</h2>
-              
-              {/* Your Network */}
-              <NetworkBoardDroppable
-                network={humanPlayer.network}
-                isCurrentPlayer={isHumanTurn}
-                label="Your Network"
-                playerId="player-1"
-                canReceiveAttacks={false}
-                canReceiveResolutions={canPlayCards && hasResolutionCards && playerHasDisabledEquipment}
-                canRearrange={canPlayCards}
+          {/* Main 3-column layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr_250px] gap-4">
+            {/* Player Section - Left */}
+            <PlayerSection
+              player={humanPlayer}
+              isHuman={true}
+              isCurrentTurn={isHumanTurn}
+              canPlayCards={canPlayCards}
+              canDiscard={canDiscard}
+              isDiscardPhase={isDiscardPhase}
+              hasResolutionCards={hasResolutionCards}
+              hasDisabledEquipment={playerHasDisabledEquipment}
+              discardPile={gameState.discardPile}
+              connectedComputers={countConnectedComputers(humanPlayer.network)}
+              playerId="player-1"
+              gamePhase={gameState.phase}
+            />
+
+            {/* Opponent Section - Center */}
+            <div className="relative">
+              <PlayerSection
+                player={computerPlayer}
+                isHuman={false}
+                isCurrentTurn={!isHumanTurn}
+                canPlayCards={false}
+                canDiscard={false}
+                isDiscardPhase={false}
+                hasResolutionCards={false}
+                hasDisabledEquipment={false}
+                discardPile={[]}
+                connectedComputers={countConnectedComputers(computerPlayer.network)}
+                playerId="player-2"
+                gamePhase={gameState.phase}
               />
               
-              {/* Your Classifications */}
-              <ClassificationSection
-                classificationCards={humanPlayer.classificationCards}
-                isCurrentPlayer={true}
-                playerId="player-1"
-                canDrag={canPlayCards}
-              />
-              
-              {/* Your Hand + Discard + Controls */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-accent-green font-medium">Your Hand</span>
-                  <span className="text-xs text-muted-foreground">
-                    {isDiscardPhase 
-                      ? 'Drag to discard' 
-                      : canPlayCards 
-                        ? 'Drag to play' 
-                        : 'Wait for turn'
-                    }
-                  </span>
-                </div>
-                <div className="flex flex-col md:flex-row md:items-start gap-3 md:gap-4">
-                  {/* Hand cards - 3x2 grid */}
-                  <div className="flex-1">
-                    <PlayerHandDraggable
-                      cards={humanPlayer.hand}
-                      isCurrentPlayer={isHumanTurn}
-                      showCards={true}
-                      disabled={!canPlayCards && !canDiscard && !isDiscardPhase}
-                      gridLayout={true}
-                    />
-                  </div>
-                  {/* Discard + Controls stacked - below on mobile, side on desktop */}
-                  <div className="flex-shrink-0 flex flex-row md:flex-col items-center md:items-start gap-3">
-                    <DiscardZone 
-                      discardPile={gameState.discardPile}
-                      isActive={canDiscard || isDiscardPhase}
-                      isDiscardPhase={isDiscardPhase}
-                      playerId="player-1"
-                    />
-                    <GameControlsSimple
-                      phase={gameState.phase}
-                      movesRemaining={gameState.movesRemaining}
-                      onEndPhase={endPhase}
-                      isCurrentPlayerHuman={isHumanTurn}
-                      isDragging={activeCard !== null}
-                      compact={true}
-                    />
-                  </div>
-                </div>
-                
-                {/* Audited Computers Section - draggable to play back */}
-                <AuditedComputersSection
-                  auditedComputers={humanPlayer.auditedComputers}
-                  isCurrentPlayer={isHumanTurn}
-                  canPlay={canPlayCards}
+              {/* Center controls - positioned at bottom of opponent section */}
+              <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 z-10">
+                <GameControlsCenter
+                  phase={gameState.phase}
+                  movesRemaining={gameState.movesRemaining}
+                  onEndPhase={endPhase}
+                  isCurrentPlayerHuman={isHumanTurn}
+                  isDragging={activeCard !== null}
                 />
               </div>
             </div>
 
-            {/* Opponent Area - Right on desktop, same size as player */}
-            <div className="order-1 lg:order-2 bg-black/20 rounded-lg p-4 border border-gray-700 space-y-4">
-              <h2 className="text-sm font-bold text-gray-400">OPPONENT</h2>
-              
-              {/* Computer's Network - full size like player */}
-              <NetworkBoardDroppable
-                network={computerPlayer.network}
-                isCurrentPlayer={false}
-                label="Computer's Network"
-                playerId="player-2"
-                canReceiveAttacks={canPlayCards}
-                canReceiveResolutions={false}
-              />
-              
-              {/* Computer's Classifications - full size */}
-              <ClassificationSection
-                classificationCards={computerPlayer.classificationCards}
-                isCurrentPlayer={false}
-                playerId="player-2"
-              />
-              
-              {/* Computer's Hand - full size */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-gray-400">Computer's Hand</span>
-                  <span className="text-sm text-muted-foreground">{computerPlayer.hand.length} cards</span>
-                </div>
-                <PlayerHandDraggable
-                  cards={computerPlayer.hand}
-                  isCurrentPlayer={false}
-                  showCards={false}
-                  disabled={true}
-                />
-              </div>
-              
-              {/* AI Actions Panel */}
-              <AIActionsPanel actions={gameState.aiLastTurnActions} />
-            </div>
+            {/* AI Log Panel - Right */}
+            <AILogPanel actions={gameState.aiLastTurnActions} />
           </div>
+
+          {/* Spacer for controls */}
+          <div className="h-20 lg:hidden" />
         </main>
 
         {/* Drag overlay - shows the card being dragged */}
