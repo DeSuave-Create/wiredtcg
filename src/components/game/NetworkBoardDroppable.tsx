@@ -58,12 +58,11 @@ export function NetworkBoardDroppable({
       >
         {/* Internet connection point */}
         <div className={cn("flex items-center justify-center", compact ? "mb-3" : "mb-6")}>
-          <div className={cn(
-            "rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/30",
-            compact ? "w-12 h-12 text-[8px]" : "w-20 h-20 text-xs"
-          )}>
-            INTERNET
-          </div>
+          <img 
+            src="/lovable-uploads/internet-logo.png" 
+            alt="Internet"
+            className={cn("object-contain", compact ? "w-12 h-12" : "w-20 h-20")}
+          />
         </div>
         
         {/* Connection lines from Internet to Switches */}
