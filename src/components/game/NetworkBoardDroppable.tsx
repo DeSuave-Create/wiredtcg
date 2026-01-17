@@ -424,10 +424,13 @@ function CableComponent({
     return accepts;
   };
   
+  // Calculate width based on number of computers
+  const containerWidth = Math.max(1, cable.computers.length) * 56; // 48px card + 8px gap
+
   return (
-    <div className="relative">
+    <div className="relative flex flex-col items-center" style={{ minWidth: `${Math.max(56, containerWidth)}px` }}>
       {/* Connection line to Switch */}
-      <div className="absolute left-1/2 w-0.5 bg-green-500/50 -top-1 h-1" />
+      <div className="w-0.5 bg-green-500/50 h-2" />
       
       {/* Cable card - droppable for computers, attacks, resolutions */}
       <DroppableZone
@@ -463,20 +466,25 @@ function CableComponent({
           {cable.attachedIssues.length > 0 && (
             <IssueIndicator issues={cable.attachedIssues} small />
           )}
+          
+          {/* Capacity indicator on cable */}
+          <div className={cn(
+            "absolute -bottom-3 left-1/2 -translate-x-1/2 text-[8px] bg-black/60 px-1 rounded",
+            hasSpace ? "text-muted-foreground" : "text-red-400"
+          )}>
+            {cable.computers.length}/{cable.maxComputers}
+          </div>
         </div>
       </DroppableZone>
       
-      {/* Capacity indicator */}
-      <div className={cn(
-        "text-center mt-0.5 text-[8px]",
-        hasSpace ? "text-muted-foreground" : "text-red-400"
-      )}>
-        {cable.computers.length}/{cable.maxComputers}
-      </div>
-      
-      {/* Computers */}
+      {/* Connection line to computers */}
       {cable.computers.length > 0 && (
-        <div className="flex gap-1 mt-1 justify-center">
+        <div className="w-0.5 bg-green-500/50 h-2 mt-3" />
+      )}
+      
+      {/* Computers - horizontal row below cable */}
+      {cable.computers.length > 0 && (
+        <div className="flex gap-2 justify-center">
           {cable.computers.map((comp) => (
             <ComputerComponent
               key={comp.id}
@@ -495,8 +503,8 @@ function CableComponent({
       
       {/* Empty computer slot hint */}
       {hasSpace && isCurrentPlayer && cable.computers.length === 0 && (
-        <div className="text-center text-[8px] text-muted-foreground mt-1">
-          ↑ Drop PC
+        <div className="text-center text-[8px] text-muted-foreground mt-4">
+          ↓ Drop PC
         </div>
       )}
     </div>
