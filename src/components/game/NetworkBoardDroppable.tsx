@@ -30,8 +30,8 @@ export function NetworkBoardDroppable({
   
   return (
     <div className={cn(
-      "bg-black/30 rounded-lg border border-accent-green/30 relative overflow-hidden",
-      compact ? "p-2" : "p-4"
+      "bg-black/30 rounded-lg border border-accent-green/30 relative overflow-hidden h-full",
+      "p-2"
     )}>
       {/* Background logo */}
       <div 
@@ -44,36 +44,33 @@ export function NetworkBoardDroppable({
         }}
       />
       
-      <h3 className={cn(
-        "font-semibold text-accent-green relative z-10",
-        compact ? "text-xs mb-2" : "text-sm mb-3"
-      )}>{label}</h3>
+      <h3 className="font-semibold text-accent-green relative z-10 text-xs mb-1">{label}</h3>
       
       {/* Board drop zone - accepts any equipment */}
       <DroppableZone
         id={`${playerId}-board`}
         type="internet"
         accepts={isCurrentPlayer ? ['switch', 'cable-2', 'cable-3', 'computer'] : []}
-        className={cn("relative z-10", compact ? "min-h-[120px]" : "min-h-[200px]")}
+        className="relative z-10"
       >
         {/* Internet connection point */}
-        <div className={cn("flex items-center justify-center", compact ? "mb-3" : "mb-6")}>
+        <div className="flex items-center justify-center mb-1">
           <img 
             src="/lovable-uploads/internet-logo.png" 
             alt="Internet"
-            className={cn("object-contain", compact ? "w-12 h-12" : "w-20 h-20")}
+            className="object-contain w-12 h-12"
           />
         </div>
         
         {/* Connection lines from Internet to Switches */}
         {network.switches.length > 0 && (
-          <div className="flex justify-center mb-2">
-            <div className={cn("w-0.5 bg-accent-green/50", compact ? "h-2" : "h-4")} />
+          <div className="flex justify-center mb-1">
+            <div className="w-0.5 bg-accent-green/50 h-2" />
           </div>
         )}
         
         {/* Connected Switches - horizontal layout */}
-        <div className={cn("flex flex-wrap justify-center", compact ? "gap-3" : "gap-6")}>
+        <div className="flex flex-wrap justify-center gap-3">
           {network.switches.map((sw) => (
             <SwitchComponent
               key={sw.id}
@@ -90,19 +87,13 @@ export function NetworkBoardDroppable({
         
         {/* Floating Equipment Section */}
         {(hasFloatingEquipment || (network.switches.length === 0 && isCurrentPlayer)) && (
-          <div className={cn(
-            "border-t border-dashed border-yellow-500/50",
-            compact ? "mt-2 pt-2" : "mt-4 pt-4"
-          )}>
-            <div className={cn(
-              "flex items-center gap-2 text-yellow-500 mb-2",
-              compact ? "text-[10px]" : "text-xs"
-            )}>
-              <Unplug className={compact ? "w-2 h-2" : "w-3 h-3"} />
+          <div className="border-t border-dashed border-yellow-500/50 mt-1 pt-1">
+            <div className="flex items-center gap-1 text-yellow-500 mb-1 text-[10px]">
+              <Unplug className="w-2 h-2" />
               <span>Unconnected</span>
             </div>
             
-            <div className={cn("flex flex-wrap", compact ? "gap-2" : "gap-3")}>
+            <div className="flex flex-wrap gap-2">
               {/* Floating Cables with their computers */}
               {network.floatingCables.map((cable) => (
                 <FloatingCableComponent
