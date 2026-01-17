@@ -1412,15 +1412,108 @@ export function useGameEngine() {
         // Add stolen classification to player
         player.classificationCards = [...player.classificationCards, stolenCard];
         
+        // Check if this stolen classification auto-resolves any existing attacks
+        const autoResolveType = getAutoResolveType(stolenCard.card.subtype);
+        let resolvedCount = 0;
+        let resolvedIssues: Card[] = [];
+        
+        if (autoResolveType) {
+          // Resolve all matching attacks on player's network (connected equipment)
+          player.network = {
+            ...player.network,
+            switches: player.network.switches.map(sw => {
+              const swMatchingIssues = sw.attachedIssues.filter(i => i.subtype === autoResolveType);
+              resolvedCount += swMatchingIssues.length;
+              resolvedIssues.push(...swMatchingIssues);
+              const newSwIssues = sw.attachedIssues.filter(i => i.subtype !== autoResolveType);
+              const swEnabled = newSwIssues.length === 0;
+              
+              return {
+                ...sw,
+                attachedIssues: newSwIssues,
+                isDisabled: !swEnabled,
+                cables: sw.cables.map(cable => {
+                  const cableMatchingIssues = cable.attachedIssues.filter(i => i.subtype === autoResolveType);
+                  resolvedCount += cableMatchingIssues.length;
+                  resolvedIssues.push(...cableMatchingIssues);
+                  const newCableIssues = cable.attachedIssues.filter(i => i.subtype !== autoResolveType);
+                  const cableEnabled = newCableIssues.length === 0 && swEnabled;
+                  
+                  return {
+                    ...cable,
+                    attachedIssues: newCableIssues,
+                    isDisabled: !cableEnabled,
+                    computers: cable.computers.map(comp => {
+                      const compMatchingIssues = comp.attachedIssues.filter(i => i.subtype === autoResolveType);
+                      resolvedCount += compMatchingIssues.length;
+                      resolvedIssues.push(...compMatchingIssues);
+                      const newCompIssues = comp.attachedIssues.filter(i => i.subtype !== autoResolveType);
+                      const compEnabled = newCompIssues.length === 0 && cableEnabled;
+                      
+                      return {
+                        ...comp,
+                        attachedIssues: newCompIssues,
+                        isDisabled: !compEnabled,
+                      };
+                    }),
+                  };
+                }),
+              };
+            }),
+            // Also resolve on floating cables and their computers
+            floatingCables: player.network.floatingCables.map(cable => {
+              const cableMatchingIssues = cable.attachedIssues.filter(i => i.subtype === autoResolveType);
+              resolvedCount += cableMatchingIssues.length;
+              resolvedIssues.push(...cableMatchingIssues);
+              const newCableIssues = cable.attachedIssues.filter(i => i.subtype !== autoResolveType);
+              const cableEnabled = newCableIssues.length === 0;
+              
+              return {
+                ...cable,
+                attachedIssues: newCableIssues,
+                isDisabled: !cableEnabled,
+                computers: cable.computers.map(comp => {
+                  const compMatchingIssues = comp.attachedIssues.filter(i => i.subtype === autoResolveType);
+                  resolvedCount += compMatchingIssues.length;
+                  resolvedIssues.push(...compMatchingIssues);
+                  const newCompIssues = comp.attachedIssues.filter(i => i.subtype !== autoResolveType);
+                  const compEnabled = newCompIssues.length === 0 && cableEnabled;
+                  
+                  return {
+                    ...comp,
+                    attachedIssues: newCompIssues,
+                    isDisabled: !compEnabled,
+                  };
+                }),
+              };
+            }),
+            // Also resolve on floating computers
+            floatingComputers: player.network.floatingComputers.map(comp => {
+              const compMatchingIssues = comp.attachedIssues.filter(i => i.subtype === autoResolveType);
+              resolvedCount += compMatchingIssues.length;
+              resolvedIssues.push(...compMatchingIssues);
+              const newCompIssues = comp.attachedIssues.filter(i => i.subtype !== autoResolveType);
+              
+              return {
+                ...comp,
+                attachedIssues: newCompIssues,
+                isDisabled: newCompIssues.length > 0,
+              };
+            }),
+          };
+        }
+        
         newPlayers[currentPlayerIndex] = player;
         newPlayers[opponentPlayerIndex] = opp;
+        
+        const resolveMsg = resolvedCount > 0 ? ` Resolved ${resolvedCount} existing attack(s)!` : '';
         
         return {
           ...prev,
           players: newPlayers,
-          discardPile: [...prev.discardPile, classCard],
+          discardPile: [...prev.discardPile, classCard, ...resolvedIssues],
           movesRemaining: prev.movesRemaining - 1,
-          gameLog: [...prev.gameLog.slice(-19), `🎖️ ${isSealTheDeal ? 'Seal the Deal' : 'Head Hunter'}! Stole ${stolenCard.card.name}!`],
+          gameLog: [...prev.gameLog.slice(-19), `🎖️ ${isSealTheDeal ? 'Seal the Deal' : 'Head Hunter'}! Stole ${stolenCard.card.name}!${resolveMsg}`],
         };
       });
       
@@ -1460,7 +1553,7 @@ export function useGameEngine() {
       let resolvedIssues: Card[] = [];
       
       if (autoResolveType) {
-        // Resolve all matching attacks on player's network
+        // Resolve all matching attacks on player's network (connected and floating)
         player.network = {
           ...player.network,
           switches: player.network.switches.map(sw => {
@@ -1501,6 +1594,46 @@ export function useGameEngine() {
                   }),
                 };
               }),
+            };
+          }),
+          // Also resolve on floating cables and their computers
+          floatingCables: player.network.floatingCables.map(cable => {
+            const cableMatchingIssues = cable.attachedIssues.filter(i => i.subtype === autoResolveType);
+            resolvedCount += cableMatchingIssues.length;
+            resolvedIssues.push(...cableMatchingIssues);
+            const newCableIssues = cable.attachedIssues.filter(i => i.subtype !== autoResolveType);
+            const cableEnabled = newCableIssues.length === 0;
+            
+            return {
+              ...cable,
+              attachedIssues: newCableIssues,
+              isDisabled: !cableEnabled,
+              computers: cable.computers.map(comp => {
+                const compMatchingIssues = comp.attachedIssues.filter(i => i.subtype === autoResolveType);
+                resolvedCount += compMatchingIssues.length;
+                resolvedIssues.push(...compMatchingIssues);
+                const newCompIssues = comp.attachedIssues.filter(i => i.subtype !== autoResolveType);
+                const compEnabled = newCompIssues.length === 0 && cableEnabled;
+                
+                return {
+                  ...comp,
+                  attachedIssues: newCompIssues,
+                  isDisabled: !compEnabled,
+                };
+              }),
+            };
+          }),
+          // Also resolve on floating computers
+          floatingComputers: player.network.floatingComputers.map(comp => {
+            const compMatchingIssues = comp.attachedIssues.filter(i => i.subtype === autoResolveType);
+            resolvedCount += compMatchingIssues.length;
+            resolvedIssues.push(...compMatchingIssues);
+            const newCompIssues = comp.attachedIssues.filter(i => i.subtype !== autoResolveType);
+            
+            return {
+              ...comp,
+              attachedIssues: newCompIssues,
+              isDisabled: newCompIssues.length > 0,
             };
           }),
         };
