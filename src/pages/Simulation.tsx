@@ -644,7 +644,7 @@ const Simulation = () => {
           )}
 
           {/* Main 3-column layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr_250px] gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr_250px] gap-4 items-start">
             {/* Player Section - Left */}
             <PlayerSection
               player={humanPlayer}
