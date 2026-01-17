@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { useGameEngine } from '@/hooks/useGameEngine';
 import { PlayerSection } from '@/components/game/PlayerSection';
 import { AILogPanel } from '@/components/game/AILogPanel';
-import { GameControlsCenter } from '@/components/game/GameControlsCenter';
 import { ConnectComputersDialog } from '@/components/game/ConnectComputersDialog';
 import { ConnectCablesDialog } from '@/components/game/ConnectCablesDialog';
 import { StealClassificationDialog } from '@/components/game/StealClassificationDialog';
@@ -660,43 +659,30 @@ const Simulation = () => {
               connectedComputers={countConnectedComputers(humanPlayer.network)}
               playerId="player-1"
               gamePhase={gameState.phase}
+              movesRemaining={gameState.movesRemaining}
+              onEndPhase={endPhase}
+              isDragging={activeCard !== null}
             />
 
             {/* Opponent Section - Center */}
-            <div className="relative">
-              <PlayerSection
-                player={computerPlayer}
-                isHuman={false}
-                isCurrentTurn={!isHumanTurn}
-                canPlayCards={false}
-                canDiscard={false}
-                isDiscardPhase={false}
-                hasResolutionCards={false}
-                hasDisabledEquipment={false}
-                discardPile={[]}
-                connectedComputers={countConnectedComputers(computerPlayer.network)}
-                playerId="player-2"
-                gamePhase={gameState.phase}
-              />
-              
-              {/* Center controls - positioned at bottom of opponent section */}
-              <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 z-10">
-                <GameControlsCenter
-                  phase={gameState.phase}
-                  movesRemaining={gameState.movesRemaining}
-                  onEndPhase={endPhase}
-                  isCurrentPlayerHuman={isHumanTurn}
-                  isDragging={activeCard !== null}
-                />
-              </div>
-            </div>
+            <PlayerSection
+              player={computerPlayer}
+              isHuman={false}
+              isCurrentTurn={!isHumanTurn}
+              canPlayCards={false}
+              canDiscard={false}
+              isDiscardPhase={false}
+              hasResolutionCards={false}
+              hasDisabledEquipment={false}
+              discardPile={[]}
+              connectedComputers={countConnectedComputers(computerPlayer.network)}
+              playerId="player-2"
+              gamePhase={gameState.phase}
+            />
 
             {/* AI Log Panel - Right */}
             <AILogPanel actions={gameState.aiLastTurnActions} />
           </div>
-
-          {/* Spacer for controls */}
-          <div className="h-20 lg:hidden" />
         </main>
 
         {/* Drag overlay - shows the card being dragged */}
