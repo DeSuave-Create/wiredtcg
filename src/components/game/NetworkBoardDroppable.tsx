@@ -97,7 +97,7 @@ export function NetworkBoardDroppable({
       
       {/* Unconnected Section - 2 cards tall (120px) */}
       {(hasFloatingEquipment || (network.switches.length === 0 && isCurrentPlayer)) && (
-        <div className="border-t border-dashed border-yellow-500/50 mt-1 pt-1 min-h-[120px] relative z-10">
+        <div className="border-t border-dashed border-yellow-500/50 mt-3 pt-3 min-h-[120px] relative z-10">
           <div className="flex items-center gap-1 text-yellow-500 mb-1 text-[10px]">
             <Unplug className="w-3 h-3" />
             <span>Unconnected</span>
