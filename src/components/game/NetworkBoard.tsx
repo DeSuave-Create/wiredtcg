@@ -28,9 +28,9 @@ export function NetworkBoard({
       {/* Internet connection point */}
       <div className="flex items-center justify-center mb-4">
         <img 
-          src="/lovable-uploads/gamemode-internet.png" 
+          src="/lovable-uploads/internet-logo.png" 
           alt="Internet"
-          className="w-16 h-16 object-contain"
+          className="w-20 h-20 object-contain"
         />
       </div>
       
