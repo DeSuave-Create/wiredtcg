@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, RotateCcw } from 'lucide-react';
 import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, pointerWithin, CollisionDetection } from '@dnd-kit/core';
@@ -14,6 +14,8 @@ import { StealClassificationDialog } from '@/components/game/StealClassification
 import { AuditDialog } from '@/components/game/AuditDialog';
 import { AuditComputerSelectionDialog } from '@/components/game/AuditComputerSelectionDialog';
 import { GameEventAnimation, useGameEventAnimation } from '@/components/game/GameEventAnimations';
+import { DifficultySelector } from '@/components/game/DifficultySelector';
+import { AIDifficulty } from '@/utils/ai';
 import { Card } from '@/types/game';
 import { toast } from 'sonner';
 
@@ -68,6 +70,7 @@ const Simulation = () => {
     passAudit,
     toggleAuditComputerSelection,
     confirmAuditSelection,
+    aiDifficulty,
   } = useGameEngine();
   
   // Animation hook for game events
@@ -101,11 +104,21 @@ const Simulation = () => {
     cardId: string;
     cardName: string;
   } | null>(null);
+  
+  // Difficulty selector dialog state
+  const [showDifficultySelector, setShowDifficultySelector] = useState(true);
 
-  // Initialize game on mount
-  useEffect(() => {
-    initializeGame('You');
+  // Start new game with selected difficulty
+  const handleStartGame = useCallback((difficulty: AIDifficulty) => {
+    initializeGame('You', difficulty);
+    setShowDifficultySelector(false);
+    toast.success(`Game started! AI difficulty: ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`);
   }, [initializeGame]);
+
+  // Handle new game button click
+  const handleNewGame = useCallback(() => {
+    setShowDifficultySelector(true);
+  }, []);
 
   // Track previous classifications to detect steals
   const [prevHumanClassCount, setPrevHumanClassCount] = useState<number>(0);
@@ -564,8 +577,16 @@ const Simulation = () => {
 
   if (!gameState) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-accent-green animate-pulse">Loading game...</div>
+      <div className="min-h-screen flex flex-col bg-background">
+        <Header />
+        <div className="flex-grow flex items-center justify-center">
+          <DifficultySelector
+            isOpen={true}
+            onSelect={handleStartGame}
+            onClose={() => {}}
+          />
+        </div>
+        <Footer />
       </div>
     );
   }
@@ -613,7 +634,7 @@ const Simulation = () => {
             </h1>
             
             <Button
-              onClick={() => initializeGame('You')}
+              onClick={handleNewGame}
               variant="outline"
               size="sm"
               className="border-accent-green text-accent-green hover:bg-accent-green/20"
@@ -634,7 +655,7 @@ const Simulation = () => {
                   Final Score: {gameState.winner.score} bitcoin
                 </p>
                 <Button
-                  onClick={() => initializeGame('You')}
+                  onClick={handleNewGame}
                   className="bg-accent-green hover:bg-accent-green/80 text-black font-bold"
                 >
                   Play Again
@@ -810,6 +831,13 @@ const Simulation = () => {
         message={currentEvent?.message}
         swapData={currentEvent?.swapData}
         onComplete={clearEvent}
+      />
+
+      {/* Difficulty Selector Dialog */}
+      <DifficultySelector
+        isOpen={showDifficultySelector}
+        onSelect={handleStartGame}
+        onClose={() => setShowDifficultySelector(false)}
       />
 
       <Footer />
