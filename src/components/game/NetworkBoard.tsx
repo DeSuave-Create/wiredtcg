@@ -35,7 +35,7 @@ export function NetworkBoard({
       </div>
       
       {/* Switches */}
-      <div className="space-y-4">
+      <div className="flex flex-wrap justify-center gap-x-24 gap-y-4">
         {network.switches.map((sw) => (
           <SwitchComponent
             key={sw.id}
