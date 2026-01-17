@@ -45,15 +45,14 @@ export function DraggableClassificationCard({
       )}
     >
       <div className={cn(
-        "rounded border-2 border-gray-600 overflow-hidden transition-all duration-200",
-        compact ? "w-24 h-32" : "w-24 h-32",
+        "rounded border-2 border-gray-600 overflow-hidden transition-all duration-200 w-28 h-40",
         !disabled && "hover:scale-105 hover:border-yellow-400",
         isDragging && "scale-110 shadow-2xl ring-2 ring-yellow-400"
       )}>
         <img 
           src={classCard.card.image} 
           alt={classCard.card.name}
-          className="w-full h-full object-contain pointer-events-none"
+          className="w-full h-full object-cover pointer-events-none"
           draggable={false}
         />
       </div>

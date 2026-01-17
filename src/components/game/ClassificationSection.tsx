@@ -99,18 +99,18 @@ export function ClassificationSection({
                   abilityLabel={compactAbilityLabels[classCard.card.subtype]}
                 />
               ) : (
-              <div key={classCard.id} className="relative group">
+              <div key={classCard.id} className="relative group flex-shrink-0">
                   <div className={cn(
-                    "rounded border-2 overflow-hidden transition-transform hover:scale-105 w-24 h-32",
+                    "rounded border-2 overflow-hidden transition-transform hover:scale-105 w-28 h-40",
                     hasDuplicateProtection ? "border-yellow-500/70 shadow-lg shadow-yellow-500/20" : "border-gray-600"
                   )}>
                     <img 
                       src={classCard.card.image} 
                       alt={classCard.card.name}
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[8px] bg-blue-900/90 text-blue-200 px-1 rounded">
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[8px] bg-blue-900/90 text-blue-200 px-1 rounded whitespace-nowrap">
                     {compactAbilityLabels[classCard.card.subtype]}
                   </div>
                 </div>
