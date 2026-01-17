@@ -33,7 +33,7 @@ export function DiscardZone({ discardPile, isActive, playerId, isDiscardPhase = 
     <div
       ref={setNodeRef}
       className={cn(
-        "relative flex flex-col items-center justify-center h-full rounded-lg border-2 transition-all duration-200",
+        "relative flex flex-col items-center justify-center w-full h-full min-h-[120px] rounded-lg border-2 transition-all duration-200 p-4",
         isActive ? "border-dashed" : "border-solid border-gray-700/50",
         canDrop && "ring-2 ring-yellow-400 ring-opacity-50 border-yellow-400",
         isValidDrop && "ring-4 ring-red-400 ring-opacity-100 bg-red-400/20 border-red-400",
@@ -43,25 +43,25 @@ export function DiscardZone({ discardPile, isActive, playerId, isDiscardPhase = 
       )}
     >
       <Trash2 className={cn(
-        "w-5 h-5",
+        "w-8 h-8 mb-2",
         isValidDrop ? "text-red-400" : isDiscardPhase ? "text-orange-400" : isActive ? "text-gray-400" : "text-gray-600"
       )} />
       
       <span className={cn(
-        "text-[10px] font-medium text-center",
+        "text-sm font-medium text-center",
         isValidDrop ? "text-red-400" : isDiscardPhase ? "text-orange-400" : isActive ? "text-gray-300" : "text-gray-500"
       )}>
         {isValidDrop 
-          ? "Release" 
+          ? "Release to Discard" 
           : isDiscardPhase 
-            ? "Discard to 6" 
+            ? "Discard to 6 cards" 
             : isActive 
               ? "Drag here to discard" 
               : "Discard Pile"
         }
       </span>
       
-      <span className="text-[10px] text-muted-foreground">
+      <span className="text-xs text-muted-foreground mt-1">
         {discardPile.length} cards
       </span>
     </div>

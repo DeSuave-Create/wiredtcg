@@ -182,11 +182,11 @@ export function PlayerSection({
         {/* Buffer between hand and discard/audited sections */}
         <div className="h-4" />
 
-        {/* Discard + Audited Cards Row - h-32 (128px) height */}
+        {/* Discard + Audited Cards Row */}
         <div className="grid grid-cols-2 gap-3">
           {/* Discard Pile */}
           <div className={cn(
-            "flex flex-col items-center justify-center p-2 rounded-lg border h-32",
+            "flex flex-col items-center justify-center p-3 rounded-lg border h-40",
             isHuman && (canDiscard || isDiscardPhase) 
               ? "border-dashed border-gray-500 bg-black/30" 
               : "border-gray-700/50 bg-black/20"
@@ -200,14 +200,14 @@ export function PlayerSection({
               />
             ) : (
               <div className="flex items-center gap-2">
-                <Trash2 className="w-4 h-4 text-gray-600" />
-                <span className="text-xs text-gray-500">Discard: 0</span>
+                <Trash2 className="w-5 h-5 text-gray-600" />
+                <span className="text-sm text-gray-500">Discard: {discardPile.length}</span>
               </div>
             )}
           </div>
 
           {/* Audited Cards */}
-          <div className="flex flex-col items-center justify-center p-2 rounded-lg border border-gray-700/50 bg-black/20 h-32 overflow-hidden">
+          <div className="flex flex-col items-center justify-center p-2 rounded-lg border border-gray-700/50 bg-black/20 h-40 overflow-hidden">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-xs text-gray-500">Audited:</span>
               <span className="text-xs text-muted-foreground">
