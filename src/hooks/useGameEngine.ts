@@ -1,6 +1,15 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { GameState, Player, Card, GamePhase, PlayerNetwork, SwitchNode, CableNode, PlacedCard, FloatingCable, AIAction, AuditBattle } from '@/types/game';
 import { buildDeck, shuffleDeck, dealCards } from '@/utils/deckBuilder';
+import { 
+  AIDifficulty, 
+  makeAIDecision, 
+  resetAIMemory, 
+  decideAuditResponse, 
+  selectAuditTargets,
+  EvaluatedAction,
+  getAIDecisionDebug,
+} from '@/utils/ai';
 
 const STARTING_HAND_SIZE = 6;
 const MAX_HAND_SIZE = 6;
@@ -68,14 +77,21 @@ export function useGameEngine() {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
+  const [aiDifficulty, setAIDifficulty] = useState<AIDifficulty>('normal');
+  const [aiDebugInfo, setAIDebugInfo] = useState<{ topActions: EvaluatedAction[]; reasoning: string[] } | null>(null);
 
-  const initializeGame = useCallback((playerName: string = 'Player') => {
+  const initializeGame = useCallback((playerName: string = 'Player', difficulty: AIDifficulty = 'normal') => {
+    // Reset AI memory for new game
+    resetAIMemory();
+    setAIDifficulty(difficulty);
+    
     // Build and shuffle deck
     const deck = shuffleDeck(buildDeck());
     
     // Create players
     const human = createPlayer('player-1', playerName, true);
-    const computer = createPlayer('player-2', 'Computer', false);
+    const computerName = difficulty === 'easy' ? 'Bot (Easy)' : difficulty === 'hard' ? 'Bot (Hard)' : 'Bot (Normal)';
+    const computer = createPlayer('player-2', computerName, false);
     
     // Deal cards
     const { dealt: humanCards, remaining: afterHuman } = dealCards(deck, STARTING_HAND_SIZE);
@@ -93,13 +109,14 @@ export function useGameEngine() {
       discardPile: [],
       turnNumber: 1,
       winner: null,
-      gameLog: ['Game started! You go first.', 'Build your network: Switch → Cable → Computer'],
+      gameLog: [`Game started vs ${computerName}! You go first.`, 'Build your network: Switch → Cable → Computer'],
       aiLastTurnActions: [],
     };
     
     setGameState(initialState);
     setSelectedCard(null);
     setSelectedTarget(null);
+    setAIDebugInfo(null);
   }, []);
 
   const getCurrentPlayer = useCallback((): Player | null => {
@@ -2031,7 +2048,7 @@ export function useGameEngine() {
     });
   }, [gameState, countConnectedComputers]);
 
-  // AI turn with full strategy: attacks, resolutions, and equipment
+  // AI turn with modular decision engine
   const executeAITurn = useCallback(async () => {
     if (!gameState) return;
     
@@ -2040,6 +2057,15 @@ export function useGameEngine() {
     const player = gameState.players[aiPlayerIndex];
     if (player.isHuman) return;
     
+    // Get AI decisions using the decision engine
+    const { action: bestAction, allActions } = makeAIDecision(gameState, aiDifficulty);
+    
+    // Store debug info
+    setAIDebugInfo({
+      topActions: allActions.slice(0, 5),
+      reasoning: allActions.slice(0, 3).map(a => `${a.type}: ${a.reasoning} (${a.utility.toFixed(1)})`),
+    });
+    
     setGameState(prev => {
       if (!prev) return prev;
       
@@ -2047,6 +2073,7 @@ export function useGameEngine() {
       let newPlayers = prev.players.map(p => ({
         ...p,
         hand: [...p.hand],
+        classificationCards: p.classificationCards.map(c => ({ ...c })),
         network: {
           ...p.network,
           switches: p.network.switches.map(sw => ({
@@ -2061,40 +2088,42 @@ export function useGameEngine() {
               })),
             })),
           })),
-          floatingCables: [...p.network.floatingCables],
-          floatingComputers: [...p.network.floatingComputers],
+          floatingCables: p.network.floatingCables.map(fc => ({
+            ...fc,
+            attachedIssues: [...fc.attachedIssues],
+            computers: fc.computers.map(c => ({ ...c, attachedIssues: [...c.attachedIssues] })),
+          })),
+          floatingComputers: p.network.floatingComputers.map(c => ({ ...c, attachedIssues: [...c.attachedIssues] })),
         },
       }));
       
       let gameLog = [...prev.gameLog];
       let newDiscardPile = [...prev.discardPile];
+      let newDrawPile = [...prev.drawPile];
       const maxMoves = getMovesForPlayer(newPlayers[aiPlayerIndex]);
-      let movesRemaining = maxMoves; // AI gets its own moves, not leftover from human
+      let movesRemaining = maxMoves;
       let movesUsed = 0;
-      const aiActions: AIAction[] = []; // Track AI actions this turn
+      const aiActions: AIAction[] = [];
       
-      // Helper: Find best attack target on human's network (prioritize switches > cables > computers)
-      const findAttackTarget = (humanNetwork: PlayerNetwork): { type: 'switch' | 'cable' | 'computer', switchIndex: number, cableIndex?: number, computerIndex?: number } | null => {
-        // Priority 1: Attack an enabled switch (disables everything below it)
+      // Helper functions for AI actions (same as before)
+      const findAttackTarget = (humanNetwork: PlayerNetwork): { type: 'switch' | 'cable' | 'computer', switchIndex: number, cableIndex?: number, computerIndex?: number, equipmentId: string } | null => {
         for (let si = 0; si < humanNetwork.switches.length; si++) {
           if (!humanNetwork.switches[si].isDisabled) {
-            return { type: 'switch', switchIndex: si };
+            return { type: 'switch', switchIndex: si, equipmentId: humanNetwork.switches[si].id };
           }
         }
-        // Priority 2: Attack an enabled cable
         for (let si = 0; si < humanNetwork.switches.length; si++) {
           for (let ci = 0; ci < humanNetwork.switches[si].cables.length; ci++) {
             if (!humanNetwork.switches[si].cables[ci].isDisabled) {
-              return { type: 'cable', switchIndex: si, cableIndex: ci };
+              return { type: 'cable', switchIndex: si, cableIndex: ci, equipmentId: humanNetwork.switches[si].cables[ci].id };
             }
           }
         }
-        // Priority 3: Attack an enabled computer
         for (let si = 0; si < humanNetwork.switches.length; si++) {
           for (let ci = 0; ci < humanNetwork.switches[si].cables.length; ci++) {
             for (let coi = 0; coi < humanNetwork.switches[si].cables[ci].computers.length; coi++) {
               if (!humanNetwork.switches[si].cables[ci].computers[coi].isDisabled) {
-                return { type: 'computer', switchIndex: si, cableIndex: ci, computerIndex: coi };
+                return { type: 'computer', switchIndex: si, cableIndex: ci, computerIndex: coi, equipmentId: humanNetwork.switches[si].cables[ci].computers[coi].id };
               }
             }
           }
@@ -2102,38 +2131,34 @@ export function useGameEngine() {
         return null;
       };
       
-      // Helper: Find disabled equipment on AI's network that can be resolved
-      const findResolutionTarget = (aiNetwork: PlayerNetwork, resolutionSubtype: string): { type: 'switch' | 'cable' | 'computer', switchIndex: number, cableIndex?: number, computerIndex?: number } | null => {
+      const findResolutionTarget = (aiNetwork: PlayerNetwork, resolutionSubtype: string): { type: 'switch' | 'cable' | 'computer', switchIndex: number, cableIndex?: number, computerIndex?: number, equipmentId: string } | null => {
         const resolutionMap: Record<string, string> = {
           'secured': 'hacked',
           'powered': 'power-outage',
           'trained': 'new-hire',
-          'helpdesk': 'any', // Helpdesk resolves any issue
+          'helpdesk': 'any',
         };
         const targetIssueType = resolutionMap[resolutionSubtype];
         
-        // Check switches
         for (let si = 0; si < aiNetwork.switches.length; si++) {
           const sw = aiNetwork.switches[si];
           if (sw.attachedIssues.length > 0) {
             if (targetIssueType === 'any' || sw.attachedIssues.some(i => i.subtype === targetIssueType)) {
-              return { type: 'switch', switchIndex: si };
+              return { type: 'switch', switchIndex: si, equipmentId: sw.id };
             }
           }
-          // Check cables
           for (let ci = 0; ci < sw.cables.length; ci++) {
             const cable = sw.cables[ci];
             if (cable.attachedIssues.length > 0) {
               if (targetIssueType === 'any' || cable.attachedIssues.some(i => i.subtype === targetIssueType)) {
-                return { type: 'cable', switchIndex: si, cableIndex: ci };
+                return { type: 'cable', switchIndex: si, cableIndex: ci, equipmentId: cable.id };
               }
             }
-            // Check computers
             for (let coi = 0; coi < cable.computers.length; coi++) {
               const comp = cable.computers[coi];
               if (comp.attachedIssues.length > 0) {
                 if (targetIssueType === 'any' || comp.attachedIssues.some(i => i.subtype === targetIssueType)) {
-                  return { type: 'computer', switchIndex: si, cableIndex: ci, computerIndex: coi };
+                  return { type: 'computer', switchIndex: si, cableIndex: ci, computerIndex: coi, equipmentId: comp.id };
                 }
               }
             }
@@ -2142,13 +2167,11 @@ export function useGameEngine() {
         return null;
       };
       
-      // Helper: Apply attack with cascading disable
       const applyAttack = (targetNetwork: PlayerNetwork, target: { type: string, switchIndex: number, cableIndex?: number, computerIndex?: number }, attackCard: Card) => {
         if (target.type === 'switch') {
           const sw = targetNetwork.switches[target.switchIndex];
           sw.attachedIssues.push(attackCard);
           sw.isDisabled = true;
-          // Cascade disable
           sw.cables.forEach(cable => {
             cable.isDisabled = true;
             cable.computers.forEach(comp => comp.isDisabled = true);
@@ -2157,7 +2180,6 @@ export function useGameEngine() {
           const cable = targetNetwork.switches[target.switchIndex].cables[target.cableIndex];
           cable.attachedIssues.push(attackCard);
           cable.isDisabled = true;
-          // Cascade disable computers
           cable.computers.forEach(comp => comp.isDisabled = true);
         } else if (target.type === 'computer' && target.cableIndex !== undefined && target.computerIndex !== undefined) {
           const comp = targetNetwork.switches[target.switchIndex].cables[target.cableIndex].computers[target.computerIndex];
@@ -2166,7 +2188,6 @@ export function useGameEngine() {
         }
       };
       
-      // Helper: Apply resolution with cascading enable
       const applyResolution = (aiNetwork: PlayerNetwork, target: { type: string, switchIndex: number, cableIndex?: number, computerIndex?: number }, resolutionCard: Card, isHelpdesk: boolean) => {
         const targetIssueType = isHelpdesk ? null : ({
           'secured': 'hacked',
@@ -2190,7 +2211,6 @@ export function useGameEngine() {
           const sw = aiNetwork.switches[target.switchIndex];
           sw.attachedIssues = removeIssue(sw.attachedIssues);
           sw.isDisabled = sw.attachedIssues.length > 0;
-          // Cascade enable if switch is now enabled
           if (!sw.isDisabled) {
             sw.cables.forEach(cable => {
               cable.isDisabled = cable.attachedIssues.length > 0;
@@ -2206,7 +2226,6 @@ export function useGameEngine() {
           const cable = sw.cables[target.cableIndex];
           cable.attachedIssues = removeIssue(cable.attachedIssues);
           cable.isDisabled = cable.attachedIssues.length > 0 || sw.isDisabled;
-          // Cascade enable computers
           if (!cable.isDisabled) {
             cable.computers.forEach(comp => {
               comp.isDisabled = comp.attachedIssues.length > 0;
@@ -2221,478 +2240,303 @@ export function useGameEngine() {
         }
       };
       
+      // Execute AI moves based on decision engine recommendations
       while (movesUsed < maxMoves && movesRemaining > 0) {
         const currentPlayer = newPlayers[aiPlayerIndex];
         const humanPlayer = newPlayers[humanPlayerIndex];
         const hand = currentPlayer.hand;
         const network = currentPlayer.network;
         
-        const switches = hand.filter(c => c.subtype === 'switch');
-        const cables = hand.filter(c => c.subtype === 'cable-2' || c.subtype === 'cable-3');
-        const computers = hand.filter(c => c.subtype === 'computer');
-        const attacks = hand.filter(c => c.type === 'attack' && c.subtype !== 'audit');
-        const resolutions = hand.filter(c => c.type === 'resolution');
-        const classifications = hand.filter(c => c.type === 'classification');
+        // Get next best action from decision engine
+        const tempState: GameState = {
+          ...prev,
+          players: newPlayers,
+          movesRemaining,
+          discardPile: newDiscardPile,
+          drawPile: newDrawPile,
+        };
         
-        let playedCard = false;
+        const { action } = makeAIDecision(tempState, aiDifficulty);
         
-        // Check if we have any cables with space for computers
-        const hasCableWithSpace = network.switches.some(sw => 
-          !sw.isDisabled && sw.cables.some(c => !c.isDisabled && c.computers.length < c.maxComputers)
-        );
-        
-        // Check if we have any enabled switches that could hold cables
-        const hasEnabledSwitch = network.switches.some(sw => !sw.isDisabled);
-        
-        // PRIORITY 1: Resolve own disabled equipment FIRST (most important)
-        if (!playedCard && resolutions.length > 0) {
-          for (const resCard of resolutions) {
-            const target = findResolutionTarget(network, resCard.subtype);
-            if (target) {
-              const isHelpdesk = resCard.subtype === 'helpdesk';
-              
-              // Get the issue type being resolved for better logging
-              let issueBeingFixed = '';
-              if (target.type === 'switch') {
-                const sw = network.switches[target.switchIndex];
-                issueBeingFixed = sw.attachedIssues[0]?.name || 'issue';
-              } else if (target.type === 'cable' && target.cableIndex !== undefined) {
-                const cable = network.switches[target.switchIndex].cables[target.cableIndex];
-                issueBeingFixed = cable.attachedIssues[0]?.name || 'issue';
-              } else if (target.type === 'computer' && target.cableIndex !== undefined && target.computerIndex !== undefined) {
-                const comp = network.switches[target.switchIndex].cables[target.cableIndex].computers[target.computerIndex];
-                issueBeingFixed = comp.attachedIssues[0]?.name || 'issue';
-              }
-              
-              applyResolution(network, target, resCard, isHelpdesk);
-              currentPlayer.hand = hand.filter(c => c.id !== resCard.id);
-              playedCard = true;
-              aiActions.push({ type: 'resolve', card: resCard, target: `${issueBeingFixed} on ${target.type}` });
-              gameLog = [...gameLog.slice(-19), `🔧 Computer used ${resCard.name} to fix ${issueBeingFixed} on ${target.type}!`];
-              break;
-            }
-          }
+        if (!action || action.utility <= -10) {
+          break; // No valuable actions
         }
         
-        // PRIORITY 2: Play classification cards (they provide bonuses)
-        if (!playedCard && classifications.length > 0) {
-          // Separate steal cards from placeable cards
-          const stealCards = classifications.filter(c => c.subtype === 'head-hunter' || c.subtype === 'seal-the-deal');
-          const placeableCards = classifications.filter(c => c.subtype !== 'head-hunter' && c.subtype !== 'seal-the-deal');
-          
-          // First, try to use steal cards if opponent has classifications
-          if (stealCards.length > 0 && humanPlayer.classificationCards.length > 0) {
-            // Prefer Seal the Deal (unblockable) over Head Hunter
-            const stealCard = stealCards.find(c => c.subtype === 'seal-the-deal') || stealCards[0];
-            
-            // Pick a target classification to steal
-            const targetClass = humanPlayer.classificationCards[0];
-            
-            // Check if AI already has this classification type
-            const alreadyHasType = currentPlayer.classificationCards.some(
-              c => c.card.subtype === targetClass.card.subtype
-            );
-            
-            if (!alreadyHasType || currentPlayer.classificationCards.length < 2) {
-              // Remove steal card from hand
-              currentPlayer.hand = hand.filter(c => c.id !== stealCard.id);
-              
-              // Remove target from human
-              humanPlayer.classificationCards = humanPlayer.classificationCards.filter(c => c.id !== targetClass.id);
-              
-              // Add to AI's classifications if space and not duplicate type
-              if (currentPlayer.classificationCards.length < 2 && !alreadyHasType) {
-                currentPlayer.classificationCards.push(targetClass);
-                aiActions.push({ type: 'steal', card: stealCard, target: targetClass.card.name });
-                gameLog = [...gameLog.slice(-19), `🎖️ Computer used ${stealCard.name} to steal ${targetClass.card.name}!`];
-              } else {
-                // Discard if can't keep
-                newDiscardPile.push(targetClass.card);
-                aiActions.push({ type: 'steal', card: stealCard, target: `${targetClass.card.name} (discarded)` });
-                gameLog = [...gameLog.slice(-19), `🎖️ Computer used ${stealCard.name} - ${targetClass.card.name} discarded!`];
+        let playedCard = false;
+        const card = action.card;
+        
+        // Execute the action based on type
+        switch (action.type) {
+          case 'play_resolution':
+            if (card && card.type === 'resolution') {
+              const target = findResolutionTarget(network, card.subtype);
+              if (target) {
+                const isHelpdesk = card.subtype === 'helpdesk';
+                let issueBeingFixed = '';
+                if (target.type === 'switch') {
+                  issueBeingFixed = network.switches[target.switchIndex].attachedIssues[0]?.name || 'issue';
+                } else if (target.type === 'cable' && target.cableIndex !== undefined) {
+                  issueBeingFixed = network.switches[target.switchIndex].cables[target.cableIndex].attachedIssues[0]?.name || 'issue';
+                } else if (target.type === 'computer' && target.cableIndex !== undefined && target.computerIndex !== undefined) {
+                  issueBeingFixed = network.switches[target.switchIndex].cables[target.cableIndex].computers[target.computerIndex].attachedIssues[0]?.name || 'issue';
+                }
+                
+                applyResolution(network, target, card, isHelpdesk);
+                currentPlayer.hand = hand.filter(c => c.id !== card.id);
+                playedCard = true;
+                aiActions.push({ type: 'resolve', card, target: `${issueBeingFixed} on ${target.type}` });
+                gameLog = [...gameLog.slice(-19), `🔧 ${currentPlayer.name} used ${card.name} to fix ${issueBeingFixed} on ${target.type}!`];
               }
+            }
+            break;
+          
+          case 'play_classification':
+            if (card && card.type === 'classification' && currentPlayer.classificationCards.length < 2) {
+              const hasSameType = currentPlayer.classificationCards.some(c => c.card.subtype === card.subtype);
+              if (!hasSameType) {
+                const newClassification: PlacedCard = {
+                  card,
+                  id: generatePlacementId(),
+                  attachedIssues: [],
+                  isDisabled: false,
+                };
+                
+                currentPlayer.hand = hand.filter(c => c.id !== card.id);
+                currentPlayer.classificationCards.push(newClassification);
+                
+                // Auto-resolve matching attacks
+                const autoResolveType = getAutoResolveType(card.subtype);
+                let resolvedCount = 0;
+                
+                if (autoResolveType) {
+                  currentPlayer.network.switches.forEach(sw => {
+                    const swMatchingIssues = sw.attachedIssues.filter(i => i.subtype === autoResolveType);
+                    resolvedCount += swMatchingIssues.length;
+                    newDiscardPile.push(...swMatchingIssues);
+                    sw.attachedIssues = sw.attachedIssues.filter(i => i.subtype !== autoResolveType);
+                    sw.isDisabled = sw.attachedIssues.length > 0;
+                    
+                    sw.cables.forEach(cable => {
+                      const cableMatchingIssues = cable.attachedIssues.filter(i => i.subtype === autoResolveType);
+                      resolvedCount += cableMatchingIssues.length;
+                      newDiscardPile.push(...cableMatchingIssues);
+                      cable.attachedIssues = cable.attachedIssues.filter(i => i.subtype !== autoResolveType);
+                      cable.isDisabled = cable.attachedIssues.length > 0 || sw.isDisabled;
+                      
+                      cable.computers.forEach(comp => {
+                        const compMatchingIssues = comp.attachedIssues.filter(i => i.subtype === autoResolveType);
+                        resolvedCount += compMatchingIssues.length;
+                        newDiscardPile.push(...compMatchingIssues);
+                        comp.attachedIssues = comp.attachedIssues.filter(i => i.subtype !== autoResolveType);
+                        comp.isDisabled = comp.attachedIssues.length > 0 || cable.isDisabled;
+                      });
+                    });
+                  });
+                }
+                
+                playedCard = true;
+                aiActions.push({ type: 'classification', card });
+                if (resolvedCount > 0) {
+                  gameLog = [...gameLog.slice(-19), `🎖️ ${currentPlayer.name} activated ${card.name} - resolved ${resolvedCount} issue(s)!`];
+                } else {
+                  gameLog = [...gameLog.slice(-19), `🎖️ ${currentPlayer.name} activated ${card.name}!`];
+                }
+              }
+            }
+            break;
+          
+          case 'steal_classification':
+            if (card && (card.subtype === 'head-hunter' || card.subtype === 'seal-the-deal')) {
+              if (humanPlayer.classificationCards.length > 0) {
+                const targetClass = humanPlayer.classificationCards.find(c => 
+                  !currentPlayer.classificationCards.some(ours => ours.card.subtype === c.card.subtype)
+                ) || humanPlayer.classificationCards[0];
+                
+                if (targetClass) {
+                  currentPlayer.hand = hand.filter(c => c.id !== card.id);
+                  humanPlayer.classificationCards = humanPlayer.classificationCards.filter(c => c.id !== targetClass.id);
+                  
+                  if (currentPlayer.classificationCards.length < 2) {
+                    currentPlayer.classificationCards.push(targetClass);
+                    aiActions.push({ type: 'steal', card, target: targetClass.card.name });
+                    gameLog = [...gameLog.slice(-19), `🎖️ ${currentPlayer.name} used ${card.name} to steal ${targetClass.card.name}!`];
+                  } else {
+                    newDiscardPile.push(targetClass.card);
+                    aiActions.push({ type: 'steal', card, target: `${targetClass.card.name} (discarded)` });
+                    gameLog = [...gameLog.slice(-19), `🎖️ ${currentPlayer.name} used ${card.name} - ${targetClass.card.name} discarded!`];
+                  }
+                  
+                  newDiscardPile.push(card);
+                  playedCard = true;
+                }
+              }
+            }
+            break;
+          
+          case 'play_switch':
+            if (card && card.subtype === 'switch') {
+              const newSwitch: SwitchNode = {
+                card,
+                id: generatePlacementId(),
+                attachedIssues: [],
+                isDisabled: false,
+                cables: [],
+              };
               
-              newDiscardPile.push(stealCard);
+              currentPlayer.hand = hand.filter(c => c.id !== card.id);
+              currentPlayer.network.switches.push(newSwitch);
+              playedCard = true;
+              aiActions.push({ type: 'play', card, target: 'network' });
+              gameLog = [...gameLog.slice(-19), `🔌 ${currentPlayer.name} placed a Switch`];
+            }
+            break;
+          
+          case 'play_cable':
+            if (card && (card.subtype === 'cable-2' || card.subtype === 'cable-3')) {
+              const maxComputers = card.subtype === 'cable-3' ? 3 : 2;
+              const newCable: CableNode = {
+                card,
+                id: generatePlacementId(),
+                attachedIssues: [],
+                isDisabled: false,
+                maxComputers: maxComputers as 2 | 3,
+                computers: [],
+              };
+              
+              currentPlayer.hand = hand.filter(c => c.id !== card.id);
+              
+              // Find enabled switch to connect to
+              const enabledSwitch = network.switches.find(sw => !sw.isDisabled);
+              if (enabledSwitch) {
+                const switchIndex = network.switches.findIndex(sw => sw.id === enabledSwitch.id);
+                network.switches[switchIndex].cables.push(newCable);
+                aiActions.push({ type: 'play', card, target: 'switch' });
+                gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} connected ${maxComputers}-Cable to Switch`];
+              } else {
+                currentPlayer.network.floatingCables.push(newCable as FloatingCable);
+                aiActions.push({ type: 'play', card, target: 'floating' });
+                gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} placed a floating ${maxComputers}-Cable`];
+              }
               playedCard = true;
             }
-          }
+            break;
           
-          // Then, try to place regular classification cards
-          if (!playedCard && placeableCards.length > 0 && currentPlayer.classificationCards.length < 2) {
-            // Prioritize: Field Tech (+1 move), then defensive ones
-            const sortedClass = [...placeableCards].sort((a, b) => {
-              const priority: Record<string, number> = {
-                'field-tech': 1,
-                'security-specialist': 2,
-                'facilities': 3,
-                'supervisor': 4,
-              };
-              return (priority[a.subtype] || 10) - (priority[b.subtype] || 10);
-            });
-            
-            // Check if we already have this type
-            const classCard = sortedClass.find(c => 
-              !currentPlayer.classificationCards.some(existing => existing.card.subtype === c.subtype)
-            );
-            
-            if (classCard) {
-              const newClassification: PlacedCard = {
-                card: classCard,
+          case 'play_computer':
+            if (card && card.subtype === 'computer') {
+              const newComputer: PlacedCard = {
+                card,
                 id: generatePlacementId(),
                 attachedIssues: [],
                 isDisabled: false,
               };
               
-              currentPlayer.hand = hand.filter(c => c.id !== classCard.id);
-              currentPlayer.classificationCards.push(newClassification);
+              currentPlayer.hand = hand.filter(c => c.id !== card.id);
               
-              // Auto-resolve matching attacks when classification is played
-              const autoResolveType = getAutoResolveType(classCard.subtype);
-              let resolvedCount = 0;
-              
-              if (autoResolveType) {
-                // Resolve all matching attacks on AI's network
-                currentPlayer.network.switches.forEach(sw => {
-                  const swMatchingIssues = sw.attachedIssues.filter(i => i.subtype === autoResolveType);
-                  resolvedCount += swMatchingIssues.length;
-                  newDiscardPile.push(...swMatchingIssues);
-                  sw.attachedIssues = sw.attachedIssues.filter(i => i.subtype !== autoResolveType);
-                  sw.isDisabled = sw.attachedIssues.length > 0;
-                  
-                  sw.cables.forEach(cable => {
-                    const cableMatchingIssues = cable.attachedIssues.filter(i => i.subtype === autoResolveType);
-                    resolvedCount += cableMatchingIssues.length;
-                    newDiscardPile.push(...cableMatchingIssues);
-                    cable.attachedIssues = cable.attachedIssues.filter(i => i.subtype !== autoResolveType);
-                    cable.isDisabled = cable.attachedIssues.length > 0 || sw.isDisabled;
-                    
-                    cable.computers.forEach(comp => {
-                      const compMatchingIssues = comp.attachedIssues.filter(i => i.subtype === autoResolveType);
-                      resolvedCount += compMatchingIssues.length;
-                      newDiscardPile.push(...compMatchingIssues);
-                      comp.attachedIssues = comp.attachedIssues.filter(i => i.subtype !== autoResolveType);
-                      comp.isDisabled = comp.attachedIssues.length > 0 || cable.isDisabled;
-                    });
-                  });
-                });
+              // Find cable with space on enabled switch
+              let placed = false;
+              for (const sw of network.switches) {
+                if (sw.isDisabled) continue;
+                for (const cable of sw.cables) {
+                  if (!cable.isDisabled && cable.computers.length < cable.maxComputers) {
+                    cable.computers.push(newComputer);
+                    placed = true;
+                    aiActions.push({ type: 'play', card, target: 'cable' });
+                    gameLog = [...gameLog.slice(-19), `💻 ${currentPlayer.name} connected Computer to Cable`];
+                    break;
+                  }
+                }
+                if (placed) break;
               }
               
+              // Try floating cables
+              if (!placed) {
+                for (const floatingCable of currentPlayer.network.floatingCables) {
+                  if (floatingCable.computers.length < floatingCable.maxComputers) {
+                    floatingCable.computers.push(newComputer);
+                    placed = true;
+                    aiActions.push({ type: 'play', card, target: 'floating cable' });
+                    gameLog = [...gameLog.slice(-19), `💻 ${currentPlayer.name} added Computer to floating Cable`];
+                    break;
+                  }
+                }
+              }
+              
+              // Floating computer
+              if (!placed) {
+                currentPlayer.network.floatingComputers.push(newComputer);
+                aiActions.push({ type: 'play', card, target: 'floating' });
+                gameLog = [...gameLog.slice(-19), `💻 ${currentPlayer.name} placed a floating Computer`];
+              }
               playedCard = true;
-              aiActions.push({ type: 'classification', card: classCard });
-              if (resolvedCount > 0) {
-                gameLog = [...gameLog.slice(-19), `🎖️ Computer activated ${classCard.name} - resolved ${resolvedCount} issue(s)!`];
-              } else {
-                gameLog = [...gameLog.slice(-19), `🎖️ Computer activated ${classCard.name}!`];
-              }
             }
-          }
-        }
-        
-        // PRIORITY 3: Build network - Play switches first (foundation)
-        if (!playedCard && switches.length > 0) {
-          const switchCard = switches[0];
-          const newSwitchId = generatePlacementId();
+            break;
           
-          const newSwitch: SwitchNode = {
-            card: switchCard,
-            id: newSwitchId,
-            attachedIssues: [],
-            isDisabled: false,
-            cables: [],
-          };
-          
-          currentPlayer.hand = hand.filter(c => c.id !== switchCard.id);
-          currentPlayer.network.switches = [...currentPlayer.network.switches, newSwitch];
-          
-          playedCard = true;
-          aiActions.push({ type: 'play', card: switchCard, target: 'network' });
-          gameLog = [...gameLog.slice(-19), `🔌 Computer placed a Switch`];
-        }
-        
-        // PRIORITY 4: Play cables - prefer connecting to enabled switches, else play floating
-        if (!playedCard && cables.length > 0) {
-          const cableCard = cables[0];
-          const maxComputers = cableCard.subtype === 'cable-2' ? 2 : 3;
-          const newCableId = generatePlacementId();
-          
-          const enabledSwitch = network.switches.find(sw => !sw.isDisabled);
-          
-          if (enabledSwitch) {
-            // Connect to an enabled switch
-            const newCable: CableNode = {
-              card: cableCard,
-              id: newCableId,
-              attachedIssues: [],
-              isDisabled: false,
-              maxComputers: maxComputers as 2 | 3,
-              computers: [],
-            };
-            
-            currentPlayer.hand = hand.filter(c => c.id !== cableCard.id);
-            const switchIndex = currentPlayer.network.switches.findIndex(sw => sw.id === enabledSwitch.id);
-            if (switchIndex !== -1) {
-              currentPlayer.network.switches[switchIndex].cables.push(newCable);
-            }
-            
-            playedCard = true;
-            aiActions.push({ type: 'play', card: cableCard, target: 'switch' });
-            gameLog = [...gameLog.slice(-19), `🔗 Computer connected a Cable`];
-          } else {
-            // Play as floating cable
-            const newFloatingCable: FloatingCable = {
-              card: cableCard,
-              id: newCableId,
-              attachedIssues: [],
-              isDisabled: false,
-              maxComputers: maxComputers as 2 | 3,
-              computers: [],
-            };
-            
-            currentPlayer.hand = hand.filter(c => c.id !== cableCard.id);
-            currentPlayer.network.floatingCables.push(newFloatingCable);
-            
-            playedCard = true;
-            aiActions.push({ type: 'play', card: cableCard, target: 'floating' });
-            gameLog = [...gameLog.slice(-19), `🔗 Computer placed a floating Cable`];
-          }
-        }
-        
-        // PRIORITY 5: Play computers - prefer connected cables, then floating cables, then floating
-        if (!playedCard && computers.length > 0) {
-          const computerCard = computers[0];
-          let placed = false;
-          
-          // Try connected cables first
-          for (let si = 0; si < network.switches.length && !placed; si++) {
-            const sw = network.switches[si];
-            if (sw.isDisabled) continue;
-            
-            for (let ci = 0; ci < sw.cables.length && !placed; ci++) {
-              const cable = sw.cables[ci];
-              if (cable.computers.length < cable.maxComputers && !cable.isDisabled) {
-                const newComputer: PlacedCard = {
-                  card: computerCard,
-                  id: generatePlacementId(),
-                  attachedIssues: [],
-                  isDisabled: false,
-                };
-                
-                currentPlayer.hand = hand.filter(c => c.id !== computerCard.id);
-                currentPlayer.network.switches[si].cables[ci].computers.push(newComputer);
-                
-                placed = true;
-                playedCard = true;
-                aiActions.push({ type: 'play', card: computerCard, target: 'cable' });
-                gameLog = [...gameLog.slice(-19), `💻 Computer connected a Computer`];
-              }
-            }
-          }
-          
-          // Try floating cables
-          if (!placed) {
-            for (let fi = 0; fi < currentPlayer.network.floatingCables.length && !placed; fi++) {
-              const floatingCable = currentPlayer.network.floatingCables[fi];
-              if (floatingCable.computers.length < floatingCable.maxComputers) {
-                const newComputer: PlacedCard = {
-                  card: computerCard,
-                  id: generatePlacementId(),
-                  attachedIssues: [],
-                  isDisabled: false,
-                };
-                
-                currentPlayer.hand = hand.filter(c => c.id !== computerCard.id);
-                currentPlayer.network.floatingCables[fi].computers.push(newComputer);
-                
-                placed = true;
-                playedCard = true;
-                aiActions.push({ type: 'play', card: computerCard, target: 'floating cable' });
-                gameLog = [...gameLog.slice(-19), `💻 Computer added Computer to floating Cable`];
-              }
-            }
-          }
-          
-          // Play as floating computer
-          if (!placed) {
-            const newComputer: PlacedCard = {
-              card: computerCard,
-              id: generatePlacementId(),
-              attachedIssues: [],
-              isDisabled: false,
-            };
-            
-            currentPlayer.hand = hand.filter(c => c.id !== computerCard.id);
-            currentPlayer.network.floatingComputers.push(newComputer);
-            
-            playedCard = true;
-            aiActions.push({ type: 'play', card: computerCard, target: 'floating' });
-            gameLog = [...gameLog.slice(-19), `💻 Computer placed a floating Computer`];
-          }
-        }
-        
-        // PRIORITY 6: Connect floating equipment if possible
-        if (!playedCard && hasEnabledSwitch) {
-          // Connect floating cables to switches
-          if (currentPlayer.network.floatingCables.length > 0) {
-            const floatingCable = currentPlayer.network.floatingCables[0];
-            const enabledSwitch = network.switches.find(sw => !sw.isDisabled);
-            
-            if (enabledSwitch) {
-              const switchIndex = currentPlayer.network.switches.findIndex(sw => sw.id === enabledSwitch.id);
-              if (switchIndex !== -1) {
-                // Move from floating to connected
+          case 'connect_cable_to_switch':
+            if (currentPlayer.network.floatingCables.length > 0) {
+              const floatingCable = currentPlayer.network.floatingCables[0];
+              const enabledSwitch = network.switches.find(sw => !sw.isDisabled);
+              
+              if (enabledSwitch) {
+                const switchIndex = network.switches.findIndex(sw => sw.id === enabledSwitch.id);
                 currentPlayer.network.floatingCables = currentPlayer.network.floatingCables.filter(c => c.id !== floatingCable.id);
-                currentPlayer.network.switches[switchIndex].cables.push(floatingCable);
-                
+                network.switches[switchIndex].cables.push(floatingCable);
                 playedCard = true;
                 aiActions.push({ type: 'play', card: floatingCable.card, target: 'connected to switch' });
-                gameLog = [...gameLog.slice(-19), `🔗 Computer connected floating Cable to Switch`];
+                gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} connected floating Cable to Switch`];
               }
             }
-          }
-        }
-        
-        // PRIORITY 7: Attack human's network (after building)
-        if (!playedCard && attacks.length > 0 && humanPlayer.network.switches.length > 0) {
-          const target = findAttackTarget(humanPlayer.network);
-          if (target) {
-            const attackCard = attacks[0];
-            
-            // Check if human has classification that blocks this attack
-            const resolveMap: Record<string, string> = {
-              'hacked': 'security-specialist',
-              'power-outage': 'facilities',
-              'new-hire': 'supervisor',
-            };
-            const blockingClass = resolveMap[attackCard.subtype];
-            const isBlocked = blockingClass && humanPlayer.classificationCards.some(c => c.card.subtype === blockingClass);
-            
-            if (isBlocked) {
-              // Attack is blocked - card is wasted but still use it
-              currentPlayer.hand = hand.filter(c => c.id !== attackCard.id);
-              newDiscardPile.push(attackCard);
-              playedCard = true;
-              const blockerName = blockingClass === 'security-specialist' ? 'Security Specialist' : blockingClass === 'facilities' ? 'Facilities' : 'Supervisor';
-              aiActions.push({ type: 'attack', card: attackCard, target: `your ${target.type}`, blocked: true });
-              gameLog = [...gameLog.slice(-19), `⚡ Computer's ${attackCard.name} was blocked by your ${blockerName}!`];
-            } else {
-              // Attack succeeds
-              applyAttack(humanPlayer.network, target, attackCard);
-              currentPlayer.hand = hand.filter(c => c.id !== attackCard.id);
-              playedCard = true;
-              aiActions.push({ type: 'attack', card: attackCard, target: `your ${target.type}` });
-              gameLog = [...gameLog.slice(-19), `⚡ Computer attacked your ${target.type} with ${attackCard.name}!`];
+            break;
+          
+          case 'play_attack':
+            if (card && card.type === 'attack' && card.subtype !== 'audit') {
+              const target = findAttackTarget(humanPlayer.network);
+              if (target) {
+                // Check if blocked by classification
+                const blockingClass = {
+                  'hacked': 'security-specialist',
+                  'power-outage': 'facilities',
+                  'new-hire': 'supervisor',
+                }[card.subtype as string];
+                
+                const isBlocked = blockingClass && humanPlayer.classificationCards.some(c => c.card.subtype === blockingClass);
+                
+                currentPlayer.hand = hand.filter(c => c.id !== card.id);
+                
+                if (isBlocked) {
+                  newDiscardPile.push(card);
+                  const blockerName = blockingClass === 'security-specialist' ? 'Security Specialist' : blockingClass === 'facilities' ? 'Facilities' : 'Supervisor';
+                  aiActions.push({ type: 'attack', card, target: `your ${target.type}`, blocked: true });
+                  gameLog = [...gameLog.slice(-19), `⚡ ${currentPlayer.name}'s ${card.name} was blocked by your ${blockerName}!`];
+                } else {
+                  applyAttack(humanPlayer.network, target, card);
+                  aiActions.push({ type: 'attack', card, target: `your ${target.type}` });
+                  gameLog = [...gameLog.slice(-19), `⚡ ${currentPlayer.name} attacked your ${target.type} with ${card.name}!`];
+                }
+                playedCard = true;
+              }
             }
-          }
+            break;
+          
+          case 'discard':
+            if (card) {
+              currentPlayer.hand = hand.filter(c => c.id !== card.id);
+              newDiscardPile.push(card);
+              aiActions.push({ type: 'discard', card });
+              gameLog = [...gameLog.slice(-19), `🗑️ ${currentPlayer.name} discarded ${card.name}`];
+              playedCard = true;
+            }
+            break;
+          
+          default:
+            // No action or pass
+            break;
         }
         
         if (playedCard) {
           movesUsed++;
           movesRemaining--;
         } else {
-          // No valid play found - try to discard unusable cards before ending
-          const hand = currentPlayer.hand;
-          
-          // Find cards that can't be played:
-          // - Head Hunter/Seal the Deal with no opponent classifications to steal
-          // - Attack cards with no valid targets on opponent's network
-          // - Resolution cards with no matching issues on own network
-          const stealCards = hand.filter(c => c.subtype === 'head-hunter' || c.subtype === 'seal-the-deal');
-          const hasStealTarget = humanPlayer.classificationCards.length > 0;
-          
-          const attackCards = hand.filter(c => c.type === 'attack');
-          const hasAttackTarget = findAttackTarget(humanPlayer.network) !== null;
-          
-          // Smart attack card retention: Hold attacks if opponent might build equipment soon
-          // Keep attacks if: opponent has cards in hand OR has any network (even if disabled)
-          const opponentHasNetwork = humanPlayer.network.switches.length > 0;
-          const opponentHasCards = humanPlayer.hand.length > 0;
-          const shouldHoldAttacks = opponentHasNetwork || opponentHasCards;
-          
-          const resolutionCards = hand.filter(c => c.type === 'resolution');
-          const hasResolutionTarget = resolutionCards.some(c => findResolutionTarget(network, c.subtype) !== null);
-          
-          // Find a card to discard
-          let cardToDiscard: Card | null = null;
-          
-          // Priority 1: Discard steal cards if no target
-          if (!hasStealTarget && stealCards.length > 0) {
-            cardToDiscard = stealCards[0];
-          }
-          // Priority 2: Discard attack cards ONLY if no valid target AND opponent unlikely to build soon
-          else if (!hasAttackTarget && attackCards.length > 0 && !shouldHoldAttacks) {
-            cardToDiscard = attackCards[0];
-          }
-          // Priority 3: Discard resolution cards that have no matching issues
-          else if (resolutionCards.length > 0) {
-            const unusableRes = resolutionCards.find(c => !findResolutionTarget(network, c.subtype));
-            if (unusableRes) {
-              cardToDiscard = unusableRes;
-            }
-          }
-          // Priority 4: If we still have moves but nothing else to do, discard lowest-value card to cycle
-          // This helps the AI get out of stuck situations while keeping high-value cards
-          else if (movesRemaining > 0 && currentPlayer.hand.length > 0) {
-            // Rank cards by value (lower = discard first)
-            // High value: Switch (essential for network), Computer (scoring), Cables (connects computers)
-            // Medium value: Attack cards (useful offense), defensive classifications
-            // Low value: Duplicate classifications, steal cards with no target, audit
-            const getCardValue = (c: Card): number => {
-              // Equipment - highest value (keep these!)
-              if (c.type === 'equipment') {
-                if (c.subtype === 'switch') return 100; // Essential foundation
-                if (c.subtype === 'computer') return 90; // Scoring
-                if (c.subtype === 'cable-3') return 80; // Better cable
-                if (c.subtype === 'cable-2') return 70; // Good cable
-              }
-              // Attack cards - medium-high value if opponent has network
-              if (c.type === 'attack') {
-                const hasTarget = findAttackTarget(humanPlayer.network) !== null;
-                return hasTarget ? 60 : 20; // Worth more if usable
-              }
-              // Resolution cards - value depends on if we have matching issues
-              if (c.type === 'resolution') {
-                const hasTarget = findResolutionTarget(network, c.subtype) !== null;
-                return hasTarget ? 65 : 15; // Worth more if usable
-              }
-              // Classification cards
-              if (c.type === 'classification') {
-                // Already have 2? Low value
-                if (currentPlayer.classificationCards.length >= 2) return 5;
-                // Already have this type? Lower value (but provides steal protection)
-                const hasSameType = currentPlayer.classificationCards.some(
-                  existing => existing.card.subtype === c.subtype
-                );
-                if (hasSameType) return 25;
-                // Field Tech is best (+1 move)
-                if (c.subtype === 'field-tech') return 55;
-                // Defensive classifications
-                if (c.subtype === 'security-specialist' || c.subtype === 'facilities' || c.subtype === 'supervisor') return 45;
-                // Steal cards - value based on if opponent has classifications
-                if (c.subtype === 'head-hunter' || c.subtype === 'seal-the-deal') {
-                  return humanPlayer.classificationCards.length > 0 ? 50 : 10;
-                }
-              }
-              return 30; // Default medium value
-            };
-            
-            // Sort hand by value (ascending) and discard lowest value card
-            const sortedHand = [...hand].sort((a, b) => getCardValue(a) - getCardValue(b));
-            cardToDiscard = sortedHand[0];
-          }
-          
-          if (cardToDiscard && movesRemaining > 0) {
-            currentPlayer.hand = hand.filter(c => c.id !== cardToDiscard!.id);
-            newDiscardPile.push(cardToDiscard);
-            aiActions.push({ type: 'discard', card: cardToDiscard });
-            gameLog = [...gameLog.slice(-19), `🗑️ Computer discarded ${cardToDiscard.name}`];
-            movesUsed++;
-            movesRemaining--;
-            // Continue the loop to try another action
-            continue;
-          }
-          
-          // No valid moves and nothing to discard
-          break;
+          break; // No valid play found
         }
       }
       
@@ -2708,13 +2552,13 @@ export function useGameEngine() {
       // Draw cards to refill hand
       const baseDraw = Math.max(0, MAX_HAND_SIZE - scoringPlayer.hand.length);
       const cardsNeeded = baseDraw;
-      const { dealt, remaining } = dealCards(prev.drawPile, cardsNeeded);
+      const { dealt, remaining } = dealCards(newDrawPile, cardsNeeded);
       
       scoringPlayer.score = newScore;
       scoringPlayer.hand = [...scoringPlayer.hand, ...dealt];
       
       // Build score log message for AI
-      const aiScoreLog = connectedComputers > 0 ? `Computer scored ${scoreGained} bitcoin (Total: ${newScore})` : `Computer's turn ended`;
+      const aiScoreLog = connectedComputers > 0 ? `${scoringPlayer.name} scored ${scoreGained} bitcoin (Total: ${newScore})` : `${scoringPlayer.name}'s turn ended`;
       
       const nextPlayer = prev.players[(aiPlayerIndex + 1) % 2];
       
@@ -2734,7 +2578,7 @@ export function useGameEngine() {
         aiLastTurnActions: aiActions,
       };
     });
-  }, [gameState, countConnectedComputers]);
+  }, [gameState, aiDifficulty, countConnectedComputers]);
 
   // Count all computers on a player's network (for audit)
   const countAllComputers = useCallback((network: PlayerNetwork): number => {
@@ -3144,5 +2988,7 @@ export function useGameEngine() {
     countAllComputers,
     toggleAuditComputerSelection,
     confirmAuditSelection,
+    aiDifficulty,
+    aiDebugInfo,
   };
 }
