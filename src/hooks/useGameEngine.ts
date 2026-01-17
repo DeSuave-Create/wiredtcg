@@ -56,6 +56,7 @@ function createPlayer(id: string, name: string, isHuman: boolean): Player {
     id,
     name,
     hand: [],
+    auditedComputers: [],
     network: createEmptyNetwork(),
     classificationCards: [],
     score: 0,
@@ -2583,6 +2584,7 @@ export function useGameEngine() {
           chain: [],
           currentTurn: 0,
           computersToReturn,
+          phase: 'counter',
         },
         gameLog: [...prev.gameLog.slice(-19), `📋 ${currentPlayer.name} audits ${targetPlayer.name} for ${computersToReturn} computer(s)!`],
       };
@@ -2626,6 +2628,49 @@ export function useGameEngine() {
     return true;
   }, [gameState]);
 
+  // Helper: Get all computers from a network with location info
+  const getAllComputersWithLocation = useCallback((network: PlayerNetwork): { id: string; card: Card; location: string; switchIndex?: number; cableIndex?: number; floatingCableIndex?: number }[] => {
+    const computers: { id: string; card: Card; location: string; switchIndex?: number; cableIndex?: number; floatingCableIndex?: number }[] = [];
+    
+    // Connected computers
+    network.switches.forEach((sw, si) => {
+      sw.cables.forEach((cable, ci) => {
+        cable.computers.forEach(comp => {
+          computers.push({
+            id: comp.id,
+            card: comp.card,
+            location: `Switch ${si + 1} → Cable ${ci + 1}`,
+            switchIndex: si,
+            cableIndex: ci,
+          });
+        });
+      });
+    });
+    
+    // Floating cable computers
+    network.floatingCables.forEach((cable, fi) => {
+      cable.computers.forEach(comp => {
+        computers.push({
+          id: comp.id,
+          card: comp.card,
+          location: `Floating Cable ${fi + 1}`,
+          floatingCableIndex: fi,
+        });
+      });
+    });
+    
+    // Floating computers
+    network.floatingComputers.forEach(comp => {
+      computers.push({
+        id: comp.id,
+        card: comp.card,
+        location: 'Floating',
+      });
+    });
+    
+    return computers;
+  }, []);
+
   // Pass/accept in audit battle (don't play a card)
   const passAudit = useCallback(() => {
     if (!gameState || !gameState.auditBattle || gameState.phase !== 'audit') return;
@@ -2639,6 +2684,7 @@ export function useGameEngine() {
       const newPlayers = prev.players.map(p => ({ 
         ...p, 
         hand: [...p.hand],
+        auditedComputers: [...p.auditedComputers],
         network: {
           ...p.network,
           switches: p.network.switches.map(sw => ({
@@ -2665,93 +2711,179 @@ export function useGameEngine() {
         cardsToDiscard.push(response.card);
       });
       
-      let logMessage = '';
-      
       if (isTargetTurn) {
         // Target passed - AUDIT SUCCEEDS
-        // Remove computers from target's network and return to hand
-        let computersRemoved = 0;
-        const computersToRemove = battle.computersToReturn;
-        
-        // Remove from connected switches first (highest value targets)
-        for (let si = 0; si < target.network.switches.length && computersRemoved < computersToRemove; si++) {
-          const sw = target.network.switches[si];
-          for (let ci = 0; ci < sw.cables.length && computersRemoved < computersToRemove; ci++) {
-            const cable = sw.cables[ci];
-            while (cable.computers.length > 0 && computersRemoved < computersToRemove) {
-              const removedComp = cable.computers.pop();
-              if (removedComp) {
-                target.hand.push(removedComp.card);
-                computersRemoved++;
-              }
-            }
-          }
-        }
-        
-        // Remove from floating cables
-        for (let fi = 0; fi < target.network.floatingCables.length && computersRemoved < computersToRemove; fi++) {
-          const floatingCable = target.network.floatingCables[fi];
-          while (floatingCable.computers.length > 0 && computersRemoved < computersToRemove) {
-            const removedComp = floatingCable.computers.pop();
-            if (removedComp) {
-              target.hand.push(removedComp.card);
-              computersRemoved++;
-            }
-          }
-        }
-        
-        // Remove floating computers
-        while (target.network.floatingComputers.length > 0 && computersRemoved < computersToRemove) {
-          const removedComp = target.network.floatingComputers.pop();
-          if (removedComp) {
-            target.hand.push(removedComp.card);
-            computersRemoved++;
-          }
-        }
-        
-        logMessage = `📋 Audit successful! ${target.name} returns ${computersRemoved} computer(s) to hand!`;
-        
-        // After audit, if target has < 6 cards, draw up to 6
-        const cardsToDraw = Math.max(0, 6 - target.hand.length);
-        if (cardsToDraw > 0) {
-          const { dealt, remaining } = dealCards(prev.drawPile, cardsToDraw);
-          target.hand.push(...dealt);
-          
-          return {
-            ...prev,
-            players: newPlayers,
-            drawPile: remaining,
-            discardPile: [...prev.discardPile, ...cardsToDiscard],
-            phase: 'moves',
-            movesRemaining: prev.movesRemaining - 1,
-            auditBattle: undefined,
-            gameLog: [...prev.gameLog.slice(-19), logMessage, `${target.name} draws ${dealt.length} card(s)`],
-          };
-        }
+        // Transition to selection phase - attacker picks which computers
+        const availableComputers = getAllComputersWithLocation(target.network);
         
         return {
           ...prev,
           players: newPlayers,
-          discardPile: [...prev.discardPile, ...cardsToDiscard],
-          phase: 'moves',
-          movesRemaining: prev.movesRemaining - 1,
-          auditBattle: undefined,
-          gameLog: [...prev.gameLog.slice(-19), logMessage],
+          auditBattle: {
+            ...prev.auditBattle,
+            phase: 'selection',
+            availableComputers,
+            selectedComputerIds: [],
+          },
+          gameLog: [...prev.gameLog.slice(-19), `📋 Audit succeeds! ${auditor.name} selects ${battle.computersToReturn} computer(s) to return...`],
         };
       } else {
         // Auditor passed - AUDIT FAILS (target's block succeeds)
-        logMessage = `🛡️ ${target.name} blocks the audit! ${auditor.name}'s Audit fails!`;
+        // Defender draws back to 6 cards
+        let newDrawPile = [...prev.drawPile];
+        const defenderCardsToDraw = Math.max(0, 6 - target.hand.length);
+        if (defenderCardsToDraw > 0) {
+          const { dealt, remaining } = dealCards(newDrawPile, defenderCardsToDraw);
+          target.hand.push(...dealt);
+          newDrawPile = remaining;
+        }
+        
+        const logMessage = `🛡️ ${target.name} blocks the audit! ${auditor.name}'s Audit fails!`;
         
         return {
           ...prev,
           players: newPlayers,
+          drawPile: newDrawPile,
           discardPile: [...prev.discardPile, ...cardsToDiscard],
           phase: 'moves',
           movesRemaining: prev.movesRemaining - 1,
           auditBattle: undefined,
-          gameLog: [...prev.gameLog.slice(-19), logMessage],
+          gameLog: [...prev.gameLog.slice(-19), logMessage, defenderCardsToDraw > 0 ? `${target.name} draws ${defenderCardsToDraw} card(s)` : ''].filter(Boolean),
         };
       }
+    });
+  }, [gameState, getAllComputersWithLocation]);
+
+  // Toggle computer selection during audit selection phase
+  const toggleAuditComputerSelection = useCallback((computerId: string) => {
+    if (!gameState || !gameState.auditBattle || gameState.auditBattle.phase !== 'selection') return;
+    
+    setGameState(prev => {
+      if (!prev || !prev.auditBattle || prev.auditBattle.phase !== 'selection') return prev;
+      
+      const currentSelected = prev.auditBattle.selectedComputerIds || [];
+      const maxSelections = prev.auditBattle.computersToReturn;
+      
+      let newSelected: string[];
+      if (currentSelected.includes(computerId)) {
+        // Deselect
+        newSelected = currentSelected.filter(id => id !== computerId);
+      } else if (currentSelected.length < maxSelections) {
+        // Select
+        newSelected = [...currentSelected, computerId];
+      } else {
+        // Already at max - replace oldest selection
+        newSelected = [...currentSelected.slice(1), computerId];
+      }
+      
+      return {
+        ...prev,
+        auditBattle: {
+          ...prev.auditBattle,
+          selectedComputerIds: newSelected,
+        },
+      };
+    });
+  }, [gameState]);
+
+  // Confirm audit computer selection and execute removal
+  const confirmAuditSelection = useCallback(() => {
+    if (!gameState || !gameState.auditBattle || gameState.auditBattle.phase !== 'selection') return;
+    
+    const battle = gameState.auditBattle;
+    const selectedIds = battle.selectedComputerIds || [];
+    
+    if (selectedIds.length !== battle.computersToReturn) return;
+    
+    setGameState(prev => {
+      if (!prev || !prev.auditBattle) return prev;
+      
+      const newPlayers = prev.players.map(p => ({ 
+        ...p, 
+        hand: [...p.hand],
+        auditedComputers: [...p.auditedComputers],
+        network: {
+          ...p.network,
+          switches: p.network.switches.map(sw => ({
+            ...sw,
+            cables: sw.cables.map(c => ({
+              ...c,
+              computers: [...c.computers],
+            })),
+          })),
+          floatingCables: p.network.floatingCables.map(fc => ({
+            ...fc,
+            computers: [...fc.computers],
+          })),
+          floatingComputers: [...p.network.floatingComputers],
+        },
+      }));
+      
+      const target = newPlayers[battle.targetIndex];
+      const removedComputers: Card[] = [];
+      
+      // Remove selected computers from network
+      selectedIds.forEach(compId => {
+        // Check connected switches
+        for (const sw of target.network.switches) {
+          for (const cable of sw.cables) {
+            const compIndex = cable.computers.findIndex(c => c.id === compId);
+            if (compIndex !== -1) {
+              const removed = cable.computers.splice(compIndex, 1)[0];
+              removedComputers.push(removed.card);
+              return;
+            }
+          }
+        }
+        
+        // Check floating cables
+        for (const cable of target.network.floatingCables) {
+          const compIndex = cable.computers.findIndex(c => c.id === compId);
+          if (compIndex !== -1) {
+            const removed = cable.computers.splice(compIndex, 1)[0];
+            removedComputers.push(removed.card);
+            return;
+          }
+        }
+        
+        // Check floating computers
+        const floatIndex = target.network.floatingComputers.findIndex(c => c.id === compId);
+        if (floatIndex !== -1) {
+          const removed = target.network.floatingComputers.splice(floatIndex, 1)[0];
+          removedComputers.push(removed.card);
+        }
+      });
+      
+      // Collect chain cards to discard
+      const cardsToDiscard: Card[] = [];
+      battle.chain.forEach(response => {
+        cardsToDiscard.push(response.card);
+      });
+      
+      // First, replenish target's hand to 6 cards (excluding audited computers)
+      let newDrawPile = [...prev.drawPile];
+      const cardsToDraw = Math.max(0, 6 - target.hand.length);
+      if (cardsToDraw > 0) {
+        const { dealt, remaining } = dealCards(newDrawPile, cardsToDraw);
+        target.hand.push(...dealt);
+        newDrawPile = remaining;
+      }
+      
+      // Then, add removed computers to auditedComputers (separate section, allows overflow)
+      target.auditedComputers.push(...removedComputers);
+      
+      const logMessage = `📋 Audit successful! ${target.name} returns ${removedComputers.length} computer(s)!`;
+      
+      return {
+        ...prev,
+        players: newPlayers,
+        drawPile: newDrawPile,
+        discardPile: [...prev.discardPile, ...cardsToDiscard],
+        phase: 'moves',
+        movesRemaining: prev.movesRemaining - 1,
+        auditBattle: undefined,
+        gameLog: [...prev.gameLog.slice(-19), logMessage, cardsToDraw > 0 ? `${target.name} draws ${cardsToDraw} card(s)` : ''].filter(Boolean),
+      };
     });
   }, [gameState]);
 
@@ -2783,5 +2915,7 @@ export function useGameEngine() {
     respondToAudit,
     passAudit,
     countAllComputers,
+    toggleAuditComputerSelection,
+    confirmAuditSelection,
   };
 }
