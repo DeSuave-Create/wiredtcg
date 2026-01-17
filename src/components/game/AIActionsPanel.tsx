@@ -1,5 +1,6 @@
 import { AIAction } from '@/types/game';
 import { Shield, Swords, Wrench, Trash2, Award, ArrowRightLeft, ShieldOff } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface AIActionsPanelProps {
   actions: AIAction[];
@@ -51,6 +52,23 @@ const getActionLabel = (action: AIAction) => {
   }
 };
 
+const getActionBgColor = (type: AIAction['type'], blocked?: boolean) => {
+  if (blocked) return 'bg-gray-800/50 border-gray-700';
+  
+  switch (type) {
+    case 'attack':
+      return 'bg-red-900/30 border-red-700/50';
+    case 'resolve':
+      return 'bg-blue-900/30 border-blue-700/50';
+    case 'classification':
+      return 'bg-purple-900/30 border-purple-700/50';
+    case 'steal':
+      return 'bg-yellow-900/30 border-yellow-700/50';
+    default:
+      return 'bg-gray-800/80 border-gray-600';
+  }
+};
+
 export function AIActionsPanel({ actions }: AIActionsPanelProps) {
   if (actions.length === 0) {
     return (
@@ -64,7 +82,7 @@ export function AIActionsPanel({ actions }: AIActionsPanelProps) {
   }
 
   return (
-    <div className="bg-gray-900/80 border border-gray-700 rounded-lg p-3">
+    <div className="bg-gray-900/80 border border-gray-700 rounded-lg p-3 animate-fade-in">
       <h3 className="text-sm font-semibold text-gray-400 mb-2 flex items-center gap-2">
         🤖 AI's Last Turn
         <span className="text-xs text-gray-500">({actions.length} actions)</span>
@@ -74,16 +92,20 @@ export function AIActionsPanel({ actions }: AIActionsPanelProps) {
         {actions.map((action, index) => (
           <div 
             key={index}
-            className={`flex items-center gap-2 p-2 rounded-md ${
-              action.blocked 
-                ? 'bg-gray-800/50 border border-gray-700' 
-                : 'bg-gray-800/80 border border-gray-600'
-            }`}
+            className={cn(
+              "flex items-center gap-2 p-2 rounded-md border transition-all duration-300",
+              getActionBgColor(action.type, action.blocked),
+              "animate-[fade-in_0.3s_ease-out]"
+            )}
+            style={{ animationDelay: `${index * 100}ms` }}
           >
-            {/* Card thumbnail */}
-            <div className={`w-10 h-14 rounded overflow-hidden flex-shrink-0 ${
-              action.blocked ? 'opacity-50 grayscale' : ''
-            }`}>
+            {/* Card thumbnail with animation */}
+            <div className={cn(
+              "w-10 h-14 rounded overflow-hidden flex-shrink-0 transition-all duration-300",
+              action.blocked ? 'opacity-50 grayscale' : 'hover:scale-110',
+              action.type === 'steal' && !action.blocked && 'ring-2 ring-yellow-400/50 animate-pulse',
+              action.type === 'attack' && !action.blocked && 'ring-2 ring-red-400/30'
+            )}>
               <img 
                 src={action.card.image} 
                 alt={action.card.name}
@@ -94,10 +116,16 @@ export function AIActionsPanel({ actions }: AIActionsPanelProps) {
             {/* Action info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5">
-                {getActionIcon(action.type, action.blocked)}
-                <span className={`text-xs font-medium ${
+                <span className={cn(
+                  "transition-transform duration-200",
+                  action.type === 'steal' && !action.blocked && "animate-bounce"
+                )}>
+                  {getActionIcon(action.type, action.blocked)}
+                </span>
+                <span className={cn(
+                  "text-xs font-medium",
                   action.blocked ? 'text-gray-500 line-through' : 'text-white'
-                }`}>
+                )}>
                   {getActionLabel(action)}
                 </span>
               </div>

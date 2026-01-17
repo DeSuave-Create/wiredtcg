@@ -19,6 +19,8 @@ import { StealClassificationDialog } from '@/components/game/StealClassification
 import { AIActionsPanel } from '@/components/game/AIActionsPanel';
 import { AuditDialog } from '@/components/game/AuditDialog';
 import { AuditComputerSelectionDialog } from '@/components/game/AuditComputerSelectionDialog';
+import { AuditedComputersSection } from '@/components/game/AuditedComputersSection';
+import { GameEventAnimation, useGameEventAnimation } from '@/components/game/GameEventAnimations';
 import { Card } from '@/types/game';
 import { toast } from 'sonner';
 
@@ -56,6 +58,7 @@ const Simulation = () => {
     playSwitch,
     playCable,
     playComputer,
+    playAuditedComputer,
     playAttack,
     playResolution,
     playClassification,
@@ -73,6 +76,9 @@ const Simulation = () => {
     toggleAuditComputerSelection,
     confirmAuditSelection,
   } = useGameEngine();
+  
+  // Animation hook for game events
+  const { currentEvent, triggerEvent, clearEvent } = useGameEventAnimation();
 
   const [activeCard, setActiveCard] = useState<Card | null>(null);
   const [activePlacedCard, setActivePlacedCard] = useState<{
@@ -196,6 +202,33 @@ const Simulation = () => {
     }
   }, [gameState?.phase, gameState?.auditBattle?.phase, gameState?.auditBattle?.selectedComputerIds?.length, toggleAuditComputerSelection, confirmAuditSelection]);
 
+  // Track previous game log to detect events
+  const [prevLogLength, setPrevLogLength] = useState(0);
+
+  // Detect game events and trigger animations
+  useEffect(() => {
+    if (!gameState) return;
+    
+    const logs = gameState.gameLog;
+    if (logs.length > prevLogLength && prevLogLength > 0) {
+      // Check new log messages for events
+      const newLogs = logs.slice(prevLogLength);
+      for (const log of newLogs) {
+        if (log.includes('Audit successful!')) {
+          triggerEvent('audit-success', 'Audit Successful!');
+        } else if (log.includes('blocks the audit')) {
+          triggerEvent('audit-blocked', 'Audit Blocked!');
+        } else if (log.includes('steals') || log.includes('Steal')) {
+          if (log.includes('Computer')) {
+            // AI stole from player
+            triggerEvent('head-hunter', 'Classification Stolen!');
+          }
+        }
+      }
+    }
+    setPrevLogLength(logs.length);
+  }, [gameState?.gameLog.length, triggerEvent]);
+
   // Detect when AI steals a classification and show visual feedback
   useEffect(() => {
     if (!gameState) return;
@@ -206,19 +239,12 @@ const Simulation = () => {
     if (prevHumanClassCount > 0 && humanClassCount < prevHumanClassCount) {
       const lastLog = gameState.gameLog[gameState.gameLog.length - 1];
       if (lastLog?.includes('steal') || lastLog?.includes('Steal')) {
-        toast.error('🎯 Your classification was stolen!', {
-          duration: 3000,
-          style: {
-            background: '#7c2d12',
-            border: '2px solid #f97316',
-            color: '#fed7aa',
-          },
-        });
+        triggerEvent('head-hunter', 'Your classification was stolen!');
       }
     }
     
     setPrevHumanClassCount(humanClassCount);
-  }, [gameState?.players[0].classificationCards.length]);
+  }, [gameState?.players[0].classificationCards.length, triggerEvent]);
 
   const handleDragStart = (event: DragStartEvent) => {
     const data = event.active.data.current;
@@ -269,6 +295,22 @@ const Simulation = () => {
     const isHumanTarget = targetPlayerId === 'player-1';
     const isComputerTarget = targetPlayerId === 'player-2';
     const computerPlayerIndex = 1;
+    
+    // === Handle AUDITED COMPUTER being played ===
+    if (data?.isAudited && isHumanTarget) {
+      const auditedIndex = data.auditedIndex as number;
+      let cableId: string | undefined;
+      if (zoneType === 'cable') {
+        cableId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
+      } else if (zoneType === 'floating') {
+        cableId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
+      }
+      const success = playAuditedComputer(card.id, auditedIndex, cableId);
+      if (success) {
+        toast.success(cableId ? 'Audited computer reconnected!' : 'Audited computer placed (floating)');
+      }
+      return;
+    }
     
     // === Handle PLACED CLASSIFICATION being discarded ===
     if (data?.isPlacedClassification && zoneType === 'discard' && isHumanTarget) {
@@ -683,29 +725,12 @@ const Simulation = () => {
                   </div>
                 </div>
                 
-                {/* Audited Computers Section - shown when player has computers returned from audit */}
-                {humanPlayer.auditedComputers.length > 0 && (
-                  <div className="mt-3 pt-3 border-t border-yellow-500/30">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs text-yellow-400 font-medium">📋 Audited Computers</span>
-                      <span className="text-xs text-gray-500">({humanPlayer.auditedComputers.length} - overflow allowed)</span>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {humanPlayer.auditedComputers.map((card, index) => (
-                        <div 
-                          key={`audited-${card.id}-${index}`}
-                          className="w-16 h-22 rounded border-2 border-yellow-500/50 bg-yellow-500/10 overflow-hidden"
-                        >
-                          <img 
-                            src={card.image} 
-                            alt={card.name}
-                            className="w-full h-full object-contain"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                {/* Audited Computers Section - draggable to play back */}
+                <AuditedComputersSection
+                  auditedComputers={humanPlayer.auditedComputers}
+                  isCurrentPlayer={isHumanTurn}
+                  canPlay={canPlayCards}
+                />
               </div>
             </div>
 
@@ -808,6 +833,7 @@ const Simulation = () => {
             const success = playClassification(stealDialog.cardId, targetId);
             if (success) {
               toast.success(`${stealDialog.cardName} used!`);
+              triggerEvent('head-hunter', 'Classification Stolen!');
             }
             setStealDialog(null);
           }}
@@ -845,6 +871,13 @@ const Simulation = () => {
           }}
         />
       )}
+
+      {/* Game Event Animation Overlay */}
+      <GameEventAnimation 
+        event={currentEvent?.type || null}
+        message={currentEvent?.message}
+        onComplete={clearEvent}
+      />
 
       <Footer />
     </div>
