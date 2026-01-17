@@ -99,8 +99,8 @@ export function PlayerSection({
 
       {/* Content Container */}
       <div className="flex-1 p-4 space-y-3">
-        {/* Network Board - tall enough for 4 rows */}
-        <div className="h-[350px] overflow-y-auto">
+        {/* Network Board - 4 cards tall (60px each) + 2 cards unconnected (120px) + padding */}
+        <div className="h-[400px] overflow-y-auto">
           <NetworkBoardDroppable
             network={player.network}
             isCurrentPlayer={isHuman && isCurrentTurn}
