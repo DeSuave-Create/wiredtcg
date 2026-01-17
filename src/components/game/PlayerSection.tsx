@@ -106,8 +106,8 @@ export function PlayerSection({
           canRearrange={isHuman && canPlayCards}
         />
 
-        {/* Classifications Row - with controls for human player */}
-        <div className="flex gap-3 items-stretch">
+        {/* Classifications Row - consistent height for both players */}
+        <div className="flex gap-3 items-stretch min-h-[80px]">
           <div className="flex-1">
             <ClassificationSection
               classificationCards={player.classificationCards}
@@ -117,8 +117,8 @@ export function PlayerSection({
             />
           </div>
           
-          {/* Game Controls - only for human player */}
-          {isHuman && onEndPhase && (
+          {/* Game Controls - only for human player, otherwise empty space for alignment */}
+          {isHuman && onEndPhase ? (
             <div className="flex flex-col items-center justify-center gap-2 p-3 bg-black/30 rounded-lg border border-accent-green/30 min-w-[140px]">
               <Button
                 onClick={onEndPhase}
@@ -150,11 +150,11 @@ export function PlayerSection({
                 </div>
               )}
             </div>
-          )}
+          ) : null}
         </div>
 
-        {/* Hand */}
-        <div>
+        {/* Hand - consistent height */}
+        <div className="min-h-[200px]">
           <div className="flex items-center justify-between mb-2">
             <span className={cn("text-sm font-medium", titleColor)}>{handLabel}</span>
             <span className="text-xs text-muted-foreground">{player.hand.length} cards</span>
@@ -164,15 +164,15 @@ export function PlayerSection({
             isCurrentPlayer={isHuman && isCurrentTurn}
             showCards={isHuman}
             disabled={isHuman ? (!canPlayCards && !canDiscard && !isDiscardPhase) : true}
-            gridLayout={isHuman}
+            gridLayout={true}
           />
         </div>
 
-        {/* Discard + Audited Cards Row */}
-        <div className="grid grid-cols-2 gap-3">
+        {/* Discard + Audited Cards Row - consistent height */}
+        <div className="grid grid-cols-2 gap-3 min-h-[100px]">
           {/* Discard Pile */}
           <div className={cn(
-            "flex flex-col items-center p-3 rounded-lg border",
+            "flex flex-col items-center justify-center p-3 rounded-lg border",
             isHuman && (canDiscard || isDiscardPhase) 
               ? "border-dashed border-gray-500 bg-black/30" 
               : "border-gray-700/50 bg-black/20"
@@ -195,7 +195,7 @@ export function PlayerSection({
 
           {/* Audited Cards */}
           <div className={cn(
-            "flex flex-col items-center p-3 rounded-lg border border-gray-700/50 bg-black/20"
+            "flex flex-col items-center justify-center p-3 rounded-lg border border-gray-700/50 bg-black/20"
           )}>
             <span className="text-xs text-gray-500 uppercase tracking-wider mb-2">Audited Cards</span>
             {isHuman && player.auditedComputers.length > 0 ? (
