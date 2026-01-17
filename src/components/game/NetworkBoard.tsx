@@ -27,9 +27,11 @@ export function NetworkBoard({
       
       {/* Internet connection point */}
       <div className="flex items-center justify-center mb-4">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-blue-500/30">
-          INTERNET
-        </div>
+        <img 
+          src="/lovable-uploads/gamemode-internet.png" 
+          alt="Internet"
+          className="w-16 h-16 object-contain"
+        />
       </div>
       
       {/* Switches */}
