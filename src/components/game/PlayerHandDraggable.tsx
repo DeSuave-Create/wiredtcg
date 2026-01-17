@@ -21,24 +21,25 @@ export function PlayerHandDraggable({
 }: PlayerHandDraggableProps) {
   // Grid layout: 3 cards per row (used for both players now)
   if (gridLayout) {
+    // Use same card size for both player and opponent
+    const cardSize = compact ? "w-14 h-20" : "w-16 h-22";
+    
     return (
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-1.5">
         {cards.map((card, index) => (
           <div 
             key={card.id}
             className="flex justify-center"
-            style={{
-              transform: showCards ? 'none' : `rotate(${(index - 2.5) * 3}deg)`,
-            }}
           >
             {showCards ? (
               <DraggableCard 
                 card={card} 
                 disabled={disabled || !isCurrentPlayer}
                 showFace={true}
+                compact={compact}
               />
             ) : (
-              <div className="w-16 h-22 rounded-lg border-2 border-gray-600 bg-gray-800 overflow-hidden">
+              <div className={cn(cardSize, "rounded-lg border-2 border-gray-600 bg-gray-800 overflow-hidden")}>
                 <img 
                   src="/lovable-uploads/card-back.png"
                   alt="Card back"
@@ -50,7 +51,7 @@ export function PlayerHandDraggable({
         ))}
         
         {cards.length === 0 && (
-          <div className="col-span-3 text-muted-foreground text-sm text-center py-4">No cards in hand</div>
+          <div className="col-span-3 text-muted-foreground text-xs text-center py-2">No cards in hand</div>
         )}
       </div>
     );

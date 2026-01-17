@@ -94,20 +94,22 @@ export function PlayerSection({
       </div>
 
       {/* Content Container */}
-      <div className="flex-1 p-4 space-y-4">
-        {/* Network Board */}
-        <NetworkBoardDroppable
-          network={player.network}
-          isCurrentPlayer={isHuman && isCurrentTurn}
-          label={isHuman ? 'Your Network' : "Computer's Network"}
-          playerId={playerId}
-          canReceiveAttacks={!isHuman && canPlayCards}
-          canReceiveResolutions={isHuman && canPlayCards && hasResolutionCards && hasDisabledEquipment}
-          canRearrange={isHuman && canPlayCards}
-        />
+      <div className="flex-1 p-4 space-y-3">
+        {/* Network Board - fixed height */}
+        <div className="h-[180px]">
+          <NetworkBoardDroppable
+            network={player.network}
+            isCurrentPlayer={isHuman && isCurrentTurn}
+            label={isHuman ? 'Your Network' : "Computer's Network"}
+            playerId={playerId}
+            canReceiveAttacks={!isHuman && canPlayCards}
+            canReceiveResolutions={isHuman && canPlayCards && hasResolutionCards && hasDisabledEquipment}
+            canRearrange={isHuman && canPlayCards}
+          />
+        </div>
 
-        {/* Classifications Row - consistent height for both players */}
-        <div className="flex gap-3 items-stretch min-h-[80px]">
+        {/* Classifications Row - fixed height */}
+        <div className="flex gap-3 items-stretch h-[90px]">
           <div className="flex-1">
             <ClassificationSection
               classificationCards={player.classificationCards}
@@ -150,12 +152,14 @@ export function PlayerSection({
                 </div>
               )}
             </div>
-          ) : null}
+          ) : (
+            <div className="min-w-[140px]" /> 
+          )}
         </div>
 
-        {/* Hand - consistent height */}
-        <div className="min-h-[200px]">
-          <div className="flex items-center justify-between mb-2">
+        {/* Hand - fixed height */}
+        <div className="h-[160px]">
+          <div className="flex items-center justify-between mb-1">
             <span className={cn("text-sm font-medium", titleColor)}>{handLabel}</span>
             <span className="text-xs text-muted-foreground">{player.hand.length} cards</span>
           </div>
@@ -165,14 +169,15 @@ export function PlayerSection({
             showCards={isHuman}
             disabled={isHuman ? (!canPlayCards && !canDiscard && !isDiscardPhase) : true}
             gridLayout={true}
+            compact={true}
           />
         </div>
 
-        {/* Discard + Audited Cards Row - consistent height */}
-        <div className="grid grid-cols-2 gap-3 min-h-[100px]">
+        {/* Discard + Audited Cards Row - fixed height */}
+        <div className="grid grid-cols-2 gap-3 h-[80px]">
           {/* Discard Pile */}
           <div className={cn(
-            "flex flex-col items-center justify-center p-3 rounded-lg border",
+            "flex flex-col items-center justify-center p-2 rounded-lg border",
             isHuman && (canDiscard || isDiscardPhase) 
               ? "border-dashed border-gray-500 bg-black/30" 
               : "border-gray-700/50 bg-black/20"
@@ -186,8 +191,8 @@ export function PlayerSection({
               />
             ) : (
               <>
-                <span className="text-xs text-gray-500 uppercase tracking-wider mb-2">Discard Pile</span>
-                <Trash2 className="w-6 h-6 text-gray-600 mb-1" />
+                <span className="text-xs text-gray-500 uppercase tracking-wider">Discard Pile</span>
+                <Trash2 className="w-5 h-5 text-gray-600" />
                 <span className="text-xs text-muted-foreground">0 cards</span>
               </>
             )}
@@ -195,9 +200,9 @@ export function PlayerSection({
 
           {/* Audited Cards */}
           <div className={cn(
-            "flex flex-col items-center justify-center p-3 rounded-lg border border-gray-700/50 bg-black/20"
+            "flex flex-col items-center justify-center p-2 rounded-lg border border-gray-700/50 bg-black/20"
           )}>
-            <span className="text-xs text-gray-500 uppercase tracking-wider mb-2">Audited Cards</span>
+            <span className="text-xs text-gray-500 uppercase tracking-wider">Audited Cards</span>
             {isHuman && player.auditedComputers.length > 0 ? (
               <AuditedComputersSection
                 auditedComputers={player.auditedComputers}
