@@ -95,8 +95,8 @@ export function PlayerSection({
 
       {/* Content Container */}
       <div className="flex-1 p-4 space-y-3">
-        {/* Network Board - fixed height */}
-        <div className="h-[180px]">
+        {/* Network Board - fixed height with overflow scroll */}
+        <div className="h-[200px] overflow-y-auto">
           <NetworkBoardDroppable
             network={player.network}
             isCurrentPlayer={isHuman && isCurrentTurn}
@@ -157,8 +157,8 @@ export function PlayerSection({
           )}
         </div>
 
-        {/* Hand - fixed height */}
-        <div className="h-[160px]">
+        {/* Hand - fixed height for single row */}
+        <div className="h-[80px]">
           <div className="flex items-center justify-between mb-1">
             <span className={cn("text-sm font-medium", titleColor)}>{handLabel}</span>
             <span className="text-xs text-muted-foreground">{player.hand.length} cards</span>
