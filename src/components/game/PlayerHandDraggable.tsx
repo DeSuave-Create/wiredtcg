@@ -19,13 +19,16 @@ export function PlayerHandDraggable({
   compact = false,
   gridLayout = false,
 }: PlayerHandDraggableProps) {
+  const MAX_HAND_SIZE = 6;
+  
   // Single row layout (1x6) for both players
   if (gridLayout) {
     // 2x card size: w-24 h-32 (was w-12 h-16)
     const cardSize = compact ? "w-12 h-16" : "w-24 h-32";
+    const emptySlots = Math.max(0, MAX_HAND_SIZE - cards.length);
     
     return (
-      <div className="flex justify-center gap-2 h-full items-center">
+      <div className="flex justify-center gap-2 h-full items-center w-full">
         {cards.map((card) => (
           <div key={card.id} className="flex-shrink-0">
             {showCards ? (
@@ -47,9 +50,16 @@ export function PlayerHandDraggable({
           </div>
         ))}
         
-        {cards.length === 0 && (
-          <div className="text-muted-foreground text-xs text-center">No cards in hand</div>
-        )}
+        {/* Empty slot placeholders */}
+        {Array.from({ length: emptySlots }).map((_, index) => (
+          <div 
+            key={`empty-${index}`} 
+            className={cn(
+              cardSize, 
+              "flex-shrink-0 rounded-lg border-2 border-dashed border-gray-700/50 bg-gray-800/20"
+            )}
+          />
+        ))}
       </div>
     );
   }
