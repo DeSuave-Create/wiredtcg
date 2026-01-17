@@ -745,10 +745,27 @@ const Simulation = () => {
           playerClassifications={gameState.players[0].classificationCards}
           cardName={stealDialog.cardName}
           onSteal={(targetId, discardId) => {
+            // Capture card data before the action
+            const stolenCard = gameState.players[1].classificationCards.find(c => c.id === targetId);
+            const discardedCard = discardId 
+              ? gameState.players[0].classificationCards.find(c => c.id === discardId)
+              : undefined;
+            
             const success = playClassification(stealDialog.cardId, targetId, discardId);
             if (success) {
               toast.success(`${stealDialog.cardName} used!`);
-              triggerEvent('head-hunter', 'Classification Stolen!');
+              
+              // Trigger swap animation if swapping, otherwise regular steal animation
+              if (discardedCard && stolenCard) {
+                triggerEvent('classification-swap', 'Classification Swapped!', {
+                  stolenCardImage: stolenCard.card.image,
+                  stolenCardName: stolenCard.card.name,
+                  discardedCardImage: discardedCard.card.image,
+                  discardedCardName: discardedCard.card.name,
+                });
+              } else {
+                triggerEvent('head-hunter', 'Classification Stolen!');
+              }
             }
             setStealDialog(null);
           }}
@@ -791,6 +808,7 @@ const Simulation = () => {
       <GameEventAnimation 
         event={currentEvent?.type || null}
         message={currentEvent?.message}
+        swapData={currentEvent?.swapData}
         onComplete={clearEvent}
       />
 
