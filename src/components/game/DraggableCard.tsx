@@ -33,7 +33,7 @@ export function DraggableCard({ card, disabled = false, showFace = true, compact
       {...attributes}
       className={cn(
         "relative rounded-lg border-2 overflow-hidden transition-all duration-200 touch-none bg-black",
-        compact ? "w-8 h-11" : "w-20 h-28 sm:w-24 sm:h-32",
+        compact ? "w-14 h-20" : "w-20 h-28 sm:w-24 sm:h-32",
         cardBorderColor,
         !disabled && "cursor-grab active:cursor-grabbing hover:scale-105 hover:-translate-y-2",
         disabled && "opacity-60 cursor-not-allowed",
