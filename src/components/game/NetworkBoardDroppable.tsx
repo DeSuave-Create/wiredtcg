@@ -53,7 +53,7 @@ export function NetworkBoardDroppable({
       <DroppableZone
         id={`${playerId}-board`}
         type="internet"
-        accepts={isCurrentPlayer ? ['switch', 'cable-2', 'cable-3', 'computer'] : []}
+        accepts={isCurrentPlayer ? ['switch', 'cable-2', 'cable-3', 'computer'] : ['audit']}
         className="relative z-10 flex-1 min-h-[240px]"
       >
         {/* Row 1: Game mode logo */}
