@@ -115,7 +115,7 @@ export function PlayerSection({
         </div>
 
         {/* Classifications Row - height for full cards */}
-        <div className="flex gap-3 items-stretch h-[180px]">
+        <div className="flex gap-3 items-stretch h-[200px]">
           <div className="flex-1">
             <ClassificationSection
               classificationCards={player.classificationCards}

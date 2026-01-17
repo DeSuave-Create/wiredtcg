@@ -54,7 +54,7 @@ export function ClassificationSection({
       className="w-full h-full"
     >
       <div className={cn(
-        "bg-gradient-to-r from-blue-900/40 to-blue-800/30 rounded-lg border border-blue-500/40 p-2 h-full flex flex-col relative overflow-hidden",
+        "bg-gradient-to-r from-blue-900/40 to-blue-800/30 rounded-lg border border-blue-500/40 p-3 h-full flex flex-col relative overflow-visible",
         hasDuplicateProtection && "ring-2 ring-yellow-400 border-yellow-500/60"
       )}>
         {/* Animated shield overlay for duplicate protection */}
@@ -81,7 +81,7 @@ export function ClassificationSection({
           )}
         </div>
         
-        <div className="flex items-center gap-2 flex-1 min-h-0 relative z-10">
+        <div className="flex items-center gap-3 flex-1 relative z-10">
           {classificationCards.length === 0 ? (
             <div className="text-muted-foreground italic text-[10px]">
               {isCurrentPlayer 
