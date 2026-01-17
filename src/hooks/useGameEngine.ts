@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { GameState, Player, Card, GamePhase, PlayerNetwork, SwitchNode, CableNode, PlacedCard, FloatingCable, AIAction } from '@/types/game';
+import { GameState, Player, Card, GamePhase, PlayerNetwork, SwitchNode, CableNode, PlacedCard, FloatingCable, AIAction, AuditBattle } from '@/types/game';
 import { buildDeck, shuffleDeck, dealCards } from '@/utils/deckBuilder';
 
 const STARTING_HAND_SIZE = 6;
@@ -2247,6 +2247,252 @@ export function useGameEngine() {
     });
   }, [gameState, countConnectedComputers]);
 
+  // Count all computers on a player's network (for audit)
+  const countAllComputers = useCallback((network: PlayerNetwork): number => {
+    let count = 0;
+    // Connected computers
+    network.switches.forEach(sw => {
+      sw.cables.forEach(cable => {
+        count += cable.computers.length;
+      });
+    });
+    // Floating cables' computers
+    network.floatingCables.forEach(cable => {
+      count += cable.computers.length;
+    });
+    // Floating computers
+    count += network.floatingComputers.length;
+    return count;
+  }, []);
+
+  // Start an audit against opponent
+  const startAudit = useCallback((auditCardId: string, targetPlayerIndex: number) => {
+    if (!gameState) return false;
+    
+    const currentPlayerIndex = gameState.currentPlayerIndex;
+    const currentPlayer = gameState.players[currentPlayerIndex];
+    const targetPlayer = gameState.players[targetPlayerIndex];
+    
+    // Validate
+    const auditCard = currentPlayer.hand.find(c => c.id === auditCardId && c.subtype === 'audit');
+    if (!auditCard) return false;
+    if (targetPlayerIndex === currentPlayerIndex) return false;
+    if (gameState.movesRemaining <= 0) return false;
+    
+    // Count target's computers
+    const totalComputers = countAllComputers(targetPlayer.network);
+    const computersToReturn = Math.ceil(totalComputers / 2);
+    
+    if (computersToReturn === 0) {
+      // No computers to audit - just discard the card
+      setGameState(prev => {
+        if (!prev) return prev;
+        const newPlayers = [...prev.players];
+        const player = { ...newPlayers[currentPlayerIndex] };
+        player.hand = player.hand.filter(c => c.id !== auditCardId);
+        newPlayers[currentPlayerIndex] = player;
+        return {
+          ...prev,
+          players: newPlayers,
+          discardPile: [...prev.discardPile, auditCard],
+          movesRemaining: prev.movesRemaining - 1,
+          gameLog: [...prev.gameLog.slice(-19), `📋 ${currentPlayer.name} tried to audit ${targetPlayer.name} but they have no computers!`],
+        };
+      });
+      return true;
+    }
+    
+    // Start audit battle
+    setGameState(prev => {
+      if (!prev) return prev;
+      const newPlayers = [...prev.players];
+      const player = { ...newPlayers[currentPlayerIndex] };
+      player.hand = player.hand.filter(c => c.id !== auditCardId);
+      newPlayers[currentPlayerIndex] = player;
+      
+      return {
+        ...prev,
+        players: newPlayers,
+        phase: 'audit',
+        auditBattle: {
+          auditorIndex: currentPlayerIndex,
+          targetIndex: targetPlayerIndex,
+          auditCardId,
+          chain: [],
+          currentTurn: 0,
+          computersToReturn,
+        },
+        gameLog: [...prev.gameLog.slice(-19), `📋 ${currentPlayer.name} audits ${targetPlayer.name} for ${computersToReturn} computer(s)!`],
+      };
+    });
+    
+    return true;
+  }, [gameState, countAllComputers]);
+
+  // Respond to audit with a card (Hacked to block, Secured to counter)
+  const respondToAudit = useCallback((cardId: string) => {
+    if (!gameState || !gameState.auditBattle || gameState.phase !== 'audit') return false;
+    
+    const battle = gameState.auditBattle;
+    const isTargetTurn = battle.chain.length % 2 === 0;
+    const respondingPlayerIndex = isTargetTurn ? battle.targetIndex : battle.auditorIndex;
+    const respondingPlayer = gameState.players[respondingPlayerIndex];
+    
+    const neededType = isTargetTurn ? 'hacked' : 'secured';
+    const card = respondingPlayer.hand.find(c => c.id === cardId && c.subtype === neededType);
+    if (!card) return false;
+    
+    setGameState(prev => {
+      if (!prev || !prev.auditBattle) return prev;
+      
+      const newPlayers = [...prev.players];
+      const player = { ...newPlayers[respondingPlayerIndex] };
+      player.hand = player.hand.filter(c => c.id !== cardId);
+      newPlayers[respondingPlayerIndex] = player;
+      
+      return {
+        ...prev,
+        players: newPlayers,
+        auditBattle: {
+          ...prev.auditBattle,
+          chain: [...prev.auditBattle.chain, { playerId: respondingPlayerIndex, card }],
+        },
+        gameLog: [...prev.gameLog.slice(-19), `${isTargetTurn ? '🛡️' : '⚔️'} ${player.name} plays ${card.name}!`],
+      };
+    });
+    
+    return true;
+  }, [gameState]);
+
+  // Pass/accept in audit battle (don't play a card)
+  const passAudit = useCallback(() => {
+    if (!gameState || !gameState.auditBattle || gameState.phase !== 'audit') return;
+    
+    const battle = gameState.auditBattle;
+    const isTargetTurn = battle.chain.length % 2 === 0;
+    
+    setGameState(prev => {
+      if (!prev || !prev.auditBattle) return prev;
+      
+      const newPlayers = prev.players.map(p => ({ 
+        ...p, 
+        hand: [...p.hand],
+        network: {
+          ...p.network,
+          switches: p.network.switches.map(sw => ({
+            ...sw,
+            cables: sw.cables.map(c => ({
+              ...c,
+              computers: [...c.computers],
+            })),
+          })),
+          floatingCables: p.network.floatingCables.map(fc => ({
+            ...fc,
+            computers: [...fc.computers],
+          })),
+          floatingComputers: [...p.network.floatingComputers],
+        },
+      }));
+      
+      const auditor = newPlayers[battle.auditorIndex];
+      const target = newPlayers[battle.targetIndex];
+      
+      // Collect all cards used in the battle to discard
+      const cardsToDiscard: Card[] = [];
+      battle.chain.forEach(response => {
+        cardsToDiscard.push(response.card);
+      });
+      
+      let logMessage = '';
+      
+      if (isTargetTurn) {
+        // Target passed - AUDIT SUCCEEDS
+        // Remove computers from target's network and return to hand
+        let computersRemoved = 0;
+        const computersToRemove = battle.computersToReturn;
+        
+        // Remove from connected switches first (highest value targets)
+        for (let si = 0; si < target.network.switches.length && computersRemoved < computersToRemove; si++) {
+          const sw = target.network.switches[si];
+          for (let ci = 0; ci < sw.cables.length && computersRemoved < computersToRemove; ci++) {
+            const cable = sw.cables[ci];
+            while (cable.computers.length > 0 && computersRemoved < computersToRemove) {
+              const removedComp = cable.computers.pop();
+              if (removedComp) {
+                target.hand.push(removedComp.card);
+                computersRemoved++;
+              }
+            }
+          }
+        }
+        
+        // Remove from floating cables
+        for (let fi = 0; fi < target.network.floatingCables.length && computersRemoved < computersToRemove; fi++) {
+          const floatingCable = target.network.floatingCables[fi];
+          while (floatingCable.computers.length > 0 && computersRemoved < computersToRemove) {
+            const removedComp = floatingCable.computers.pop();
+            if (removedComp) {
+              target.hand.push(removedComp.card);
+              computersRemoved++;
+            }
+          }
+        }
+        
+        // Remove floating computers
+        while (target.network.floatingComputers.length > 0 && computersRemoved < computersToRemove) {
+          const removedComp = target.network.floatingComputers.pop();
+          if (removedComp) {
+            target.hand.push(removedComp.card);
+            computersRemoved++;
+          }
+        }
+        
+        logMessage = `📋 Audit successful! ${target.name} returns ${computersRemoved} computer(s) to hand!`;
+        
+        // After audit, if target has < 6 cards, draw up to 6
+        const cardsToDraw = Math.max(0, 6 - target.hand.length);
+        if (cardsToDraw > 0) {
+          const { dealt, remaining } = dealCards(prev.drawPile, cardsToDraw);
+          target.hand.push(...dealt);
+          
+          return {
+            ...prev,
+            players: newPlayers,
+            drawPile: remaining,
+            discardPile: [...prev.discardPile, ...cardsToDiscard],
+            phase: 'moves',
+            movesRemaining: prev.movesRemaining - 1,
+            auditBattle: undefined,
+            gameLog: [...prev.gameLog.slice(-19), logMessage, `${target.name} draws ${dealt.length} card(s)`],
+          };
+        }
+        
+        return {
+          ...prev,
+          players: newPlayers,
+          discardPile: [...prev.discardPile, ...cardsToDiscard],
+          phase: 'moves',
+          movesRemaining: prev.movesRemaining - 1,
+          auditBattle: undefined,
+          gameLog: [...prev.gameLog.slice(-19), logMessage],
+        };
+      } else {
+        // Auditor passed - AUDIT FAILS (target's block succeeds)
+        logMessage = `🛡️ ${target.name} blocks the audit! ${auditor.name}'s Audit fails!`;
+        
+        return {
+          ...prev,
+          players: newPlayers,
+          discardPile: [...prev.discardPile, ...cardsToDiscard],
+          phase: 'moves',
+          movesRemaining: prev.movesRemaining - 1,
+          auditBattle: undefined,
+          gameLog: [...prev.gameLog.slice(-19), logMessage],
+        };
+      }
+    });
+  }, [gameState]);
+
   return {
     gameState,
     selectedCard,
@@ -2271,5 +2517,9 @@ export function useGameEngine() {
     connectFloatingComputersToCable,
     connectFloatingCablesToSwitch,
     moveEquipment,
+    startAudit,
+    respondToAudit,
+    passAudit,
+    countAllComputers,
   };
 }

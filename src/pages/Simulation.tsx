@@ -17,6 +17,7 @@ import { ConnectComputersDialog } from '@/components/game/ConnectComputersDialog
 import { ConnectCablesDialog } from '@/components/game/ConnectCablesDialog';
 import { StealClassificationDialog } from '@/components/game/StealClassificationDialog';
 import { AIActionsPanel } from '@/components/game/AIActionsPanel';
+import { AuditDialog } from '@/components/game/AuditDialog';
 import { Card } from '@/types/game';
 import { toast } from 'sonner';
 
@@ -65,6 +66,9 @@ const Simulation = () => {
     connectFloatingComputersToCable,
     connectFloatingCablesToSwitch,
     moveEquipment,
+    startAudit,
+    respondToAudit,
+    passAudit,
   } = useGameEngine();
 
   const [activeCard, setActiveCard] = useState<Card | null>(null);
@@ -109,13 +113,47 @@ const Simulation = () => {
     if (!gameState) return;
     
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-    if (!currentPlayer.isHuman && gameState.phase !== 'game-over') {
+    if (!currentPlayer.isHuman && gameState.phase !== 'game-over' && gameState.phase !== 'audit') {
       const timer = setTimeout(() => {
         executeAITurn();
       }, 1000);
       return () => clearTimeout(timer);
     }
   }, [gameState?.currentPlayerIndex, gameState?.phase, executeAITurn]);
+
+  // Handle AI response in audit battles
+  useEffect(() => {
+    if (!gameState || gameState.phase !== 'audit' || !gameState.auditBattle) return;
+    
+    const battle = gameState.auditBattle;
+    const isTargetTurn = battle.chain.length % 2 === 0;
+    const respondingPlayerIndex = isTargetTurn ? battle.targetIndex : battle.auditorIndex;
+    const respondingPlayer = gameState.players[respondingPlayerIndex];
+    
+    // Only act if it's AI's turn to respond
+    if (!respondingPlayer.isHuman) {
+      const neededType = isTargetTurn ? 'hacked' : 'secured';
+      const playableCards = respondingPlayer.hand.filter(c => c.subtype === neededType);
+      
+      const timer = setTimeout(() => {
+        if (playableCards.length > 0) {
+          // AI plays a card to respond
+          respondToAudit(playableCards[0].id);
+          toast.info(`🤖 Computer plays ${playableCards[0].name}!`);
+        } else {
+          // AI passes
+          passAudit();
+          if (isTargetTurn) {
+            toast.info('🤖 Computer accepts the audit!');
+          } else {
+            toast.info('🤖 Computer lets the block succeed!');
+          }
+        }
+      }, 1500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [gameState?.phase, gameState?.auditBattle?.chain.length, respondToAudit, passAudit]);
 
   // Detect when AI steals a classification and show visual feedback
   useEffect(() => {
@@ -306,6 +344,19 @@ const Simulation = () => {
 
     // Handle attack cards (on opponent's network)
     if (card.type === 'attack' && isComputerTarget) {
+      // Special handling for Audit card
+      if (card.subtype === 'audit') {
+        // Audit can be dropped anywhere on opponent's network/board
+        if (zoneType === 'board' || zoneType === 'switch' || zoneType === 'cable' || zoneType === 'computer') {
+          const success = startAudit(card.id, computerPlayerIndex);
+          if (success) {
+            toast.info('📋 Audit initiated!');
+          }
+        }
+        return;
+      }
+      
+      // Regular attack cards
       let equipmentId = '';
       if (zoneType === 'switch') {
         equipmentId = dropZoneId.replace(`${targetPlayerId}-switch-`, '');
@@ -415,6 +466,7 @@ const Simulation = () => {
       'hacked': '⚡ Drag attack cards to OPPONENT\'s equipment',
       'power-outage': '⚡ Drag attack cards to OPPONENT\'s equipment',
       'new-hire': '⚡ Drag attack cards to OPPONENT\'s equipment',
+      'audit': '📋 Drag Audit to OPPONENT\'s network to audit them!',
       'secured': '🔧 Drag to YOUR disabled equipment with Hacked issue',
       'powered': '🔧 Drag to YOUR disabled equipment with Power Outage issue',
       'trained': '🔧 Drag to YOUR disabled equipment with New Hire issue',
@@ -693,6 +745,22 @@ const Simulation = () => {
               toast.success(`${stealDialog.cardName} used!`);
             }
             setStealDialog(null);
+          }}
+        />
+      )}
+      
+      {/* Audit Battle Dialog */}
+      {gameState && gameState.phase === 'audit' && gameState.auditBattle && (
+        <AuditDialog
+          isOpen={true}
+          auditBattle={gameState.auditBattle}
+          players={gameState.players}
+          currentPlayerId={humanPlayer.id}
+          onPlayCard={(cardId) => {
+            respondToAudit(cardId);
+          }}
+          onPass={() => {
+            passAudit();
           }}
         />
       )}

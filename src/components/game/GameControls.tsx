@@ -42,6 +42,7 @@ export function GameControls({
     'draw': 'Draw Cards',
     'score': 'Scoring',
     'game-over': 'Game Over',
+    'audit': 'Audit Battle',
   };
 
   // Get contextual action based on selected card
