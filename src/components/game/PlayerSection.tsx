@@ -27,6 +27,7 @@ interface PlayerSectionProps {
   isDragging?: boolean;
   isWinning?: boolean;
   opponentScore?: number;
+  humanCanPlayCards?: boolean; // Whether the human player can play cards (for attack targeting)
 }
 
 export function PlayerSection({
@@ -47,6 +48,7 @@ export function PlayerSection({
   isDragging = false,
   isWinning = false,
   opponentScore = 0,
+  humanCanPlayCards = false,
 }: PlayerSectionProps) {
   const sectionTitle = isHuman ? 'YOUR NETWORK' : "COMPUTER'S NETWORK";
   const handLabel = isHuman ? 'Your Hand' : "Computer's Hand";
@@ -106,7 +108,7 @@ export function PlayerSection({
             isCurrentPlayer={isHuman && isCurrentTurn}
             label={isHuman ? 'Your Network' : "Computer's Network"}
             playerId={playerId}
-            canReceiveAttacks={!isHuman && canPlayCards}
+            canReceiveAttacks={!isHuman && humanCanPlayCards}
             canReceiveResolutions={isHuman && canPlayCards && hasResolutionCards && hasDisabledEquipment}
             canRearrange={isHuman && canPlayCards}
           />
