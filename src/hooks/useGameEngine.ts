@@ -805,6 +805,116 @@ export function useGameEngine() {
     return true;
   }, [gameState, addLog]);
 
+  // Play a computer from the audited computers pile (returned from audit)
+  const playAuditedComputer = useCallback((cardId: string, auditedIndex: number, targetCableId?: string) => {
+    if (!gameState) return false;
+    
+    const player = gameState.players[gameState.currentPlayerIndex];
+    
+    // Find the card in audited computers
+    if (auditedIndex >= player.auditedComputers.length) {
+      addLog('Invalid audited computer!');
+      return false;
+    }
+    
+    const computerCard = player.auditedComputers[auditedIndex];
+    if (!computerCard || computerCard.subtype !== 'computer') {
+      addLog('Not a computer card!');
+      return false;
+    }
+    
+    if (gameState.movesRemaining <= 0) {
+      addLog('No moves remaining!');
+      return false;
+    }
+    
+    setGameState(prev => {
+      if (!prev) return prev;
+      
+      const newPlayers = [...prev.players];
+      const currentPlayer = { ...newPlayers[prev.currentPlayerIndex] };
+      
+      // Remove card from audited computers
+      currentPlayer.auditedComputers = [
+        ...currentPlayer.auditedComputers.slice(0, auditedIndex),
+        ...currentPlayer.auditedComputers.slice(auditedIndex + 1),
+      ];
+      
+      const newComputer: PlacedCard = {
+        card: computerCard,
+        id: generatePlacementId(),
+        attachedIssues: [],
+        isDisabled: false,
+      };
+      
+      // Try to find target cable (in switches or floating)
+      let cableFound = false;
+      
+      if (targetCableId) {
+        // Check connected cables in switches
+        const newSwitches = currentPlayer.network.switches.map(sw => {
+          const cableIndex = sw.cables.findIndex(c => c.id === targetCableId);
+          if (cableIndex === -1) return sw;
+          
+          const cable = sw.cables[cableIndex];
+          if (cable.computers.length >= cable.maxComputers) {
+            return sw; // Cable is full
+          }
+          
+          cableFound = true;
+          
+          const newCables = [...sw.cables];
+          newCables[cableIndex] = {
+            ...cable,
+            computers: [...cable.computers, newComputer],
+          };
+          
+          return { ...sw, cables: newCables };
+        });
+        
+        if (cableFound) {
+          currentPlayer.network = { ...currentPlayer.network, switches: newSwitches };
+        } else {
+          // Check floating cables
+          const floatingCableIndex = currentPlayer.network.floatingCables.findIndex(c => c.id === targetCableId);
+          if (floatingCableIndex !== -1) {
+            const cable = currentPlayer.network.floatingCables[floatingCableIndex];
+            if (cable.computers.length < cable.maxComputers) {
+              cableFound = true;
+              const newFloatingCables = [...currentPlayer.network.floatingCables];
+              newFloatingCables[floatingCableIndex] = {
+                ...cable,
+                computers: [...cable.computers, newComputer],
+              };
+              currentPlayer.network = { ...currentPlayer.network, floatingCables: newFloatingCables };
+            }
+          }
+        }
+      }
+      
+      // If no cable found or specified, add as floating
+      if (!cableFound) {
+        currentPlayer.network = {
+          ...currentPlayer.network,
+          floatingComputers: [...currentPlayer.network.floatingComputers, newComputer],
+        };
+      }
+      
+      newPlayers[prev.currentPlayerIndex] = currentPlayer;
+      
+      const floatingMsg = !cableFound ? ' [floating]' : '';
+      
+      return {
+        ...prev,
+        players: newPlayers,
+        movesRemaining: prev.movesRemaining - 1,
+        gameLog: [...prev.gameLog.slice(-19), `🔄 Played audited Computer${floatingMsg} (${prev.movesRemaining - 1} moves left)`],
+      };
+    });
+    
+    return true;
+  }, [gameState, addLog]);
+
   // Discard a card from hand
   const discardCard = useCallback((cardId: string) => {
     if (!gameState) return false;
@@ -2898,6 +3008,7 @@ export function useGameEngine() {
     playSwitch,
     playCable,
     playComputer,
+    playAuditedComputer,
     playAttack,
     playResolution,
     playClassification,
