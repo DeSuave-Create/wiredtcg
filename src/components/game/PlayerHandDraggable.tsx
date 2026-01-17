@@ -21,10 +21,11 @@ export function PlayerHandDraggable({
 }: PlayerHandDraggableProps) {
   // Single row layout (1x6) for both players
   if (gridLayout) {
-    const cardSize = "w-12 h-16";
+    // 2x card size: w-24 h-32 (was w-12 h-16)
+    const cardSize = compact ? "w-12 h-16" : "w-24 h-32";
     
     return (
-      <div className="flex justify-center gap-1.5 h-full items-center">
+      <div className="flex justify-center gap-2 h-full items-center">
         {cards.map((card) => (
           <div key={card.id} className="flex-shrink-0">
             {showCards ? (
@@ -32,7 +33,7 @@ export function PlayerHandDraggable({
                 card={card} 
                 disabled={disabled || !isCurrentPlayer}
                 showFace={true}
-                compact={true}
+                compact={compact}
               />
             ) : (
               <div className={cn(cardSize, "rounded-lg border-2 border-gray-600 bg-gray-800 overflow-hidden")}>

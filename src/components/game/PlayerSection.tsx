@@ -25,6 +25,8 @@ interface PlayerSectionProps {
   movesRemaining?: number;
   onEndPhase?: () => void;
   isDragging?: boolean;
+  isWinning?: boolean;
+  opponentScore?: number;
 }
 
 export function PlayerSection({
@@ -43,6 +45,8 @@ export function PlayerSection({
   movesRemaining = 0,
   onEndPhase,
   isDragging = false,
+  isWinning = false,
+  opponentScore = 0,
 }: PlayerSectionProps) {
   const sectionTitle = isHuman ? 'YOUR NETWORK' : "COMPUTER'S NETWORK";
   const handLabel = isHuman ? 'Your Hand' : "Computer's Hand";
@@ -95,8 +99,8 @@ export function PlayerSection({
 
       {/* Content Container */}
       <div className="flex-1 p-4 space-y-3">
-        {/* Network Board - fixed height with overflow scroll */}
-        <div className="h-[200px] overflow-y-auto">
+        {/* Network Board - tall enough for 4 rows */}
+        <div className="h-[350px] overflow-y-auto">
           <NetworkBoardDroppable
             network={player.network}
             isCurrentPlayer={isHuman && isCurrentTurn}
@@ -157,8 +161,8 @@ export function PlayerSection({
           )}
         </div>
 
-        {/* Hand - fixed height for single row */}
-        <div className="h-[80px]">
+        {/* Hand - taller for bigger cards */}
+        <div className="h-[140px] bg-black/20 rounded-lg p-2">
           <div className="flex items-center justify-between mb-1">
             <span className={cn("text-sm font-medium", titleColor)}>{handLabel}</span>
             <span className="text-xs text-muted-foreground">{player.hand.length} cards</span>
@@ -169,15 +173,15 @@ export function PlayerSection({
             showCards={isHuman}
             disabled={isHuman ? (!canPlayCards && !canDiscard && !isDiscardPhase) : true}
             gridLayout={true}
-            compact={true}
+            compact={false}
           />
         </div>
 
-        {/* Discard + Audited Cards Row - fixed height */}
-        <div className="grid grid-cols-2 gap-3 h-[80px]">
+        {/* Discard + Audited Cards Row - separate section */}
+        <div className="grid grid-cols-2 gap-3">
           {/* Discard Pile */}
           <div className={cn(
-            "flex flex-col items-center justify-center p-2 rounded-lg border",
+            "flex flex-col items-center justify-center p-2 rounded-lg border h-[50px]",
             isHuman && (canDiscard || isDiscardPhase) 
               ? "border-dashed border-gray-500 bg-black/30" 
               : "border-gray-700/50 bg-black/20"
@@ -190,30 +194,21 @@ export function PlayerSection({
                 isDiscardPhase={isDiscardPhase}
               />
             ) : (
-              <>
-                <span className="text-xs text-gray-500 uppercase tracking-wider">Discard Pile</span>
-                <Trash2 className="w-5 h-5 text-gray-600" />
-                <span className="text-xs text-muted-foreground">0 cards</span>
-              </>
+              <div className="flex items-center gap-2">
+                <Trash2 className="w-4 h-4 text-gray-600" />
+                <span className="text-xs text-gray-500">Discard: 0</span>
+              </div>
             )}
           </div>
 
           {/* Audited Cards */}
-          <div className={cn(
-            "flex flex-col items-center justify-center p-2 rounded-lg border border-gray-700/50 bg-black/20"
-          )}>
-            <span className="text-xs text-gray-500 uppercase tracking-wider">Audited Cards</span>
-            {isHuman && player.auditedComputers.length > 0 ? (
-              <AuditedComputersSection
-                auditedComputers={player.auditedComputers}
-                isCurrentPlayer={isCurrentTurn}
-                canPlay={canPlayCards}
-              />
-            ) : (
+          <div className="flex flex-col items-center justify-center p-2 rounded-lg border border-gray-700/50 bg-black/20 h-[50px]">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-500">Audited:</span>
               <span className="text-xs text-muted-foreground">
                 {player.auditedComputers.length} cards
               </span>
-            )}
+            </div>
           </div>
         </div>
       </div>
@@ -221,17 +216,20 @@ export function PlayerSection({
       {/* Score Footer */}
       <div className={cn(
         "px-4 py-3 border-t flex items-center justify-center gap-4",
-        isHuman ? "border-accent-green/30 bg-accent-green/5" : "border-gray-700 bg-gray-800/30"
+        isWinning ? "border-yellow-500/50 bg-yellow-500/10" : isHuman ? "border-accent-green/30 bg-accent-green/5" : "border-gray-700 bg-gray-800/30"
       )}>
-        <span className={cn("font-medium", titleColor)}>{playerLabel}</span>
+        <span className={cn("font-medium", isWinning ? "text-yellow-400" : titleColor)}>{playerLabel}</span>
         <div className="flex items-center gap-1">
-          <Bitcoin className={cn("w-5 h-5", isHuman ? "text-accent-green" : "text-gray-400")} />
-          <span className={cn("text-2xl font-bold", isHuman ? "text-accent-green" : "text-gray-300")}>
+          <Bitcoin className={cn("w-5 h-5", isWinning ? "text-yellow-400" : isHuman ? "text-accent-green" : "text-gray-400")} />
+          <span className={cn(
+            "text-2xl font-bold",
+            isWinning ? "text-yellow-400" : isHuman ? "text-accent-green" : "text-gray-300"
+          )}>
             {player.score}
           </span>
         </div>
         <div className="text-xs text-muted-foreground">
-          <span className={isHuman ? "text-accent-green" : "text-gray-400"}>{connectedComputers}</span>
+          <span className={isWinning ? "text-yellow-400" : isHuman ? "text-accent-green" : "text-gray-400"}>{connectedComputers}</span>
           {' '}connected
         </div>
       </div>
