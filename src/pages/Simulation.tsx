@@ -682,6 +682,7 @@ const Simulation = () => {
               gamePhase={gameState.phase}
               isWinning={computerPlayer.score > humanPlayer.score}
               opponentScore={humanPlayer.score}
+              humanCanPlayCards={canPlayCards}
             />
 
             {/* AI Log Panel - Right */}
