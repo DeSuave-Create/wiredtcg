@@ -49,12 +49,12 @@ export function NetworkBoardDroppable({
       
       <h3 className="font-semibold text-accent-green relative z-10 text-xs mb-1">{label}</h3>
       
-      {/* Connected Network Area - 4 cards tall (240px) */}
+      {/* Connected Network Area */}
       <DroppableZone
         id={`${playerId}-board`}
         type="internet"
         accepts={isCurrentPlayer ? ['switch', 'cable-2', 'cable-3', 'computer'] : ['audit']}
-        className="relative z-10 flex-1 min-h-[240px]"
+        className="relative z-10"
       >
         {/* Row 1: Game mode logo */}
         <div className="flex items-center justify-center h-[60px]">
@@ -72,8 +72,8 @@ export function NetworkBoardDroppable({
           </div>
         )}
         
-        {/* Rows 2-4: Connected Switches with cables and computers */}
-        <div className="flex flex-wrap justify-center gap-2 min-h-[180px]">
+        {/* Connected Switches with cables and computers */}
+        <div className="flex flex-wrap justify-center gap-2">
           {network.switches.map((sw) => (
             <SwitchComponent
               key={sw.id}
