@@ -720,7 +720,7 @@ function IssueIndicator({ issues, small = false }: IssueIndicatorProps) {
           key={idx}
           className={cn(
             "transform rotate-90 border-2 border-red-500 rounded shadow-lg",
-            small ? "w-6 h-8" : "w-10 h-14"
+            small ? "w-12 h-16" : "w-20 h-28"
           )}
           title={issue.name}
         >
