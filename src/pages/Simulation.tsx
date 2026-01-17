@@ -662,6 +662,8 @@ const Simulation = () => {
               movesRemaining={gameState.movesRemaining}
               onEndPhase={endPhase}
               isDragging={activeCard !== null}
+              isWinning={humanPlayer.score > computerPlayer.score}
+              opponentScore={computerPlayer.score}
             />
 
             {/* Opponent Section - Center */}
@@ -678,6 +680,8 @@ const Simulation = () => {
               connectedComputers={countConnectedComputers(computerPlayer.network)}
               playerId="player-2"
               gamePhase={gameState.phase}
+              isWinning={computerPlayer.score > humanPlayer.score}
+              opponentScore={humanPlayer.score}
             />
 
             {/* AI Log Panel - Right */}
