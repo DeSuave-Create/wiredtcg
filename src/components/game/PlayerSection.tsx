@@ -86,7 +86,7 @@ export function PlayerSection({
 
   return (
     <div className={cn(
-      "bg-gray-900/60 rounded-lg border flex flex-col",
+      "bg-gray-900/60 rounded-lg border flex flex-col h-full",
       borderColor
     )}>
       {/* Section Header */}
@@ -101,8 +101,8 @@ export function PlayerSection({
 
       {/* Content Container */}
       <div className="flex-1 p-4 space-y-3">
-        {/* Network Board - expands based on content, min height ensures reasonable size */}
-        <div className="min-h-[300px]">
+        {/* Network Board - 6 cards tall: 1 game mode + 3 connected + 2 unconnected (60px each = 360px + padding) */}
+        <div className="h-[420px] overflow-y-auto">
           <NetworkBoardDroppable
             network={player.network}
             isCurrentPlayer={isHuman && isCurrentTurn}
