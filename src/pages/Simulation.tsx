@@ -744,8 +744,8 @@ const Simulation = () => {
           opponentClassifications={gameState.players[1].classificationCards}
           playerClassifications={gameState.players[0].classificationCards}
           cardName={stealDialog.cardName}
-          onSteal={(targetId) => {
-            const success = playClassification(stealDialog.cardId, targetId);
+          onSteal={(targetId, discardId) => {
+            const success = playClassification(stealDialog.cardId, targetId, discardId);
             if (success) {
               toast.success(`${stealDialog.cardName} used!`);
               triggerEvent('head-hunter', 'Classification Stolen!');
