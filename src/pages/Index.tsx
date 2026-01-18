@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
@@ -8,16 +8,25 @@ import StrategySection from '@/components/StrategySection';
 import ElectricProgressBar from '@/components/ElectricProgressBar';
 import { SimulationIntro } from '@/components/game/SimulationIntro';
 
+type FadeOverlayState = 'none' | 'shown' | 'fading';
+
 const Index = () => {
   // Check if intro was already shown this session
   const hasSeenIntro = sessionStorage.getItem('hasSeenIntro') === 'true';
   const [showIntro, setShowIntro] = useState(!hasSeenIntro);
-  // If intro was already seen, skip the fade overlay entirely
-  const [showFadeOverlay, setShowFadeOverlay] = useState(false);
+  const [fadeOverlay, setFadeOverlay] = useState<FadeOverlayState>('none');
+
+  useEffect(() => {
+    if (fadeOverlay !== 'shown') return;
+
+    // Ensure we get one paint at opacity-100 before fading to 0
+    const raf = requestAnimationFrame(() => setFadeOverlay('fading'));
+    return () => cancelAnimationFrame(raf);
+  }, [fadeOverlay]);
 
   const handleIntroComplete = () => {
     sessionStorage.setItem('hasSeenIntro', 'true');
-    setShowFadeOverlay(true);
+    setFadeOverlay('shown');
     setShowIntro(false);
   };
 
@@ -33,14 +42,15 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col relative">
       {/* Fade overlay that disappears - only shown after intro completes */}
-      {showFadeOverlay && (
-        <div 
-          className="fixed inset-0 bg-black z-50 pointer-events-none animate-fade-out"
-          style={{ animation: 'fade-out 0.7s ease-out forwards' }}
-          onAnimationEnd={() => setShowFadeOverlay(false)}
+      {fadeOverlay !== 'none' && (
+        <div
+          className={`fixed inset-0 bg-black z-50 pointer-events-none transition-opacity duration-700 ease-out ${
+            fadeOverlay === 'shown' ? 'opacity-100' : 'opacity-0'
+          }`}
+          onTransitionEnd={() => setFadeOverlay('none')}
         />
       )}
-      
+
       <Header />
       
       <main className="container mx-auto px-3 sm:px-4 lg:px-6 py-3 sm:py-6 lg:py-8 flex justify-center flex-grow">
