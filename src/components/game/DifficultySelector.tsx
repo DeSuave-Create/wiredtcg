@@ -80,7 +80,7 @@ export function DifficultySelector({ isOpen, onSelect, onClose }: DifficultySele
                 onClick={() => onSelect(diff.id)}
                 className="group relative p-4 rounded-lg border border-gray-700 hover:border-accent-green/50 
                            bg-gray-900/50 hover:bg-gray-800/70 transition-all duration-300
-                           flex flex-col items-center text-center"
+                           flex flex-col items-center text-center h-full"
               >
                 {/* Gradient glow on hover */}
                 <div className={`absolute inset-0 rounded-lg bg-gradient-to-br ${diff.color} opacity-0 
@@ -98,24 +98,23 @@ export function DifficultySelector({ isOpen, onSelect, onClose }: DifficultySele
                   {diff.name}
                 </h3>
                 
-                {/* Description */}
-                <p className="text-sm text-gray-400 mb-3">
+                {/* Description - fixed height for alignment */}
+                <p className="text-sm text-gray-400 mb-3 h-5">
                   {diff.description}
                 </p>
                 
-                {/* Details */}
-                <ul className="text-xs text-gray-500 space-y-1">
+                {/* Details - fixed height container for alignment */}
+                <ul className="text-xs text-gray-500 space-y-1 text-left w-full flex-1">
                   {diff.details.map((detail, i) => (
-                    <li key={i} className="flex items-center gap-1">
-                      <span className="text-accent-green">•</span>
-                      {detail}
+                    <li key={i} className="flex items-start gap-1">
+                      <span className="text-accent-green flex-shrink-0">•</span>
+                      <span>{detail}</span>
                     </li>
                   ))}
                 </ul>
                 
                 {/* Select button appears on hover */}
-                <div className="absolute bottom-3 left-0 right-0 opacity-0 group-hover:opacity-100 
-                                transition-opacity duration-300">
+                <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <Button 
                     size="sm" 
                     className={`bg-gradient-to-r ${diff.color} text-white border-0 hover:opacity-90`}
