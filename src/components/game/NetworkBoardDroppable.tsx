@@ -224,13 +224,13 @@ export function NetworkBoardDroppable({
               ) : compContent;
               
               if (compAccepts.length > 0) {
-                return (
+              return (
                   <DroppableZone
                     key={comp.id}
                     id={`${playerId}-floating-computer-${comp.id}`}
                     type="computer"
                     accepts={compAccepts}
-                    className="w-fit"
+                    className="w-fit p-2 -m-2"
                   >
                     {wrappedContent}
                   </DroppableZone>
@@ -303,7 +303,7 @@ function SwitchComponent({
         id={`${playerId}-switch-${switchNode.id}`}
         type={canReceiveAttacks ? 'opponent-equipment' : isCurrentPlayer ? 'switch' : 'own-equipment'}
         accepts={getEquipmentAccepts()}
-        className="w-fit"
+        className="w-fit p-2 -m-2"
       >
         <div className="relative">
           <PlacedCardDisplay
@@ -526,7 +526,7 @@ function FloatingCableComponent({
         id={`${playerId}-floating-cable-${cable.id}`}
         type="cable"
         accepts={accepts}
-        className="w-fit"
+        className="w-fit p-2 -m-2"
       >
         {wrappedContent}
       </DroppableZone>
@@ -594,7 +594,7 @@ function CableComponent({
         id={`${playerId}-cable-${cable.id}`}
         type={canReceiveAttacks ? 'opponent-equipment' : isCurrentPlayer ? 'cable' : 'own-equipment'}
         accepts={getEquipmentAccepts()}
-        className="w-fit"
+        className="w-fit p-2 -m-2"
       >
         <div className="relative">
           {canRearrange ? (
@@ -737,7 +737,7 @@ function ComputerComponent({
           id={`${playerId}-computer-${computer.id}`}
           type={canReceiveAttacks ? 'opponent-equipment' : 'own-equipment'}
           accepts={accepts}
-          className="w-fit"
+          className="w-fit p-2 -m-2"
         >
           {content}
         </DroppableZone>
