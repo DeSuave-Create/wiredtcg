@@ -104,10 +104,10 @@ export function NetworkBoardDroppable({
       {/* Unconnected Section - takes 1/3 of space when no switches, otherwise min-h */}
       {(hasFloatingEquipment || (network.switches.length === 0 && isCurrentPlayer)) && (
         <div className={cn(
-          "border-t border-dashed border-yellow-500/50 mt-3 pt-3 relative z-10",
+          "mt-3 pt-3 relative z-10",
           network.switches.length === 0 ? "flex-1" : "min-h-[120px]"
         )}>
-          <div className="flex items-center gap-1 text-yellow-500 mb-1 text-[10px]">
+          <div className="flex items-center gap-1 text-muted-foreground mb-1 text-[10px]">
             <Unplug className="w-3 h-3" />
             <span>Unconnected</span>
           </div>
