@@ -2519,16 +2519,33 @@ export function useGameEngine() {
           
           case 'connect_cable_to_switch':
             if (currentPlayer.network.floatingCables.length > 0) {
-              const floatingCable = currentPlayer.network.floatingCables[0];
-              const enabledSwitch = network.switches.find(sw => !sw.isDisabled);
+              // Use sourceId if provided, otherwise fallback to first floating cable
+              const floatingCable = action.sourceId 
+                ? currentPlayer.network.floatingCables.find(c => c.id === action.sourceId)
+                : currentPlayer.network.floatingCables[0];
               
-              if (enabledSwitch) {
-                const switchIndex = network.switches.findIndex(sw => sw.id === enabledSwitch.id);
+              // Use targetId if provided, otherwise find first enabled switch
+              const targetSwitch = action.targetId
+                ? network.switches.find(sw => sw.id === action.targetId && !sw.isDisabled)
+                : network.switches.find(sw => !sw.isDisabled);
+              
+              if (floatingCable && targetSwitch) {
+                const switchIndex = network.switches.findIndex(sw => sw.id === targetSwitch.id);
                 currentPlayer.network.floatingCables = currentPlayer.network.floatingCables.filter(c => c.id !== floatingCable.id);
+                
+                // Re-enable the cable and its computers since now connected to working switch
+                floatingCable.isDisabled = targetSwitch.isDisabled;
+                for (const comp of floatingCable.computers) {
+                  if (comp.attachedIssues.length === 0) {
+                    comp.isDisabled = floatingCable.isDisabled;
+                  }
+                }
+                
                 network.switches[switchIndex].cables.push(floatingCable);
                 playedCard = true;
-                aiActions.push({ type: 'play', card: floatingCable.card, target: 'connected to switch' });
-                gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} connected floating Cable to Switch`];
+                const computersOnCable = floatingCable.computers.length;
+                aiActions.push({ type: 'play', card: floatingCable.card, target: `connected to switch (${computersOnCable} computers now scoring)` });
+                gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} connected floating Cable with ${computersOnCable} computers to Switch`];
               }
             }
             break;
