@@ -176,15 +176,22 @@ export function NetworkBoardDroppable({
                       small
                       sourceType="floating-computer"
                       sourceId={comp.id}
+                      showIssueIndicator
                     />
                   ) : (
-                    <PlacedCardDisplay
-                      card={comp.card}
-                      placementId={comp.id}
-                      isDisabled={true}
-                      className={cn("opacity-70", CARD_SIZE)}
-                      small
-                    />
+                    <div className="relative">
+                      <PlacedCardDisplay
+                        card={comp.card}
+                        placementId={comp.id}
+                        isDisabled={comp.isDisabled}
+                        className={cn("opacity-70", CARD_SIZE)}
+                        small
+                      />
+                      {/* Show issues on floating computers */}
+                      {comp.attachedIssues.length > 0 && (
+                        <IssueIndicator issues={comp.attachedIssues} small />
+                      )}
+                    </div>
                   )}
                   <div className="absolute -bottom-1 left-0 right-0 text-center">
                     <span className="text-[6px] bg-yellow-500 text-black px-0.5 rounded">floating</span>
