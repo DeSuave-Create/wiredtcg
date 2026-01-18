@@ -6,10 +6,15 @@ interface SimulationIntroProps {
 }
 
 export function SimulationIntro({ onComplete }: SimulationIntroProps) {
-  const [phase, setPhase] = useState<'logo-in' | 'logo-glow' | 'logo-out'>('logo-in');
+  const [phase, setPhase] = useState<'initial' | 'logo-in' | 'logo-glow' | 'logo-out'>('initial');
 
   useEffect(() => {
-    // Phase 1: Logo fades in (0-1500ms)
+    // Start animation after a brief mount delay
+    const startTimer = setTimeout(() => {
+      setPhase('logo-in');
+    }, 100);
+
+    // Phase 1: Logo fades in (100-1500ms)
     const glowTimer = setTimeout(() => {
       setPhase('logo-glow');
     }, 1500);
@@ -25,6 +30,7 @@ export function SimulationIntro({ onComplete }: SimulationIntroProps) {
     }, 5000);
 
     return () => {
+      clearTimeout(startTimer);
       clearTimeout(glowTimer);
       clearTimeout(outTimer);
       clearTimeout(completeTimer);
@@ -47,8 +53,8 @@ export function SimulationIntro({ onComplete }: SimulationIntroProps) {
       {/* Logo container */}
       <div 
         className={cn(
-          "relative transition-all duration-700 ease-out",
-          phase === 'logo-in' && "opacity-0 scale-90",
+          "relative transition-all duration-1000 ease-out",
+          (phase === 'initial' || phase === 'logo-in') && "opacity-0 scale-90",
           phase === 'logo-glow' && "opacity-100 scale-100",
           phase === 'logo-out' && "opacity-0 scale-110"
         )}
