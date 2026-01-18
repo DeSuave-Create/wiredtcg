@@ -649,11 +649,8 @@ const Simulation = () => {
         <SimulationIntro 
           onComplete={() => {
             setIsTransitioning(true);
-            // Brief delay before showing difficulty selector for smooth transition
-            setTimeout(() => {
-              setShowIntro(false);
-              setShowDifficultySelector(true);
-            }, 300);
+            setShowIntro(false);
+            setShowDifficultySelector(true);
           }} 
         />
       </div>
@@ -663,23 +660,24 @@ const Simulation = () => {
   // After intro, if game not started, show difficulty selector with fade-in
   if (!gameState) {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
+      <div className="min-h-screen flex flex-col bg-background relative">
+        {/* Fade overlay that disappears */}
         <div 
-          className={`flex-grow flex flex-col transition-opacity duration-500 ${
-            isTransitioning ? 'opacity-0' : 'opacity-100'
+          className={`fixed inset-0 bg-black z-40 pointer-events-none transition-opacity duration-700 ease-out ${
+            isTransitioning ? 'opacity-100' : 'opacity-0'
           }`}
           onTransitionEnd={() => setIsTransitioning(false)}
-        >
-          <Header />
-          <div className="flex-grow flex items-center justify-center animate-fade-in">
-            <DifficultySelector
-              isOpen={showDifficultySelector}
-              onSelect={handleStartGame}
-              onClose={() => navigate('/')}
-            />
-          </div>
-          <Footer />
+        />
+        
+        <Header />
+        <div className="flex-grow flex items-center justify-center">
+          <DifficultySelector
+            isOpen={showDifficultySelector}
+            onSelect={handleStartGame}
+            onClose={() => navigate('/')}
+          />
         </div>
+        <Footer />
       </div>
     );
   }

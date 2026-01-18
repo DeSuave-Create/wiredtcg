@@ -10,7 +10,7 @@ import { SimulationIntro } from '@/components/game/SimulationIntro';
 
 const Index = () => {
   const [showIntro, setShowIntro] = useState(true);
-  const [contentVisible, setContentVisible] = useState(false);
+  const [isFadingIn, setIsFadingIn] = useState(false);
 
   // Show intro animation first
   if (showIntro) {
@@ -18,9 +18,8 @@ const Index = () => {
       <div className="min-h-screen flex flex-col bg-background">
         <SimulationIntro 
           onComplete={() => {
+            setIsFadingIn(true);
             setShowIntro(false);
-            // Brief delay for smooth transition
-            setTimeout(() => setContentVisible(true), 100);
           }} 
         />
       </div>
@@ -28,7 +27,15 @@ const Index = () => {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col transition-opacity duration-500 ${contentVisible ? 'opacity-100' : 'opacity-0'}`}>
+    <div className="min-h-screen flex flex-col relative">
+      {/* Fade overlay that disappears */}
+      <div 
+        className={`fixed inset-0 bg-black z-50 pointer-events-none transition-opacity duration-700 ease-out ${
+          isFadingIn ? 'opacity-0' : 'opacity-100'
+        }`}
+        onTransitionEnd={() => setIsFadingIn(false)}
+      />
+      
       <Header />
       
       <main className="container mx-auto px-3 sm:px-4 lg:px-6 py-3 sm:py-6 lg:py-8 flex justify-center flex-grow">
