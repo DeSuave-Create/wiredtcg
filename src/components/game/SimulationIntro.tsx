@@ -9,20 +9,20 @@ export function SimulationIntro({ onComplete }: SimulationIntroProps) {
   const [phase, setPhase] = useState<'logo-in' | 'logo-glow' | 'logo-out'>('logo-in');
 
   useEffect(() => {
-    // Phase 1: Logo fades in (0-800ms)
+    // Phase 1: Logo fades in (0-1500ms)
     const glowTimer = setTimeout(() => {
       setPhase('logo-glow');
-    }, 800);
+    }, 1500);
 
-    // Phase 2: Logo glows (800-2000ms)
+    // Phase 2: Logo glows (1500-4000ms)
     const outTimer = setTimeout(() => {
       setPhase('logo-out');
-    }, 2000);
+    }, 4000);
 
-    // Phase 3: Logo fades out and callback (2000-2500ms)
+    // Phase 3: Logo fades out and callback (4000-5000ms)
     const completeTimer = setTimeout(() => {
       onComplete();
-    }, 2500);
+    }, 5000);
 
     return () => {
       clearTimeout(glowTimer);
