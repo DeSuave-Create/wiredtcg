@@ -303,19 +303,25 @@ export function evaluateRecoveryActions(context: AIDecisionContext): EvaluatedAc
     }
   }
 
-  // Connect floating cables to enabled switches
+  // Connect floating cables to enabled switches - HIGH PRIORITY when computers attached
   for (const floatingCable of aiPlayer.network.floatingCables) {
     for (const sw of aiPlayer.network.switches) {
       if (sw.isDisabled) continue;
       
       const computersOnCable = floatingCable.computers.length;
-      const utility = weights.bitcoinGain * (computersOnCable + 1);
+      // Much higher utility when computers are attached - this should be prioritized over playing new equipment
+      const utility = computersOnCable > 0 
+        ? weights.bitcoinGain * computersOnCable * 5 + weights.boardStability * 3 // High priority: immediate bitcoin recovery
+        : weights.bitcoinGain * 1.5; // Lower priority if no computers attached
 
       actions.push({
         type: 'connect_cable_to_switch',
         targetId: sw.id,
+        sourceId: floatingCable.id, // Include the floating cable ID
         utility,
-        reasoning: `Connecting floating cable with ${computersOnCable} computers to switch`,
+        reasoning: computersOnCable > 0
+          ? `PRIORITY: Connect floating cable with ${computersOnCable} computers to switch - immediate ${computersOnCable} bitcoin`
+          : `Connect empty floating cable to switch for future expansion`,
         risk: 0,
       });
     }
