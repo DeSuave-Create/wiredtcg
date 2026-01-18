@@ -91,18 +91,18 @@ function getRandomnessScale(difficulty: AIDifficulty): number {
 // Get utility threshold for considering an action
 function getUtilityThreshold(difficulty: AIDifficulty, category: ActionCategory): number {
   const baseThresholds: Record<ActionCategory, number> = {
-    build: 5,
-    reroute: 8,
-    repair: 6,
+    build: 1,     // Very low - always try to build if possible
+    reroute: 3,   // Low - rerouting is high value
+    repair: 3,    // Low - repairs are important
     disrupt: 4,
-    setup: 3,
+    setup: 2,
     cycle: -20,
   };
   
   // Easy AI has lower thresholds (takes suboptimal actions more readily)
-  if (difficulty === 'easy') return baseThresholds[category] - 3;
-  // Hard AI has higher thresholds (more selective)
-  if (difficulty === 'hard') return baseThresholds[category] + 2;
+  if (difficulty === 'easy') return baseThresholds[category] - 2;
+  // Hard AI has slightly higher thresholds (more selective)
+  if (difficulty === 'hard') return baseThresholds[category] + 1;
   return baseThresholds[category];
 }
 
@@ -142,55 +142,67 @@ function evaluateBuildActions(boardState: BoardState, aiPlayer: Player, oppPlaye
   const actions: EvaluatedAction[] = [];
   const { difficulty } = boardState;
   
-  // Play Switch - if no enabled switch or need redundancy
+  // Strategy: Build in order - Switch first, then Cable, then Computer
+  // If no switch: must play switch first
+  // If switch but no cables with slots: must play cable
+  // If cables with slots: play computers
+  
+  const hasEnabledSwitch = boardState.availableEnabledSwitches > 0;
+  const hasCableSlots = boardState.availableCableSlots > 0;
+  
+  // Play Switch - CRITICAL if no enabled switch exists
   for (const switchCard of boardState.switchesInHand) {
-    let utility = 10;
+    let utility = 8; // Base utility
     
-    if (boardState.availableEnabledSwitches === 0) {
-      utility = 50; // Critical - need switch to score
+    if (!hasEnabledSwitch) {
+      utility = 50; // CRITICAL - need switch to start scoring
     } else if (boardState.switchRedundancyScore < 0.5 && difficulty !== 'easy') {
-      utility = 25; // Build redundancy
+      utility = 20; // Build redundancy
     } else if (boardState.availableEnabledSwitches >= 2) {
-      utility = 5; // Already have enough
+      utility = 4; // Already have enough switches
     }
     
     // Racing to win - less redundancy focus
     if (boardState.turnsToWin <= 3 && difficulty === 'hard') {
-      utility *= 0.7;
+      utility *= 0.8;
     }
     
     actions.push({
       type: 'play_switch',
       card: switchCard,
       utility,
-      reasoning: boardState.availableEnabledSwitches === 0 
-        ? 'Must build switch to start scoring'
+      reasoning: !hasEnabledSwitch 
+        ? 'CRITICAL: Must build switch to start scoring'
         : 'Expanding network capacity',
       risk: 0.2,
     });
   }
   
-  // Play Cable - prefer filling existing switch slots
+  // Play Cable - HIGH PRIORITY if we have switch but no cable slots for computers
   for (const cableCard of boardState.cablesInHand) {
-    let utility = 8;
     const cableCapacity = cableCard.subtype === 'cable-3' ? 3 : 2;
+    let utility = 8; // Base utility
     
-    // Only play cable if we have a switch
-    if (boardState.availableEnabledSwitches === 0) {
-      utility = 2; // Will be floating
-    } else if (boardState.availableCableSlots === 0) {
-      utility = 15; // Need cables to place computers
+    if (!hasEnabledSwitch) {
+      // No switch yet - still can play cable (will be floating), lower priority
+      utility = 5; // Above threshold but lower than switch
+    } else if (!hasCableSlots) {
+      // Have switch but need cables to place computers
+      utility = 25; // HIGH priority - opens up computer placement
     } else if (boardState.availableCableSlots >= 3) {
-      // Have slots, don't need more cables yet
-      utility = 5;
+      // Have plenty of slots already
+      utility = 6;
+    } else {
+      // Have some slots, cable adds more capacity
+      utility = 10;
     }
     
-    // Prefer 3-cables
+    // Prefer 3-cables over 2-cables
     if (cableCard.subtype === 'cable-3') {
       utility += 3;
     }
     
-    // Find best switch to attach to
+    // Find best switch to attach to (prefer switches with fewer cables)
     let targetSwitchId: string | undefined;
     let minCables = Infinity;
     for (const sw of aiPlayer.network.switches) {
@@ -205,14 +217,18 @@ function evaluateBuildActions(boardState: BoardState, aiPlayer: Player, oppPlaye
       card: cableCard,
       targetId: targetSwitchId,
       utility,
-      reasoning: `Adding ${cableCapacity}-capacity cable`,
+      reasoning: !hasEnabledSwitch 
+        ? `Placing floating ${cableCapacity}-Cable (need switch first)`
+        : !hasCableSlots
+          ? `Adding ${cableCapacity}-Cable to enable computer placement`
+          : `Adding ${cableCapacity}-capacity cable`,
       risk: 0.1,
     });
   }
   
-  // Play Computer - highest priority when slots available
+  // Play Computer - HIGHEST priority when we can score immediately
   for (const computerCard of boardState.computersInHand) {
-    let utility = 12;
+    let utility = 10; // Base utility
     
     // Find cable with space on enabled switch
     let targetCableId: string | undefined;
@@ -224,6 +240,7 @@ function evaluateBuildActions(boardState: BoardState, aiPlayer: Player, oppPlaye
       for (const cable of sw.cables) {
         if (cable.isDisabled || cable.computers.length >= cable.maxComputers) continue;
         
+        // Score based on available space and distribution
         const score = (cable.maxComputers - cable.computers.length) + 
           (1 / (sw.cables.length + 1)) * 2;
         
@@ -234,10 +251,22 @@ function evaluateBuildActions(boardState: BoardState, aiPlayer: Player, oppPlaye
       }
     }
     
+    // Also check floating cables for computer placement
+    if (!targetCableId) {
+      for (const floatingCable of aiPlayer.network.floatingCables) {
+        if (!floatingCable.isDisabled && floatingCable.computers.length < floatingCable.maxComputers) {
+          // Can place on floating cable (won't score until cable is connected)
+          utility = 8;
+          break;
+        }
+      }
+    }
+    
     if (targetCableId) {
-      utility = 20; // Will immediately score - high priority
-    } else {
-      utility = 3; // Will be floating
+      utility = 30; // HIGHEST - Will immediately score bitcoin!
+    } else if (!hasEnabledSwitch || !hasCableSlots) {
+      // No place to put computer yet - still play it (floating) if nothing else to do
+      utility = 4; // Above threshold but low priority
     }
     
     actions.push({
@@ -245,7 +274,9 @@ function evaluateBuildActions(boardState: BoardState, aiPlayer: Player, oppPlaye
       card: computerCard,
       targetId: targetCableId,
       utility,
-      reasoning: targetCableId ? 'Computer will score immediately' : 'Placing floating computer',
+      reasoning: targetCableId 
+        ? 'Computer will score immediately - priority!'
+        : 'Placing floating computer (need cable slot)',
       risk: 0.1,
     });
   }
