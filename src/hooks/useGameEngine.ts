@@ -385,10 +385,20 @@ export function useGameEngine() {
     return { success: true, cableId: newCableId, maxComputers };
   }, [gameState, addLog]);
 
-  // Connect floating computers to a cable (FREE action - doesn't cost a move)
+  // Connect floating computers to a cable (costs 1 move per connection action)
   // Works for HUMAN player specifically (player index 0)
   const connectFloatingComputersToCable = useCallback((cableId: string, computerIds: string[]) => {
     if (!gameState || computerIds.length === 0) return false;
+    
+    // Check if player has moves remaining (regular or equipment)
+    const humanPlayerIndex = 0;
+    const hasEquipmentMoves = gameState.equipmentMovesRemaining > 0;
+    const hasRegularMoves = gameState.movesRemaining > 0;
+    
+    if (!hasEquipmentMoves && !hasRegularMoves) {
+      console.log('No moves remaining to connect equipment');
+      return false;
+    }
     
     setGameState(prev => {
       if (!prev) return prev;
@@ -466,9 +476,20 @@ export function useGameEngine() {
       
       const locationMsg = connectedToSwitch ? ' (connected to internet!)' : ' (floating cable)';
       
+      // Consume a move (equipment move first if available)
+      let newEquipmentMoves = prev.equipmentMovesRemaining;
+      let newMoves = prev.movesRemaining;
+      if (newEquipmentMoves > 0) {
+        newEquipmentMoves--;
+      } else {
+        newMoves--;
+      }
+      
       return {
         ...prev,
         players: newPlayers,
+        movesRemaining: newMoves,
+        equipmentMovesRemaining: newEquipmentMoves,
         gameLog: [...prev.gameLog.slice(-19), `Connected ${computersToConnect.length} computer(s)${locationMsg}`],
       };
     });
@@ -476,10 +497,20 @@ export function useGameEngine() {
     return true;
   }, [gameState]);
 
-  // Connect floating cables to a switch (FREE action - doesn't cost a move)
+  // Connect floating cables to a switch (costs 1 move per connection action)
   // Works for HUMAN player specifically (player index 0)
   const connectFloatingCablesToSwitch = useCallback((switchId: string, cableIds: string[]) => {
     if (!gameState || cableIds.length === 0) return false;
+    
+    // Check if player has moves remaining (regular or equipment)
+    const humanPlayerIndex = 0;
+    const hasEquipmentMoves = gameState.equipmentMovesRemaining > 0;
+    const hasRegularMoves = gameState.movesRemaining > 0;
+    
+    if (!hasEquipmentMoves && !hasRegularMoves) {
+      console.log('No moves remaining to connect equipment');
+      return false;
+    }
     
     setGameState(prev => {
       if (!prev) return prev;
@@ -530,9 +561,20 @@ export function useGameEngine() {
       const totalComputers = cablesToConnect.reduce((sum, c) => sum + c.computers.length, 0);
       const computerMsg = totalComputers > 0 ? ` with ${totalComputers} computer(s)` : '';
       
+      // Consume a move (equipment move first if available)
+      let newEquipmentMoves = prev.equipmentMovesRemaining;
+      let newMoves = prev.movesRemaining;
+      if (newEquipmentMoves > 0) {
+        newEquipmentMoves--;
+      } else {
+        newMoves--;
+      }
+      
       return {
         ...prev,
         players: newPlayers,
+        movesRemaining: newMoves,
+        equipmentMovesRemaining: newEquipmentMoves,
         gameLog: [...prev.gameLog.slice(-19), `Connected ${cablesToConnect.length} cable(s)${computerMsg} to switch!`],
       };
     });
@@ -540,7 +582,7 @@ export function useGameEngine() {
     return true;
   }, [gameState]);
 
-  // Move placed equipment to a new location (FREE action - doesn't cost a move if it's rearranging)
+  // Move placed equipment to a new location (costs 1 move - equipment move first if available)
   const moveEquipment = useCallback((
     sourceType: 'switch' | 'cable' | 'computer' | 'floating-cable' | 'floating-computer',
     sourceId: string,
@@ -548,6 +590,15 @@ export function useGameEngine() {
     targetId?: string
   ) => {
     if (!gameState) return false;
+    
+    // Check if player has moves remaining (regular or equipment)
+    const hasEquipmentMoves = gameState.equipmentMovesRemaining > 0;
+    const hasRegularMoves = gameState.movesRemaining > 0;
+    
+    if (!hasEquipmentMoves && !hasRegularMoves) {
+      console.log('No moves remaining to move equipment');
+      return false;
+    }
     
     // Only human player can rearrange
     const humanPlayerIndex = 0;
@@ -737,9 +788,20 @@ export function useGameEngine() {
       player.network = network;
       newPlayers[humanPlayerIndex] = player;
       
+      // Consume a move (equipment move first if available)
+      let newEquipmentMoves = prev.equipmentMovesRemaining;
+      let newMoves = prev.movesRemaining;
+      if (newEquipmentMoves > 0) {
+        newEquipmentMoves--;
+      } else {
+        newMoves--;
+      }
+      
       return {
         ...prev,
         players: newPlayers,
+        movesRemaining: newMoves,
+        equipmentMovesRemaining: newEquipmentMoves,
         gameLog: logMessage ? [...prev.gameLog.slice(-19), logMessage] : prev.gameLog,
       };
     });
