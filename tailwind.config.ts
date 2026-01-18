@@ -230,6 +230,52 @@ export default {
 						opacity: '0',
 						transform: 'scale(0.5) translateX(100px) translateY(-50px)'
 					}
+				},
+				'flyToBoard': {
+					'0%': {
+						left: 'var(--start-x)',
+						top: 'var(--start-y)',
+						opacity: '1',
+						transform: 'scale(1)'
+					},
+					'50%': {
+						opacity: '1',
+						transform: 'scale(1.2)'
+					},
+					'100%': {
+						left: 'var(--end-x)',
+						top: 'var(--end-y)',
+						opacity: '0',
+						transform: 'scale(0.8)'
+					}
+				},
+				'flyFromDeck': {
+					'0%': {
+						left: 'var(--start-x)',
+						top: 'var(--start-y)',
+						opacity: '0',
+						transform: 'scale(0.5) rotate(-10deg)'
+					},
+					'50%': {
+						opacity: '1',
+						transform: 'scale(1.1) rotate(5deg)'
+					},
+					'100%': {
+						left: 'var(--end-x)',
+						top: 'var(--end-y)',
+						opacity: '1',
+						transform: 'scale(1) rotate(0deg)'
+					}
+				},
+				'scale-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'scale(0.8)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'scale(1)'
+					}
 				}
 			},
 			animation: {
@@ -245,7 +291,10 @@ export default {
 				'wave-sweep': 'wave-sweep 2s ease-in-out infinite',
 				'game-icon-cable': 'game-icon-cable 3s ease-in-out forwards',
 				'game-icon-computer': 'game-icon-computer 3s ease-in-out forwards',
-				'game-icon-bitcoin': 'game-icon-bitcoin 3s ease-in-out forwards'
+				'game-icon-bitcoin': 'game-icon-bitcoin 3s ease-in-out forwards',
+				'flyToBoard': 'flyToBoard 0.7s ease-out forwards',
+				'flyFromDeck': 'flyFromDeck 0.5s ease-out forwards',
+				'scale-in': 'scale-in 0.3s ease-out forwards'
 			},
 			fontFamily: {
 				'orbitron': ['Orbitron', 'sans-serif'],
