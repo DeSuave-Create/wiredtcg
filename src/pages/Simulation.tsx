@@ -638,13 +638,28 @@ const Simulation = () => {
   };
 
 
+  // Show intro animation first, then difficulty selector
+  if (showIntro) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <SimulationIntro 
+          onComplete={() => {
+            setShowIntro(false);
+            setShowDifficultySelector(true);
+          }} 
+        />
+      </div>
+    );
+  }
+
+  // After intro, if game not started, show difficulty selector
   if (!gameState) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
         <div className="flex-grow flex items-center justify-center">
           <DifficultySelector
-            isOpen={true}
+            isOpen={showDifficultySelector}
             onSelect={handleStartGame}
             onClose={() => {}}
           />
@@ -941,15 +956,7 @@ const Simulation = () => {
         onComplete={clearEvent}
       />
 
-      {/* Intro Animation */}
-      {showIntro && (
-        <SimulationIntro 
-          onComplete={() => {
-            setShowIntro(false);
-            setShowDifficultySelector(true);
-          }} 
-        />
-      )}
+      {/* Intro Animation - handled in early return above */}
 
       {/* Difficulty Selector Dialog */}
       <DifficultySelector
