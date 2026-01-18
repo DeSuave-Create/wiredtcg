@@ -143,8 +143,19 @@ export function cablesToPlacementTargets(
     });
   });
   
-  // Note: We don't include floating cables here since computers on floating cables won't score
-  // Users can still manually drag to floating cables if they want
+  // Include floating cables with available capacity
+  floatingCables.forEach((fc, index) => {
+    if (fc.isDisabled) return;
+    const available = fc.maxComputers - fc.computers.length;
+    if (available > 0) {
+      targets.push({
+        id: fc.id,
+        name: `Floating Cable ${index + 1}`,
+        image: fc.card.image,
+        capacity: `${fc.computers.length}/${fc.maxComputers} used (unconnected)`,
+      });
+    }
+  });
   
   return targets;
 }
