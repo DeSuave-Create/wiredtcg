@@ -113,14 +113,13 @@ export function DifficultySelector({ isOpen, onSelect, onClose }: DifficultySele
                   ))}
                 </ul>
                 
-                {/* Select button appears on hover */}
+                {/* Select indicator appears on hover */}
                 <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Button 
-                    size="sm" 
-                    className={`bg-gradient-to-r ${diff.color} text-white border-0 hover:opacity-90`}
+                  <span 
+                    className={`inline-flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium bg-gradient-to-r ${diff.color} text-white`}
                   >
                     Select {diff.name}
-                  </Button>
+                  </span>
                 </div>
               </button>
             );
