@@ -509,7 +509,7 @@ const Simulation = () => {
           playComputer(card.id, cableId);
           toast.success('Computer connected to cable!');
         } else {
-          // Dropped on unconnected area or board - check if connected cables with space exist
+          // Dropped on unconnected area or board - check if ANY cables with space exist (connected or floating)
           const humanPlayer = gameState!.players[0];
           const availableCables = cablesToPlacementTargets(
             humanPlayer.network.switches,
@@ -517,7 +517,7 @@ const Simulation = () => {
           );
           
           if (availableCables.length > 0) {
-            // Show placement choice dialog
+            // Show placement choice dialog - includes both connected and floating cables
             setPlacementChoiceDialog({
               isOpen: true,
               cardType: 'computer',
