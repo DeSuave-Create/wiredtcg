@@ -161,6 +161,112 @@ export function findRerouteOpportunities(context: AIDecisionContext): RerouteOpp
   return opportunities;
 }
 
+// Evaluate reroute actions - moving cables/computers to working switches/cables
+export function evaluateReroutes(context: AIDecisionContext): EvaluatedAction[] {
+  const actions: EvaluatedAction[] = [];
+  const { aiPlayer, weights } = context;
+  const network = aiPlayer.network;
+
+  // 1. Move cables from disabled switches to enabled switches
+  for (const disabledSwitch of network.switches) {
+    if (!disabledSwitch.isDisabled) continue;
+    
+    for (const cable of disabledSwitch.cables) {
+      const computersOnCable = cable.computers.length;
+      
+      // Find enabled switches to move to
+      for (const targetSwitch of network.switches) {
+        if (targetSwitch.isDisabled || targetSwitch.id === disabledSwitch.id) continue;
+        
+        // Calculate utility based on computers that would become scoring
+        const scoringComputers = cable.computers.filter(c => c.attachedIssues.length === 0).length;
+        const utility = weights.bitcoinGain * scoringComputers * 3 + weights.boardStability * 2;
+        
+        if (utility > 0) {
+          actions.push({
+            type: 'move_cable_to_switch',
+            targetId: targetSwitch.id,
+            sourceId: cable.id,
+            utility,
+            reasoning: `Move cable (${computersOnCable} computers) from disabled switch to working switch - recover ${scoringComputers} bitcoin`,
+            risk: 0,
+          });
+        }
+      }
+    }
+  }
+
+  // 2. Move computers from disabled/full cables to working cables with space
+  const allComputers: { computer: typeof network.switches[0]['cables'][0]['computers'][0], cableId: string, switchId: string, isDisabled: boolean }[] = [];
+  
+  // Collect all computers with their locations
+  for (const sw of network.switches) {
+    for (const cable of sw.cables) {
+      for (const comp of cable.computers) {
+        allComputers.push({
+          computer: comp,
+          cableId: cable.id,
+          switchId: sw.id,
+          isDisabled: comp.isDisabled || cable.isDisabled || sw.isDisabled,
+        });
+      }
+    }
+  }
+  
+  // Find computers on disabled paths that could be moved to working cables
+  for (const { computer, cableId, switchId, isDisabled } of allComputers) {
+    if (!isDisabled) continue; // Only move disabled computers
+    if (computer.attachedIssues.length > 0) continue; // Skip computers with direct attacks
+    
+    // Find working cables with space
+    for (const sw of network.switches) {
+      if (sw.isDisabled) continue;
+      
+      for (const targetCable of sw.cables) {
+        if (targetCable.isDisabled) continue;
+        if (targetCable.id === cableId) continue; // Same cable
+        if (targetCable.computers.length >= targetCable.maxComputers) continue; // Full
+        
+        const utility = weights.bitcoinGain * 3 + weights.boardStability;
+        
+        actions.push({
+          type: 'move_computer_to_cable',
+          targetId: targetCable.id,
+          sourceId: computer.id,
+          utility,
+          reasoning: `Move computer from disabled path to working cable - recover 1 bitcoin`,
+          risk: 0,
+        });
+      }
+    }
+  }
+
+  // 3. Connect floating computers to working cables
+  for (const floatingComp of network.floatingComputers) {
+    for (const sw of network.switches) {
+      if (sw.isDisabled) continue;
+      
+      for (const cable of sw.cables) {
+        if (cable.isDisabled) continue;
+        if (cable.computers.length >= cable.maxComputers) continue;
+        
+        const utility = weights.bitcoinGain * 2.5;
+        
+        actions.push({
+          type: 'connect_floating_computer',
+          targetId: cable.id,
+          sourceId: floatingComp.id,
+          utility,
+          reasoning: `Connect floating computer to working cable - gain 1 bitcoin`,
+          risk: 0,
+        });
+      }
+    }
+  }
+
+  return actions;
+}
+
 export function evaluateRecoveryActions(context: AIDecisionContext): EvaluatedAction[] {
   const actions: EvaluatedAction[] = [];
   const { aiHand, aiNetwork, aiPlayer, weights } = context;
