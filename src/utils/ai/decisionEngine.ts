@@ -132,9 +132,29 @@ export function makeAIDecision(
   }
 
   // Select best action
-  const bestAction = allActions.length > 0 && allActions[0].utility > -5 
+  let bestAction = allActions.length > 0 && allActions[0].utility > -5 
     ? allActions[0] 
     : null;
+
+  // FALLBACK: If no action was selected, force a discard of the lowest value card
+  if (!bestAction && aiPlayer.hand.length > 0) {
+    // Find the lowest value card to discard
+    const discardOptions = evaluateDiscards(context);
+    if (discardOptions.length > 0) {
+      bestAction = discardOptions[0]; // Take first (lowest value)
+      bestAction.reasoning = 'Forced discard - no better actions available';
+    } else {
+      // If no discard options from strategy, create one for the first card
+      const cardToDiscard = aiPlayer.hand[0];
+      bestAction = {
+        type: 'discard',
+        card: cardToDiscard,
+        utility: -10,
+        reasoning: 'Forced discard - no valid actions available',
+        risk: 0,
+      };
+    }
+  }
 
   return { action: bestAction, allActions };
 }

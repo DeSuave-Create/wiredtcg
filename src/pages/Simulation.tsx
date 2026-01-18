@@ -311,11 +311,12 @@ const Simulation = () => {
           triggerEvent('audit-success', 'Audit Successful!');
         } else if (log.includes('blocks the audit')) {
           triggerEvent('audit-blocked', 'Audit Blocked!');
-        } else if (log.includes('steals') || log.includes('Steal')) {
-          if (log.includes('Computer')) {
-            // AI stole from player
-            triggerEvent('head-hunter', 'Classification Stolen!');
-          }
+        } else if (log.includes('blocks the steal')) {
+          triggerEvent('audit-blocked', 'Steal Blocked!');
+        } else if (log.includes('Seal the Deal')) {
+          triggerEvent('seal-the-deal', 'UNBLOCKABLE STEAL! 💎');
+        } else if (log.includes('steals') && !log.includes('Seal the Deal')) {
+          triggerEvent('head-hunter', 'Classification Stolen!');
         }
       }
     }
@@ -331,7 +332,9 @@ const Simulation = () => {
     // Check if human lost a classification (AI stole it)
     if (prevHumanClassCount > 0 && humanClassCount < prevHumanClassCount) {
       const lastLog = gameState.gameLog[gameState.gameLog.length - 1];
-      if (lastLog?.includes('steal') || lastLog?.includes('Steal')) {
+      if (lastLog?.includes('Seal the Deal')) {
+        triggerEvent('seal-the-deal', 'Your classification was stolen! 💎');
+      } else if (lastLog?.includes('steal') || lastLog?.includes('Steal')) {
         triggerEvent('head-hunter', 'Your classification was stolen!');
       }
     }

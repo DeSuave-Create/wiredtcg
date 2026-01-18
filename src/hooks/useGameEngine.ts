@@ -1774,7 +1774,7 @@ export function useGameEngine() {
           players: newPlayers,
           discardPile: [...prev.discardPile, classCard, ...resolvedIssues],
           movesRemaining: prev.movesRemaining - 1,
-          gameLog: [...prev.gameLog.slice(-19), `🎖️ ${isSealTheDeal ? 'Seal the Deal' : 'Head Hunter'}! Stole ${stolenCard.card.name}!${resolveMsg}`],
+          gameLog: [...prev.gameLog.slice(-19), `${isSealTheDeal ? '💎 Seal the Deal! UNBLOCKABLE -' : '🎖️ Head Hunter!'} Stole ${stolenCard.card.name}!${resolveMsg}`],
         };
       });
       
@@ -2378,6 +2378,20 @@ export function useGameEngine() {
           
           case 'steal_classification':
             if (card && (card.subtype === 'head-hunter' || card.subtype === 'seal-the-deal')) {
+              const isSealTheDealCard = card.subtype === 'seal-the-deal';
+              
+              // Check if opponent has duplicate protection
+              const opponentClassTypes = humanPlayer.classificationCards.map(c => c.card.subtype);
+              const hasDuplicateType = opponentClassTypes.some((type, i) => 
+                opponentClassTypes.indexOf(type) !== i
+              );
+              
+              if (hasDuplicateType) {
+                // Can't steal - opponent is protected
+                gameLog = [...gameLog.slice(-19), `❌ ${currentPlayer.name} tried to steal but opponent's duplicate classifications are protected!`];
+                break;
+              }
+              
               if (humanPlayer.classificationCards.length > 0) {
                 const targetClass = humanPlayer.classificationCards.find(c => 
                   !currentPlayer.classificationCards.some(ours => ours.card.subtype === c.card.subtype)
@@ -2390,11 +2404,17 @@ export function useGameEngine() {
                   if (currentPlayer.classificationCards.length < 2) {
                     currentPlayer.classificationCards.push(targetClass);
                     aiActions.push({ type: 'steal', card, target: targetClass.card.name });
-                    gameLog = [...gameLog.slice(-19), `🎖️ ${currentPlayer.name} used ${card.name} to steal ${targetClass.card.name}!`];
+                    gameLog = [...gameLog.slice(-19), isSealTheDealCard 
+                      ? `💎 Seal the Deal! UNBLOCKABLE - ${currentPlayer.name} steals ${targetClass.card.name}!`
+                      : `🎖️ ${currentPlayer.name} used Head Hunter to steal ${targetClass.card.name}!`
+                    ];
                   } else {
                     newDiscardPile.push(targetClass.card);
                     aiActions.push({ type: 'steal', card, target: `${targetClass.card.name} (discarded)` });
-                    gameLog = [...gameLog.slice(-19), `🎖️ ${currentPlayer.name} used ${card.name} - ${targetClass.card.name} discarded!`];
+                    gameLog = [...gameLog.slice(-19), isSealTheDealCard
+                      ? `💎 Seal the Deal! UNBLOCKABLE - ${targetClass.card.name} discarded!`
+                      : `🎖️ ${currentPlayer.name} used Head Hunter - ${targetClass.card.name} discarded!`
+                    ];
                   }
                   
                   newDiscardPile.push(card);
