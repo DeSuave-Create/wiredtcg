@@ -54,8 +54,8 @@ export function SimulationIntro({ onComplete }: SimulationIntroProps) {
       <div 
         className={cn(
           "relative transition-all duration-1000 ease-out",
-          (phase === 'initial' || phase === 'logo-in') && "opacity-0 scale-90",
-          phase === 'logo-glow' && "opacity-100 scale-100",
+          phase === 'initial' && "opacity-0 scale-90",
+          (phase === 'logo-in' || phase === 'logo-glow') && "opacity-100 scale-100",
           phase === 'logo-out' && "opacity-0 scale-110"
         )}
       >
