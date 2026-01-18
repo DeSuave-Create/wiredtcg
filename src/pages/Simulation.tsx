@@ -118,6 +118,9 @@ const Simulation = () => {
   // Intro animation state
   const [showIntro, setShowIntro] = useState(true);
   
+  // Transition state for smooth fade between intro and difficulty selector
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  
   // Difficulty selector dialog state
   const [showDifficultySelector, setShowDifficultySelector] = useState(false);
 
@@ -644,27 +647,38 @@ const Simulation = () => {
       <div className="min-h-screen flex flex-col bg-background">
         <SimulationIntro 
           onComplete={() => {
-            setShowIntro(false);
-            setShowDifficultySelector(true);
+            setIsTransitioning(true);
+            // Brief delay before showing difficulty selector for smooth transition
+            setTimeout(() => {
+              setShowIntro(false);
+              setShowDifficultySelector(true);
+            }, 300);
           }} 
         />
       </div>
     );
   }
 
-  // After intro, if game not started, show difficulty selector
+  // After intro, if game not started, show difficulty selector with fade-in
   if (!gameState) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <div className="flex-grow flex items-center justify-center">
-          <DifficultySelector
-            isOpen={showDifficultySelector}
-            onSelect={handleStartGame}
-            onClose={() => {}}
-          />
+        <div 
+          className={`flex-grow flex flex-col transition-opacity duration-500 ${
+            isTransitioning ? 'opacity-0' : 'opacity-100'
+          }`}
+          onTransitionEnd={() => setIsTransitioning(false)}
+        >
+          <Header />
+          <div className="flex-grow flex items-center justify-center animate-fade-in">
+            <DifficultySelector
+              isOpen={showDifficultySelector}
+              onSelect={handleStartGame}
+              onClose={() => {}}
+            />
+          </div>
+          <Footer />
         </div>
-        <Footer />
       </div>
     );
   }
