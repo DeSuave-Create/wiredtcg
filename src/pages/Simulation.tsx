@@ -20,6 +20,8 @@ import { ReplaceClassificationDialog } from '@/components/game/ReplaceClassifica
 import { GameEventAnimation, useGameEventAnimation } from '@/components/game/GameEventAnimations';
 import { DifficultySelector } from '@/components/game/DifficultySelector';
 import { SimulationIntro } from '@/components/game/SimulationIntro';
+import { DeckIndicator } from '@/components/game/DeckIndicator';
+import { AICardPlayAnimation } from '@/components/game/FloatingCardAnimation';
 import { AIDifficulty } from '@/utils/ai';
 import { Card } from '@/types/game';
 import { toast } from 'sonner';
@@ -135,6 +137,15 @@ const Simulation = () => {
     isOpen: boolean;
     newCard: Card;
   } | null>(null);
+  
+  // AI card animation state
+  const [aiCardAnimation, setAICardAnimation] = useState<{
+    card: Card | null;
+    action: 'play' | 'draw' | null;
+  }>({ card: null, action: null });
+  
+  // Track previous AI hand size for draw animation
+  const [prevAIHandSize, setPrevAIHandSize] = useState<number>(0);
   
   // Check if intro was already shown this session
   const hasSeenIntro = sessionStorage.getItem('hasSeenIntro') === 'true';
@@ -348,6 +359,35 @@ const Simulation = () => {
     
     setPrevHumanClassCount(humanClassCount);
   }, [gameState?.players[0].classificationCards.length, triggerEvent]);
+
+  // Trigger AI card animations when AI plays cards or draws
+  useEffect(() => {
+    if (!gameState) return;
+    
+    const aiPlayer = gameState.players[1];
+    const aiHandSize = aiPlayer.hand.length;
+    
+    // Check for AI drawing cards (hand size increased)
+    if (aiHandSize > prevAIHandSize && prevAIHandSize > 0) {
+      // AI drew cards - trigger draw animation
+      const lastDrawnCard = aiPlayer.hand[aiPlayer.hand.length - 1];
+      if (lastDrawnCard) {
+        setAICardAnimation({ card: lastDrawnCard, action: 'draw' });
+      }
+    }
+    
+    setPrevAIHandSize(aiHandSize);
+  }, [gameState?.players[1].hand.length]);
+
+  // Trigger play animation when AI takes actions
+  useEffect(() => {
+    if (!gameState || gameState.aiLastTurnActions.length === 0) return;
+    
+    const lastAction = gameState.aiLastTurnActions[gameState.aiLastTurnActions.length - 1];
+    if (lastAction && lastAction.type === 'play' && lastAction.card) {
+      setAICardAnimation({ card: lastAction.card, action: 'play' });
+    }
+  }, [gameState?.aiLastTurnActions.length]);
 
   const handleDragStart = (event: DragStartEvent) => {
     const data = event.active.data.current;
@@ -984,9 +1024,27 @@ const Simulation = () => {
               humanCanPlayCards={canPlayCards}
             />
 
-            {/* AI Log Panel - Right */}
-            <AILogPanel actions={gameState.aiLastTurnActions} />
+            {/* Right Column: AI Log + Deck Indicator */}
+            <div className="flex flex-col gap-4">
+              <AILogPanel actions={gameState.aiLastTurnActions} />
+              
+              {/* Deck Indicator */}
+              <div className="bg-gray-900/60 rounded-lg border border-gray-700 p-4">
+                <h3 className="text-sm font-semibold text-muted-foreground mb-3 text-center">Card Piles</h3>
+                <DeckIndicator 
+                  deckCount={gameState.drawPile.length}
+                  discardCount={gameState.discardPile.length}
+                />
+              </div>
+            </div>
           </div>
+
+          {/* AI Card Play Animation */}
+          <AICardPlayAnimation 
+            card={aiCardAnimation.card}
+            action={aiCardAnimation.action}
+            onComplete={() => setAICardAnimation({ card: null, action: null })}
+          />
         </main>
 
         {/* Drag overlay - shows the card being dragged */}
