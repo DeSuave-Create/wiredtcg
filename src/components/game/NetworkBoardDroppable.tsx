@@ -49,12 +49,15 @@ export function NetworkBoardDroppable({
       
       <h3 className="font-semibold text-accent-green relative z-10 text-xs mb-1">{label}</h3>
       
-      {/* Connected Network Area */}
+      {/* Connected Network Area - takes 2/3 of space when empty, flex-1 when switches exist */}
       <DroppableZone
         id={`${playerId}-board`}
         type="internet"
         accepts={isCurrentPlayer ? ['switch', 'cable-2', 'cable-3', 'computer'] : ['audit']}
-        className="relative z-10"
+        className={cn(
+          "relative z-10",
+          network.switches.length === 0 ? "flex-[2]" : "flex-1"
+        )}
       >
         {/* Row 1: Game mode logo */}
         <div className="flex items-center justify-center h-[60px]">
@@ -95,9 +98,12 @@ export function NetworkBoardDroppable({
         </div>
       </DroppableZone>
       
-      {/* Unconnected Section - 2 cards tall (120px) */}
+      {/* Unconnected Section - takes 1/3 of space when no switches, otherwise min-h */}
       {(hasFloatingEquipment || (network.switches.length === 0 && isCurrentPlayer)) && (
-        <div className="border-t border-dashed border-yellow-500/50 mt-3 pt-3 min-h-[120px] relative z-10">
+        <div className={cn(
+          "border-t border-dashed border-yellow-500/50 mt-3 pt-3 relative z-10",
+          network.switches.length === 0 ? "flex-1" : "min-h-[120px]"
+        )}>
           <div className="flex items-center gap-1 text-yellow-500 mb-1 text-[10px]">
             <Unplug className="w-3 h-3" />
             <span>Unconnected</span>
