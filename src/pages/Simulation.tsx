@@ -464,6 +464,17 @@ const Simulation = () => {
                 const result = playCable(card.id, undefined);
                 if (result.success) {
                   toast.success('Cable placed (floating)');
+                  
+                  // Check if there are floating computers to connect
+                  const humanPlayer = gameState!.players[0];
+                  if (humanPlayer.network.floatingComputers.length > 0 && result.cableId && result.maxComputers) {
+                    setConnectDialog({
+                      isOpen: true,
+                      cableId: result.cableId,
+                      maxConnections: result.maxComputers,
+                      cableType: card.subtype,
+                    });
+                  }
                 }
               },
             });
@@ -472,6 +483,17 @@ const Simulation = () => {
             const result = playCable(card.id, undefined);
             if (result.success) {
               toast.success('Cable placed (floating - drag onto a switch to connect)');
+              
+              // Check if there are floating computers to connect
+              const humanPlayer = gameState!.players[0];
+              if (humanPlayer.network.floatingComputers.length > 0 && result.cableId && result.maxComputers) {
+                setConnectDialog({
+                  isOpen: true,
+                  cableId: result.cableId,
+                  maxConnections: result.maxComputers,
+                  cableType: card.subtype,
+                });
+              }
             }
           }
         }
@@ -560,15 +582,32 @@ const Simulation = () => {
       return;
     }
 
-    // Handle resolution cards (on own network)
+    // Handle resolution cards (on own network - connected OR floating equipment)
     if (card.type === 'resolution' && isHumanTarget) {
       let equipmentId = '';
       if (zoneType === 'switch') {
         equipmentId = dropZoneId.replace(`${targetPlayerId}-switch-`, '');
       } else if (zoneType === 'cable') {
-        equipmentId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
+        // Check if it's a floating cable first
+        if (dropZoneId.includes('floating-cable')) {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
+        } else {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
+        }
       } else if (zoneType === 'computer') {
-        equipmentId = dropZoneId.replace(`${targetPlayerId}-computer-`, '');
+        // Check if it's a floating computer first
+        if (dropZoneId.includes('floating-computer')) {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-floating-computer-`, '');
+        } else {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-computer-`, '');
+        }
+      } else if (zoneType === 'floating') {
+        // Handle floating equipment dropped on floating zone
+        if (dropZoneId.includes('floating-cable')) {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
+        } else if (dropZoneId.includes('floating-computer')) {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-floating-computer-`, '');
+        }
       }
       
       if (equipmentId) {
@@ -723,11 +762,16 @@ const Simulation = () => {
   // Check if player has resolution cards
   const hasResolutionCards = humanPlayer.hand.some(c => c.type === 'resolution');
   
-  // Check if opponent has equipment with issues that need resolving
-  const playerHasDisabledEquipment = humanPlayer.network.switches.some(sw => 
-    sw.attachedIssues.length > 0 || 
-    sw.cables.some(c => c.attachedIssues.length > 0 || c.computers.some(comp => comp.attachedIssues.length > 0))
-  );
+  // Check if player has equipment with issues that need resolving (connected AND floating)
+  const playerHasDisabledEquipment = 
+    humanPlayer.network.switches.some(sw => 
+      sw.attachedIssues.length > 0 || 
+      sw.cables.some(c => c.attachedIssues.length > 0 || c.computers.some(comp => comp.attachedIssues.length > 0))
+    ) ||
+    humanPlayer.network.floatingCables.some(c => 
+      c.attachedIssues.length > 0 || c.computers.some(comp => comp.attachedIssues.length > 0)
+    ) ||
+    humanPlayer.network.floatingComputers.some(comp => comp.attachedIssues.length > 0);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
