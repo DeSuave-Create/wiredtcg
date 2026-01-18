@@ -941,14 +941,7 @@ const Simulation = () => {
       <DifficultySelector
         isOpen={showDifficultySelector}
         onSelect={handleStartGame}
-        onClose={() => {
-          // If no game exists, start with normal difficulty; otherwise just close
-          if (!gameState) {
-            handleStartGame('normal');
-          } else {
-            setShowDifficultySelector(false);
-          }
-        }}
+        onClose={() => setShowDifficultySelector(false)}
       />
 
       <Footer />
