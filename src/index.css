@@ -870,3 +870,250 @@
   100% { transform: scale(1.1); opacity: 1; }
 }
 
+/* ========== HEAD HUNTER ANIMATIONS ========== */
+
+/* Slow spin for targeting reticle */
+@keyframes spin-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Reverse spin */
+@keyframes spin-reverse {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* Pulse opacity */
+@keyframes pulse-opacity {
+  0% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* Bracket pulse for targeting corners */
+@keyframes bracket-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Target lock entrance */
+@keyframes target-lock-in {
+  0% {
+    transform: scale(2) rotate(180deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(0.9) rotate(-10deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* Target pulse */
+@keyframes target-pulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
+}
+
+/* Lock-on ring */
+@keyframes lock-on-ring {
+  0% {
+    transform: scale(2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Scan down effect */
+@keyframes scan-down {
+  0% { top: 0; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* Vortex spin for particles */
+@keyframes vortex-spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) translateX(100px);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(720deg) translateX(0px);
+    opacity: 0;
+  }
+}
+
+/* Slide in animations for corner lines */
+@keyframes slide-in-left {
+  0% { transform: translateX(-100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-in-right {
+  0% { transform: translateX(100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-in-top {
+  0% { transform: translateY(-100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slide-in-bottom {
+  0% { transform: translateY(100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* ========== SEAL THE DEAL ANIMATIONS ========== */
+
+/* Crystal rotate */
+@keyframes crystal-rotate {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.1); }
+}
+
+/* Diamond pulse */
+@keyframes diamond-pulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.15); }
+}
+
+/* Ray burst effect */
+@keyframes ray-burst {
+  0% {
+    transform-origin: left center;
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0.6;
+  }
+}
+
+/* Badge slam entrance */
+@keyframes badge-slam {
+  0% {
+    transform: translateY(-100px) scale(0.5);
+    opacity: 0;
+  }
+  70% {
+    transform: translateY(10px) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Diamond entrance */
+@keyframes diamond-entrance {
+  0% {
+    transform: scale(0) rotate(-180deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) rotate(10deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* Shimmer sweep */
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Corner diamond entrance */
+@keyframes corner-diamond {
+  0% {
+    transform: scale(0) rotate(-90deg);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* ========== AUDIT BLOCKED ANIMATIONS ========== */
+
+/* Shield ripple */
+@keyframes shield-ripple {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+/* Shield form */
+@keyframes shield-form {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Shield pulse */
+@keyframes shield-pulse {
+  0% {
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.5), inset 0 0 40px rgba(6, 182, 212, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 60px rgba(59, 130, 246, 0.7), inset 0 0 60px rgba(6, 182, 212, 0.5);
+  }
+}
+
+/* Shield slam entrance */
+@keyframes shield-slam-in {
+  0% {
+    transform: scale(3);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(0.9);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Shield bounce */
+@keyframes shield-bounce {
+  0% { transform: scale(0.5); }
+  50% { transform: scale(1.2); }
+  75% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
