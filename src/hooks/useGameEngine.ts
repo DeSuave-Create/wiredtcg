@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import { GameState, Player, Card, GamePhase, PlayerNetwork, SwitchNode, CableNode, PlacedCard, FloatingCable, AIAction, AuditBattle } from '@/types/game';
+import { GameState, Player, Card, GamePhase, PlayerNetwork, SwitchNode, CableNode, PlacedCard, FloatingCable, AIAction, AuditBattle, HeadHunterBattle } from '@/types/game';
 import { buildDeck, shuffleDeck, dealCards } from '@/utils/deckBuilder';
 import { 
   AIDifficulty, 
@@ -26,9 +26,14 @@ function getMovesForPlayer(player: Player): number {
   return moves;
 }
 
-// Helper: Count Head Hunter cards for a player
-function countHeadHunters(player: Player): number {
+// Helper: Count Head Hunter cards in player's classification area
+function countHeadHuntersInPlay(player: Player): number {
   return player.classificationCards.filter(c => c.card.subtype === 'head-hunter').length;
+}
+
+// Helper: Count Head Hunter cards in player's hand
+function countHeadHuntersInHand(player: Player): number {
+  return player.hand.filter(c => c.subtype === 'head-hunter').length;
 }
 
 // Helper: Check if player has Seal the Deal (unblockable Head Hunter)
@@ -1444,40 +1449,52 @@ export function useGameEngine() {
         return false;
       }
       
-      // For Head Hunter: check if opponent can block (has their own Head Hunter)
+      // For Head Hunter: check if opponent can block (has their own Head Hunter in HAND)
       if (isHeadHunter) {
-        const opponentHeadHunters = countHeadHunters(opponent);
-        const playerHeadHunters = countHeadHunters(currentPlayer);
+        const opponentHeadHuntersInHand = countHeadHuntersInHand(opponent);
         
-        // If opponent has more or equal head hunters, the steal is blocked
-        // (player is using one now, so compare player's current + 1 vs opponent's)
-        if (opponentHeadHunters > 0) {
-          addLog(`Opponent's Head Hunter blocks your steal! Both cards are discarded.`);
-          // Both players lose a Head Hunter - the attacking one and one defending one
+        // If opponent has Head Hunters in hand, start a Head Hunter battle
+        if (opponentHeadHuntersInHand > 0) {
+          // Get target classification (first one if not specified)
+          const targetIndex = targetClassificationId 
+            ? opponent.classificationCards.findIndex(c => c.id === targetClassificationId)
+            : 0;
+          
+          if (targetIndex === -1 || opponent.classificationCards.length === 0) {
+            addLog('No classification to steal!');
+            return false;
+          }
+          
+          const targetClassId = opponent.classificationCards[targetIndex].id;
+          
+          // Start Head Hunter battle
           setGameState(prev => {
             if (!prev) return prev;
             
             const newPlayers = [...prev.players];
             const player = { ...newPlayers[currentPlayerIndex] };
-            const opp = { ...newPlayers[opponentPlayerIndex] };
             
             // Remove the Head Hunter card from attacker's hand
             player.hand = player.hand.filter(c => c.id !== classCard.id);
-            
-            // Remove one Head Hunter from opponent's classifications
-            const oppHeadHunterIndex = opp.classificationCards.findIndex(c => c.card.subtype === 'head-hunter');
-            const removedOppCard = opp.classificationCards[oppHeadHunterIndex];
-            opp.classificationCards = opp.classificationCards.filter((_, i) => i !== oppHeadHunterIndex);
-            
             newPlayers[currentPlayerIndex] = player;
-            newPlayers[opponentPlayerIndex] = opp;
+            
+            const headHunterBattle: HeadHunterBattle = {
+              attackerIndex: currentPlayerIndex,
+              defenderIndex: opponentPlayerIndex,
+              initialHeadHunterCardId: classCard.id,
+              targetClassificationId: targetClassId,
+              chain: [],
+              previousPhase: prev.phase,
+              previousMovesRemaining: prev.movesRemaining,
+            };
             
             return {
               ...prev,
               players: newPlayers,
-              discardPile: [...prev.discardPile, classCard, removedOppCard.card],
-              movesRemaining: prev.movesRemaining - 1,
-              gameLog: [...prev.gameLog.slice(-19), `🎖️ Head Hunter vs Head Hunter! Both cards discarded.`],
+              phase: 'headhunter-battle',
+              headHunterBattle,
+              discardPile: [...prev.discardPile, classCard],
+              gameLog: [...prev.gameLog.slice(-19), `🎯 ${currentPlayer.name} plays Head Hunter! ${opponent.name} can block...`],
             };
           });
           return true;
@@ -2971,6 +2988,127 @@ export function useGameEngine() {
     });
   }, [gameState]);
 
+  // Respond to Head Hunter battle by playing a Head Hunter card
+  const respondToHeadHunterBattle = useCallback((cardId: string) => {
+    if (!gameState || !gameState.headHunterBattle || gameState.phase !== 'headhunter-battle') return;
+    
+    const battle = gameState.headHunterBattle;
+    const isDefenderTurn = battle.chain.length % 2 === 0;
+    const respondingPlayerIndex = isDefenderTurn ? battle.defenderIndex : battle.attackerIndex;
+    const respondingPlayer = gameState.players[respondingPlayerIndex];
+    
+    // Verify card exists and is a Head Hunter
+    const card = respondingPlayer.hand.find(c => c.id === cardId);
+    if (!card || card.subtype !== 'head-hunter') return;
+    
+    setGameState(prev => {
+      if (!prev || !prev.headHunterBattle) return prev;
+      
+      const newPlayers = [...prev.players];
+      const player = { ...newPlayers[respondingPlayerIndex] };
+      
+      // Remove card from player's hand
+      player.hand = player.hand.filter(c => c.id !== cardId);
+      newPlayers[respondingPlayerIndex] = player;
+      
+      // Add to chain
+      const newChain = [...prev.headHunterBattle.chain, { playerId: respondingPlayerIndex, card }];
+      
+      const actionWord = isDefenderTurn ? 'blocks' : 'counters';
+      
+      return {
+        ...prev,
+        players: newPlayers,
+        headHunterBattle: {
+          ...prev.headHunterBattle,
+          chain: newChain,
+        },
+        discardPile: [...prev.discardPile, card],
+        gameLog: [...prev.gameLog.slice(-19), `🎯 ${player.name} ${actionWord} with Head Hunter!`],
+      };
+    });
+  }, [gameState]);
+
+  // Pass/accept in Head Hunter battle (don't play a card)
+  const passHeadHunterBattle = useCallback(() => {
+    if (!gameState || !gameState.headHunterBattle || gameState.phase !== 'headhunter-battle') return;
+    
+    const battle = gameState.headHunterBattle;
+    const isDefenderTurn = battle.chain.length % 2 === 0;
+    
+    setGameState(prev => {
+      if (!prev || !prev.headHunterBattle) return prev;
+      
+      const newPlayers = prev.players.map(p => ({ 
+        ...p, 
+        hand: [...p.hand],
+        classificationCards: [...p.classificationCards],
+      }));
+      
+      const attacker = newPlayers[battle.attackerIndex];
+      const defender = newPlayers[battle.defenderIndex];
+      
+      if (isDefenderTurn) {
+        // Defender passed - STEAL SUCCEEDS
+        // Find and steal the target classification
+        const targetIndex = defender.classificationCards.findIndex(c => c.id === battle.targetClassificationId);
+        if (targetIndex === -1) {
+          // Classification no longer exists, battle ends
+          return {
+            ...prev,
+            phase: battle.previousPhase,
+            movesRemaining: battle.previousMovesRemaining - 1,
+            headHunterBattle: undefined,
+            gameLog: [...prev.gameLog.slice(-19), `⚠️ Target classification no longer exists!`],
+          };
+        }
+        
+        const stolenCard = defender.classificationCards[targetIndex];
+        defender.classificationCards = defender.classificationCards.filter((_, i) => i !== targetIndex);
+        
+        // Check if attacker already has this classification type
+        const attackerHasSameType = attacker.classificationCards.some(
+          c => c.card.subtype === stolenCard.card.subtype
+        );
+        
+        if (attackerHasSameType) {
+          // Can't steal - discard it instead
+          return {
+            ...prev,
+            players: newPlayers,
+            discardPile: [...prev.discardPile, stolenCard.card],
+            phase: battle.previousPhase,
+            movesRemaining: battle.previousMovesRemaining - 1,
+            headHunterBattle: undefined,
+            gameLog: [...prev.gameLog.slice(-19), `🎯 Steal successful but ${attacker.name} already has ${stolenCard.card.name} - card discarded!`],
+          };
+        }
+        
+        // Check if attacker already has 2 classifications - for now just add it (dialog should handle this)
+        attacker.classificationCards = [...attacker.classificationCards, stolenCard];
+        
+        return {
+          ...prev,
+          players: newPlayers,
+          phase: battle.previousPhase,
+          movesRemaining: battle.previousMovesRemaining - 1,
+          headHunterBattle: undefined,
+          gameLog: [...prev.gameLog.slice(-19), `🎯 ${attacker.name} steals ${stolenCard.card.name} from ${defender.name}!`],
+        };
+      } else {
+        // Attacker passed - BLOCK SUCCEEDS (steal fails)
+        return {
+          ...prev,
+          players: newPlayers,
+          phase: battle.previousPhase,
+          movesRemaining: battle.previousMovesRemaining - 1,
+          headHunterBattle: undefined,
+          gameLog: [...prev.gameLog.slice(-19), `🛡️ ${defender.name} blocks the steal! ${attacker.name}'s Head Hunter fails!`],
+        };
+      }
+    });
+  }, [gameState]);
+
   return {
     gameState,
     selectedCard,
@@ -3002,6 +3140,8 @@ export function useGameEngine() {
     countAllComputers,
     toggleAuditComputerSelection,
     confirmAuditSelection,
+    respondToHeadHunterBattle,
+    passHeadHunterBattle,
     aiDifficulty,
     aiDebugInfo,
   };

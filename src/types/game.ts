@@ -55,7 +55,7 @@ export interface Player {
 }
 
 // Game phases
-export type GamePhase = 'trade' | 'moves' | 'discard' | 'draw' | 'score' | 'game-over' | 'audit';
+export type GamePhase = 'trade' | 'moves' | 'discard' | 'draw' | 'score' | 'game-over' | 'audit' | 'headhunter-battle';
 
 // Audit battle state (for the back-and-forth blocking)
 export interface AuditBattle {
@@ -68,6 +68,17 @@ export interface AuditBattle {
   phase: 'counter' | 'selection'; // 'counter' = back-and-forth, 'selection' = attacker picks computers
   availableComputers?: { id: string; card: Card; location: string }[]; // Computers available for selection
   selectedComputerIds?: string[]; // IDs of computers selected for removal
+}
+
+// Head Hunter battle state (for the back-and-forth blocking with Head Hunters from hand)
+export interface HeadHunterBattle {
+  attackerIndex: number; // Player who initiated the Head Hunter attack
+  defenderIndex: number; // Player being targeted
+  initialHeadHunterCardId: string; // The Head Hunter card that started the battle
+  targetClassificationId: string; // Which classification is being stolen
+  chain: { playerId: number; card: Card }[]; // Chain of Head Hunter cards played
+  previousPhase: GamePhase; // Phase to return to if battle ends
+  previousMovesRemaining: number; // Moves to restore when returning to previous phase
 }
 
 // AI Action tracking
@@ -91,6 +102,7 @@ export interface GameState {
   gameLog: string[];
   aiLastTurnActions: AIAction[]; // Track AI's last turn moves
   auditBattle?: AuditBattle; // Active audit battle state
+  headHunterBattle?: HeadHunterBattle; // Active head hunter battle state
 }
 
 // Actions
