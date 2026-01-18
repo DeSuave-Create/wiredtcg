@@ -155,24 +155,32 @@ function CableComponent({
         {cable.computers.length}/{cable.maxComputers}
       </div>
       
-      {/* Computers */}
+      {/* Computers - smaller when 3 attached */}
       {cable.computers.length > 0 && (
-        <div className="flex gap-1 mt-1 justify-center">
-          {cable.computers.map((comp) => (
-            <div
-              key={comp.id}
-              className={cn(
-                "w-10 h-12 rounded border overflow-hidden",
-                comp.isDisabled ? "border-red-500 opacity-50" : "border-green-400"
-              )}
-            >
-              <img 
-                src={comp.card.image} 
-                alt="Computer"
-                className="w-full h-full object-contain"
-              />
-            </div>
-          ))}
+        <div className="flex gap-0.5 mt-1 justify-center">
+          {cable.computers.map((comp) => {
+            // Scale down cards when there are 3 computers
+            const sizeClasses = cable.computers.length >= 3 
+              ? "w-7 h-9" 
+              : "w-10 h-12";
+            
+            return (
+              <div
+                key={comp.id}
+                className={cn(
+                  "rounded border overflow-hidden transition-all",
+                  sizeClasses,
+                  comp.isDisabled ? "border-red-500 opacity-50" : "border-green-400"
+                )}
+              >
+                <img 
+                  src={comp.card.image} 
+                  alt="Computer"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
