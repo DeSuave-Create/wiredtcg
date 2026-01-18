@@ -125,31 +125,58 @@ export function NetworkBoardDroppable({
             ))}
             
             {/* Floating Computers */}
-            {network.floatingComputers.map((comp) => (
-              <div key={comp.id} className="relative">
-                {canRearrange ? (
-                  <DraggablePlacedCard
-                    placedCard={comp}
-                    disabled={false}
-                    className={cn("opacity-70", CARD_SIZE)}
-                    small
-                    sourceType="floating-computer"
-                    sourceId={comp.id}
-                  />
-                ) : (
-                  <PlacedCardDisplay
-                    card={comp.card}
-                    placementId={comp.id}
-                    isDisabled={true}
-                    className={cn("opacity-70", CARD_SIZE)}
-                    small
-                  />
-                )}
-                <div className="absolute -bottom-1 left-0 right-0 text-center">
-                  <span className="text-[6px] bg-yellow-500 text-black px-0.5 rounded">floating</span>
+            {network.floatingComputers.map((comp) => {
+              // Floating computers can receive attacks and resolutions
+              const compAccepts: string[] = [];
+              if (canReceiveAttacks) {
+                compAccepts.push('attack');
+              }
+              if (canReceiveResolutions && comp.attachedIssues.length > 0) {
+                compAccepts.push('resolution');
+              }
+              
+              const compContent = (
+                <div className="relative">
+                  {canRearrange ? (
+                    <DraggablePlacedCard
+                      placedCard={comp}
+                      disabled={false}
+                      className={cn("opacity-70", CARD_SIZE)}
+                      small
+                      sourceType="floating-computer"
+                      sourceId={comp.id}
+                    />
+                  ) : (
+                    <PlacedCardDisplay
+                      card={comp.card}
+                      placementId={comp.id}
+                      isDisabled={true}
+                      className={cn("opacity-70", CARD_SIZE)}
+                      small
+                    />
+                  )}
+                  <div className="absolute -bottom-1 left-0 right-0 text-center">
+                    <span className="text-[6px] bg-yellow-500 text-black px-0.5 rounded">floating</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+              
+              if (compAccepts.length > 0) {
+                return (
+                  <DroppableZone
+                    key={comp.id}
+                    id={`${playerId}-floating-computer-${comp.id}`}
+                    type="computer"
+                    accepts={compAccepts}
+                    className="w-fit"
+                  >
+                    {compContent}
+                  </DroppableZone>
+                );
+              }
+              
+              return <div key={comp.id}>{compContent}</div>;
+            })}
             
             {!hasFloatingEquipment && network.switches.length === 0 && (
               <div className="text-center text-muted-foreground text-xs py-2 w-full">
@@ -283,11 +310,17 @@ function FloatingCableComponent({
 }: FloatingCableComponentProps) {
   const hasSpace = cable.computers.length < cable.maxComputers;
   
-  // Floating cables can receive computers if there's space
+  // Floating cables can receive computers if there's space, and attacks/resolutions
   const getAccepts = (): string[] => {
     const accepts: string[] = [];
     if (isCurrentPlayer && hasSpace) {
       accepts.push('computer');
+    }
+    if (canReceiveAttacks) {
+      accepts.push('attack');
+    }
+    if (canReceiveResolutions && cable.attachedIssues.length > 0) {
+      accepts.push('resolution');
     }
     return accepts;
   };
