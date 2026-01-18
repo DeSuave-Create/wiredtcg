@@ -182,13 +182,20 @@ const Simulation = () => {
     if (!gameState) return;
     
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-    if (!currentPlayer.isHuman && gameState.phase !== 'game-over' && gameState.phase !== 'audit' && gameState.phase !== 'headhunter-battle') {
+    
+    // Only execute AI turn when:
+    // 1. Current player is not human
+    // 2. Game is in 'moves' phase (not in special phases like audit, headhunter-battle, or game-over)
+    if (!currentPlayer.isHuman && gameState.phase === 'moves') {
+      
+      console.log('[AI Turn] Triggering AI turn, player:', currentPlayer.name, 'phase:', gameState.phase, 'moves:', gameState.movesRemaining);
+      
       const timer = setTimeout(() => {
         executeAITurn();
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [gameState?.currentPlayerIndex, gameState?.phase, executeAITurn]);
+  }, [gameState?.currentPlayerIndex, gameState?.phase, gameState?.movesRemaining, executeAITurn]);
 
   // Handle AI response in audit battles (counter phase)
   useEffect(() => {
