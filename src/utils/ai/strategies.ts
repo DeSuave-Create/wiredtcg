@@ -40,13 +40,19 @@ export function evaluateNetworkBuilding(context: AIDecisionContext): EvaluatedAc
     });
   }
 
-  // Play Cable
+  // Play Cable - but deprioritize if we already have available computer slots
   for (const cableCard of aiHand.cables) {
     let utility = weights.boardStability * 2;
     const cableCapacity = cableCard.subtype === 'cable-3' ? 3 : 2;
     
-    if (aiNetwork.enabledSwitches > 0 && aiNetwork.availableCableSlots === 0) {
+    // Check if we already have available cable slots for computers
+    const hasAvailableSlots = aiNetwork.availableCableSlots > 0;
+    
+    if (aiNetwork.enabledSwitches > 0 && !hasAvailableSlots) {
       utility += weights.bitcoinGain * 3; // Need cables to place computers
+    } else if (hasAvailableSlots) {
+      // REDUCE utility if we already have slots - should use those first with computers
+      utility *= 0.4;
     }
     
     // Prefer 3-cables
@@ -70,7 +76,9 @@ export function evaluateNetworkBuilding(context: AIDecisionContext): EvaluatedAc
       card: cableCard,
       targetId: targetSwitchId,
       utility,
-      reasoning: `Adding ${cableCapacity}-capacity cable to network`,
+      reasoning: hasAvailableSlots 
+        ? `Adding cable (but have ${aiNetwork.availableCableSlots} open slot(s) already)`
+        : `Adding ${cableCapacity}-capacity cable to network`,
       risk: 0.1,
     });
   }
