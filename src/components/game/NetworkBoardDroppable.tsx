@@ -176,7 +176,7 @@ export function NetworkBoardDroppable({
                       small
                       sourceType="floating-computer"
                       sourceId={comp.id}
-                      showIssueIndicator
+                      showIssueIndicator={false}
                     />
                   ) : (
                     <div className="relative">
@@ -187,12 +187,14 @@ export function NetworkBoardDroppable({
                         className={cn("opacity-70", CARD_SIZE)}
                         small
                       />
-                      {/* Show issues on floating computers */}
-                      {comp.attachedIssues.length > 0 && (
-                        <IssueIndicator issues={comp.attachedIssues} small />
-                      )}
                     </div>
                   )}
+                  
+                  {/* Show issues OUTSIDE the floating computer card for better visibility */}
+                  {hasIssues && (
+                    <FloatingIssueIndicator issues={comp.attachedIssues} />
+                  )}
+                  
                   <div className="absolute -bottom-1 left-0 right-0 text-center">
                     <span className="text-[6px] bg-yellow-500 text-black px-0.5 rounded">floating</span>
                   </div>
@@ -432,7 +434,7 @@ function FloatingCableComponent({
           <PlacedCardDisplay
             card={cable.card}
             placementId={cable.id}
-            isDisabled={true}
+            isDisabled={cable.isDisabled}
             className={cn("opacity-80", cardSize)}
             small
           />
@@ -441,6 +443,11 @@ function FloatingCableComponent({
           <div className="absolute -bottom-1 left-0 right-0 text-center">
             <span className="text-[6px] bg-yellow-500 text-black px-0.5 rounded">floating</span>
           </div>
+        )}
+        
+        {/* Show issues OUTSIDE the floating cable for better visibility */}
+        {hasIssues && (
+          <FloatingIssueIndicator issues={cable.attachedIssues} />
         )}
       </div>
       
@@ -878,6 +885,27 @@ function IssueIndicator({ issues, small = false }: IssueIndicatorProps) {
             src={issue.image} 
             alt={issue.name}
             className="w-full h-full object-contain bg-black/80"
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Floating issue indicator - displayed OUTSIDE the card for better visibility
+function FloatingIssueIndicator({ issues }: { issues: Card[] }) {
+  return (
+    <div className="absolute -right-8 top-1/2 -translate-y-1/2 flex flex-col gap-1 z-20">
+      {issues.map((issue, idx) => (
+        <div
+          key={idx}
+          className="transform rotate-90 border-2 border-red-500 rounded shadow-lg shadow-red-500/50 animate-pulse w-8 h-10 bg-black/90"
+          title={issue.name}
+        >
+          <img 
+            src={issue.image} 
+            alt={issue.name}
+            className="w-full h-full object-contain"
           />
         </div>
       ))}
