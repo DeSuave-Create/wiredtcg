@@ -94,51 +94,51 @@ export function ReconnectEquipmentDialog({
   );
 }
 
-// Helper to convert switches to reconnect targets
+// Helper to convert switches to reconnect targets (includes disabled for strategic play)
 export function switchesToReconnectTargets(switches: SwitchNode[]): ReconnectTarget[] {
-  return switches
-    .filter(sw => !sw.isDisabled)
-    .map((sw, index) => ({
-      id: sw.id,
-      name: `Switch ${index + 1}`,
-      image: sw.card.image,
-    }));
+  return switches.map((sw, index) => ({
+    id: sw.id,
+    name: `Switch ${index + 1}${sw.isDisabled ? ' ⚠️' : ''}`,
+    image: sw.card.image,
+    capacity: sw.isDisabled ? '(disabled)' : undefined,
+  }));
 }
 
-// Helper to convert cables to reconnect targets (only those with available capacity)
+// Helper to convert cables to reconnect targets (includes disabled for strategic play)
 export function cablesToReconnectTargets(
   switches: SwitchNode[],
   floatingCables: FloatingCable[]
 ): ReconnectTarget[] {
   const targets: ReconnectTarget[] = [];
   
-  // Connected cables
+  // Connected cables (include disabled)
   switches.forEach((sw, switchIndex) => {
-    if (sw.isDisabled) return;
     sw.cables.forEach((cable, cableIndex) => {
-      if (cable.isDisabled) return;
       const available = cable.maxComputers - cable.computers.length;
       if (available > 0) {
         targets.push({
           id: cable.id,
-          name: `Cable ${switchIndex + 1}-${cableIndex + 1}`,
+          name: `Cable ${switchIndex + 1}-${cableIndex + 1}${cable.isDisabled ? ' ⚠️' : ''}`,
           image: cable.card.image,
-          capacity: `${cable.computers.length}/${cable.maxComputers} used`,
+          capacity: cable.isDisabled 
+            ? `${cable.computers.length}/${cable.maxComputers} (disabled)` 
+            : `${cable.computers.length}/${cable.maxComputers} used`,
         });
       }
     });
   });
   
-  // Include floating cables with available capacity
+  // Include floating cables with available capacity (include disabled)
   floatingCables.forEach((fc, index) => {
-    if (fc.isDisabled) return;
     const available = fc.maxComputers - fc.computers.length;
     if (available > 0) {
       targets.push({
         id: fc.id,
-        name: `Floating Cable ${index + 1}`,
+        name: `Floating Cable ${index + 1}${fc.isDisabled ? ' ⚠️' : ''}`,
         image: fc.card.image,
-        capacity: `${fc.computers.length}/${fc.maxComputers} used`,
+        capacity: fc.isDisabled 
+          ? `${fc.computers.length}/${fc.maxComputers} (disabled)` 
+          : `${fc.computers.length}/${fc.maxComputers} used`,
       });
     }
   });
