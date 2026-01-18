@@ -2573,6 +2573,118 @@ export function useGameEngine() {
             }
             break;
           
+          case 'move_cable_to_switch':
+            // Move a cable from a disabled switch to an enabled switch
+            if (action.sourceId && action.targetId) {
+              let cableToMove: CableNode | null = null;
+              let sourceSwitchIndex = -1;
+              
+              // Find the cable and its source switch
+              for (let si = 0; si < network.switches.length; si++) {
+                const sw = network.switches[si];
+                const cableIndex = sw.cables.findIndex(c => c.id === action.sourceId);
+                if (cableIndex !== -1) {
+                  cableToMove = sw.cables[cableIndex];
+                  sourceSwitchIndex = si;
+                  // Remove from source
+                  network.switches[si].cables.splice(cableIndex, 1);
+                  break;
+                }
+              }
+              
+              if (cableToMove) {
+                // Find target switch and add cable
+                const targetSwitchIndex = network.switches.findIndex(sw => sw.id === action.targetId);
+                if (targetSwitchIndex !== -1) {
+                  // Re-enable the cable and its computers since they're on a working switch now
+                  cableToMove.isDisabled = cableToMove.attachedIssues.length > 0;
+                  cableToMove.computers.forEach(comp => {
+                    comp.isDisabled = comp.attachedIssues.length > 0 || cableToMove!.isDisabled;
+                  });
+                  
+                  network.switches[targetSwitchIndex].cables.push(cableToMove);
+                  
+                  const computersRecovered = cableToMove.computers.filter(c => !c.isDisabled).length;
+                  aiActions.push({ type: 'play', card: cableToMove.card, target: 'rerouted to working switch' });
+                  gameLog = [...gameLog.slice(-19), `🔀 ${currentPlayer.name} rerouted Cable with ${cableToMove.computers.length} computer(s) to a working Switch! (+${computersRecovered} bitcoin)`];
+                  playedCard = true;
+                }
+              }
+            }
+            break;
+          
+          case 'move_computer_to_cable':
+            // Move a computer from a disabled cable to an enabled cable
+            if (action.sourceId && action.targetId) {
+              let computerToMove: PlacedCard | null = null;
+              
+              // Find and remove the computer from its current cable
+              for (const sw of network.switches) {
+                for (const cable of sw.cables) {
+                  const compIndex = cable.computers.findIndex(c => c.id === action.sourceId);
+                  if (compIndex !== -1) {
+                    computerToMove = cable.computers[compIndex];
+                    cable.computers.splice(compIndex, 1);
+                    break;
+                  }
+                }
+                if (computerToMove) break;
+              }
+              
+              if (computerToMove) {
+                // Find target cable and add computer
+                for (const sw of network.switches) {
+                  if (sw.isDisabled) continue;
+                  for (const cable of sw.cables) {
+                    if (cable.id === action.targetId && cable.computers.length < cable.maxComputers) {
+                      // Re-enable computer if cable is working
+                      computerToMove.isDisabled = computerToMove.attachedIssues.length > 0 || cable.isDisabled || sw.isDisabled;
+                      cable.computers.push(computerToMove);
+                      
+                      aiActions.push({ type: 'play', card: computerToMove.card, target: 'rerouted to working cable' });
+                      gameLog = [...gameLog.slice(-19), `🔀 ${currentPlayer.name} moved Computer to a working Cable! (+1 bitcoin)`];
+                      playedCard = true;
+                      break;
+                    }
+                  }
+                  if (playedCard) break;
+                }
+              }
+            }
+            break;
+          
+          case 'connect_floating_computer':
+            // Connect a floating computer to a working cable
+            if (action.sourceId && action.targetId) {
+              const floatingCompIndex = network.floatingComputers.findIndex(c => c.id === action.sourceId);
+              
+              if (floatingCompIndex !== -1) {
+                const floatingComp = network.floatingComputers[floatingCompIndex];
+                
+                // Find target cable
+                for (const sw of network.switches) {
+                  if (sw.isDisabled) continue;
+                  for (const cable of sw.cables) {
+                    if (cable.id === action.targetId && cable.computers.length < cable.maxComputers) {
+                      // Remove from floating
+                      network.floatingComputers.splice(floatingCompIndex, 1);
+                      
+                      // Add to cable and set enabled state
+                      floatingComp.isDisabled = floatingComp.attachedIssues.length > 0 || cable.isDisabled || sw.isDisabled;
+                      cable.computers.push(floatingComp);
+                      
+                      aiActions.push({ type: 'play', card: floatingComp.card, target: 'connected floating to cable' });
+                      gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} connected floating Computer to Cable! (+1 bitcoin)`];
+                      playedCard = true;
+                      break;
+                    }
+                  }
+                  if (playedCard) break;
+                }
+              }
+            }
+            break;
+          
           default:
             // No action or pass
             break;

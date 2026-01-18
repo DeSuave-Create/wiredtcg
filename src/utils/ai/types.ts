@@ -13,7 +13,10 @@ export type AIActionType =
   | 'play_resolution'
   | 'connect_cable_to_switch'
   | 'connect_computer_to_cable'
+  | 'connect_floating_computer'
   | 'reroute_cable'
+  | 'move_cable_to_switch'
+  | 'move_computer_to_cable'
   | 'steal_classification'
   | 'start_audit'
   | 'discard'
@@ -24,6 +27,7 @@ export interface EvaluatedAction {
   type: AIActionType;
   card?: Card;
   targetId?: string;
+  sourceId?: string; // For reroute actions - the equipment being moved
   targetPlayerIndex?: number;
   utility: number;
   reasoning: string;

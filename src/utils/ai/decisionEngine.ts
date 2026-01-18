@@ -21,6 +21,7 @@ import {
   evaluateSteals,
   evaluateClassifications,
   evaluateDiscards,
+  evaluateReroutes,
   findRerouteOpportunities,
 } from './strategies';
 
@@ -90,12 +91,13 @@ export function makeAIDecision(
   // Collect all possible actions
   const allActions: EvaluatedAction[] = [
     ...evaluateRecoveryActions(context),     // Priority 1: Resolve issues
-    ...evaluateClassifications(context),     // Priority 2: Play classifications
-    ...evaluateNetworkBuilding(context),     // Priority 3: Build network
-    ...evaluateSteals(context),              // Priority 4: Steal classifications
-    ...evaluateAudit(context),               // Priority 5: Audit
-    ...evaluateAttacks(context),             // Priority 6: Attack opponent
-    ...evaluateDiscards(context),            // Priority 7: Discard dead cards
+    ...evaluateReroutes(context),            // Priority 2: Reroute equipment to recover bitcoin
+    ...evaluateClassifications(context),     // Priority 3: Play classifications
+    ...evaluateNetworkBuilding(context),     // Priority 4: Build network
+    ...evaluateSteals(context),              // Priority 5: Steal classifications
+    ...evaluateAudit(context),               // Priority 6: Audit
+    ...evaluateAttacks(context),             // Priority 7: Attack opponent
+    ...evaluateDiscards(context),            // Priority 8: Discard dead cards
   ];
 
   // Apply difficulty-based randomness
