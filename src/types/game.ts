@@ -95,6 +95,7 @@ export interface GameState {
   currentPlayerIndex: number;
   phase: GamePhase;
   movesRemaining: number;
+  equipmentMovesRemaining: number; // Bonus equipment moves from Field Tech (resets each turn)
   drawPile: Card[];
   discardPile: Card[];
   turnNumber: number;

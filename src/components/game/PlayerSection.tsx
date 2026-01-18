@@ -24,6 +24,7 @@ interface PlayerSectionProps {
   playerId: string;
   gamePhase: GamePhase;
   movesRemaining?: number;
+  equipmentMovesRemaining?: number; // Bonus equipment moves from Field Tech
   onEndPhase?: () => void;
   isDragging?: boolean;
   isWinning?: boolean;
@@ -46,6 +47,7 @@ export function PlayerSection({
   playerId,
   gamePhase,
   movesRemaining = 0,
+  equipmentMovesRemaining = 0,
   onEndPhase,
   isDragging = false,
   isWinning = false,
@@ -60,17 +62,19 @@ export function PlayerSection({
   const titleColor = isHuman ? 'text-accent-green' : 'text-gray-400';
 
   const [isAnimating, setIsAnimating] = useState(false);
-  const prevMovesRef = useRef(movesRemaining);
+  const prevMovesRef = useRef(movesRemaining + equipmentMovesRemaining);
+  const totalMoves = movesRemaining + equipmentMovesRemaining;
 
   // Animate when moves decrement
   useEffect(() => {
-    if (movesRemaining < prevMovesRef.current) {
+    const currentTotal = movesRemaining + equipmentMovesRemaining;
+    if (currentTotal < prevMovesRef.current) {
       setIsAnimating(true);
       const timer = setTimeout(() => setIsAnimating(false), 400);
       return () => clearTimeout(timer);
     }
-    prevMovesRef.current = movesRemaining;
-  }, [movesRemaining]);
+    prevMovesRef.current = currentTotal;
+  }, [movesRemaining, equipmentMovesRemaining]);
 
   const getButtonText = () => {
     switch (gamePhase) {
@@ -168,15 +172,17 @@ export function PlayerSection({
                   <span 
                     className={cn(
                       "w-6 h-6 rounded flex items-center justify-center font-bold transition-all duration-300",
-                      movesRemaining > 0 
+                      totalMoves > 0 
                         ? "bg-accent-green/20 text-accent-green" 
                         : "bg-red-500/20 text-red-400",
                       isAnimating && "animate-bounce scale-125 bg-yellow-500/30 text-yellow-300"
                     )}
                   >
-                    {movesRemaining}
+                    {totalMoves}
                   </span>
-                  <span className="text-muted-foreground">moves x3</span>
+                  <span className="text-muted-foreground">
+                    moves{equipmentMovesRemaining > 0 ? ` (${equipmentMovesRemaining}🔧)` : ''}
+                  </span>
                 </div>
               )}
               

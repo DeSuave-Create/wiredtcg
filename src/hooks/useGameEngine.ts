@@ -16,14 +16,14 @@ const MAX_HAND_SIZE = 6;
 const BASE_MOVES_PER_TURN = 3;
 const WINNING_SCORE = 25;
 
-// Helper: Calculate moves per turn based on classification cards
-function getMovesForPlayer(player: Player): number {
-  let moves = BASE_MOVES_PER_TURN;
-  // Field Tech gives +1 move per turn
-  if (player.classificationCards.some(c => c.card.subtype === 'field-tech')) {
-    moves += 1;
-  }
-  return moves;
+// Helper: Calculate base moves per turn (not including Field Tech equipment bonus)
+function getBaseMovesForPlayer(): number {
+  return BASE_MOVES_PER_TURN;
+}
+
+// Helper: Check if player has Field Tech (grants +1 equipment move per turn)
+function hasFieldTech(player: Player): boolean {
+  return player.classificationCards.some(c => c.card.subtype === 'field-tech');
 }
 
 // Helper: Count Head Hunter cards in player's classification area
@@ -110,6 +110,7 @@ export function useGameEngine() {
       currentPlayerIndex: 0,
       phase: 'moves',
       movesRemaining: BASE_MOVES_PER_TURN, // Human starts without classification cards
+      equipmentMovesRemaining: 0, // No Field Tech at start
       drawPile,
       discardPile: [],
       turnNumber: 1,
@@ -237,7 +238,11 @@ export function useGameEngine() {
       return { success: false };
     }
     
-    if (gameState.movesRemaining <= 0) {
+    // Check if we have moves available (either equipment bonus or regular)
+    const hasEquipmentBonus = gameState.equipmentMovesRemaining > 0;
+    const hasRegularMoves = gameState.movesRemaining > 0;
+    
+    if (!hasEquipmentBonus && !hasRegularMoves) {
       addLog('No moves remaining!');
       return { success: false };
     }
@@ -269,11 +274,18 @@ export function useGameEngine() {
       
       newPlayers[prev.currentPlayerIndex] = currentPlayer;
       
+      // Use equipment bonus move first if available, otherwise use regular move
+      const useEquipmentBonus = prev.equipmentMovesRemaining > 0;
+      const newEquipmentMoves = useEquipmentBonus ? prev.equipmentMovesRemaining - 1 : prev.equipmentMovesRemaining;
+      const newRegularMoves = useEquipmentBonus ? prev.movesRemaining : prev.movesRemaining - 1;
+      const totalMovesLeft = newRegularMoves + newEquipmentMoves;
+      
       return {
         ...prev,
         players: newPlayers,
-        movesRemaining: prev.movesRemaining - 1,
-        gameLog: [...prev.gameLog.slice(-19), `Played Switch (${prev.movesRemaining - 1} moves left)`],
+        movesRemaining: newRegularMoves,
+        equipmentMovesRemaining: newEquipmentMoves,
+        gameLog: [...prev.gameLog.slice(-19), `Played Switch (${totalMovesLeft} moves left${useEquipmentBonus ? ' - used Field Tech bonus' : ''})`],
       };
     });
     
@@ -295,7 +307,11 @@ export function useGameEngine() {
       return { success: false };
     }
     
-    if (gameState.movesRemaining <= 0) {
+    // Check if we have moves available (either equipment bonus or regular)
+    const hasEquipmentBonus = gameState.equipmentMovesRemaining > 0;
+    const hasRegularMoves = gameState.movesRemaining > 0;
+    
+    if (!hasEquipmentBonus && !hasRegularMoves) {
       addLog('No moves remaining!');
       return { success: false };
     }
@@ -351,11 +367,18 @@ export function useGameEngine() {
       
       const floatingMsg = switchIndex === -1 ? ' [floating]' : '';
       
+      // Use equipment bonus move first if available, otherwise use regular move
+      const useEquipmentBonus = prev.equipmentMovesRemaining > 0;
+      const newEquipmentMoves = useEquipmentBonus ? prev.equipmentMovesRemaining - 1 : prev.equipmentMovesRemaining;
+      const newRegularMoves = useEquipmentBonus ? prev.movesRemaining : prev.movesRemaining - 1;
+      const totalMovesLeft = newRegularMoves + newEquipmentMoves;
+      
       return {
         ...prev,
         players: newPlayers,
-        movesRemaining: prev.movesRemaining - 1,
-        gameLog: [...prev.gameLog.slice(-19), `Played ${maxComputers}-Cable${floatingMsg} (${prev.movesRemaining - 1} moves left)`],
+        movesRemaining: newRegularMoves,
+        equipmentMovesRemaining: newEquipmentMoves,
+        gameLog: [...prev.gameLog.slice(-19), `Played ${maxComputers}-Cable${floatingMsg} (${totalMovesLeft} moves left${useEquipmentBonus ? ' - used Field Tech bonus' : ''})`],
       };
     });
     
@@ -738,7 +761,11 @@ export function useGameEngine() {
       return false;
     }
     
-    if (gameState.movesRemaining <= 0) {
+    // Check if we have moves available (either equipment bonus or regular)
+    const hasEquipmentBonus = gameState.equipmentMovesRemaining > 0;
+    const hasRegularMoves = gameState.movesRemaining > 0;
+    
+    if (!hasEquipmentBonus && !hasRegularMoves) {
       addLog('No moves remaining!');
       return false;
     }
@@ -816,11 +843,18 @@ export function useGameEngine() {
       
       const floatingMsg = !cableFound ? ' [floating]' : '';
       
+      // Use equipment bonus move first if available, otherwise use regular move
+      const useEquipmentBonus = prev.equipmentMovesRemaining > 0;
+      const newEquipmentMoves = useEquipmentBonus ? prev.equipmentMovesRemaining - 1 : prev.equipmentMovesRemaining;
+      const newRegularMoves = useEquipmentBonus ? prev.movesRemaining : prev.movesRemaining - 1;
+      const totalMovesLeft = newRegularMoves + newEquipmentMoves;
+      
       return {
         ...prev,
         players: newPlayers,
-        movesRemaining: prev.movesRemaining - 1,
-        gameLog: [...prev.gameLog.slice(-19), `Played Computer${floatingMsg} (${prev.movesRemaining - 1} moves left)`],
+        movesRemaining: newRegularMoves,
+        equipmentMovesRemaining: newEquipmentMoves,
+        gameLog: [...prev.gameLog.slice(-19), `Played Computer${floatingMsg} (${totalMovesLeft} moves left${useEquipmentBonus ? ' - used Field Tech bonus' : ''})`],
       };
     });
     
@@ -845,7 +879,11 @@ export function useGameEngine() {
       return false;
     }
     
-    if (gameState.movesRemaining <= 0) {
+    // Check if we have moves available (either equipment bonus or regular)
+    const hasEquipmentBonus = gameState.equipmentMovesRemaining > 0;
+    const hasRegularMoves = gameState.movesRemaining > 0;
+    
+    if (!hasEquipmentBonus && !hasRegularMoves) {
       addLog('No moves remaining!');
       return false;
     }
@@ -926,11 +964,18 @@ export function useGameEngine() {
       
       const floatingMsg = !cableFound ? ' [floating]' : '';
       
+      // Use equipment bonus move first if available, otherwise use regular move
+      const useEquipmentBonus = prev.equipmentMovesRemaining > 0;
+      const newEquipmentMoves = useEquipmentBonus ? prev.equipmentMovesRemaining - 1 : prev.equipmentMovesRemaining;
+      const newRegularMoves = useEquipmentBonus ? prev.movesRemaining : prev.movesRemaining - 1;
+      const totalMovesLeft = newRegularMoves + newEquipmentMoves;
+      
       return {
         ...prev,
         players: newPlayers,
-        movesRemaining: prev.movesRemaining - 1,
-        gameLog: [...prev.gameLog.slice(-19), `🔄 Played audited Computer${floatingMsg} (${prev.movesRemaining - 1} moves left)`],
+        movesRemaining: newRegularMoves,
+        equipmentMovesRemaining: newEquipmentMoves,
+        gameLog: [...prev.gameLog.slice(-19), `🔄 Played audited Computer${floatingMsg} (${totalMovesLeft} moves left${useEquipmentBonus ? ' - used Field Tech bonus' : ''})`],
       };
     });
     
@@ -2051,7 +2096,8 @@ export function useGameEngine() {
           discardPile: newDiscardPile,
           currentPlayerIndex: nextPlayerIndex,
           phase: 'moves',
-          movesRemaining: getMovesForPlayer(nextPlayer),
+          movesRemaining: getBaseMovesForPlayer(),
+          equipmentMovesRemaining: hasFieldTech(nextPlayer) ? 1 : 0,
           turnNumber: prev.turnNumber + 1,
           gameLog: [
             ...prev.gameLog.slice(-19),
@@ -2127,8 +2173,9 @@ export function useGameEngine() {
       let gameLog = [...prev.gameLog];
       let newDiscardPile = [...prev.discardPile];
       let newDrawPile = [...prev.drawPile];
-      const maxMoves = getMovesForPlayer(newPlayers[aiPlayerIndex]);
+      const maxMoves = getBaseMovesForPlayer() + (hasFieldTech(newPlayers[aiPlayerIndex]) ? 1 : 0);
       let movesRemaining = maxMoves;
+      let equipmentMovesRemaining = hasFieldTech(newPlayers[aiPlayerIndex]) ? 1 : 0;
       let movesUsed = 0;
       const aiActions: AIAction[] = [];
       
@@ -2751,7 +2798,8 @@ export function useGameEngine() {
         discardPile: newDiscardPile,
         currentPlayerIndex: isWinner ? aiPlayerIndex : (aiPlayerIndex + 1) % 2,
         phase: isWinner ? 'game-over' : 'moves',
-        movesRemaining: getMovesForPlayer(nextPlayer),
+        movesRemaining: getBaseMovesForPlayer(),
+        equipmentMovesRemaining: hasFieldTech(nextPlayer) ? 1 : 0,
         winner: isWinner ? scoringPlayer : undefined,
         gameLog: [
           ...gameLog.slice(-19), 
@@ -2829,6 +2877,7 @@ export function useGameEngine() {
         ...prev,
         players: newPlayers,
         phase: 'audit',
+        movesRemaining: prev.movesRemaining - 1, // Consume move immediately when audit starts
         auditBattle: {
           auditorIndex: currentPlayerIndex,
           targetIndex: targetPlayerIndex,
@@ -2838,7 +2887,7 @@ export function useGameEngine() {
           computersToReturn,
           phase: 'counter',
         },
-        gameLog: [...prev.gameLog.slice(-19), `📋 ${currentPlayer.name} audits ${targetPlayer.name} for ${computersToReturn} computer(s)!`],
+        gameLog: [...prev.gameLog.slice(-19), `📋 ${currentPlayer.name} audits ${targetPlayer.name} for ${computersToReturn} computer(s)! (${prev.movesRemaining - 1} moves left)`],
       };
     });
     
@@ -2998,7 +3047,7 @@ export function useGameEngine() {
           drawPile: newDrawPile,
           discardPile: [...prev.discardPile, ...cardsToDiscard],
           phase: 'moves',
-          movesRemaining: prev.movesRemaining - 1,
+          // Move was already consumed when audit started - don't deduct again
           auditBattle: undefined,
           gameLog: [...prev.gameLog.slice(-19), logMessage, defenderCardsToDraw > 0 ? `${target.name} draws ${defenderCardsToDraw} card(s)` : ''].filter(Boolean),
         };
@@ -3132,7 +3181,7 @@ export function useGameEngine() {
         drawPile: newDrawPile,
         discardPile: [...prev.discardPile, ...cardsToDiscard],
         phase: 'moves',
-        movesRemaining: prev.movesRemaining - 1,
+        // Move was already consumed when audit started - don't deduct again
         auditBattle: undefined,
         gameLog: [...prev.gameLog.slice(-19), logMessage, cardsToDraw > 0 ? `${target.name} draws ${cardsToDraw} card(s)` : ''].filter(Boolean),
       };
