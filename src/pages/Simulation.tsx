@@ -116,14 +116,24 @@ const Simulation = () => {
     pendingAction: () => void; // Action to place floating
   } | null>(null);
   
+  // Check if intro was already shown this session
+  const hasSeenIntro = sessionStorage.getItem('hasSeenIntro') === 'true';
+  
   // Intro animation state
-  const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(!hasSeenIntro);
   
   // Transition state for smooth fade between intro and difficulty selector
   const [isTransitioning, setIsTransitioning] = useState(false);
   
-  // Difficulty selector dialog state
-  const [showDifficultySelector, setShowDifficultySelector] = useState(false);
+  // Difficulty selector dialog state - show immediately if intro was already seen
+  const [showDifficultySelector, setShowDifficultySelector] = useState(hasSeenIntro);
+
+  const handleIntroComplete = () => {
+    sessionStorage.setItem('hasSeenIntro', 'true');
+    setIsTransitioning(true);
+    setShowIntro(false);
+    setShowDifficultySelector(true);
+  };
 
   // Start new game with selected difficulty
   const handleStartGame = useCallback((difficulty: AIDifficulty) => {
@@ -642,17 +652,11 @@ const Simulation = () => {
   };
 
 
-  // Show intro animation first, then difficulty selector
+  // Show intro animation first, then difficulty selector (only if not seen this session)
   if (showIntro) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <SimulationIntro 
-          onComplete={() => {
-            setIsTransitioning(true);
-            setShowIntro(false);
-            setShowDifficultySelector(true);
-          }} 
-        />
+        <SimulationIntro onComplete={handleIntroComplete} />
       </div>
     );
   }

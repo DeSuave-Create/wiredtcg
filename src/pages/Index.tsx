@@ -9,19 +9,22 @@ import ElectricProgressBar from '@/components/ElectricProgressBar';
 import { SimulationIntro } from '@/components/game/SimulationIntro';
 
 const Index = () => {
-  const [showIntro, setShowIntro] = useState(true);
+  // Check if intro was already shown this session
+  const hasSeenIntro = sessionStorage.getItem('hasSeenIntro') === 'true';
+  const [showIntro, setShowIntro] = useState(!hasSeenIntro);
   const [isFadingIn, setIsFadingIn] = useState(false);
 
-  // Show intro animation first
+  const handleIntroComplete = () => {
+    sessionStorage.setItem('hasSeenIntro', 'true');
+    setIsFadingIn(true);
+    setShowIntro(false);
+  };
+
+  // Show intro animation first (only if not seen this session)
   if (showIntro) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <SimulationIntro 
-          onComplete={() => {
-            setIsFadingIn(true);
-            setShowIntro(false);
-          }} 
-        />
+        <SimulationIntro onComplete={handleIntroComplete} />
       </div>
     );
   }
