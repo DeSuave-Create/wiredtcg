@@ -754,10 +754,8 @@ export function evaluateDiscards(context: AIDecisionContext): EvaluatedAction[] 
   // Sort by value (lowest first for discarding)
   cardValues.sort((a, b) => a.value - b.value);
 
-  // Only suggest discarding low-value cards
+  // Always provide discard options for ALL cards (AI needs fallback)
   for (const { card, value } of cardValues) {
-    if (value > 40) break; // Don't discard valuable cards
-
     const utility = -value * 0.1; // Negative utility (discarding is a last resort)
     
     // Bluff behavior for hard AI
@@ -771,6 +769,7 @@ export function evaluateDiscards(context: AIDecisionContext): EvaluatedAction[] 
           reasoning: 'Bluffing - discarding to disguise hand strength',
           risk: 0.1,
         });
+        continue;
       }
     }
 
@@ -778,7 +777,7 @@ export function evaluateDiscards(context: AIDecisionContext): EvaluatedAction[] 
       type: 'discard',
       card,
       utility,
-      reasoning: `Low value card (${value})`,
+      reasoning: `Card value (${value})`,
       risk: 0,
     });
   }

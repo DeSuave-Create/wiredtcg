@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 
-type EventType = 'audit-success' | 'audit-blocked' | 'head-hunter' | 'ai-action' | 'classification-swap';
+type EventType = 'audit-success' | 'audit-blocked' | 'head-hunter' | 'seal-the-deal' | 'ai-action' | 'classification-swap';
 
 interface SwapAnimationData {
   stolenCardImage?: string;
@@ -167,6 +167,13 @@ export function GameEventAnimation({ event, message, swapData, onComplete }: Gam
           border: 'border-purple-400',
           icon: '🎯',
           glow: 'shadow-purple-500/50',
+        };
+      case 'seal-the-deal':
+        return {
+          bg: 'bg-gradient-to-r from-amber-500/90 to-red-600/90',
+          border: 'border-amber-400',
+          icon: '💎',
+          glow: 'shadow-amber-500/50',
         };
       case 'ai-action':
         return {
