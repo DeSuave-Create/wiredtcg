@@ -529,19 +529,33 @@ const Simulation = () => {
         return;
       }
       
-      // Regular attack cards
+      // Regular attack cards - can target connected OR floating equipment
       let equipmentId = '';
       if (zoneType === 'switch') {
         equipmentId = dropZoneId.replace(`${targetPlayerId}-switch-`, '');
       } else if (zoneType === 'cable') {
-        equipmentId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
+        // Check if it's a floating cable first
+        if (dropZoneId.includes('floating-cable')) {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
+        } else {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
+        }
       } else if (zoneType === 'computer') {
         equipmentId = dropZoneId.replace(`${targetPlayerId}-computer-`, '');
+      } else if (zoneType === 'floating') {
+        // Handle floating equipment dropped on floating zone
+        if (dropZoneId.includes('floating-cable')) {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
+        } else if (dropZoneId.includes('floating-computer')) {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-floating-computer-`, '');
+        }
       }
       
       if (equipmentId) {
         playAttack(card.id, equipmentId, computerPlayerIndex);
         toast.success(`${card.name} attack played!`);
+      } else if (zoneType === 'board') {
+        toast.error('Drop on specific equipment to attack!');
       }
       return;
     }
