@@ -9,8 +9,11 @@ export function SimulationIntro({ onComplete }: SimulationIntroProps) {
   const [phase, setPhase] = useState<'initial' | 'logo-in' | 'logo-glow' | 'logo-out'>('initial');
 
   useEffect(() => {
+    console.log('SimulationIntro mounted, starting animation');
+    
     // Start animation after a brief mount delay
     const startTimer = setTimeout(() => {
+      console.log('Phase: logo-in');
       setPhase('logo-in');
     }, 100);
 
