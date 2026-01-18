@@ -104,7 +104,7 @@ export function DifficultySelector({ isOpen, onSelect, onClose }: DifficultySele
                 </p>
                 
                 {/* Details - fixed height container for alignment */}
-                <ul className="text-xs text-gray-500 space-y-1 text-left w-full flex-1">
+                <ul className="text-xs text-gray-500 space-y-1 text-left w-full flex-1 mt-4 pt-3 border-t border-gray-700/50">
                   {diff.details.map((detail, i) => (
                     <li key={i} className="flex items-start gap-1">
                       <span className="text-accent-green flex-shrink-0">•</span>
