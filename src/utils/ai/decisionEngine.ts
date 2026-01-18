@@ -13,17 +13,8 @@ import {
   initializeMemory,
   estimateTurnsToWin,
 } from './analysis';
-import {
-  evaluateNetworkBuilding,
-  evaluateRecoveryActions,
-  evaluateAttacks,
-  evaluateAudit,
-  evaluateSteals,
-  evaluateClassifications,
-  evaluateDiscards,
-  evaluateReroutes,
-  findRerouteOpportunities,
-} from './strategies';
+import { makePriorityDecision } from './priorityEngine';
+import { computeBoardState } from './boardState';
 
 // Global memory storage (persists across turns)
 let aiMemory: AIStateMemory = initializeMemory();
@@ -38,127 +29,29 @@ export function getAIMemory(): AIStateMemory {
   return aiMemory;
 }
 
-// Main decision function
+// Main decision function - now uses priority-based engine
 export function makeAIDecision(
   gameState: GameState,
   difficulty: AIDifficulty = 'normal'
 ): { action: EvaluatedAction | null; allActions: EvaluatedAction[] } {
   const aiPlayerIndex = gameState.currentPlayerIndex;
-  const humanPlayerIndex = aiPlayerIndex === 0 ? 1 : 0;
   const aiPlayer = gameState.players[aiPlayerIndex];
-  const humanPlayer = gameState.players[humanPlayerIndex];
 
   // Skip if not AI's turn
   if (aiPlayer.isHuman) {
     return { action: null, allActions: [] };
   }
 
-  // Build decision context
-  const config = getAIConfig(difficulty);
-  const aiNetwork = analyzeNetwork(aiPlayer.network);
-  const humanNetwork = analyzeNetwork(humanPlayer.network);
-  const aiHand = analyzeHand(aiPlayer.hand, aiPlayer.network);
-  
-  const scoreDifference = aiPlayer.score - humanPlayer.score;
-  const turnsToWin = estimateTurnsToWin(aiPlayer.score, aiNetwork.projectedScoring);
-  const humanTurnsToWin = estimateTurnsToWin(humanPlayer.score, humanNetwork.projectedScoring);
-  
-  const weights = getUtilityWeights(difficulty, scoreDifference, turnsToWin);
+  // Use new priority-based decision engine
+  const { action, allActions } = makePriorityDecision(gameState, difficulty);
 
-  // Update opponent analysis
-  const cardsInPlay = gameState.discardPile.length + 
-    gameState.players.reduce((sum, p) => sum + p.hand.length, 0);
-  aiMemory.opponentBehavior = analyzeOpponent(humanPlayer, aiMemory, cardsInPlay, difficulty);
-
-  const context: AIDecisionContext = {
-    gameState,
-    aiPlayerIndex,
-    humanPlayerIndex,
-    aiPlayer,
-    humanPlayer,
-    aiNetwork,
-    humanNetwork,
-    aiHand,
-    memory: aiMemory,
-    config,
-    weights,
-    movesRemaining: gameState.movesRemaining,
-    scoreDifference,
-    turnsToWin,
-    humanTurnsToWin,
-  };
-
-  // Collect all possible actions
-  const allActions: EvaluatedAction[] = [
-    ...evaluateRecoveryActions(context),     // Priority 1: Resolve issues
-    ...evaluateReroutes(context),            // Priority 2: Reroute equipment to recover bitcoin
-    ...evaluateClassifications(context),     // Priority 3: Play classifications
-    ...evaluateNetworkBuilding(context),     // Priority 4: Build network
-    ...evaluateSteals(context),              // Priority 5: Steal classifications
-    ...evaluateAudit(context),               // Priority 6: Audit
-    ...evaluateAttacks(context),             // Priority 7: Attack opponent
-    ...evaluateDiscards(context),            // Priority 8: Discard dead cards
-  ];
-
-  // Apply difficulty-based randomness
-  for (const action of allActions) {
-    if (config.randomnessFactor > 0) {
-      const randomAdjustment = (Math.random() - 0.5) * config.randomnessFactor * 20;
-      action.utility += randomAdjustment;
-    }
-
-    // Apply risk penalty based on risk tolerance
-    action.utility -= action.risk * (1 - config.riskTolerance) * 10;
+  // Update memory with played cards
+  if (action?.card) {
+    aiMemory.attacksUsed[action.card.subtype] = 
+      (aiMemory.attacksUsed[action.card.subtype] || 0) + 1;
   }
 
-  // Sort by utility (highest first)
-  allActions.sort((a, b) => b.utility - a.utility);
-
-  // Apply hold probability for non-easy difficulties
-  if (config.holdProbability > 0 && allActions.length > 0) {
-    const topAction = allActions[0];
-    
-    // Consider holding if action is not critical
-    if (topAction.utility < 15 && Math.random() < config.holdProbability) {
-      // Prefer to hold attacks for better timing
-      if (topAction.type === 'play_attack' || topAction.type === 'start_audit') {
-        // Find next best non-attack action
-        const nonAttackAction = allActions.find(a => 
-          a.type !== 'play_attack' && a.type !== 'start_audit' && a.utility > 0
-        );
-        if (nonAttackAction) {
-          return { action: nonAttackAction, allActions };
-        }
-      }
-    }
-  }
-
-  // Select best action
-  let bestAction = allActions.length > 0 && allActions[0].utility > -5 
-    ? allActions[0] 
-    : null;
-
-  // FALLBACK: If no action was selected, force a discard of the lowest value card
-  if (!bestAction && aiPlayer.hand.length > 0) {
-    // Find the lowest value card to discard
-    const discardOptions = evaluateDiscards(context);
-    if (discardOptions.length > 0) {
-      bestAction = discardOptions[0]; // Take first (lowest value)
-      bestAction.reasoning = 'Forced discard - no better actions available';
-    } else {
-      // If no discard options from strategy, create one for the first card
-      const cardToDiscard = aiPlayer.hand[0];
-      bestAction = {
-        type: 'discard',
-        card: cardToDiscard,
-        utility: -10,
-        reasoning: 'Forced discard - no valid actions available',
-        risk: 0,
-      };
-    }
-  }
-
-  return { action: bestAction, allActions };
+  return { action, allActions };
 }
 
 // Execute a full AI turn (called from game engine)

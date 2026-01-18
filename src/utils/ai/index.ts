@@ -26,3 +26,6 @@ export {
   analyzeOpponent,
   estimateTurnsToWin,
 } from './analysis';
+
+export { computeBoardState, type BoardState } from './boardState';
+export { makePriorityDecision } from './priorityEngine';
