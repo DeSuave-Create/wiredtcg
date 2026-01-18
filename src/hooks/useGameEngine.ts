@@ -1767,8 +1767,11 @@ export function useGameEngine() {
     // Regular classification cards (Field Tech, Supervisor, Security Specialist, Facilities)
     // Check if player already has 2 classification cards
     if (currentPlayer.classificationCards.length >= 2) {
-      addLog('Maximum 2 classification cards in play!');
-      return false;
+      // If discardClassificationId is provided, we can replace
+      if (!discardClassificationId) {
+        addLog('Maximum 2 classification cards in play!');
+        return false;
+      }
     }
     
     // Duplicates ARE allowed - having 2 of the same type provides steal protection
@@ -1781,6 +1784,16 @@ export function useGameEngine() {
       
       // Remove card from hand
       player.hand = player.hand.filter(c => c.id !== classCard.id);
+      
+      // If replacing an existing classification, discard it first
+      let discardedCard: PlacedCard | null = null;
+      if (discardClassificationId && player.classificationCards.length >= 2) {
+        const discardIndex = player.classificationCards.findIndex(c => c.id === discardClassificationId);
+        if (discardIndex !== -1) {
+          discardedCard = player.classificationCards[discardIndex];
+          player.classificationCards = player.classificationCards.filter((_, i) => i !== discardIndex);
+        }
+      }
       
       // Add to classification cards
       const newClassCard: PlacedCard = {
@@ -1894,13 +1907,14 @@ export function useGameEngine() {
       };
       
       const resolveMsg = resolvedCount > 0 ? ` Resolved ${resolvedCount} existing attack(s)!` : '';
+      const replaceMsg = discardedCard ? ` (replaced ${discardedCard.card.name})` : '';
       
       return {
         ...prev,
         players: newPlayers,
-        discardPile: [...prev.discardPile, ...resolvedIssues],
+        discardPile: [...prev.discardPile, ...resolvedIssues, ...(discardedCard ? [discardedCard.card] : [])],
         movesRemaining: prev.movesRemaining - 1,
-        gameLog: [...prev.gameLog.slice(-19), `🎖️ ${classCard.name} played! ${abilities[classCard.subtype] || ''}${resolveMsg}`],
+        gameLog: [...prev.gameLog.slice(-19), `🎖️ ${classCard.name} played!${replaceMsg} ${abilities[classCard.subtype] || ''}${resolveMsg}`],
       };
     });
     

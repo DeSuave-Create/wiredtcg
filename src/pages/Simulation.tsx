@@ -15,6 +15,7 @@ import { AuditDialog } from '@/components/game/AuditDialog';
 import { PlacementChoiceDialog, switchesToPlacementTargets, cablesToPlacementTargets } from '@/components/game/PlacementChoiceDialog';
 import { ReconnectEquipmentDialog, switchesToReconnectTargets, cablesToReconnectTargets } from '@/components/game/ReconnectEquipmentDialog';
 import { AuditComputerSelectionDialog } from '@/components/game/AuditComputerSelectionDialog';
+import { ReplaceClassificationDialog } from '@/components/game/ReplaceClassificationDialog';
 import { GameEventAnimation, useGameEventAnimation } from '@/components/game/GameEventAnimations';
 import { DifficultySelector } from '@/components/game/DifficultySelector';
 import { SimulationIntro } from '@/components/game/SimulationIntro';
@@ -124,6 +125,12 @@ const Simulation = () => {
     equipmentId: string;
     equipmentImage: string;
     equipmentName: string;
+  } | null>(null);
+  
+  // Dialog state for replacing classification
+  const [replaceClassDialog, setReplaceClassDialog] = useState<{
+    isOpen: boolean;
+    newCard: Card;
   } | null>(null);
   
   // Check if intro was already shown this session
@@ -717,9 +724,12 @@ const Simulation = () => {
       
       const humanPlayer = gameState.players[0];
       
-      // Check if already at max classifications
+      // Check if already at max classifications - prompt to replace
       if (humanPlayer.classificationCards.length >= 2) {
-        toast.error("Maximum 2 classification cards in play!");
+        setReplaceClassDialog({
+          isOpen: true,
+          newCard: card,
+        });
         return;
       }
       
@@ -1132,6 +1142,26 @@ const Simulation = () => {
             setReconnectDialog(null);
           }}
           onCancel={() => setReconnectDialog(null)}
+        />
+      )}
+      
+      {/* Replace Classification Dialog */}
+      {replaceClassDialog && gameState && (
+        <ReplaceClassificationDialog
+          isOpen={replaceClassDialog.isOpen}
+          newCard={replaceClassDialog.newCard}
+          existingClassifications={gameState.players[0].classificationCards}
+          onReplace={(discardId) => {
+            const success = playClassification(replaceClassDialog.newCard.id, undefined, discardId);
+            if (success) {
+              const discardedCard = gameState.players[0].classificationCards.find(c => c.id === discardId);
+              toast.success(`${replaceClassDialog.newCard.name} replaces ${discardedCard?.card.name || 'classification'}!`);
+            } else {
+              toast.error('Failed to replace classification');
+            }
+            setReplaceClassDialog(null);
+          }}
+          onCancel={() => setReplaceClassDialog(null)}
         />
       )}
 
