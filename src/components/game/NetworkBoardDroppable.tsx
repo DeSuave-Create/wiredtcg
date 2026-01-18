@@ -133,10 +133,10 @@ export function NetworkBoardDroppable({
               // Floating computers can receive attacks and resolutions
               const compAccepts: string[] = [];
               if (canReceiveAttacks) {
-                compAccepts.push('attack');
+                compAccepts.push('hacked', 'power-outage', 'new-hire');
               }
               if (canReceiveResolutions && comp.attachedIssues.length > 0) {
-                compAccepts.push('resolution');
+                compAccepts.push('secured', 'powered', 'trained', 'helpdesk');
               }
               
               const hasIssues = comp.attachedIssues.length > 0;
@@ -372,10 +372,10 @@ function FloatingCableComponent({
       accepts.push('computer');
     }
     if (canReceiveAttacks) {
-      accepts.push('attack');
+      accepts.push('hacked', 'power-outage', 'new-hire');
     }
     if (canReceiveResolutions && cable.attachedIssues.length > 0) {
-      accepts.push('resolution');
+      accepts.push('secured', 'powered', 'trained', 'helpdesk');
     }
     return accepts;
   };

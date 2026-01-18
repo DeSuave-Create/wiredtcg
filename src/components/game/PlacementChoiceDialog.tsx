@@ -15,6 +15,7 @@ interface PlacementTarget {
   name: string;
   image: string;
   capacity?: string; // e.g., "2/3 slots used"
+  issues?: string; // e.g., "hacked" or "hacked, power-outage"
 }
 
 interface PlacementChoiceDialogProps {
@@ -79,6 +80,9 @@ export function PlacementChoiceDialog({
                   {target.capacity && (
                     <span className="text-[10px] text-muted-foreground">{target.capacity}</span>
                   )}
+                  {target.issues && (
+                    <span className="text-[10px] text-destructive">Under attack: {target.issues}</span>
+                  )}
                 </Button>
               ))}
             </div>
@@ -115,6 +119,7 @@ export function switchesToPlacementTargets(switches: SwitchNode[]): PlacementTar
     name: `Switch ${index + 1}${sw.isDisabled ? ' ⚠️' : ''}`,
     image: sw.card.image,
     capacity: sw.isDisabled ? '(disabled)' : undefined,
+    issues: sw.attachedIssues.length ? sw.attachedIssues.map(i => i.subtype).join(', ') : undefined,
   }));
 }
 
@@ -137,6 +142,7 @@ export function cablesToPlacementTargets(
           capacity: cable.isDisabled 
             ? `${cable.computers.length}/${cable.maxComputers} (disabled)` 
             : `${cable.computers.length}/${cable.maxComputers} used`,
+          issues: cable.attachedIssues.length ? cable.attachedIssues.map(i => i.subtype).join(', ') : undefined,
         });
       }
     });
@@ -153,6 +159,7 @@ export function cablesToPlacementTargets(
         capacity: fc.isDisabled 
           ? `${fc.computers.length}/${fc.maxComputers} (disabled)` 
           : `${fc.computers.length}/${fc.maxComputers} used (unconnected)`,
+        issues: fc.attachedIssues.length ? fc.attachedIssues.map(i => i.subtype).join(', ') : undefined,
       });
     }
   });
