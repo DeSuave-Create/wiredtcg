@@ -12,6 +12,7 @@ import { ConnectComputersDialog } from '@/components/game/ConnectComputersDialog
 import { ConnectCablesDialog } from '@/components/game/ConnectCablesDialog';
 import { StealClassificationDialog } from '@/components/game/StealClassificationDialog';
 import { AuditDialog } from '@/components/game/AuditDialog';
+import { PlacementChoiceDialog, switchesToPlacementTargets, cablesToPlacementTargets } from '@/components/game/PlacementChoiceDialog';
 import { AuditComputerSelectionDialog } from '@/components/game/AuditComputerSelectionDialog';
 import { GameEventAnimation, useGameEventAnimation } from '@/components/game/GameEventAnimations';
 import { DifficultySelector } from '@/components/game/DifficultySelector';
@@ -103,6 +104,14 @@ const Simulation = () => {
     isOpen: boolean;
     cardId: string;
     cardName: string;
+  } | null>(null);
+  
+  // Dialog state for placement choice (cable or computer)
+  const [placementChoiceDialog, setPlacementChoiceDialog] = useState<{
+    isOpen: boolean;
+    cardType: 'cable' | 'computer';
+    card: Card;
+    pendingAction: () => void; // Action to place floating
   } | null>(null);
   
   // Difficulty selector dialog state
@@ -396,37 +405,87 @@ const Simulation = () => {
           }
         }
       } else if (card.subtype === 'cable-2' || card.subtype === 'cable-3') {
-        // If dropped on a switch, connect to it; otherwise floating
-        const switchId = zoneType === 'switch' 
-          ? dropZoneId.replace(`${targetPlayerId}-switch-`, '')
-          : undefined;
-        const result = playCable(card.id, switchId);
-        
-        if (result.success) {
-          toast.success(switchId ? 'Cable connected to switch!' : 'Cable placed (floating - drag onto a switch to connect)');
+        // If dropped on a switch, connect to it directly
+        if (zoneType === 'switch') {
+          const switchId = dropZoneId.replace(`${targetPlayerId}-switch-`, '');
+          const result = playCable(card.id, switchId);
           
-          // Check if there are floating computers to connect
+          if (result.success) {
+            toast.success('Cable connected to switch!');
+            
+            // Check if there are floating computers to connect
+            const humanPlayer = gameState!.players[0];
+            if (humanPlayer.network.floatingComputers.length > 0 && result.cableId && result.maxComputers) {
+              setConnectDialog({
+                isOpen: true,
+                cableId: result.cableId,
+                maxConnections: result.maxComputers,
+                cableType: card.subtype,
+              });
+            }
+          }
+        } else {
+          // Dropped on unconnected area or board - check if switches exist
           const humanPlayer = gameState!.players[0];
-          if (humanPlayer.network.floatingComputers.length > 0 && result.cableId && result.maxComputers) {
-            setConnectDialog({
+          const availableSwitches = humanPlayer.network.switches.filter(sw => !sw.isDisabled);
+          
+          if (availableSwitches.length > 0) {
+            // Show placement choice dialog
+            setPlacementChoiceDialog({
               isOpen: true,
-              cableId: result.cableId,
-              maxConnections: result.maxComputers,
-              cableType: card.subtype,
+              cardType: 'cable',
+              card: card,
+              pendingAction: () => {
+                const result = playCable(card.id, undefined);
+                if (result.success) {
+                  toast.success('Cable placed (floating)');
+                }
+              },
             });
+          } else {
+            // No switches - just place floating
+            const result = playCable(card.id, undefined);
+            if (result.success) {
+              toast.success('Cable placed (floating - drag onto a switch to connect)');
+            }
           }
         }
       } else if (card.subtype === 'computer') {
-        // If dropped on a cable (connected or floating), connect to it; otherwise floating
-        let cableId: string | undefined;
-        if (zoneType === 'cable') {
-          cableId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
-        } else if (zoneType === 'floating') {
-          // Dropped on floating cable
-          cableId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
+        // If dropped on a cable (connected or floating), connect to it directly
+        if (zoneType === 'cable' || zoneType === 'floating') {
+          let cableId: string | undefined;
+          if (zoneType === 'cable') {
+            cableId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
+          } else {
+            cableId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
+          }
+          playComputer(card.id, cableId);
+          toast.success('Computer connected to cable!');
+        } else {
+          // Dropped on unconnected area or board - check if connected cables with space exist
+          const humanPlayer = gameState!.players[0];
+          const availableCables = cablesToPlacementTargets(
+            humanPlayer.network.switches,
+            humanPlayer.network.floatingCables
+          );
+          
+          if (availableCables.length > 0) {
+            // Show placement choice dialog
+            setPlacementChoiceDialog({
+              isOpen: true,
+              cardType: 'computer',
+              card: card,
+              pendingAction: () => {
+                playComputer(card.id, undefined);
+                toast.success('Computer placed (floating)');
+              },
+            });
+          } else {
+            // No cables with space - just place floating
+            playComputer(card.id, undefined);
+            toast.success('Computer placed (floating - drag onto a cable to connect)');
+          }
         }
-        playComputer(card.id, cableId);
-        toast.success(cableId ? 'Computer connected to cable!' : 'Computer placed (floating - drag onto a cable to connect)');
       }
       return;
     }
@@ -822,6 +881,51 @@ const Simulation = () => {
           onConfirm={() => {
             confirmAuditSelection();
           }}
+        />
+      )}
+
+      {/* Placement Choice Dialog - cable or computer placement */}
+      {placementChoiceDialog && gameState && (
+        <PlacementChoiceDialog
+          isOpen={placementChoiceDialog.isOpen}
+          cardType={placementChoiceDialog.cardType}
+          cardImage={placementChoiceDialog.card.image}
+          cardName={placementChoiceDialog.card.name}
+          availableTargets={
+            placementChoiceDialog.cardType === 'cable'
+              ? switchesToPlacementTargets(gameState.players[0].network.switches)
+              : cablesToPlacementTargets(
+                  gameState.players[0].network.switches,
+                  gameState.players[0].network.floatingCables
+                )
+          }
+          onPlaceFloating={() => {
+            placementChoiceDialog.pendingAction();
+            setPlacementChoiceDialog(null);
+          }}
+          onConnectTo={(targetId) => {
+            if (placementChoiceDialog.cardType === 'cable') {
+              const result = playCable(placementChoiceDialog.card.id, targetId);
+              if (result.success) {
+                toast.success('Cable connected to switch!');
+                // Check for floating computers to connect
+                const humanPlayer = gameState.players[0];
+                if (humanPlayer.network.floatingComputers.length > 0 && result.cableId && result.maxComputers) {
+                  setConnectDialog({
+                    isOpen: true,
+                    cableId: result.cableId,
+                    maxConnections: result.maxComputers,
+                    cableType: placementChoiceDialog.card.subtype,
+                  });
+                }
+              }
+            } else {
+              playComputer(placementChoiceDialog.card.id, targetId);
+              toast.success('Computer connected to cable!');
+            }
+            setPlacementChoiceDialog(null);
+          }}
+          onCancel={() => setPlacementChoiceDialog(null)}
         />
       )}
 
