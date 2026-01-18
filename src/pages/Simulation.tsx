@@ -907,7 +907,8 @@ const Simulation = () => {
   const computerPlayer = gameState.players[1];
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
   const isHumanTurn = currentPlayer.isHuman;
-  const canPlayCards = isHumanTurn && gameState.phase === 'moves' && gameState.movesRemaining > 0;
+  const totalMovesAvailable = gameState.movesRemaining + gameState.equipmentMovesRemaining;
+  const canPlayCards = isHumanTurn && gameState.phase === 'moves' && totalMovesAvailable > 0;
   const canDiscard = isHumanTurn && gameState.phase === 'moves'; // Can always discard during your turn
   const isDiscardPhase = isHumanTurn && gameState.phase === 'discard';
   
@@ -998,6 +999,7 @@ const Simulation = () => {
               playerId="player-1"
               gamePhase={gameState.phase}
               movesRemaining={gameState.movesRemaining}
+              equipmentMovesRemaining={gameState.equipmentMovesRemaining}
               onEndPhase={endPhase}
               isDragging={activeCard !== null}
               isWinning={humanPlayer.score > computerPlayer.score}
