@@ -104,8 +104,32 @@ export function PlayerSection({
 
       {/* Content Container */}
       <div className="flex-1 p-4 space-y-4">
-        {/* Network Board - expanded height to show connected + unconnected */}
-        <div className="h-[480px] overflow-y-auto">
+        {/* Network Board - with score in top right corner */}
+        <div className="h-[480px] overflow-y-auto relative">
+          {/* Score Badge - Top Right Corner */}
+          <div className={cn(
+            "absolute top-2 right-2 z-10 flex items-center gap-2 px-3 py-1.5 rounded-lg border",
+            isWinning 
+              ? "bg-yellow-500/20 border-yellow-500/50" 
+              : isHuman 
+                ? "bg-accent-green/20 border-accent-green/50" 
+                : "bg-gray-800/80 border-gray-600"
+          )}>
+            <Bitcoin className={cn("w-5 h-5", isWinning ? "text-yellow-400" : isHuman ? "text-accent-green" : "text-gray-400")} />
+            <span className={cn(
+              "text-xl font-bold",
+              isWinning ? "text-yellow-400" : isHuman ? "text-accent-green" : "text-gray-300"
+            )}>
+              {player.score}
+            </span>
+            <span className={cn(
+              "text-xs",
+              isWinning ? "text-yellow-400/80" : isHuman ? "text-accent-green/80" : "text-gray-500"
+            )}>
+              ({connectedComputers} mining)
+            </span>
+          </div>
+          
           <NetworkBoardDroppable
             network={player.network}
             isCurrentPlayer={isHuman && isCurrentTurn}
@@ -243,25 +267,12 @@ export function PlayerSection({
         </div>
       </div>
 
-      {/* Score Footer */}
+      {/* Footer - simplified, score moved to network board */}
       <div className={cn(
-        "px-4 py-3 border-t flex items-center justify-center gap-4",
-        isWinning ? "border-yellow-500/50 bg-yellow-500/10" : isHuman ? "border-accent-green/30 bg-accent-green/5" : "border-gray-700 bg-gray-800/30"
+        "px-4 py-2 border-t flex items-center justify-center",
+        isHuman ? "border-accent-green/30 bg-accent-green/5" : "border-gray-700 bg-gray-800/30"
       )}>
-        <span className={cn("font-medium", isWinning ? "text-yellow-400" : titleColor)}>{playerLabel}</span>
-        <div className="flex items-center gap-1">
-          <Bitcoin className={cn("w-5 h-5", isWinning ? "text-yellow-400" : isHuman ? "text-accent-green" : "text-gray-400")} />
-          <span className={cn(
-            "text-2xl font-bold",
-            isWinning ? "text-yellow-400" : isHuman ? "text-accent-green" : "text-gray-300"
-          )}>
-            {player.score}
-          </span>
-        </div>
-        <div className="text-xs text-muted-foreground">
-          <span className={isWinning ? "text-yellow-400" : isHuman ? "text-accent-green" : "text-gray-400"}>{connectedComputers}</span>
-          {' '}connected
-        </div>
+        <span className={cn("text-sm font-medium", titleColor)}>{playerLabel}</span>
       </div>
     </div>
   );
