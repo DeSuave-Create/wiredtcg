@@ -147,6 +147,13 @@ const Simulation = () => {
     setShowDifficultySelector(true);
   }, []);
 
+  // Navigate to home if difficulty selector is closed without starting a game
+  useEffect(() => {
+    if (!gameState && !showDifficultySelector && !showIntro) {
+      navigate('/');
+    }
+  }, [gameState, showDifficultySelector, showIntro, navigate]);
+
   // Track previous classifications to detect steals
   const [prevHumanClassCount, setPrevHumanClassCount] = useState<number>(0);
 
@@ -662,11 +669,9 @@ const Simulation = () => {
   }
 
   // After intro, if game not started, show difficulty selector with fade-in
-  // If dialog is closed without selection, we've already navigated away
   if (!gameState) {
-    // If difficulty selector is closed but no game started, ensure navigation happens
+    // If difficulty selector is closed, useEffect above will handle navigation
     if (!showDifficultySelector) {
-      navigate('/');
       return null;
     }
     
@@ -685,7 +690,7 @@ const Simulation = () => {
           <DifficultySelector
             isOpen={showDifficultySelector}
             onSelect={handleStartGame}
-            onClose={() => navigate('/')}
+            onClose={() => setShowDifficultySelector(false)}
           />
         </div>
         <Footer />
