@@ -16,6 +16,7 @@ import { PlacementChoiceDialog, switchesToPlacementTargets, cablesToPlacementTar
 import { AuditComputerSelectionDialog } from '@/components/game/AuditComputerSelectionDialog';
 import { GameEventAnimation, useGameEventAnimation } from '@/components/game/GameEventAnimations';
 import { DifficultySelector } from '@/components/game/DifficultySelector';
+import { SimulationIntro } from '@/components/game/SimulationIntro';
 import { AIDifficulty } from '@/utils/ai';
 import { Card } from '@/types/game';
 import { toast } from 'sonner';
@@ -114,8 +115,11 @@ const Simulation = () => {
     pendingAction: () => void; // Action to place floating
   } | null>(null);
   
+  // Intro animation state
+  const [showIntro, setShowIntro] = useState(true);
+  
   // Difficulty selector dialog state
-  const [showDifficultySelector, setShowDifficultySelector] = useState(true);
+  const [showDifficultySelector, setShowDifficultySelector] = useState(false);
 
   // Start new game with selected difficulty
   const handleStartGame = useCallback((difficulty: AIDifficulty) => {
@@ -936,6 +940,16 @@ const Simulation = () => {
         swapData={currentEvent?.swapData}
         onComplete={clearEvent}
       />
+
+      {/* Intro Animation */}
+      {showIntro && (
+        <SimulationIntro 
+          onComplete={() => {
+            setShowIntro(false);
+            setShowDifficultySelector(true);
+          }} 
+        />
+      )}
 
       {/* Difficulty Selector Dialog */}
       <DifficultySelector
