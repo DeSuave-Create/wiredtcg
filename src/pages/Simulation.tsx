@@ -850,6 +850,7 @@ const Simulation = () => {
               isDragging={activeCard !== null}
               isWinning={humanPlayer.score > computerPlayer.score}
               opponentScore={computerPlayer.score}
+              aiDifficulty={aiDifficulty}
             />
 
             {/* Opponent Section - Center */}

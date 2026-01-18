@@ -2,8 +2,9 @@ import { PlayerNetwork, SwitchNode, CableNode, PlacedCard, Card, FloatingCable }
 import { DroppableZone } from './DroppableZone';
 import { DraggablePlacedCard } from './DraggablePlacedCard';
 import { cn } from '@/lib/utils';
-import { Unplug } from 'lucide-react';
+import { Unplug, AlertTriangle, Wrench } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface NetworkBoardDroppableProps {
   network: PlayerNetwork;
@@ -14,6 +15,7 @@ interface NetworkBoardDroppableProps {
   canReceiveResolutions?: boolean;
   canRearrange?: boolean; // Whether cards can be dragged to rearrange
   compact?: boolean; // Compact mode for smaller display
+  showEasyModeHints?: boolean; // Show visual hints for easy mode
 }
 
 export function NetworkBoardDroppable({
@@ -25,6 +27,7 @@ export function NetworkBoardDroppable({
   canReceiveResolutions = false,
   canRearrange = false,
   compact = false,
+  showEasyModeHints = false,
 }: NetworkBoardDroppableProps) {
   const hasFloatingEquipment = network.floatingCables.length > 0 || network.floatingComputers.length > 0;
   
@@ -121,6 +124,7 @@ export function NetworkBoardDroppable({
                 canReceiveResolutions={canReceiveResolutions}
                 canRearrange={canRearrange}
                 cardSize={CARD_SIZE}
+                showEasyModeHints={showEasyModeHints}
               />
             ))}
             
@@ -135,8 +139,35 @@ export function NetworkBoardDroppable({
                 compAccepts.push('resolution');
               }
               
+              const hasIssues = comp.attachedIssues.length > 0;
+              const issueTypes = comp.attachedIssues.map(i => i.subtype).join(', ');
+              
+              // Get resolution hint based on attack type
+              const getResolutionHint = () => {
+                const issues = comp.attachedIssues;
+                if (issues.length === 0) return '';
+                const hints: string[] = [];
+                issues.forEach(issue => {
+                  if (issue.subtype === 'hacked') hints.push('Use "Secured" card');
+                  if (issue.subtype === 'power-outage') hints.push('Use "Powered" card');
+                  if (issue.subtype === 'new-hire') hints.push('Use "Trained" card');
+                });
+                hints.push('Or use "Help Desk" to fix all');
+                return hints.join(' • ');
+              };
+              
               const compContent = (
-                <div className="relative">
+                <div className={cn(
+                  "relative",
+                  hasIssues && showEasyModeHints && "animate-pulse"
+                )}>
+                  {/* Attack indicator for easy mode */}
+                  {hasIssues && showEasyModeHints && (
+                    <div className="absolute -top-2 -right-2 z-10">
+                      <AlertTriangle className="w-4 h-4 text-red-500 animate-bounce" />
+                    </div>
+                  )}
+                  
                   {canRearrange ? (
                     <DraggablePlacedCard
                       placedCard={comp}
@@ -161,6 +192,28 @@ export function NetworkBoardDroppable({
                 </div>
               );
               
+              // Wrap with tooltip for easy mode
+              const wrappedContent = showEasyModeHints && hasIssues ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    {compContent}
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-xs bg-red-900/90 border-red-500">
+                    <div className="text-xs space-y-1">
+                      <div className="flex items-center gap-1 text-red-300 font-semibold">
+                        <AlertTriangle className="w-3 h-3" />
+                        <span>Under Attack!</span>
+                      </div>
+                      <div className="text-white">Issues: {issueTypes}</div>
+                      <div className="flex items-center gap-1 text-green-300">
+                        <Wrench className="w-3 h-3" />
+                        <span>{getResolutionHint()}</span>
+                      </div>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              ) : compContent;
+              
               if (compAccepts.length > 0) {
                 return (
                   <DroppableZone
@@ -170,12 +223,12 @@ export function NetworkBoardDroppable({
                     accepts={compAccepts}
                     className="w-fit"
                   >
-                    {compContent}
+                    {wrappedContent}
                   </DroppableZone>
                 );
               }
               
-              return <div key={comp.id}>{compContent}</div>;
+              return <div key={comp.id}>{wrappedContent}</div>;
             })}
             
             {!hasFloatingEquipment && network.switches.length === 0 && (
@@ -297,6 +350,7 @@ interface FloatingCableComponentProps {
   canReceiveResolutions: boolean;
   canRearrange: boolean;
   cardSize: string;
+  showEasyModeHints?: boolean;
 }
 
 function FloatingCableComponent({
@@ -307,6 +361,7 @@ function FloatingCableComponent({
   canReceiveResolutions,
   canRearrange,
   cardSize,
+  showEasyModeHints = false,
 }: FloatingCableComponentProps) {
   const hasSpace = cable.computers.length < cable.maxComputers;
   
@@ -327,9 +382,36 @@ function FloatingCableComponent({
   
   const accepts = getAccepts();
   
+  const hasIssues = cable.attachedIssues.length > 0;
+  const issueTypes = cable.attachedIssues.map(i => i.subtype).join(', ');
+  
+  // Get resolution hint based on attack type
+  const getResolutionHint = () => {
+    const issues = cable.attachedIssues;
+    if (issues.length === 0) return '';
+    const hints: string[] = [];
+    issues.forEach(issue => {
+      if (issue.subtype === 'hacked') hints.push('Use "Secured" card');
+      if (issue.subtype === 'power-outage') hints.push('Use "Powered" card');
+      if (issue.subtype === 'new-hire') hints.push('Use "Trained" card');
+    });
+    hints.push('Or use "Help Desk" to fix all');
+    return hints.join(' • ');
+  };
+  
   // Wrap in DroppableZone if it can accept cards
   const content = (
-    <div className="relative bg-yellow-500/10 rounded-lg border border-dashed border-yellow-500/50 p-1">
+    <div className={cn(
+      "relative bg-yellow-500/10 rounded-lg border border-dashed border-yellow-500/50 p-1",
+      hasIssues && showEasyModeHints && "border-red-500 bg-red-500/10"
+    )}>
+      {/* Attack indicator for easy mode */}
+      {hasIssues && showEasyModeHints && (
+        <div className="absolute -top-2 -right-2 z-10">
+          <AlertTriangle className="w-4 h-4 text-red-500 animate-bounce" />
+        </div>
+      )}
+      
       <div className="relative">
         {canRearrange ? (
           <DraggablePlacedCard
@@ -401,6 +483,28 @@ function FloatingCableComponent({
     </div>
   );
   
+  // Wrap with tooltip for easy mode
+  const wrappedContent = showEasyModeHints && hasIssues ? (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        {content}
+      </TooltipTrigger>
+      <TooltipContent side="top" className="max-w-xs bg-red-900/90 border-red-500">
+        <div className="text-xs space-y-1">
+          <div className="flex items-center gap-1 text-red-300 font-semibold">
+            <AlertTriangle className="w-3 h-3" />
+            <span>Cable Under Attack!</span>
+          </div>
+          <div className="text-white">Issues: {issueTypes}</div>
+          <div className="flex items-center gap-1 text-green-300">
+            <Wrench className="w-3 h-3" />
+            <span>{getResolutionHint()}</span>
+          </div>
+        </div>
+      </TooltipContent>
+    </Tooltip>
+  ) : content;
+  
   // If can accept computers, wrap in DroppableZone
   if (accepts.length > 0) {
     return (
@@ -410,12 +514,12 @@ function FloatingCableComponent({
         accepts={accepts}
         className="w-fit"
       >
-        {content}
+        {wrappedContent}
       </DroppableZone>
     );
   }
   
-  return content;
+  return wrappedContent;
 }
 
 interface CableComponentProps {
