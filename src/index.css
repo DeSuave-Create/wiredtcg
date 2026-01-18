@@ -612,3 +612,261 @@
   }
 }
 
+/* Epic Game Event Animations */
+
+/* Explosion particle animation */
+@keyframes explode-particle {
+  0% {
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateX(var(--distance));
+    opacity: 0;
+  }
+}
+
+/* Shockwave ring expansion */
+@keyframes shockwave {
+  0% {
+    width: 20px;
+    height: 20px;
+    opacity: 1;
+  }
+  100% {
+    width: 300px;
+    height: 300px;
+    opacity: 0;
+  }
+}
+
+/* Red flash for attacks */
+@keyframes flash-red {
+  0% { opacity: 0; }
+  30% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Explosion scale */
+@keyframes explosion-scale {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Shake effect */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px) rotate(-1deg); }
+  75% { transform: translateX(5px) rotate(1deg); }
+}
+
+/* Hard shake for audits */
+@keyframes shake-hard {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  10% { transform: translateX(-8px) translateY(-2px); }
+  20% { transform: translateX(8px) translateY(2px); }
+  30% { transform: translateX(-6px) translateY(-1px); }
+  40% { transform: translateX(6px) translateY(1px); }
+  50% { transform: translateX(-4px); }
+  60% { transform: translateX(4px); }
+  70% { transform: translateX(-2px); }
+  80% { transform: translateX(2px); }
+  90% { transform: translateX(-1px); }
+}
+
+/* Slam in from top */
+@keyframes slam-in {
+  0% {
+    transform: translateY(-100px) scale(1.5);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(10px) scale(0.95);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Slam down for audit icon */
+@keyframes slam-down {
+  0% {
+    transform: translateY(-200px) scale(0.5);
+    opacity: 0;
+  }
+  70% {
+    transform: translateY(20px) scale(1.1);
+    opacity: 1;
+  }
+  85% {
+    transform: translateY(-10px) scale(0.95);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Lightning flash */
+@keyframes lightning-flash {
+  0%, 100% { 
+    opacity: 0; 
+    transform: translateY(-20px); 
+  }
+  10%, 30%, 50% { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+  20%, 40% { 
+    opacity: 0.3; 
+  }
+}
+
+/* Aggressive pulse for audits */
+@keyframes aggressive-pulse {
+  0% { opacity: 0.3; }
+  100% { opacity: 0.6; }
+}
+
+/* Impact ring for audit */
+@keyframes impact-ring {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Glitch in effect */
+@keyframes glitch-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px) skewX(-10deg);
+  }
+  20% {
+    opacity: 1;
+    transform: translateX(10px) skewX(5deg);
+  }
+  40% {
+    transform: translateX(-5px) skewX(-3deg);
+  }
+  60% {
+    transform: translateX(3px) skewX(2deg);
+  }
+  80% {
+    transform: translateX(-1px) skewX(-1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) skewX(0deg);
+  }
+}
+
+/* Text glitch subtle */
+@keyframes text-glitch {
+  0%, 100% { 
+    text-shadow: 0 0 10px #fbbf24, 0 0 30px #fbbf24, 0 0 60px #f59e0b, 3px 3px 0 #92400e;
+  }
+  50% { 
+    text-shadow: -2px 0 10px #fbbf24, 2px 0 30px #fbbf24, 0 0 60px #f59e0b, 3px 3px 0 #92400e;
+  }
+}
+
+/* Fade in fast */
+@keyframes fade-in-fast {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Float up for sparkles */
+@keyframes float-up {
+  0% {
+    transform: translateY(0) scale(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-20px) scale(1);
+  }
+  100% {
+    transform: translateY(-150px) scale(0.5);
+    opacity: 0;
+  }
+}
+
+/* Healing pulse rings */
+@keyframes healing-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Gentle fade in */
+@keyframes gentle-fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Float in gently */
+@keyframes float-in {
+  0% {
+    transform: translateY(30px) scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Gentle bounce */
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Soft pulse glow */
+@keyframes soft-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+/* Shimmer border effect */
+@keyframes shimmer-border {
+  0% {
+    box-shadow: 0 0 30px rgba(34, 197, 94, 0.3), inset 0 0 20px rgba(134, 239, 172, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(34, 197, 94, 0.5), inset 0 0 30px rgba(134, 239, 172, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 30px rgba(34, 197, 94, 0.3), inset 0 0 20px rgba(134, 239, 172, 0.2);
+  }
+}
+
+/* Pulse glow for explosions */
+@keyframes pulse-glow {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.1); opacity: 1; }
+}
+
