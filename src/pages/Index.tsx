@@ -1,4 +1,4 @@
-
+import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
@@ -6,10 +6,29 @@ import HeroSection from '@/components/HeroSection';
 import GameMechanicsSection from '@/components/GameMechanicsSection';
 import StrategySection from '@/components/StrategySection';
 import ElectricProgressBar from '@/components/ElectricProgressBar';
+import { SimulationIntro } from '@/components/game/SimulationIntro';
 
 const Index = () => {
+  const [showIntro, setShowIntro] = useState(true);
+  const [contentVisible, setContentVisible] = useState(false);
+
+  // Show intro animation first
+  if (showIntro) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <SimulationIntro 
+          onComplete={() => {
+            setShowIntro(false);
+            // Brief delay for smooth transition
+            setTimeout(() => setContentVisible(true), 100);
+          }} 
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className={`min-h-screen flex flex-col transition-opacity duration-500 ${contentVisible ? 'opacity-100' : 'opacity-0'}`}>
       <Header />
       
       <main className="container mx-auto px-3 sm:px-4 lg:px-6 py-3 sm:py-6 lg:py-8 flex justify-center flex-grow">
