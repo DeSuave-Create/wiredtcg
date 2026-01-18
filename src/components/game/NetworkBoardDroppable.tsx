@@ -868,16 +868,39 @@ interface IssueIndicatorProps {
 }
 
 function IssueIndicator({ issues, small = false }: IssueIndicatorProps) {
+  const [showImpact, setShowImpact] = useState(false);
+  const prevIssueCount = useRef(issues.length);
+  
+  // Detect when a new attack lands
+  useEffect(() => {
+    if (issues.length > prevIssueCount.current) {
+      setShowImpact(true);
+      const timer = setTimeout(() => setShowImpact(false), 600);
+      return () => clearTimeout(timer);
+    }
+    prevIssueCount.current = issues.length;
+  }, [issues.length]);
+  
   return (
     <div className={cn(
       "absolute inset-0 flex flex-col items-center justify-center gap-0.5 pointer-events-none",
+      showImpact && "animate-[equipment-shake_0.5s_ease-out]"
     )}>
+      {/* Impact flash */}
+      {showImpact && (
+        <>
+          <div className="absolute inset-0 animate-[attack-flash_0.4s_ease-out] rounded" />
+          <AttackImpactSparks />
+        </>
+      )}
+      
       {issues.map((issue, idx) => (
         <div
-          key={idx}
+          key={`${issue.id}-${idx}`}
           className={cn(
-            "transform rotate-90 border-2 border-red-500 rounded shadow-lg",
-            small ? "w-12 h-16" : "w-20 h-28"
+            "transform rotate-90 border-2 border-red-500 rounded shadow-lg shadow-red-500/50",
+            small ? "w-12 h-16" : "w-20 h-28",
+            idx === issues.length - 1 && showImpact && "animate-[attack-land_0.5s_ease-out]"
           )}
           title={issue.name}
         >
@@ -892,14 +915,77 @@ function IssueIndicator({ issues, small = false }: IssueIndicatorProps) {
   );
 }
 
-// Floating issue indicator - displayed OUTSIDE the card for better visibility
-function FloatingIssueIndicator({ issues }: { issues: Card[] }) {
+// Spark particles for attack impact
+function AttackImpactSparks() {
+  const sparks = Array.from({ length: 8 }).map((_, i) => {
+    const angle = (360 / 8) * i;
+    const distance = 30 + Math.random() * 20;
+    const x = Math.cos((angle * Math.PI) / 180) * distance;
+    const y = Math.sin((angle * Math.PI) / 180) * distance;
+    return { x, y, delay: Math.random() * 0.1 };
+  });
+  
   return (
-    <div className="absolute -right-8 top-1/2 -translate-y-1/2 flex flex-col gap-1 z-20">
+    <>
+      {sparks.map((spark, i) => (
+        <div
+          key={i}
+          className="absolute left-1/2 top-1/2 w-2 h-2 rounded-full bg-orange-400"
+          style={{
+            '--spark-x': `${spark.x}px`,
+            '--spark-y': `${spark.y}px`,
+            animation: `attack-spark 0.4s ease-out ${spark.delay}s forwards`,
+            boxShadow: '0 0 6px #f97316, 0 0 12px #ef4444',
+          } as React.CSSProperties}
+        />
+      ))}
+      {/* Central fire burst */}
+      <div 
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full"
+        style={{
+          background: 'radial-gradient(circle, rgba(250,204,21,0.8) 0%, rgba(249,115,22,0.6) 40%, transparent 70%)',
+          animation: 'fire-burst 0.4s ease-out forwards',
+        }}
+      />
+    </>
+  );
+}
+
+// Floating issue indicator - displayed ON TOP of the card for visibility
+function FloatingIssueIndicator({ issues }: { issues: Card[] }) {
+  const [showImpact, setShowImpact] = useState(false);
+  const prevIssueCount = useRef(issues.length);
+  
+  // Detect when a new attack lands
+  useEffect(() => {
+    if (issues.length > prevIssueCount.current) {
+      setShowImpact(true);
+      const timer = setTimeout(() => setShowImpact(false), 600);
+      return () => clearTimeout(timer);
+    }
+    prevIssueCount.current = issues.length;
+  }, [issues.length]);
+  
+  return (
+    <div className={cn(
+      "absolute inset-0 flex items-center justify-center z-20 pointer-events-none",
+      showImpact && "animate-[equipment-shake_0.5s_ease-out]"
+    )}>
+      {/* Impact flash */}
+      {showImpact && (
+        <>
+          <div className="absolute inset-0 animate-[attack-flash_0.4s_ease-out] rounded" />
+          <AttackImpactSparks />
+        </>
+      )}
+      
       {issues.map((issue, idx) => (
         <div
-          key={idx}
-          className="transform rotate-90 border-2 border-red-500 rounded shadow-lg shadow-red-500/50 animate-pulse w-8 h-10 bg-black/90"
+          key={`${issue.id}-${idx}`}
+          className={cn(
+            "transform rotate-90 border-2 border-red-500 rounded shadow-lg shadow-red-500/50 w-10 h-14 bg-black/90",
+            idx === issues.length - 1 && showImpact && "animate-[attack-land_0.5s_ease-out]"
+          )}
           title={issue.name}
         >
           <img 
