@@ -869,13 +869,21 @@ interface IssueIndicatorProps {
 
 function IssueIndicator({ issues, small = false }: IssueIndicatorProps) {
   const [showImpact, setShowImpact] = useState(false);
+  const [showHealing, setShowHealing] = useState(false);
   const prevIssueCount = useRef(issues.length);
   
-  // Detect when a new attack lands
+  // Detect when attacks are added or removed
   useEffect(() => {
     if (issues.length > prevIssueCount.current) {
+      // Attack added
       setShowImpact(true);
       const timer = setTimeout(() => setShowImpact(false), 600);
+      return () => clearTimeout(timer);
+    } else if (issues.length < prevIssueCount.current && prevIssueCount.current > 0) {
+      // Attack removed - show healing
+      setShowHealing(true);
+      const timer = setTimeout(() => setShowHealing(false), 800);
+      prevIssueCount.current = issues.length;
       return () => clearTimeout(timer);
     }
     prevIssueCount.current = issues.length;
@@ -886,13 +894,16 @@ function IssueIndicator({ issues, small = false }: IssueIndicatorProps) {
       "absolute inset-0 flex flex-col items-center justify-center gap-0.5 pointer-events-none",
       showImpact && "animate-[equipment-shake_0.5s_ease-out]"
     )}>
-      {/* Impact flash */}
+      {/* Impact flash for attacks */}
       {showImpact && (
         <>
           <div className="absolute inset-0 animate-[attack-flash_0.4s_ease-out] rounded" />
           <AttackImpactSparks />
         </>
       )}
+      
+      {/* Healing effect for resolutions */}
+      {showHealing && <HealingEffect />}
       
       {issues.map((issue, idx) => (
         <div
@@ -912,6 +923,75 @@ function IssueIndicator({ issues, small = false }: IssueIndicatorProps) {
         </div>
       ))}
     </div>
+  );
+}
+
+// Healing effect with green cross and glow
+function HealingEffect() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30">
+      {/* Expanding green glow rings */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border-2 border-green-400 animate-[heal-ring_0.6s_ease-out_forwards]" style={{ boxShadow: '0 0 15px #4ade80, 0 0 30px #22c55e' }} />
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border-2 border-green-400 animate-[heal-ring_0.6s_ease-out_0.1s_forwards]" style={{ boxShadow: '0 0 15px #4ade80' }} />
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border-2 border-green-400 animate-[heal-ring_0.6s_ease-out_0.2s_forwards]" style={{ boxShadow: '0 0 10px #4ade80' }} />
+      
+      {/* Green cross icon */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-[heal-cross_0.6s_ease-out_forwards]">
+        <svg viewBox="0 0 24 24" className="w-10 h-10" style={{ filter: 'drop-shadow(0 0 8px #4ade80) drop-shadow(0 0 16px #22c55e)' }}>
+          <path
+            d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6V3z"
+            fill="url(#heal-gradient)"
+            stroke="#bbf7d0"
+            strokeWidth="0.5"
+          />
+          <defs>
+            <linearGradient id="heal-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#86efac" />
+              <stop offset="50%" stopColor="#4ade80" />
+              <stop offset="100%" stopColor="#22c55e" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      
+      {/* Sparkle particles */}
+      <HealingSparkles />
+      
+      {/* Green flash overlay */}
+      <div className="absolute inset-0 animate-[heal-flash_0.5s_ease-out] rounded" />
+    </div>
+  );
+}
+
+// Sparkle particles for healing
+function HealingSparkles() {
+  const sparkles = Array.from({ length: 6 }).map((_, i) => {
+    const angle = (360 / 6) * i + Math.random() * 30;
+    const distance = 25 + Math.random() * 15;
+    const x = Math.cos((angle * Math.PI) / 180) * distance;
+    const y = Math.sin((angle * Math.PI) / 180) * distance;
+    const delay = Math.random() * 0.2;
+    return { x, y, delay };
+  });
+  
+  return (
+    <>
+      {sparkles.map((sparkle, i) => (
+        <div
+          key={i}
+          className="absolute left-1/2 top-1/2 w-2 h-2"
+          style={{
+            '--sparkle-x': `${sparkle.x}px`,
+            '--sparkle-y': `${sparkle.y}px`,
+            animation: `heal-sparkle 0.6s ease-out ${sparkle.delay}s forwards`,
+          } as React.CSSProperties}
+        >
+          <svg viewBox="0 0 16 16" className="w-full h-full">
+            <polygon points="8,0 10,6 16,8 10,10 8,16 6,10 0,8 6,6" fill="#4ade80" style={{ filter: 'drop-shadow(0 0 4px #4ade80)' }} />
+          </svg>
+        </div>
+      ))}
+    </>
   );
 }
 
@@ -954,13 +1034,21 @@ function AttackImpactSparks() {
 // Floating issue indicator - displayed ON TOP of the card for visibility
 function FloatingIssueIndicator({ issues }: { issues: Card[] }) {
   const [showImpact, setShowImpact] = useState(false);
+  const [showHealing, setShowHealing] = useState(false);
   const prevIssueCount = useRef(issues.length);
   
-  // Detect when a new attack lands
+  // Detect when attacks are added or removed
   useEffect(() => {
     if (issues.length > prevIssueCount.current) {
+      // Attack added
       setShowImpact(true);
       const timer = setTimeout(() => setShowImpact(false), 600);
+      return () => clearTimeout(timer);
+    } else if (issues.length < prevIssueCount.current && prevIssueCount.current > 0) {
+      // Attack removed - show healing
+      setShowHealing(true);
+      const timer = setTimeout(() => setShowHealing(false), 800);
+      prevIssueCount.current = issues.length;
       return () => clearTimeout(timer);
     }
     prevIssueCount.current = issues.length;
@@ -971,13 +1059,16 @@ function FloatingIssueIndicator({ issues }: { issues: Card[] }) {
       "absolute inset-0 flex items-center justify-center z-20 pointer-events-none",
       showImpact && "animate-[equipment-shake_0.5s_ease-out]"
     )}>
-      {/* Impact flash */}
+      {/* Impact flash for attacks */}
       {showImpact && (
         <>
           <div className="absolute inset-0 animate-[attack-flash_0.4s_ease-out] rounded" />
           <AttackImpactSparks />
         </>
       )}
+      
+      {/* Healing effect for resolutions */}
+      {showHealing && <HealingEffect />}
       
       {issues.map((issue, idx) => (
         <div
