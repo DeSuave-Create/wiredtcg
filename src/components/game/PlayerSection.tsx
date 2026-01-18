@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Bitcoin, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState, useEffect, useRef } from 'react';
+import { AIDifficulty } from '@/utils/ai';
 
 interface PlayerSectionProps {
   player: Player;
@@ -28,6 +29,7 @@ interface PlayerSectionProps {
   isWinning?: boolean;
   opponentScore?: number;
   humanCanPlayCards?: boolean; // Whether the human player can play cards (for attack targeting)
+  aiDifficulty?: AIDifficulty; // Current AI difficulty for showing hints
 }
 
 export function PlayerSection({
@@ -49,6 +51,7 @@ export function PlayerSection({
   isWinning = false,
   opponentScore = 0,
   humanCanPlayCards = false,
+  aiDifficulty,
 }: PlayerSectionProps) {
   const sectionTitle = isHuman ? 'YOUR NETWORK' : "COMPUTER'S NETWORK";
   const handLabel = isHuman ? 'Your Hand' : "Computer's Hand";
@@ -111,6 +114,7 @@ export function PlayerSection({
             canReceiveAttacks={!isHuman && humanCanPlayCards}
             canReceiveResolutions={isHuman && canPlayCards && hasResolutionCards && hasDisabledEquipment}
             canRearrange={isHuman && canPlayCards}
+            showEasyModeHints={aiDifficulty === 'easy' && isHuman}
           />
         </div>
 
