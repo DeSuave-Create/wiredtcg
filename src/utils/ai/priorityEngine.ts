@@ -179,13 +179,20 @@ function evaluateBuildActions(boardState: BoardState, aiPlayer: Player, oppPlaye
   }
   
   // Play Cable - HIGH PRIORITY if we have switch but no cable slots for computers
+  // Can also place floating cables for future use (up to 5)
   for (const cableCard of boardState.cablesInHand) {
     const cableCapacity = cableCard.subtype === 'cable-3' ? 3 : 2;
     let utility = 8; // Base utility
     
+    const floatingCableCount = aiPlayer.network.floatingCables.length;
+    
     if (!hasEnabledSwitch) {
-      // No switch yet - still can play cable (will be floating), lower priority
-      utility = 5; // Above threshold but lower than switch
+      // No switch yet - place as floating cable for future use
+      if (floatingCableCount >= 5) {
+        utility = 0; // Too many floating cables already, skip
+      } else {
+        utility = 6; // Place floating cable for future use
+      }
     } else if (!hasCableSlots) {
       // Have switch but need cables to place computers
       utility = 25; // HIGH priority - opens up computer placement
@@ -212,13 +219,16 @@ function evaluateBuildActions(boardState: BoardState, aiPlayer: Player, oppPlaye
       }
     }
     
+    // Skip if too many floating cables and no switch to connect to
+    if (utility <= 0) continue;
+    
     actions.push({
       type: 'play_cable',
       card: cableCard,
       targetId: targetSwitchId,
       utility,
       reasoning: !hasEnabledSwitch 
-        ? `Placing floating ${cableCapacity}-Cable (need switch first)`
+        ? `Placing floating ${cableCapacity}-Cable for future use (${floatingCableCount}/5)`
         : !hasCableSlots
           ? `Adding ${cableCapacity}-Cable to enable computer placement`
           : `Adding ${cableCapacity}-capacity cable`,
