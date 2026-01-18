@@ -662,7 +662,14 @@ const Simulation = () => {
   }
 
   // After intro, if game not started, show difficulty selector with fade-in
+  // If dialog is closed without selection, we've already navigated away
   if (!gameState) {
+    // If difficulty selector is closed but no game started, ensure navigation happens
+    if (!showDifficultySelector) {
+      navigate('/');
+      return null;
+    }
+    
     return (
       <div className="min-h-screen flex flex-col bg-background relative">
         {/* Fade overlay that disappears */}
