@@ -2278,8 +2278,14 @@ export function useGameEngine() {
         
         const { action } = makeAIDecision(tempState, aiDifficulty);
         
-        if (!action || action.utility <= -10) {
-          break; // No valuable actions
+        // If decision engine returns nothing, end the AI's turn loop.
+        if (!action) {
+          break;
+        }
+        
+        // Allow discards even when utility is very low (discard is the fallback to avoid AI freezing).
+        if (action.utility <= -10 && action.type !== 'discard') {
+          break; // No valuable non-discard actions
         }
         
         let playedCard = false;
