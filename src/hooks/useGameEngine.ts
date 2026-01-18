@@ -1202,6 +1202,13 @@ export function useGameEngine() {
     if (!gameState) return false;
     
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    
+    // Only the current player can play resolution cards
+    if (!currentPlayer.isHuman) {
+      addLog('Not your turn!');
+      return false;
+    }
+    
     const resolutionCard = currentPlayer.hand.find(c => c.id === resolutionCardId);
     
     if (!resolutionCard || resolutionCard.type !== 'resolution') {
