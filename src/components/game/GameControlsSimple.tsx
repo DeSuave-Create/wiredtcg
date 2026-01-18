@@ -49,6 +49,7 @@ export function GameControlsSimple({
     'score': 'Score',
     'game-over': 'Game Over',
     'audit': 'Audit',
+    'headhunter-battle': 'HH Battle',
   };
 
   // Compact version for sidebar

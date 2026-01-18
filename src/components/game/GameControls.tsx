@@ -43,6 +43,7 @@ export function GameControls({
     'score': 'Scoring',
     'game-over': 'Game Over',
     'audit': 'Audit Battle',
+    'headhunter-battle': 'Head Hunter Battle',
   };
 
   // Get contextual action based on selected card

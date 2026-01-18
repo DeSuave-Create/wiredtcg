@@ -12,6 +12,7 @@ import { ConnectComputersDialog } from '@/components/game/ConnectComputersDialog
 import { ConnectCablesDialog } from '@/components/game/ConnectCablesDialog';
 import { StealClassificationDialog } from '@/components/game/StealClassificationDialog';
 import { AuditDialog } from '@/components/game/AuditDialog';
+import { HeadHunterBattleDialog } from '@/components/game/HeadHunterBattleDialog';
 import { PlacementChoiceDialog, switchesToPlacementTargets, cablesToPlacementTargets } from '@/components/game/PlacementChoiceDialog';
 import { ReconnectEquipmentDialog, switchesToReconnectTargets, cablesToReconnectTargets } from '@/components/game/ReconnectEquipmentDialog';
 import { AuditComputerSelectionDialog } from '@/components/game/AuditComputerSelectionDialog';
@@ -75,6 +76,8 @@ const Simulation = () => {
     passAudit,
     toggleAuditComputerSelection,
     confirmAuditSelection,
+    respondToHeadHunterBattle,
+    passHeadHunterBattle,
     aiDifficulty,
   } = useGameEngine();
   
@@ -179,7 +182,7 @@ const Simulation = () => {
     if (!gameState) return;
     
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-    if (!currentPlayer.isHuman && gameState.phase !== 'game-over' && gameState.phase !== 'audit') {
+    if (!currentPlayer.isHuman && gameState.phase !== 'game-over' && gameState.phase !== 'audit' && gameState.phase !== 'headhunter-battle') {
       const timer = setTimeout(() => {
         executeAITurn();
       }, 1000);
@@ -221,6 +224,39 @@ const Simulation = () => {
       return () => clearTimeout(timer);
     }
   }, [gameState?.phase, gameState?.auditBattle?.phase, gameState?.auditBattle?.chain.length, respondToAudit, passAudit]);
+
+  // Handle AI response in Head Hunter battles
+  useEffect(() => {
+    if (!gameState || gameState.phase !== 'headhunter-battle' || !gameState.headHunterBattle) return;
+    
+    const battle = gameState.headHunterBattle;
+    const isDefenderTurn = battle.chain.length % 2 === 0;
+    const respondingPlayerIndex = isDefenderTurn ? battle.defenderIndex : battle.attackerIndex;
+    const respondingPlayer = gameState.players[respondingPlayerIndex];
+    
+    // Only act if it's AI's turn to respond
+    if (!respondingPlayer.isHuman) {
+      const playableCards = respondingPlayer.hand.filter(c => c.subtype === 'head-hunter');
+      
+      const timer = setTimeout(() => {
+        if (playableCards.length > 0) {
+          // AI plays a Head Hunter to respond
+          respondToHeadHunterBattle(playableCards[0].id);
+          toast.info(`🤖 Computer plays Head Hunter to ${isDefenderTurn ? 'block' : 'counter'}!`);
+        } else {
+          // AI passes
+          passHeadHunterBattle();
+          if (isDefenderTurn) {
+            toast.info('🤖 Computer accepts the steal!');
+          } else {
+            toast.info('🤖 Computer lets the block succeed!');
+          }
+        }
+      }, 1500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [gameState?.phase, gameState?.headHunterBattle?.chain.length, respondToHeadHunterBattle, passHeadHunterBattle]);
 
   // Handle AI computer selection during audit selection phase
   useEffect(() => {
@@ -1037,6 +1073,22 @@ const Simulation = () => {
           }}
           onPass={() => {
             passAudit();
+          }}
+        />
+      )}
+      
+      {/* Head Hunter Battle Dialog */}
+      {gameState && gameState.phase === 'headhunter-battle' && gameState.headHunterBattle && (
+        <HeadHunterBattleDialog
+          isOpen={true}
+          battle={gameState.headHunterBattle}
+          players={gameState.players}
+          currentPlayerId={humanPlayer.id}
+          onPlayCard={(cardId) => {
+            respondToHeadHunterBattle(cardId);
+          }}
+          onPass={() => {
+            passHeadHunterBattle();
           }}
         />
       )}
