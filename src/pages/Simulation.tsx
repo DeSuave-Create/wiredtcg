@@ -13,6 +13,7 @@ import { ConnectCablesDialog } from '@/components/game/ConnectCablesDialog';
 import { StealClassificationDialog } from '@/components/game/StealClassificationDialog';
 import { AuditDialog } from '@/components/game/AuditDialog';
 import { PlacementChoiceDialog, switchesToPlacementTargets, cablesToPlacementTargets } from '@/components/game/PlacementChoiceDialog';
+import { ReconnectEquipmentDialog, switchesToReconnectTargets, cablesToReconnectTargets } from '@/components/game/ReconnectEquipmentDialog';
 import { AuditComputerSelectionDialog } from '@/components/game/AuditComputerSelectionDialog';
 import { GameEventAnimation, useGameEventAnimation } from '@/components/game/GameEventAnimations';
 import { DifficultySelector } from '@/components/game/DifficultySelector';
@@ -114,6 +115,15 @@ const Simulation = () => {
     cardType: 'cable' | 'computer';
     card: Card;
     pendingAction: () => void; // Action to place floating
+  } | null>(null);
+  
+  // Dialog state for reconnecting floating equipment
+  const [reconnectDialog, setReconnectDialog] = useState<{
+    isOpen: boolean;
+    equipmentType: 'cable' | 'computer';
+    equipmentId: string;
+    equipmentImage: string;
+    equipmentName: string;
   } | null>(null);
   
   // Check if intro was already shown this session
@@ -388,6 +398,52 @@ const Simulation = () => {
       // Don't move to same location
       if (targetId === sourceId) {
         return;
+      }
+      
+      // If dropping to floating zone, check if there are available targets to prompt
+      if (targetType === 'floating') {
+        const humanPlayer = gameState.players[0];
+        
+        // Floating cable - check for available switches
+        if (sourceType === 'floating-cable') {
+          const availableSwitches = switchesToReconnectTargets(humanPlayer.network.switches);
+          if (availableSwitches.length > 0) {
+            // Find the floating cable being moved
+            const floatingCable = humanPlayer.network.floatingCables.find(c => c.id === sourceId);
+            if (floatingCable) {
+              setReconnectDialog({
+                isOpen: true,
+                equipmentType: 'cable',
+                equipmentId: sourceId,
+                equipmentImage: floatingCable.card.image,
+                equipmentName: floatingCable.card.name,
+              });
+              return; // Don't move yet, wait for dialog
+            }
+          }
+        }
+        
+        // Floating computer - check for available cables
+        if (sourceType === 'floating-computer') {
+          const availableCables = cablesToReconnectTargets(
+            humanPlayer.network.switches,
+            humanPlayer.network.floatingCables
+          );
+          if (availableCables.length > 0) {
+            // Find the floating computer being moved
+            const floatingComputer = humanPlayer.network.floatingComputers.find(c => c.id === sourceId);
+            if (floatingComputer) {
+              setReconnectDialog({
+                isOpen: true,
+                equipmentType: 'computer',
+                equipmentId: sourceId,
+                equipmentImage: floatingComputer.card.image,
+                equipmentName: floatingComputer.card.name,
+              });
+              return; // Don't move yet, wait for dialog
+            }
+          }
+        }
       }
       
       moveEquipment(sourceType, sourceId, targetType, targetId);
@@ -1033,6 +1089,49 @@ const Simulation = () => {
             setPlacementChoiceDialog(null);
           }}
           onCancel={() => setPlacementChoiceDialog(null)}
+        />
+      )}
+      
+      {/* Reconnect Floating Equipment Dialog */}
+      {reconnectDialog && gameState && (
+        <ReconnectEquipmentDialog
+          isOpen={reconnectDialog.isOpen}
+          equipmentType={reconnectDialog.equipmentType}
+          equipmentImage={reconnectDialog.equipmentImage}
+          equipmentName={reconnectDialog.equipmentName}
+          availableTargets={
+            reconnectDialog.equipmentType === 'cable'
+              ? switchesToReconnectTargets(gameState.players[0].network.switches)
+              : cablesToReconnectTargets(
+                  gameState.players[0].network.switches,
+                  gameState.players[0].network.floatingCables
+                )
+          }
+          onReconnect={(targetId) => {
+            if (reconnectDialog.equipmentType === 'cable') {
+              moveEquipment('floating-cable', reconnectDialog.equipmentId, 'switch', targetId);
+              toast.success('Cable connected to switch!');
+              
+              // Check for floating computers to connect
+              const humanPlayer = gameState.players[0];
+              const floatingCable = humanPlayer.network.floatingCables.find(c => c.id === reconnectDialog.equipmentId);
+              if (floatingCable && humanPlayer.network.floatingComputers.length > 0) {
+                // The cable is now connected, prompt to connect computers
+                // We need to find the new cable ID after it was moved
+                setConnectDialog({
+                  isOpen: true,
+                  cableId: reconnectDialog.equipmentId,
+                  maxConnections: floatingCable.maxComputers - floatingCable.computers.length,
+                  cableType: floatingCable.card.subtype,
+                });
+              }
+            } else {
+              moveEquipment('floating-computer', reconnectDialog.equipmentId, 'cable', targetId);
+              toast.success('Computer connected to cable!');
+            }
+            setReconnectDialog(null);
+          }}
+          onCancel={() => setReconnectDialog(null)}
         />
       )}
 
