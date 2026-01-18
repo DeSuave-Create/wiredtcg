@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, RotateCcw } from 'lucide-react';
 import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, pointerWithin, CollisionDetection } from '@dnd-kit/core';
 import Header from '@/components/Header';
@@ -49,6 +49,7 @@ const preferSpecificTargets: CollisionDetection = (args) => {
 };
 
 const Simulation = () => {
+  const navigate = useNavigate();
   const {
     gameState,
     initializeGame,
@@ -674,7 +675,7 @@ const Simulation = () => {
             <DifficultySelector
               isOpen={showDifficultySelector}
               onSelect={handleStartGame}
-              onClose={() => {}}
+              onClose={() => navigate('/')}
             />
           </div>
           <Footer />
