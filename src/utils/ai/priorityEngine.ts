@@ -906,14 +906,28 @@ function hasMatchingIssueForResolution(network: PlayerNetwork, resolutionSubtype
 function createFallbackDiscard(aiPlayer: Player, difficulty: AIDifficulty): EvaluatedAction | null {
   if (aiPlayer.hand.length === 0) return null;
   
-  // Find lowest value card
-  const card = aiPlayer.hand[0];
+  // Find lowest value card to discard - prioritize attacks/resolutions over equipment
+  const cardPriority: Record<string, number> = {
+    'attack': 1,      // Attacks are least valuable when we can't progress
+    'resolution': 2,  // Resolutions without targets aren't useful
+    'classification': 3, // Classifications have situational value
+    'equipment': 4,   // Equipment is most valuable for building
+  };
+  
+  // Sort hand by value (lowest first)
+  const sortedHand = [...aiPlayer.hand].sort((a, b) => {
+    const priorityA = cardPriority[a.type] || 5;
+    const priorityB = cardPriority[b.type] || 5;
+    return priorityA - priorityB;
+  });
+  
+  const card = sortedHand[0];
   
   return {
     type: 'discard',
     card,
-    utility: -15,
-    reasoning: 'Forced discard - no better actions available',
+    utility: -8, // Higher than -10 so it gets selected as fallback
+    reasoning: `Fallback discard - ${card.name} is least valuable with no valid actions`,
     risk: 0,
   };
 }
