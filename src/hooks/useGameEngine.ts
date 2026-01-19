@@ -2377,11 +2377,23 @@ export function useGameEngine() {
       };
       
       // Execute AI moves based on decision engine recommendations
+      // Track failed actions to avoid infinite loops and enable fallback
+      const failedActionTypes = new Set<string>();
+      let consecutiveFailures = 0;
+      const MAX_CONSECUTIVE_FAILURES = 10;
+      const MAX_FAILED_ACTION_TYPES = 5;
+      
       while (movesUsed < maxMoves && movesRemaining > 0) {
         const currentPlayer = newPlayers[aiPlayerIndex];
         const humanPlayer = newPlayers[humanPlayerIndex];
         const hand = currentPlayer.hand;
         const network = currentPlayer.network;
+        
+        // Safety check: too many consecutive failures = end turn
+        if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+          console.log('[AI] Too many consecutive failures, forcing end of turn');
+          break;
+        }
         
         // Get next best action from decision engine
         const tempState: GameState = {
@@ -2394,13 +2406,40 @@ export function useGameEngine() {
         
         const { action } = makeAIDecision(tempState, aiDifficulty);
         
-        // If decision engine returns nothing, end the AI's turn loop.
+        // If decision engine returns nothing, try fallback discard
         if (!action) {
+          console.log('[AI] No action returned. Hand:', currentPlayer.hand.map(c => c.name));
+          console.log('[AI] Network - Switches:', network.switches.length, 'Floating cables:', network.floatingCables.length, 'Floating computers:', network.floatingComputers.length);
+          
+          // Force discard if we have cards
+          if (currentPlayer.hand.length > 0) {
+            const discardCard = currentPlayer.hand[0];
+            currentPlayer.hand = currentPlayer.hand.filter(c => c.id !== discardCard.id);
+            newDiscardPile.push(discardCard);
+            aiActions.push({ type: 'discard', card: discardCard });
+            gameLog = [...gameLog.slice(-19), `🗑️ ${currentPlayer.name} discarded ${discardCard.name} (no valid actions)`];
+            movesUsed++;
+            movesRemaining--;
+            continue;
+          }
           break;
         }
         
         // Allow discards even when utility is very low (discard is the fallback to avoid AI freezing).
         if (action.utility <= -10 && action.type !== 'discard') {
+          // Check if we should force a fallback discard instead of ending
+          if (failedActionTypes.size >= MAX_FAILED_ACTION_TYPES && currentPlayer.hand.length > 0) {
+            const discardCard = currentPlayer.hand[0];
+            currentPlayer.hand = currentPlayer.hand.filter(c => c.id !== discardCard.id);
+            newDiscardPile.push(discardCard);
+            aiActions.push({ type: 'discard', card: discardCard });
+            gameLog = [...gameLog.slice(-19), `🗑️ ${currentPlayer.name} discarded ${discardCard.name} (fallback action)`];
+            movesUsed++;
+            movesRemaining--;
+            failedActionTypes.clear();
+            consecutiveFailures = 0;
+            continue;
+          }
           break; // No valuable non-discard actions
         }
         
@@ -2826,8 +2865,39 @@ export function useGameEngine() {
         if (playedCard) {
           movesUsed++;
           movesRemaining--;
+          failedActionTypes.clear();
+          consecutiveFailures = 0;
         } else {
-          break; // No valid play found
+          // Track failed action type to avoid retrying same action
+          failedActionTypes.add(action.type);
+          consecutiveFailures++;
+          
+          // If we've failed too many different action types, force discard
+          if (failedActionTypes.size >= MAX_FAILED_ACTION_TYPES && currentPlayer.hand.length > 0) {
+            // Find least valuable card to discard
+            const cardPriority: Record<string, number> = {
+              'attack': 1,
+              'resolution': 2,
+              'classification': 3,
+              'equipment': 4,
+            };
+            const sortedHand = [...currentPlayer.hand].sort((a, b) => {
+              const priorityA = cardPriority[a.type] || 5;
+              const priorityB = cardPriority[b.type] || 5;
+              return priorityA - priorityB;
+            });
+            
+            const discardCard = sortedHand[0];
+            currentPlayer.hand = currentPlayer.hand.filter(c => c.id !== discardCard.id);
+            newDiscardPile.push(discardCard);
+            aiActions.push({ type: 'discard', card: discardCard });
+            gameLog = [...gameLog.slice(-19), `🗑️ ${currentPlayer.name} discarded ${discardCard.name} (no valid actions)`];
+            movesUsed++;
+            movesRemaining--;
+            failedActionTypes.clear();
+            consecutiveFailures = 0;
+          }
+          // Continue to try next action (don't break yet)
         }
       }
       
