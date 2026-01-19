@@ -22,9 +22,12 @@ import { DifficultySelector } from '@/components/game/DifficultySelector';
 import { SimulationIntro } from '@/components/game/SimulationIntro';
 import { DeckIndicator } from '@/components/game/DeckIndicator';
 import { AICardPlayAnimation } from '@/components/game/FloatingCardAnimation';
+import { MobileSelectionBar } from '@/components/game/MobileSelectionBar';
+import { MobileGameProvider, useMobileGame } from '@/contexts/MobileGameContext';
 import { AIDifficulty } from '@/utils/ai';
 import { Card } from '@/types/game';
 import { toast } from 'sonner';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Custom collision detection that prefers specific targets over board zones
 const preferSpecificTargets: CollisionDetection = (args) => {
@@ -53,7 +56,8 @@ const preferSpecificTargets: CollisionDetection = (args) => {
   return sorted.slice(0, 1);
 };
 
-const Simulation = () => {
+// Inner simulation component that uses mobile context
+const SimulationContent = () => {
   const navigate = useNavigate();
   const {
     gameState,
@@ -1306,6 +1310,15 @@ const Simulation = () => {
 
       <Footer />
     </div>
+  );
+};
+
+// Main Simulation component wrapped with MobileGameProvider
+const Simulation = () => {
+  return (
+    <MobileGameProvider>
+      <SimulationContent />
+    </MobileGameProvider>
   );
 };
 

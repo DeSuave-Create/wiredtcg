@@ -2,6 +2,7 @@ import { Card } from '@/types/game';
 import { DraggableCard } from './DraggableCard';
 import { cn } from '@/lib/utils';
 import { useState, useEffect, useRef } from 'react';
+import { useMobileGameOptional } from '@/contexts/MobileGameContext';
 
 interface PlayerHandDraggableProps {
   cards: Card[];
@@ -21,6 +22,10 @@ export function PlayerHandDraggable({
   gridLayout = false,
 }: PlayerHandDraggableProps) {
   const MAX_HAND_SIZE = 6;
+  const mobileContext = useMobileGameOptional();
+  const isMobile = mobileContext?.isMobile ?? false;
+  const selectedCard = mobileContext?.selectedCard ?? null;
+  const selectedCardSource = mobileContext?.selectedCardSource ?? null;
   
   // Track previous card IDs for animations
   const prevCardIdsRef = useRef<string[]>([]);
@@ -52,17 +57,36 @@ export function PlayerHandDraggable({
     
     prevCardIdsRef.current = currentIds;
   }, [cards, showCards]);
+
+  // Handle mobile card selection
+  const handleMobileSelect = (card: Card) => {
+    if (!mobileContext || !isCurrentPlayer || disabled) return;
+    
+    // Toggle selection
+    if (selectedCard?.id === card.id && selectedCardSource === 'hand') {
+      mobileContext.clearSelection();
+    } else {
+      mobileContext.setSelectedCard(card, 'hand');
+    }
+  };
   
   // Single row layout (1x6) for both players
   if (gridLayout) {
-    // 2x card size: w-24 h-32 (was w-12 h-16)
-    const cardSize = compact ? "w-12 h-16" : "w-24 h-32";
+    // Mobile-responsive card sizes
+    const cardSize = isMobile 
+      ? (compact ? "w-10 h-14" : "w-16 h-22") 
+      : (compact ? "w-12 h-16" : "w-24 h-32");
     const emptySlots = Math.max(0, MAX_HAND_SIZE - cards.length);
     
     return (
-      <div className="flex justify-center gap-2 h-full items-center w-full">
+      <div className={cn(
+        "flex gap-2 h-full items-center w-full",
+        // Mobile: horizontal scroll
+        isMobile ? "overflow-x-auto pb-2 justify-start px-2" : "justify-center"
+      )}>
         {cards.map((card) => {
           const isEntering = enteringCardIds.has(card.id);
+          const isMobileSelected = isMobile && selectedCard?.id === card.id && selectedCardSource === 'hand';
           
           return (
             <div 
@@ -78,6 +102,8 @@ export function PlayerHandDraggable({
                   disabled={disabled || !isCurrentPlayer}
                   showFace={true}
                   compact={compact}
+                  isMobileSelected={isMobileSelected}
+                  onMobileSelect={() => handleMobileSelect(card)}
                 />
               ) : (
                 <div className={cn(
@@ -96,8 +122,8 @@ export function PlayerHandDraggable({
           );
         })}
         
-        {/* Empty slot placeholders */}
-        {Array.from({ length: emptySlots }).map((_, index) => (
+        {/* Empty slot placeholders - hide on mobile to save space */}
+        {!isMobile && Array.from({ length: emptySlots }).map((_, index) => (
           <div 
             key={`empty-${index}`} 
             className={cn(
@@ -112,23 +138,28 @@ export function PlayerHandDraggable({
 
   return (
     <div className={cn(
-      "flex flex-wrap justify-center",
-      compact ? "gap-0.5 p-1" : "gap-2 p-4"
+      "flex flex-wrap",
+      compact ? "gap-0.5 p-1" : "gap-2 p-4",
+      // Mobile: horizontal scroll
+      isMobile ? "overflow-x-auto flex-nowrap justify-start" : "justify-center"
     )}>
       {cards.map((card, index) => {
         const isEntering = enteringCardIds.has(card.id);
+        const isMobileSelected = isMobile && selectedCard?.id === card.id && selectedCardSource === 'hand';
         
         return (
           <div
             key={card.id}
             className={cn(
-              "transition-all duration-300",
+              "transition-all duration-300 flex-shrink-0",
               isEntering && "animate-scale-in"
             )}
             style={{
-              transform: compact 
-                ? `rotate(${(index - cards.length / 2) * 1}deg)`
-                : `rotate(${(index - cards.length / 2) * 3}deg)`,
+              transform: isMobile 
+                ? undefined // No rotation on mobile for easier scrolling
+                : compact 
+                  ? `rotate(${(index - cards.length / 2) * 1}deg)`
+                  : `rotate(${(index - cards.length / 2) * 3}deg)`,
             }}
           >
             {showCards ? (
@@ -137,11 +168,13 @@ export function PlayerHandDraggable({
                 disabled={disabled || !isCurrentPlayer}
                 showFace={true}
                 compact={compact}
+                isMobileSelected={isMobileSelected}
+                onMobileSelect={() => handleMobileSelect(card)}
               />
             ) : (
               <div className={cn(
                 "rounded-lg border-2 border-gray-600 bg-gray-800 overflow-hidden transition-all duration-300",
-                compact ? "w-8 h-11" : "w-20 h-28 sm:w-24 sm:h-32",
+                isMobile ? "w-12 h-16" : (compact ? "w-8 h-11" : "w-20 h-28 sm:w-24 sm:h-32"),
                 isEntering && "ring-2 ring-yellow-400 animate-pulse"
               )}>
                 <img 

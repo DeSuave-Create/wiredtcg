@@ -9,6 +9,7 @@ import { Bitcoin, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState, useEffect, useRef } from 'react';
 import { AIDifficulty } from '@/utils/ai';
+import { useMobileGameOptional } from '@/contexts/MobileGameContext';
 
 interface PlayerSectionProps {
   player: Player;
@@ -55,6 +56,9 @@ export function PlayerSection({
   humanCanPlayCards = false,
   aiDifficulty,
 }: PlayerSectionProps) {
+  const mobileContext = useMobileGameOptional();
+  const isMobile = mobileContext?.isMobile ?? false;
+  
   const sectionTitle = isHuman ? 'YOUR NETWORK' : "COMPUTER'S NETWORK";
   const handLabel = isHuman ? 'Your Hand' : "Computer's Hand";
   const playerLabel = isHuman ? 'You' : 'Computer';
@@ -107,9 +111,12 @@ export function PlayerSection({
       </div>
 
       {/* Content Container */}
-      <div className="flex-1 p-4 space-y-4">
+      <div className="flex-1 p-4 space-y-4 overflow-hidden">
         {/* Network Board - with score in top right corner */}
-        <div className="h-[480px] overflow-y-auto relative">
+        <div className={cn(
+          "overflow-y-auto relative",
+          isMobile ? "h-[280px]" : "h-[480px]"
+        )}>
           {/* Score Badge - Top Right Corner */}
           <div className={cn(
             "absolute top-2 right-2 z-10 flex items-center gap-2 px-3 py-1.5 rounded-lg border",
@@ -121,7 +128,8 @@ export function PlayerSection({
           )}>
             <Bitcoin className={cn("w-5 h-5", isWinning ? "text-yellow-400" : isHuman ? "text-accent-green" : "text-gray-400")} />
             <span className={cn(
-              "text-xl font-bold",
+              isMobile ? "text-lg" : "text-xl",
+              "font-bold",
               isWinning ? "text-yellow-400" : isHuman ? "text-accent-green" : "text-gray-300"
             )}>
               {player.score}
@@ -147,7 +155,10 @@ export function PlayerSection({
         </div>
 
         {/* Classifications Row - height for full cards */}
-        <div className="flex gap-3 items-stretch h-[200px]">
+        <div className={cn(
+          "flex gap-3 items-stretch",
+          isMobile ? "h-[120px]" : "h-[200px]"
+        )}>
           <div className="flex-1">
             <ClassificationSection
               classificationCards={player.classificationCards}
@@ -197,8 +208,11 @@ export function PlayerSection({
           )}
         </div>
 
-        {/* Hand - taller for bigger cards */}
-        <div className="h-[140px] bg-black/20 rounded-lg p-2">
+        {/* Hand - taller for bigger cards, scrollable on mobile */}
+        <div className={cn(
+          "bg-black/20 rounded-lg p-2",
+          isMobile ? "h-[100px]" : "h-[140px]"
+        )}>
           <div className="flex items-center justify-between mb-1">
             <span className={cn("text-sm font-medium", titleColor)}>{handLabel}</span>
             <span className="text-xs text-muted-foreground">{player.hand.length} cards</span>
@@ -209,7 +223,7 @@ export function PlayerSection({
             showCards={isHuman}
             disabled={isHuman ? (!canPlayCards && !canDiscard && !isDiscardPhase) : true}
             gridLayout={true}
-            compact={false}
+            compact={isMobile}
           />
         </div>
 
