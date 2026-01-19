@@ -72,17 +72,17 @@ export function PlayerHandDraggable({
   
   // Single row layout (1x6) for both players
   if (gridLayout) {
-    // Mobile-responsive card sizes - 2x bigger for mobile hand cards
+    // Mobile-responsive card sizes - 66% of large size
     const cardSize = isMobile 
-      ? (compact ? "w-10 h-14" : "w-32 h-44") 
+      ? (compact ? "w-10 h-14" : "w-20 h-28") 
       : (compact ? "w-12 h-16" : "w-24 h-32");
     const emptySlots = Math.max(0, MAX_HAND_SIZE - cards.length);
     
     return (
       <div className={cn(
-        "flex gap-3 h-full items-center w-full",
-        // Mobile: horizontal scroll with larger gap
-        isMobile ? "overflow-x-auto pb-2 justify-start px-3 snap-x snap-mandatory" : "justify-center"
+        "flex gap-2 h-full items-center w-full",
+        // Mobile: horizontal scroll
+        isMobile ? "overflow-x-auto pb-2 justify-start px-2 snap-x snap-mandatory" : "justify-center"
       )}>
         {cards.map((card) => {
           const isEntering = enteringCardIds.has(card.id);

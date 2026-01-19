@@ -44,10 +44,10 @@ export function DraggableCard({
     }
   };
 
-  // Mobile card sizes - larger for hand cards, allow scrolling
+  // Mobile card sizes - 66% of large size for hand cards
   const getSizeClasses = () => {
     if (isMobile) {
-      return compact ? "w-10 h-14" : "w-32 h-44";
+      return compact ? "w-10 h-14" : "w-20 h-28";
     }
     return compact ? "w-12 h-16" : "w-24 h-32";
   };
