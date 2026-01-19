@@ -385,20 +385,10 @@ export function useGameEngine() {
     return { success: true, cableId: newCableId, maxComputers };
   }, [gameState, addLog]);
 
-  // Connect floating computers to a cable (costs 1 move per connection action)
+  // Connect floating computers to a cable (FREE - no move cost)
   // Works for HUMAN player specifically (player index 0)
   const connectFloatingComputersToCable = useCallback((cableId: string, computerIds: string[]) => {
     if (!gameState || computerIds.length === 0) return false;
-    
-    // Check if player has moves remaining (regular or equipment)
-    const humanPlayerIndex = 0;
-    const hasEquipmentMoves = gameState.equipmentMovesRemaining > 0;
-    const hasRegularMoves = gameState.movesRemaining > 0;
-    
-    if (!hasEquipmentMoves && !hasRegularMoves) {
-      console.log('No moves remaining to connect equipment');
-      return false;
-    }
     
     setGameState(prev => {
       if (!prev) return prev;
@@ -476,41 +466,20 @@ export function useGameEngine() {
       
       const locationMsg = connectedToSwitch ? ' (connected to internet!)' : ' (floating cable)';
       
-      // Consume a move (equipment move first if available)
-      let newEquipmentMoves = prev.equipmentMovesRemaining;
-      let newMoves = prev.movesRemaining;
-      if (newEquipmentMoves > 0) {
-        newEquipmentMoves--;
-      } else {
-        newMoves--;
-      }
-      
       return {
         ...prev,
         players: newPlayers,
-        movesRemaining: newMoves,
-        equipmentMovesRemaining: newEquipmentMoves,
-        gameLog: [...prev.gameLog.slice(-19), `Connected ${computersToConnect.length} computer(s)${locationMsg}`],
+        gameLog: [...prev.gameLog.slice(-19), `Connected ${computersToConnect.length} computer(s)${locationMsg} (FREE)`],
       };
     });
     
     return true;
   }, [gameState]);
 
-  // Connect floating cables to a switch (costs 1 move per connection action)
+  // Connect floating cables to a switch (FREE - no move cost)
   // Works for HUMAN player specifically (player index 0)
   const connectFloatingCablesToSwitch = useCallback((switchId: string, cableIds: string[]) => {
     if (!gameState || cableIds.length === 0) return false;
-    
-    // Check if player has moves remaining (regular or equipment)
-    const humanPlayerIndex = 0;
-    const hasEquipmentMoves = gameState.equipmentMovesRemaining > 0;
-    const hasRegularMoves = gameState.movesRemaining > 0;
-    
-    if (!hasEquipmentMoves && !hasRegularMoves) {
-      console.log('No moves remaining to connect equipment');
-      return false;
-    }
     
     setGameState(prev => {
       if (!prev) return prev;
@@ -561,21 +530,10 @@ export function useGameEngine() {
       const totalComputers = cablesToConnect.reduce((sum, c) => sum + c.computers.length, 0);
       const computerMsg = totalComputers > 0 ? ` with ${totalComputers} computer(s)` : '';
       
-      // Consume a move (equipment move first if available)
-      let newEquipmentMoves = prev.equipmentMovesRemaining;
-      let newMoves = prev.movesRemaining;
-      if (newEquipmentMoves > 0) {
-        newEquipmentMoves--;
-      } else {
-        newMoves--;
-      }
-      
       return {
         ...prev,
         players: newPlayers,
-        movesRemaining: newMoves,
-        equipmentMovesRemaining: newEquipmentMoves,
-        gameLog: [...prev.gameLog.slice(-19), `Connected ${cablesToConnect.length} cable(s)${computerMsg} to switch!`],
+        gameLog: [...prev.gameLog.slice(-19), `Connected ${cablesToConnect.length} cable(s)${computerMsg} to switch! (FREE)`],
       };
     });
     
