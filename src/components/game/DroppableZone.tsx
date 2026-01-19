@@ -1,6 +1,7 @@
 import { useDroppable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
 import { ReactNode } from 'react';
+import { useMobileGameOptional } from '@/contexts/MobileGameContext';
 
 export type DropZoneType = 'internet' | 'switch' | 'cable' | 'computer' | 'floating' | 'discard' | 'opponent-equipment' | 'own-equipment' | 'classification';
 
@@ -11,6 +12,7 @@ interface DroppableZoneProps {
   children: ReactNode;
   className?: string;
   label?: string;
+  onMobileTap?: () => void; // Mobile tap handler for placement
 }
 
 export function DroppableZone({ 
@@ -19,27 +21,46 @@ export function DroppableZone({
   accepts, 
   children, 
   className,
-  label 
+  label,
+  onMobileTap,
 }: DroppableZoneProps) {
   const { isOver, setNodeRef, active } = useDroppable({
     id,
     data: { type, accepts },
   });
 
-  // Check if the currently dragged item can be dropped here
-  const activeCard = active?.data?.current?.card;
+  const mobileContext = useMobileGameOptional();
+  const isMobile = mobileContext?.isMobile ?? false;
+  const selectedCard = mobileContext?.selectedCard ?? null;
+
+  // Check if the currently dragged/selected item can be dropped here
+  const activeCard = active?.data?.current?.card || selectedCard;
   const canDrop = activeCard && accepts.includes(activeCard.subtype);
   const isValidDrop = isOver && canDrop;
-  const showDropHint = active && canDrop;
+  const showDropHint = (active || (isMobile && selectedCard)) && canDrop;
+
+  // Handle mobile tap to place
+  const handleClick = (e: React.MouseEvent) => {
+    if (isMobile && selectedCard && canDrop && onMobileTap) {
+      e.preventDefault();
+      e.stopPropagation();
+      onMobileTap();
+    }
+  };
 
   return (
     <div
       ref={setNodeRef}
+      onClick={handleClick}
       className={cn(
         "relative transition-all duration-200",
+        // Mobile: make tappable zones more visible when card is selected
+        isMobile && showDropHint && "cursor-pointer",
         showDropHint && "ring-4 ring-yellow-400 ring-opacity-70 bg-yellow-400/5 rounded-lg",
         isValidDrop && "ring-4 ring-green-400 ring-opacity-100 bg-green-400/20 rounded-lg scale-105",
         isOver && !canDrop && "ring-4 ring-red-400 ring-opacity-100 rounded-lg",
+        // Add min touch target on mobile
+        isMobile && "min-h-[44px]",
         className
       )}
     >
@@ -48,8 +69,11 @@ export function DroppableZone({
       {/* Drop indicator - enhanced visibility */}
       {showDropHint && !isOver && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
-          <div className="bg-yellow-400/30 border-2 border-dashed border-yellow-400 rounded-lg px-3 py-2 text-xs text-yellow-400 font-bold shadow-lg shadow-yellow-400/20">
-            Drop here
+          <div className={cn(
+            "border-2 border-dashed border-yellow-400 rounded-lg px-3 py-2 text-xs text-yellow-400 font-bold shadow-lg shadow-yellow-400/20",
+            isMobile ? "bg-yellow-400/40" : "bg-yellow-400/30"
+          )}>
+            {isMobile ? "Tap here" : "Drop here"}
           </div>
         </div>
       )}
