@@ -38,12 +38,12 @@ export function NetworkBoardDroppable({
   const hasFloatingEquipment = network.floatingCables.length > 0 || network.floatingComputers.length > 0;
   
   // Card height is h-15 (60px), so 4 rows = 240px + padding, 2 rows for unconnected = 120px
-  const CARD_SIZE = "w-12 h-15"; // 48px × 60px
+  const CARD_SIZE = isMobile ? "w-10 h-12" : "w-12 h-15"; // Mobile: 40x48px, Desktop: 48x60px
   
   return (
     <div className={cn(
-      "bg-black/30 rounded-lg border border-accent-green/30 relative overflow-hidden h-full flex flex-col",
-      "p-2"
+      "bg-black/30 rounded-lg border border-accent-green/30 relative h-full flex flex-col",
+      isMobile ? "overflow-y-auto p-1" : "overflow-hidden p-2"
     )}>
       {/* Background logo */}
       <div 
@@ -70,11 +70,14 @@ export function NetworkBoardDroppable({
         onMobileTap={isMobile && selectedCard ? () => onMobilePlacement?.(`${playerId}-board`, 'internet') : undefined}
       >
         {/* Row 1: Game mode logo */}
-        <div className="flex items-center justify-center h-[60px]">
+        <div className={cn(
+          "flex items-center justify-center",
+          isMobile ? "h-[40px]" : "h-[60px]"
+        )}>
           <img 
             src="/lovable-uploads/internet-logo.png" 
             alt="Internet"
-            className="object-contain w-12 h-12"
+            className={cn("object-contain", isMobile ? "w-8 h-8" : "w-12 h-12")}
           />
         </div>
         
@@ -112,8 +115,11 @@ export function NetworkBoardDroppable({
       {/* Unconnected Section - takes 1/3 of space when no switches, otherwise min-h */}
       {(hasFloatingEquipment || (network.switches.length === 0 && isCurrentPlayer)) && (
         <div className={cn(
-          "mt-3 pt-3 relative z-10",
-          network.switches.length === 0 ? "flex-1" : "min-h-[120px]"
+          "relative z-10 border-t border-yellow-500/30",
+          isMobile ? "mt-1 pt-1" : "mt-3 pt-3",
+          network.switches.length === 0 
+            ? "flex-1" 
+            : isMobile ? "min-h-[60px]" : "min-h-[120px]"
         )}>
           <div className="flex items-center gap-1 text-muted-foreground mb-1 text-[10px]">
             <Unplug className="w-3 h-3" />
