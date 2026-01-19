@@ -44,10 +44,10 @@ export function DraggableCard({
     }
   };
 
-  // Mobile card sizes - smaller for better fit
+  // Mobile card sizes - larger for hand cards, allow scrolling
   const getSizeClasses = () => {
     if (isMobile) {
-      return compact ? "w-10 h-14" : "w-16 h-22";
+      return compact ? "w-10 h-14" : "w-32 h-44";
     }
     return compact ? "w-12 h-16" : "w-24 h-32";
   };
