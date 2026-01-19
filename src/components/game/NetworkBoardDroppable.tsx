@@ -42,8 +42,8 @@ export function NetworkBoardDroppable({
   
   return (
     <div className={cn(
-      "bg-black/30 rounded-lg border border-accent-green/30 relative h-full flex flex-col",
-      isMobile ? "overflow-y-auto p-1" : "overflow-hidden p-2"
+      "bg-black/30 rounded-lg border border-accent-green/30 relative flex flex-col",
+      isMobile ? "p-1" : "p-2"
     )}>
       {/* Background logo */}
       <div 
@@ -63,10 +63,7 @@ export function NetworkBoardDroppable({
         id={`${playerId}-board`}
         type="internet"
         accepts={isCurrentPlayer ? ['switch', 'cable-2', 'cable-3', 'computer'] : ['audit']}
-        className={cn(
-          "relative z-10",
-          network.switches.length === 0 ? "flex-[2]" : "flex-1"
-        )}
+        className="relative z-10 pb-4"
         onMobileTap={isMobile && selectedCard ? () => onMobilePlacement?.(`${playerId}-board`, 'internet') : undefined}
       >
         {/* Row 1: Game mode logo */}
@@ -116,10 +113,7 @@ export function NetworkBoardDroppable({
       {(hasFloatingEquipment || (network.switches.length === 0 && isCurrentPlayer)) && (
         <div className={cn(
           "relative z-10 border-t border-yellow-500/30",
-          isMobile ? "mt-1 pt-1" : "mt-3 pt-3",
-          network.switches.length === 0 
-            ? "flex-1" 
-            : isMobile ? "min-h-[60px]" : "min-h-[120px]"
+          isMobile ? "mt-2 pt-2 min-h-[50px]" : "mt-3 pt-3 min-h-[80px]"
         )}>
           <div className="flex items-center gap-1 text-muted-foreground mb-1 text-[10px]">
             <Unplug className="w-3 h-3" />

@@ -112,12 +112,12 @@ export function PlayerSection({
         </h2>
       </div>
 
-      {/* Content Container */}
-      <div className="flex-1 p-4 space-y-4 overflow-hidden">
+      {/* Content Container - scrollable if network grows */}
+      <div className="flex-1 p-4 space-y-4 overflow-y-auto">
         {/* Network Board - with score in top right corner */}
         <div className={cn(
-          "overflow-y-auto relative",
-          isMobile ? "h-[280px]" : "h-[480px]"
+          "overflow-visible relative",
+          isMobile ? "min-h-[200px]" : "min-h-[300px]"
         )}>
           {/* Score Badge - Top Right Corner */}
           <div className={cn(
