@@ -952,7 +952,7 @@ const SimulationContent = () => {
       }
       
       if (targetId) {
-        const success = playAttack(card.id, '1', targetId);
+        const success = playAttack(card.id, targetId, 1);
         if (success) {
           toast.success(`${card.name} played!`);
           clearSelection();
