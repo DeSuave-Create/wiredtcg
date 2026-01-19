@@ -870,11 +870,10 @@ const SimulationContent = () => {
   // Get mobile context for tap-to-place
   const { selectedCard, clearSelection } = useMobileGame();
 
-  // Handle mobile tap-to-place
+  // Handle mobile tap-to-place - mirrors handleDragEnd logic
   const handleMobilePlacement = useCallback((dropZoneId: string, dropZoneType: string) => {
     if (!selectedCard || !gameState) return;
     
-    // Simulate the same logic as handleDragEnd but for mobile tap
     const card = selectedCard;
     const parts = dropZoneId.split('-');
     const targetPlayerId = parts[0] + '-' + parts[1];
@@ -882,113 +881,297 @@ const SimulationContent = () => {
 
     const isHumanTarget = targetPlayerId === 'player-1';
     const isComputerTarget = targetPlayerId === 'player-2';
+    const computerPlayerIndex = 1;
+    const humanPlayer = gameState.players[0];
 
-    // Handle equipment placements on own board
+    // === Handle SWITCH placement ===
     if (card.subtype === 'switch' && isHumanTarget && (zoneType === 'board' || zoneType === 'internet')) {
-      const success = playSwitch(card.id);
-      if (success) {
-        toast.success(`Switch placed!`);
+      const result = playSwitch(card.id);
+      if (result.success) {
+        toast.success('Switch placed!');
+        clearSelection();
+        
+        // Check if there are floating cables to connect
+        if (humanPlayer.network.floatingCables.length > 0 && result.switchId) {
+          setCableDialog({
+            isOpen: true,
+            switchId: result.switchId,
+          });
+        }
+      }
+      return;
+    }
+
+    // === Handle CABLE placement ===
+    if ((card.subtype === 'cable-2' || card.subtype === 'cable-3') && isHumanTarget) {
+      if (zoneType === 'switch') {
+        const switchId = dropZoneId.replace(`${targetPlayerId}-switch-`, '');
+        const result = playCable(card.id, switchId);
+        
+        if (result.success) {
+          toast.success('Cable connected to switch!');
+          clearSelection();
+          
+          // Check if there are floating computers to connect
+          if (humanPlayer.network.floatingComputers.length > 0 && result.cableId && result.maxComputers) {
+            setConnectDialog({
+              isOpen: true,
+              cableId: result.cableId,
+              maxConnections: result.maxComputers,
+              cableType: card.subtype,
+            });
+          }
+        }
+      } else if (zoneType === 'board' || zoneType === 'internet') {
+        // Check if switches exist for placement choice dialog
+        const availableSwitches = humanPlayer.network.switches.filter(sw => !sw.isDisabled);
+        
+        if (availableSwitches.length > 0) {
+          // Show placement choice dialog
+          setPlacementChoiceDialog({
+            isOpen: true,
+            cardType: 'cable',
+            card: card,
+            pendingAction: () => {
+              const result = playCable(card.id, undefined);
+              if (result.success) {
+                toast.success('Cable placed (floating)');
+                clearSelection();
+                
+                // Check if there are floating computers to connect
+                if (humanPlayer.network.floatingComputers.length > 0 && result.cableId && result.maxComputers) {
+                  setConnectDialog({
+                    isOpen: true,
+                    cableId: result.cableId,
+                    maxConnections: result.maxComputers,
+                    cableType: card.subtype,
+                  });
+                }
+              }
+            },
+          });
+          clearSelection();
+        } else {
+          // No switches - just place floating
+          const result = playCable(card.id, undefined);
+          if (result.success) {
+            toast.success('Cable placed (floating - tap a switch to connect)');
+            clearSelection();
+            
+            // Check if there are floating computers to connect
+            if (humanPlayer.network.floatingComputers.length > 0 && result.cableId && result.maxComputers) {
+              setConnectDialog({
+                isOpen: true,
+                cableId: result.cableId,
+                maxConnections: result.maxComputers,
+                cableType: card.subtype,
+              });
+            }
+          }
+        }
+      }
+      return;
+    }
+
+    // === Handle COMPUTER placement ===
+    if (card.subtype === 'computer' && isHumanTarget) {
+      if (zoneType === 'cable') {
+        const cableId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
+        playComputer(card.id, cableId);
+        toast.success('Computer connected to cable!');
+        clearSelection();
+      } else if (zoneType === 'floating' || zoneType === 'floating-cable') {
+        const cableId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
+        playComputer(card.id, cableId);
+        toast.success('Computer connected to cable!');
+        clearSelection();
+      } else if (zoneType === 'board' || zoneType === 'internet') {
+        // Check if ANY cables with space exist
+        const availableCables = cablesToPlacementTargets(
+          humanPlayer.network.switches,
+          humanPlayer.network.floatingCables
+        );
+        
+        if (availableCables.length > 0) {
+          // Show placement choice dialog
+          setPlacementChoiceDialog({
+            isOpen: true,
+            cardType: 'computer',
+            card: card,
+            pendingAction: () => {
+              playComputer(card.id, undefined);
+              toast.success('Computer placed (floating)');
+              clearSelection();
+            },
+          });
+          clearSelection();
+        } else {
+          // No cables with space - just place floating
+          playComputer(card.id, undefined);
+          toast.success('Computer placed (floating - tap a cable to connect)');
+          clearSelection();
+        }
+      }
+      return;
+    }
+
+    // === Handle ATTACK cards on opponent ===
+    if (card.type === 'attack' && isComputerTarget) {
+      // Special handling for Audit card
+      if (card.subtype === 'audit') {
+        if (zoneType === 'board' || zoneType === 'switch' || zoneType === 'cable' || zoneType === 'computer') {
+          const success = startAudit(card.id, computerPlayerIndex);
+          if (success) {
+            toast.info('📋 Audit initiated!');
+            clearSelection();
+          }
+        }
+        return;
+      }
+      
+      // Regular attack cards
+      let equipmentId = '';
+      if (zoneType === 'switch') {
+        equipmentId = dropZoneId.replace(`${targetPlayerId}-switch-`, '');
+      } else if (zoneType === 'cable') {
+        if (dropZoneId.includes('floating-cable')) {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
+        } else {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
+        }
+      } else if (zoneType === 'computer') {
+        equipmentId = dropZoneId.replace(`${targetPlayerId}-computer-`, '');
+      } else if (zoneType === 'floating') {
+        if (dropZoneId.includes('floating-cable')) {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
+        } else if (dropZoneId.includes('floating-computer')) {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-floating-computer-`, '');
+        }
+      } else if (zoneType === 'floating-cable') {
+        equipmentId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
+      } else if (zoneType === 'floating-computer') {
+        equipmentId = dropZoneId.replace(`${targetPlayerId}-floating-computer-`, '');
+      }
+      
+      if (equipmentId) {
+        playAttack(card.id, equipmentId, computerPlayerIndex);
+        toast.success(`${card.name} attack played!`);
+        clearSelection();
+      } else if (zoneType === 'board') {
+        toast.error('Tap on specific equipment to attack!');
+      }
+      return;
+    }
+
+    // === Handle RESOLUTION cards on own equipment ===
+    if (card.type === 'resolution' && isHumanTarget) {
+      let equipmentId = '';
+      if (zoneType === 'switch') {
+        equipmentId = dropZoneId.replace(`${targetPlayerId}-switch-`, '');
+      } else if (zoneType === 'cable') {
+        if (dropZoneId.includes('floating-cable')) {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
+        } else {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
+        }
+      } else if (zoneType === 'computer') {
+        if (dropZoneId.includes('floating-computer')) {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-floating-computer-`, '');
+        } else {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-computer-`, '');
+        }
+      } else if (zoneType === 'floating') {
+        if (dropZoneId.includes('floating-cable')) {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
+        } else if (dropZoneId.includes('floating-computer')) {
+          equipmentId = dropZoneId.replace(`${targetPlayerId}-floating-computer-`, '');
+        }
+      } else if (zoneType === 'floating-cable') {
+        equipmentId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
+      } else if (zoneType === 'floating-computer') {
+        equipmentId = dropZoneId.replace(`${targetPlayerId}-floating-computer-`, '');
+      }
+      
+      if (equipmentId) {
+        playResolution(card.id, equipmentId);
+        toast.success('Issue resolved!');
         clearSelection();
       }
       return;
     }
 
-    if ((card.subtype === 'cable-2' || card.subtype === 'cable-3') && isHumanTarget) {
-      if (zoneType === 'switch') {
-        const switchId = dropZoneId.replace(`${targetPlayerId}-switch-`, '');
-        const success = playCable(card.id, switchId);
-        if (success) {
-          toast.success(`Cable connected to switch!`);
-          clearSelection();
+    // === Handle CLASSIFICATION cards ===
+    if (card.type === 'classification' && zoneType === 'classification') {
+      // Head Hunter and Seal the Deal - must target OPPONENT's classification zone
+      if (card.subtype === 'head-hunter' || card.subtype === 'seal-the-deal') {
+        if (!isComputerTarget) {
+          toast.error(`${card.name} must be used on opponent's classifications!`);
+          return;
         }
-      } else if (zoneType === 'board' || zoneType === 'internet') {
-        const success = playCable(card.id);
-        if (success) {
-          toast.success(`Cable placed (floating)!`);
-          clearSelection();
+        
+        const computerPlayer = gameState.players[1];
+        
+        if (computerPlayer.classificationCards.length === 0) {
+          toast.error("Opponent has no classifications to steal!");
+          return;
         }
-      }
-      return;
-    }
-
-    if (card.subtype === 'computer' && isHumanTarget) {
-      if (zoneType === 'cable') {
-        const cableId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
-        const success = playComputer(card.id, cableId);
-        if (success) {
-          toast.success(`Computer connected!`);
-          clearSelection();
+        
+        // Check if there are any stealable classifications
+        const stealable = computerPlayer.classificationCards.filter(oppClass => 
+          !humanPlayer.classificationCards.some(c => c.card.subtype === oppClass.card.subtype)
+        );
+        
+        if (stealable.length === 0) {
+          toast.error("Can't steal - you already have the same classification types!");
+          return;
         }
-      } else if (zoneType === 'floating-cable') {
-        const cableId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
-        const success = playComputer(card.id, cableId);
-        if (success) {
-          toast.success(`Computer connected to floating cable!`);
-          clearSelection();
-        }
-      } else if (zoneType === 'board' || zoneType === 'internet') {
-        const success = playComputer(card.id);
-        if (success) {
-          toast.success(`Computer placed (floating)!`);
-          clearSelection();
-        }
-      }
-      return;
-    }
-
-    // Handle attacks on opponent equipment
-    if (card.type === 'attack' && isComputerTarget) {
-      let targetId: string | undefined;
-      if (zoneType === 'switch') {
-        targetId = dropZoneId.replace(`${targetPlayerId}-switch-`, '');
-      } else if (zoneType === 'cable') {
-        targetId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
-      } else if (zoneType === 'computer') {
-        targetId = dropZoneId.replace(`${targetPlayerId}-computer-`, '');
-      } else if (zoneType === 'floating-cable') {
-        targetId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
-      } else if (zoneType === 'floating-computer') {
-        targetId = dropZoneId.replace(`${targetPlayerId}-floating-computer-`, '');
+        
+        // Open the steal dialog
+        setStealDialog({
+          isOpen: true,
+          cardId: card.id,
+          cardName: card.name,
+        });
+        clearSelection();
+        return;
       }
       
-      if (targetId) {
-        const success = playAttack(card.id, targetId, 1);
-        if (success) {
-          toast.success(`${card.name} played!`);
-          clearSelection();
-        }
-      }
-      return;
-    }
-
-    // Handle resolutions on own equipment
-    if (card.type === 'resolution' && isHumanTarget) {
-      let targetId: string | undefined;
-      if (zoneType === 'switch') {
-        targetId = dropZoneId.replace(`${targetPlayerId}-switch-`, '');
-      } else if (zoneType === 'cable') {
-        targetId = dropZoneId.replace(`${targetPlayerId}-cable-`, '');
-      } else if (zoneType === 'computer') {
-        targetId = dropZoneId.replace(`${targetPlayerId}-computer-`, '');
-      } else if (zoneType === 'floating-cable') {
-        targetId = dropZoneId.replace(`${targetPlayerId}-floating-cable-`, '');
-      } else if (zoneType === 'floating-computer') {
-        targetId = dropZoneId.replace(`${targetPlayerId}-floating-computer-`, '');
+      // Regular classifications - on OWN zone only
+      if (!isHumanTarget) {
+        toast.error(`${card.name} must be placed on your own classification zone!`);
+        return;
       }
       
-      if (targetId) {
-        const success = playResolution(card.id, targetId);
-        if (success) {
-          toast.success(`${card.name} applied!`);
-          clearSelection();
+      // Check if already at max classifications - prompt to replace
+      if (humanPlayer.classificationCards.length >= 2) {
+        setReplaceClassDialog({
+          isOpen: true,
+          newCard: card,
+        });
+        clearSelection();
+        return;
+      }
+      
+      const success = playClassification(card.id);
+      if (success) {
+        // Check if this creates a duplicate pair
+        const updatedClassifications = [...humanPlayer.classificationCards, { card }];
+        const hasDuplicate = updatedClassifications.filter(c => c.card.subtype === card.subtype).length >= 2;
+        if (hasDuplicate) {
+          toast.success(`${card.name} is now active! 🛡️ Duplicate protection active!`);
+        } else {
+          toast.success(`${card.name} is now active!`);
         }
+        clearSelection();
+      } else {
+        toast.error(`Failed to play ${card.name}!`);
       }
       return;
     }
 
     // Show hint if placement didn't work
     showCardHint(card);
-  }, [selectedCard, gameState, playSwitch, playCable, playComputer, playAttack, playResolution, clearSelection]);
+  }, [selectedCard, gameState, playSwitch, playCable, playComputer, playAttack, playResolution, playClassification, startAudit, clearSelection]);
 
 
   if (showIntro) {
