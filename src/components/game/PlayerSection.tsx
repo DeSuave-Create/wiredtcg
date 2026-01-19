@@ -214,7 +214,7 @@ export function PlayerSection({
         {/* Hand - taller for bigger cards, scrollable on mobile */}
         <div className={cn(
           "bg-black/20 rounded-lg p-2",
-          isMobile ? "h-[100px]" : "h-[140px]"
+          isMobile ? "h-[200px]" : "h-[140px]"
         )}>
           <div className="flex items-center justify-between mb-1">
             <span className={cn("text-sm font-medium", titleColor)}>{handLabel}</span>
@@ -226,7 +226,7 @@ export function PlayerSection({
             showCards={isHuman}
             disabled={isHuman ? (!canPlayCards && !canDiscard && !isDiscardPhase) : true}
             gridLayout={true}
-            compact={isMobile}
+            compact={false}
           />
         </div>
 
