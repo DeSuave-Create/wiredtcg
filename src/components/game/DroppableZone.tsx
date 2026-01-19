@@ -66,14 +66,14 @@ export function DroppableZone({
     >
       {children}
       
-      {/* Drop indicator - enhanced visibility */}
+      {/* Drop indicator - positioned below content, not covering it */}
       {showDropHint && !isOver && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+        <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 pointer-events-none z-10">
           <div className={cn(
-            "border-2 border-dashed border-yellow-400 rounded-lg px-3 py-2 text-xs text-yellow-400 font-bold shadow-lg shadow-yellow-400/20",
+            "border border-dashed border-yellow-400 rounded px-2 py-0.5 text-[10px] text-yellow-400 font-bold whitespace-nowrap",
             isMobile ? "bg-yellow-400/40" : "bg-yellow-400/30"
           )}>
-            {isMobile ? "Tap here" : "Drop here"}
+            {isMobile ? "Tap" : "Drop"}
           </div>
         </div>
       )}
