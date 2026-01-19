@@ -2568,13 +2568,33 @@ export function useGameEngine() {
               const enabledSwitch = network.switches.find(sw => !sw.isDisabled);
               if (enabledSwitch) {
                 const switchIndex = network.switches.findIndex(sw => sw.id === enabledSwitch.id);
+                
+                // AUTO-CONNECT floating computers to the new cable (FREE action)
+                const floatingComputers = [...currentPlayer.network.floatingComputers];
+                const computersToConnect = floatingComputers.slice(0, maxComputers);
+                if (computersToConnect.length > 0) {
+                  newCable.computers = computersToConnect;
+                  currentPlayer.network.floatingComputers = floatingComputers.slice(maxComputers);
+                  gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} connected ${maxComputers}-Cable to Switch + auto-connected ${computersToConnect.length} computer(s) (FREE)`];
+                } else {
+                  gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} connected ${maxComputers}-Cable to Switch`];
+                }
+                
                 network.switches[switchIndex].cables.push(newCable);
                 aiActions.push({ type: 'play', card, target: 'switch' });
-                gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} connected ${maxComputers}-Cable to Switch`];
               } else {
+                // Floating cable - also auto-connect computers for future use
+                const floatingComputers = [...currentPlayer.network.floatingComputers];
+                const computersToConnect = floatingComputers.slice(0, maxComputers);
+                if (computersToConnect.length > 0) {
+                  (newCable as FloatingCable).computers = computersToConnect;
+                  currentPlayer.network.floatingComputers = floatingComputers.slice(maxComputers);
+                  gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} placed floating ${maxComputers}-Cable + auto-connected ${computersToConnect.length} computer(s) (FREE)`];
+                } else {
+                  gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} placed a floating ${maxComputers}-Cable`];
+                }
                 currentPlayer.network.floatingCables.push(newCable as FloatingCable);
                 aiActions.push({ type: 'play', card, target: 'floating' });
-                gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} placed a floating ${maxComputers}-Cable`];
               }
               playedCard = true;
             }
