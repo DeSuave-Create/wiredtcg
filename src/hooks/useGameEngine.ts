@@ -2564,18 +2564,73 @@ export function useGameEngine() {
               
               currentPlayer.hand = hand.filter(c => c.id !== card.id);
               
-              // Find enabled switch to connect to
+              // SMART AUTO-CONNECT: Fill existing cables with floating computers FIRST
+              let remainingFloating = [...currentPlayer.network.floatingComputers];
+              let autoConnectedCount = 0;
+              
+              // Priority 1: Fill cables on ENABLED switches first (for immediate scoring)
+              for (const sw of network.switches) {
+                if (sw.isDisabled || remainingFloating.length === 0) continue;
+                for (const cable of sw.cables) {
+                  if (cable.isDisabled) continue;
+                  const openSlots = cable.maxComputers - cable.computers.length;
+                  if (openSlots > 0) {
+                    const toConnect = remainingFloating.slice(0, openSlots);
+                    cable.computers.push(...toConnect);
+                    remainingFloating = remainingFloating.slice(toConnect.length);
+                    autoConnectedCount += toConnect.length;
+                  }
+                }
+              }
+              
+              // Priority 2: Fill cables on DISABLED switches (if still have floating computers)
+              if (remainingFloating.length > 0) {
+                for (const sw of network.switches) {
+                  if (!sw.isDisabled || remainingFloating.length === 0) continue;
+                  for (const cable of sw.cables) {
+                    const openSlots = cable.maxComputers - cable.computers.length;
+                    if (openSlots > 0) {
+                      const toConnect = remainingFloating.slice(0, openSlots);
+                      cable.computers.push(...toConnect);
+                      remainingFloating = remainingFloating.slice(toConnect.length);
+                      autoConnectedCount += toConnect.length;
+                    }
+                  }
+                }
+              }
+              
+              // Priority 3: Fill floating cables (if still have floating computers)
+              if (remainingFloating.length > 0) {
+                for (const floatingCable of currentPlayer.network.floatingCables) {
+                  const openSlots = floatingCable.maxComputers - floatingCable.computers.length;
+                  if (openSlots > 0) {
+                    const toConnect = remainingFloating.slice(0, openSlots);
+                    floatingCable.computers.push(...toConnect);
+                    remainingFloating = remainingFloating.slice(toConnect.length);
+                    autoConnectedCount += toConnect.length;
+                  }
+                }
+              }
+              
+              // Update the floating computers list
+              currentPlayer.network.floatingComputers = remainingFloating;
+              
+              // Log if we auto-connected any computers to existing cables
+              if (autoConnectedCount > 0) {
+                gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} auto-connected ${autoConnectedCount} floating computer(s) to existing cables (FREE)`];
+              }
+              
+              // Now place the new cable
               const enabledSwitch = network.switches.find(sw => !sw.isDisabled);
               if (enabledSwitch) {
                 const switchIndex = network.switches.findIndex(sw => sw.id === enabledSwitch.id);
                 
-                // AUTO-CONNECT floating computers to the new cable (FREE action)
-                const floatingComputers = [...currentPlayer.network.floatingComputers];
-                const computersToConnect = floatingComputers.slice(0, maxComputers);
+                // Connect remaining floating computers to the NEW cable
+                const computersToConnect = remainingFloating.slice(0, maxComputers);
                 if (computersToConnect.length > 0) {
                   newCable.computers = computersToConnect;
-                  currentPlayer.network.floatingComputers = floatingComputers.slice(maxComputers);
-                  gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} connected ${maxComputers}-Cable to Switch + auto-connected ${computersToConnect.length} computer(s) (FREE)`];
+                  currentPlayer.network.floatingComputers = remainingFloating.slice(computersToConnect.length);
+                  gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} connected ${maxComputers}-Cable to Switch + ${computersToConnect.length} computer(s) (FREE)`];
                 } else {
                   gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} connected ${maxComputers}-Cable to Switch`];
                 }
@@ -2583,13 +2638,12 @@ export function useGameEngine() {
                 network.switches[switchIndex].cables.push(newCable);
                 aiActions.push({ type: 'play', card, target: 'switch' });
               } else {
-                // Floating cable - also auto-connect computers for future use
-                const floatingComputers = [...currentPlayer.network.floatingComputers];
-                const computersToConnect = floatingComputers.slice(0, maxComputers);
+                // Floating cable - connect remaining computers
+                const computersToConnect = remainingFloating.slice(0, maxComputers);
                 if (computersToConnect.length > 0) {
                   (newCable as FloatingCable).computers = computersToConnect;
-                  currentPlayer.network.floatingComputers = floatingComputers.slice(maxComputers);
-                  gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} placed floating ${maxComputers}-Cable + auto-connected ${computersToConnect.length} computer(s) (FREE)`];
+                  currentPlayer.network.floatingComputers = remainingFloating.slice(computersToConnect.length);
+                  gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} placed floating ${maxComputers}-Cable + ${computersToConnect.length} computer(s) (FREE)`];
                 } else {
                   gameLog = [...gameLog.slice(-19), `🔗 ${currentPlayer.name} placed a floating ${maxComputers}-Cable`];
                 }
