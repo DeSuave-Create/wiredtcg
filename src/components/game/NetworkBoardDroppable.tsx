@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { Unplug, AlertTriangle, Wrench } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useMobileGameOptional } from '@/contexts/MobileGameContext';
 
 interface NetworkBoardDroppableProps {
   network: PlayerNetwork;
@@ -16,6 +17,7 @@ interface NetworkBoardDroppableProps {
   canRearrange?: boolean; // Whether cards can be dragged to rearrange
   compact?: boolean; // Compact mode for smaller display
   showEasyModeHints?: boolean; // Show visual hints for easy mode
+  onMobilePlacement?: (dropZoneId: string, dropZoneType: string) => void; // Mobile tap-to-place handler
 }
 
 export function NetworkBoardDroppable({
@@ -28,7 +30,11 @@ export function NetworkBoardDroppable({
   canRearrange = false,
   compact = false,
   showEasyModeHints = false,
+  onMobilePlacement,
 }: NetworkBoardDroppableProps) {
+  const mobileContext = useMobileGameOptional();
+  const isMobile = mobileContext?.isMobile ?? false;
+  const selectedCard = mobileContext?.selectedCard ?? null;
   const hasFloatingEquipment = network.floatingCables.length > 0 || network.floatingComputers.length > 0;
   
   // Card height is h-15 (60px), so 4 rows = 240px + padding, 2 rows for unconnected = 120px
@@ -61,6 +67,7 @@ export function NetworkBoardDroppable({
           "relative z-10",
           network.switches.length === 0 ? "flex-[2]" : "flex-1"
         )}
+        onMobileTap={isMobile && selectedCard ? () => onMobilePlacement?.(`${playerId}-board`, 'internet') : undefined}
       >
         {/* Row 1: Game mode logo */}
         <div className="flex items-center justify-center h-[60px]">
@@ -90,6 +97,7 @@ export function NetworkBoardDroppable({
               canReceiveResolutions={canReceiveResolutions}
               canRearrange={canRearrange}
               cardSize={CARD_SIZE}
+              onMobilePlacement={onMobilePlacement}
             />
           ))}
           
@@ -125,6 +133,7 @@ export function NetworkBoardDroppable({
                 canRearrange={canRearrange}
                 cardSize={CARD_SIZE}
                 showEasyModeHints={showEasyModeHints}
+                onMobilePlacement={onMobilePlacement}
               />
             ))}
             
@@ -231,6 +240,7 @@ export function NetworkBoardDroppable({
                     type="computer"
                     accepts={compAccepts}
                     className="w-fit p-2 -m-2"
+                    onMobileTap={isMobile && selectedCard ? () => onMobilePlacement?.(`${playerId}-floating-computer-${comp.id}`, 'computer') : undefined}
                   >
                     {wrappedContent}
                   </DroppableZone>
@@ -260,6 +270,7 @@ interface SwitchComponentProps {
   canReceiveResolutions: boolean;
   canRearrange: boolean;
   cardSize: string;
+  onMobilePlacement?: (dropZoneId: string, dropZoneType: string) => void;
 }
 
 function SwitchComponent({
@@ -270,7 +281,11 @@ function SwitchComponent({
   canReceiveResolutions,
   canRearrange,
   cardSize,
+  onMobilePlacement,
 }: SwitchComponentProps) {
+  const mobileContext = useMobileGameOptional();
+  const isMobile = mobileContext?.isMobile ?? false;
+  const selectedCard = mobileContext?.selectedCard ?? null;
   // Determine what this equipment can accept
   const getEquipmentAccepts = (): string[] => {
     const accepts: string[] = [];
@@ -304,6 +319,7 @@ function SwitchComponent({
         type={canReceiveAttacks ? 'opponent-equipment' : isCurrentPlayer ? 'switch' : 'own-equipment'}
         accepts={getEquipmentAccepts()}
         className="w-fit p-2 -m-2"
+        onMobileTap={isMobile && selectedCard ? () => onMobilePlacement?.(`${playerId}-switch-${switchNode.id}`, 'switch') : undefined}
       >
         <div className="relative">
           <PlacedCardDisplay
@@ -335,6 +351,7 @@ function SwitchComponent({
               canReceiveResolutions={canReceiveResolutions}
               canRearrange={canRearrange}
               cardSize={cardSize}
+              onMobilePlacement={onMobilePlacement}
             />
           ))}
         </div>
@@ -360,6 +377,7 @@ interface FloatingCableComponentProps {
   canRearrange: boolean;
   cardSize: string;
   showEasyModeHints?: boolean;
+  onMobilePlacement?: (dropZoneId: string, dropZoneType: string) => void;
 }
 
 function FloatingCableComponent({
@@ -371,7 +389,11 @@ function FloatingCableComponent({
   canRearrange,
   cardSize,
   showEasyModeHints = false,
+  onMobilePlacement,
 }: FloatingCableComponentProps) {
+  const mobileContext = useMobileGameOptional();
+  const isMobile = mobileContext?.isMobile ?? false;
+  const selectedCard = mobileContext?.selectedCard ?? null;
   const hasSpace = cable.computers.length < cable.maxComputers;
   
   // Floating cables can receive computers if there's space, and attacks/resolutions
@@ -527,6 +549,7 @@ function FloatingCableComponent({
         type="cable"
         accepts={accepts}
         className="w-fit p-2 -m-2"
+        onMobileTap={isMobile && selectedCard ? () => onMobilePlacement?.(`${playerId}-floating-cable-${cable.id}`, 'cable') : undefined}
       >
         {wrappedContent}
       </DroppableZone>
@@ -545,6 +568,7 @@ interface CableComponentProps {
   canReceiveResolutions: boolean;
   canRearrange: boolean;
   cardSize: string;
+  onMobilePlacement?: (dropZoneId: string, dropZoneType: string) => void;
 }
 
 function CableComponent({
@@ -556,7 +580,11 @@ function CableComponent({
   canReceiveResolutions,
   canRearrange,
   cardSize,
+  onMobilePlacement,
 }: CableComponentProps) {
+  const mobileContext = useMobileGameOptional();
+  const isMobile = mobileContext?.isMobile ?? false;
+  const selectedCard = mobileContext?.selectedCard ?? null;
   const hasSpace = cable.computers.length < cable.maxComputers;
   
   // Determine what this equipment can accept
@@ -595,6 +623,7 @@ function CableComponent({
         type={canReceiveAttacks ? 'opponent-equipment' : isCurrentPlayer ? 'cable' : 'own-equipment'}
         accepts={getEquipmentAccepts()}
         className="w-fit p-2 -m-2"
+        onMobileTap={isMobile && selectedCard ? () => onMobilePlacement?.(`${playerId}-cable-${cable.id}`, 'cable') : undefined}
       >
         <div className="relative">
           {canRearrange ? (
@@ -653,6 +682,7 @@ function CableComponent({
               canReceiveResolutions={canReceiveResolutions}
               canRearrange={canRearrange}
               cardSize={cardSize}
+              onMobilePlacement={onMobilePlacement}
             />
           ))}
         </div>
@@ -677,6 +707,7 @@ interface ComputerComponentProps {
   canReceiveResolutions: boolean;
   canRearrange: boolean;
   cardSize: string;
+  onMobilePlacement?: (dropZoneId: string, dropZoneType: string) => void;
 }
 
 function ComputerComponent({
@@ -688,7 +719,11 @@ function ComputerComponent({
   canReceiveResolutions,
   canRearrange,
   cardSize,
+  onMobilePlacement,
 }: ComputerComponentProps) {
+  const mobileContext = useMobileGameOptional();
+  const isMobile = mobileContext?.isMobile ?? false;
+  const selectedCard = mobileContext?.selectedCard ?? null;
   // Determine what this equipment can accept
   const getEquipmentAccepts = (): string[] => {
     const accepts: string[] = [];
@@ -738,6 +773,7 @@ function ComputerComponent({
           type={canReceiveAttacks ? 'opponent-equipment' : 'own-equipment'}
           accepts={accepts}
           className="w-fit p-2 -m-2"
+          onMobileTap={isMobile && selectedCard ? () => onMobilePlacement?.(`${playerId}-computer-${computer.id}`, 'computer') : undefined}
         >
           {content}
         </DroppableZone>
@@ -772,6 +808,7 @@ function ComputerComponent({
       type={canReceiveAttacks ? 'opponent-equipment' : 'own-equipment'}
       accepts={accepts}
       className="w-fit"
+      onMobileTap={isMobile && selectedCard ? () => onMobilePlacement?.(`${playerId}-computer-${computer.id}`, 'computer') : undefined}
     >
       <div className="relative">
         <PlacedCardDisplay

@@ -32,6 +32,7 @@ interface PlayerSectionProps {
   opponentScore?: number;
   humanCanPlayCards?: boolean; // Whether the human player can play cards (for attack targeting)
   aiDifficulty?: AIDifficulty; // Current AI difficulty for showing hints
+  onMobilePlacement?: (dropZoneId: string, dropZoneType: string) => void; // Mobile tap-to-place handler
 }
 
 export function PlayerSection({
@@ -55,6 +56,7 @@ export function PlayerSection({
   opponentScore = 0,
   humanCanPlayCards = false,
   aiDifficulty,
+  onMobilePlacement,
 }: PlayerSectionProps) {
   const mobileContext = useMobileGameOptional();
   const isMobile = mobileContext?.isMobile ?? false;
@@ -151,6 +153,7 @@ export function PlayerSection({
             canReceiveResolutions={isHuman && canPlayCards && hasResolutionCards && hasDisabledEquipment}
             canRearrange={isHuman && canPlayCards}
             showEasyModeHints={aiDifficulty === 'easy' && isHuman}
+            onMobilePlacement={onMobilePlacement}
           />
         </div>
 
