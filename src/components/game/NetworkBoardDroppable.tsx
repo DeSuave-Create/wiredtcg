@@ -108,11 +108,11 @@ export function NetworkBoardDroppable({
         {/* Row 2: All Switches */}
         <div className={cn(
           "flex items-center justify-center gap-2",
-          isMobile ? "h-[55px] overflow-x-auto py-1" : "h-[65px] py-2"
+          isMobile ? "h-[70px] overflow-x-auto py-1" : "h-[80px] py-2"
         )}>
           {network.switches.length > 0 ? (
             <div className={cn(
-              "flex gap-3",
+              "flex gap-4",
               isMobile && "flex-nowrap min-w-min px-2"
             )}>
               {network.switches.map((sw) => (
@@ -137,11 +137,11 @@ export function NetworkBoardDroppable({
         {/* Row 3: All Cables */}
         <div className={cn(
           "flex items-center justify-center gap-2",
-          isMobile ? "h-[55px] overflow-x-auto py-1" : "h-[65px] py-2"
+          isMobile ? "h-[70px] overflow-x-auto py-1" : "h-[80px] py-2"
         )}>
           {allCables.length > 0 ? (
             <div className={cn(
-              "flex gap-3",
+              "flex gap-4",
               isMobile && "flex-nowrap min-w-min px-2"
             )}>
               {allCables.map(({ cable, parentSwitchId }) => (
@@ -167,11 +167,11 @@ export function NetworkBoardDroppable({
         {/* Row 4: All Computers */}
         <div className={cn(
           "flex items-center justify-center gap-2",
-          isMobile ? "h-[55px] overflow-x-auto py-1" : "h-[65px] py-2"
+          isMobile ? "h-[70px] overflow-x-auto py-1" : "h-[80px] py-2"
         )}>
           {allComputers.length > 0 ? (
             <div className={cn(
-              "flex gap-3",
+              "flex gap-4",
               isMobile && "flex-nowrap min-w-min px-2"
             )}>
               {allComputers.map(({ computer, parentCableId }) => (
