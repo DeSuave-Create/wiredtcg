@@ -54,7 +54,7 @@ export function ClassificationSection({
       className="w-full h-full"
     >
       <div className={cn(
-        "bg-gradient-to-r from-blue-900/40 to-blue-800/30 rounded-lg border border-blue-500/40 p-3 h-full flex flex-col relative overflow-visible",
+        "bg-gradient-to-r from-blue-900/40 to-blue-800/30 rounded-lg border border-blue-500/40 p-2 h-full flex flex-col relative overflow-hidden",
         hasDuplicateProtection && "ring-2 ring-yellow-400 border-yellow-500/60"
       )}>
         {/* Animated shield overlay for duplicate protection */}
@@ -101,7 +101,8 @@ export function ClassificationSection({
               ) : (
               <div key={classCard.id} className="relative group flex-shrink-0">
                   <div className={cn(
-                    "rounded border-2 overflow-hidden transition-transform hover:scale-105 w-28 h-40",
+                    "rounded border-2 overflow-hidden transition-transform hover:scale-105",
+                    "w-16 h-24 md:w-28 md:h-40", // Responsive: smaller on mobile
                     hasDuplicateProtection ? "border-yellow-500/70 shadow-lg shadow-yellow-500/20" : "border-gray-600"
                   )}>
                     <img 
