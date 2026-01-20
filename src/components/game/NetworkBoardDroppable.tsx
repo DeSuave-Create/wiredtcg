@@ -195,10 +195,10 @@ export function NetworkBoardDroppable({
         </div>
       </DroppableZone>
       
-      {/* Row 5: Unconnected Equipment Section - Always visible */}
+      {/* Row 5: Unconnected Equipment Section - Always visible with 3 rows of space */}
       <div className={cn(
         "relative z-10",
-        isMobile ? "mt-1 pt-1 h-[55px]" : "mt-2 pt-2 h-[70px]"
+        isMobile ? "mt-1 pt-1 h-[165px]" : "mt-2 pt-2 h-[200px]"
       )}>
         <div className="flex items-center gap-1 text-muted-foreground mb-1 text-[10px]">
           <Unplug className="w-3 h-3" />
@@ -206,8 +206,8 @@ export function NetworkBoardDroppable({
         </div>
         
         <div className={cn(
-          "flex gap-2 items-start",
-          isMobile ? "flex-nowrap overflow-x-auto pb-2" : "flex-wrap"
+          "flex gap-2 items-start flex-wrap content-start",
+          isMobile ? "overflow-y-auto pb-2" : ""
         )}>
           {/* Floating Cables */}
           {network.floatingCables.map((cable) => (
