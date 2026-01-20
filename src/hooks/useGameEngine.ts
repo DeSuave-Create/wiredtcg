@@ -2495,40 +2495,68 @@ export function useGameEngine() {
               );
               
               if (hasDuplicateType) {
-                // Can't steal - opponent is protected
                 gameLog = [...gameLog.slice(-19), `❌ ${currentPlayer.name} tried to steal but opponent's duplicate classifications are protected!`];
                 break;
               }
               
-              if (humanPlayer.classificationCards.length > 0) {
-                const targetClass = humanPlayer.classificationCards.find(c => 
-                  !currentPlayer.classificationCards.some(ours => ours.card.subtype === c.card.subtype)
-                ) || humanPlayer.classificationCards[0];
-                
-                if (targetClass) {
-                  currentPlayer.hand = hand.filter(c => c.id !== card.id);
-                  humanPlayer.classificationCards = humanPlayer.classificationCards.filter(c => c.id !== targetClass.id);
-                  
-                  if (currentPlayer.classificationCards.length < 2) {
-                    currentPlayer.classificationCards.push(targetClass);
-                    aiActions.push({ type: 'steal', card, target: targetClass.card.name });
-                    gameLog = [...gameLog.slice(-19), isSealTheDealCard 
-                      ? `💎 Seal the Deal! UNBLOCKABLE - ${currentPlayer.name} steals ${targetClass.card.name}!`
-                      : `🎖️ ${currentPlayer.name} used Head Hunter to steal ${targetClass.card.name}!`
-                    ];
-                  } else {
-                    newDiscardPile.push(targetClass.card);
-                    aiActions.push({ type: 'steal', card, target: `${targetClass.card.name} (discarded)` });
-                    gameLog = [...gameLog.slice(-19), isSealTheDealCard
-                      ? `💎 Seal the Deal! UNBLOCKABLE - ${targetClass.card.name} discarded!`
-                      : `🎖️ ${currentPlayer.name} used Head Hunter - ${targetClass.card.name} discarded!`
-                    ];
-                  }
-                  
-                  newDiscardPile.push(card);
-                  playedCard = true;
-                }
+              if (humanPlayer.classificationCards.length === 0) {
+                gameLog = [...gameLog.slice(-19), `❌ No classification to steal!`];
+                break;
               }
+              
+              const targetClass = humanPlayer.classificationCards.find(c => 
+                !currentPlayer.classificationCards.some(ours => ours.card.subtype === c.card.subtype)
+              ) || humanPlayer.classificationCards[0];
+              
+              if (!targetClass) break;
+              
+              // For Head Hunter (not Seal the Deal): Start battle phase so human can block
+              if (!isSealTheDealCard) {
+                currentPlayer.hand = hand.filter(c => c.id !== card.id);
+                newDiscardPile.push(card);
+                
+                const headHunterBattle: HeadHunterBattle = {
+                  attackerIndex: 1, // AI is always player index 1
+                  defenderIndex: 0, // Human is always player index 0
+                  initialHeadHunterCardId: card.id,
+                  targetClassificationId: targetClass.id,
+                  chain: [],
+                  previousPhase: 'moves',
+                  previousMovesRemaining: movesRemaining,
+                };
+                
+                aiActions.push({ type: 'steal', card, target: `${targetClass.card.name} (battle started)` });
+                gameLog = [...gameLog.slice(-19), `🎯 ${currentPlayer.name} plays Head Hunter targeting ${targetClass.card.name}! Can you block?`];
+                
+                // Set battle state and exit AI turn - player needs to respond
+                setGameState(prev => ({
+                  ...prev!,
+                  players: [humanPlayer, currentPlayer],
+                  phase: 'headhunter-battle',
+                  headHunterBattle,
+                  discardPile: [...prev!.discardPile, ...newDiscardPile],
+                  gameLog,
+                  aiLastTurnActions: aiActions,
+                }));
+                return; // Exit AI turn - player responds via dialog
+              }
+              
+              // Seal the Deal: Unblockable, proceed with direct steal
+              currentPlayer.hand = hand.filter(c => c.id !== card.id);
+              humanPlayer.classificationCards = humanPlayer.classificationCards.filter(c => c.id !== targetClass.id);
+              
+              if (currentPlayer.classificationCards.length < 2) {
+                currentPlayer.classificationCards.push(targetClass);
+                aiActions.push({ type: 'steal', card, target: targetClass.card.name });
+                gameLog = [...gameLog.slice(-19), `💎 Seal the Deal! UNBLOCKABLE - ${currentPlayer.name} steals ${targetClass.card.name}!`];
+              } else {
+                newDiscardPile.push(targetClass.card);
+                aiActions.push({ type: 'steal', card, target: `${targetClass.card.name} (discarded)` });
+                gameLog = [...gameLog.slice(-19), `💎 Seal the Deal! UNBLOCKABLE - ${targetClass.card.name} discarded!`];
+              }
+              
+              newDiscardPile.push(card);
+              playedCard = true;
             }
             break;
           
