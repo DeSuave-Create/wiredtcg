@@ -112,7 +112,7 @@ export function NetworkBoardDroppable({
         )}>
           {network.switches.length > 0 ? (
             <div className={cn(
-              "flex gap-4",
+              "flex gap-6",
               isMobile && "flex-nowrap min-w-min px-2"
             )}>
               {network.switches.map((sw) => (
@@ -141,7 +141,7 @@ export function NetworkBoardDroppable({
         )}>
           {allCables.length > 0 ? (
             <div className={cn(
-              "flex gap-4",
+              "flex gap-6",
               isMobile && "flex-nowrap min-w-min px-2"
             )}>
               {allCables.map(({ cable, parentSwitchId }) => (
@@ -171,7 +171,7 @@ export function NetworkBoardDroppable({
         )}>
           {allComputers.length > 0 ? (
             <div className={cn(
-              "flex gap-4",
+              "flex gap-6",
               isMobile && "flex-nowrap min-w-min px-2"
             )}>
               {allComputers.map(({ computer, parentCableId }) => (
