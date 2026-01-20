@@ -58,7 +58,7 @@ export function ClassificationSection({
       type="classification"
       accepts={acceptedCards}
       className="w-full h-full"
-      onMobileTap={isMobile && selectedCard ? () => onMobilePlacement?.(`${playerId}-classification`, 'classification') : undefined}
+      onMobileTap={() => onMobilePlacement?.(`${playerId}-classification`, 'classification')}
     >
       <div className={cn(
         "bg-gradient-to-r from-blue-900/40 to-blue-800/30 rounded-lg border border-blue-500/40 p-2 h-full flex flex-col relative overflow-hidden",

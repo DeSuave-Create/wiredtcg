@@ -64,7 +64,7 @@ export function NetworkBoardDroppable({
         type="internet"
         accepts={isCurrentPlayer ? ['switch', 'cable-2', 'cable-3', 'computer'] : ['audit']}
         className="relative z-10 pb-4"
-        onMobileTap={isMobile && selectedCard ? () => onMobilePlacement?.(`${playerId}-board`, 'internet') : undefined}
+        onMobileTap={() => onMobilePlacement?.(`${playerId}-board`, 'internet')}
       >
         {/* Row 1: Game mode logo */}
         <div className={cn(
@@ -246,7 +246,7 @@ export function NetworkBoardDroppable({
                     type="computer"
                     accepts={compAccepts}
                     className="w-fit p-2 -m-2"
-                    onMobileTap={isMobile && selectedCard ? () => onMobilePlacement?.(`${playerId}-floating-computer-${comp.id}`, 'computer') : undefined}
+                    onMobileTap={() => onMobilePlacement?.(`${playerId}-floating-computer-${comp.id}`, 'computer')}
                   >
                     {wrappedContent}
                   </DroppableZone>
@@ -325,7 +325,7 @@ function SwitchComponent({
         type={canReceiveAttacks ? 'opponent-equipment' : isCurrentPlayer ? 'switch' : 'own-equipment'}
         accepts={getEquipmentAccepts()}
         className="w-fit p-2 -m-2"
-        onMobileTap={isMobile && selectedCard ? () => onMobilePlacement?.(`${playerId}-switch-${switchNode.id}`, 'switch') : undefined}
+        onMobileTap={() => onMobilePlacement?.(`${playerId}-switch-${switchNode.id}`, 'switch')}
       >
         <div className="relative">
           <PlacedCardDisplay
@@ -555,7 +555,7 @@ function FloatingCableComponent({
         type="cable"
         accepts={accepts}
         className="w-fit p-2 -m-2"
-        onMobileTap={isMobile && selectedCard ? () => onMobilePlacement?.(`${playerId}-floating-cable-${cable.id}`, 'cable') : undefined}
+        onMobileTap={() => onMobilePlacement?.(`${playerId}-floating-cable-${cable.id}`, 'cable')}
       >
         {wrappedContent}
       </DroppableZone>
@@ -629,7 +629,7 @@ function CableComponent({
         type={canReceiveAttacks ? 'opponent-equipment' : isCurrentPlayer ? 'cable' : 'own-equipment'}
         accepts={getEquipmentAccepts()}
         className="w-fit p-2 -m-2"
-        onMobileTap={isMobile && selectedCard ? () => onMobilePlacement?.(`${playerId}-cable-${cable.id}`, 'cable') : undefined}
+        onMobileTap={() => onMobilePlacement?.(`${playerId}-cable-${cable.id}`, 'cable')}
       >
         <div className="relative">
           {canRearrange ? (
@@ -779,7 +779,7 @@ function ComputerComponent({
           type={canReceiveAttacks ? 'opponent-equipment' : 'own-equipment'}
           accepts={accepts}
           className="w-fit p-2 -m-2"
-          onMobileTap={isMobile && selectedCard ? () => onMobilePlacement?.(`${playerId}-computer-${computer.id}`, 'computer') : undefined}
+          onMobileTap={() => onMobilePlacement?.(`${playerId}-computer-${computer.id}`, 'computer')}
         >
           {content}
         </DroppableZone>
@@ -814,7 +814,7 @@ function ComputerComponent({
       type={canReceiveAttacks ? 'opponent-equipment' : 'own-equipment'}
       accepts={accepts}
       className="w-fit"
-      onMobileTap={isMobile && selectedCard ? () => onMobilePlacement?.(`${playerId}-computer-${computer.id}`, 'computer') : undefined}
+      onMobileTap={() => onMobilePlacement?.(`${playerId}-computer-${computer.id}`, 'computer')}
     >
       <div className="relative">
         <PlacedCardDisplay
