@@ -2,6 +2,7 @@ import { PlacedCard } from '@/types/game';
 import { DroppableZone } from './DroppableZone';
 import { DraggableClassificationCard } from './DraggableClassificationCard';
 import { cn } from '@/lib/utils';
+import { useMobileGameOptional } from '@/contexts/MobileGameContext';
 
 interface ClassificationSectionProps {
   classificationCards: PlacedCard[];
@@ -9,6 +10,7 @@ interface ClassificationSectionProps {
   playerId: string;
   compact?: boolean;
   canDrag?: boolean; // Allow dragging classifications to discard
+  onMobilePlacement?: (dropZoneId: string, dropZoneType: string) => void; // Mobile tap-to-place handler
 }
 
 const abilityDescriptions: Record<string, string> = {
@@ -35,7 +37,11 @@ export function ClassificationSection({
   playerId,
   compact = false,
   canDrag = false,
+  onMobilePlacement,
 }: ClassificationSectionProps) {
+  const mobileContext = useMobileGameOptional();
+  const isMobile = mobileContext?.isMobile ?? false;
+  const selectedCard = mobileContext?.selectedCard ?? null;
   // Player zone accepts placeable classifications (not Head Hunter/Seal the Deal)
   // Opponent zone accepts steal cards (Head Hunter, Seal the Deal)
   const acceptedCards = isCurrentPlayer 
@@ -52,6 +58,7 @@ export function ClassificationSection({
       type="classification"
       accepts={acceptedCards}
       className="w-full h-full"
+      onMobileTap={isMobile && selectedCard ? () => onMobilePlacement?.(`${playerId}-classification`, 'classification') : undefined}
     >
       <div className={cn(
         "bg-gradient-to-r from-blue-900/40 to-blue-800/30 rounded-lg border border-blue-500/40 p-2 h-full flex flex-col relative overflow-hidden",
@@ -85,7 +92,7 @@ export function ClassificationSection({
           {classificationCards.length === 0 ? (
             <div className="text-muted-foreground italic text-[10px]">
               {isCurrentPlayer 
-                ? 'Drag classification cards here (max 2)' 
+                ? (isMobile ? 'Tap classification cards here (max 2)' : 'Drag classification cards here (max 2)')
                 : 'No classifications in play'
               }
             </div>

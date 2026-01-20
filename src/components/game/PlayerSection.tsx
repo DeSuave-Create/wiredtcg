@@ -116,8 +116,8 @@ export function PlayerSection({
       <div className="flex-1 p-4 space-y-4 overflow-y-auto">
         {/* Network Board - with score in top right corner */}
         <div className={cn(
-          "overflow-visible relative",
-          isMobile ? "min-h-[200px]" : "min-h-[300px]"
+          "relative",
+          isMobile ? "min-h-[200px] overflow-x-auto" : "min-h-[300px] overflow-visible"
         )}>
           {/* Score Badge - Top Right Corner */}
           <div className={cn(
@@ -168,6 +168,7 @@ export function PlayerSection({
               isCurrentPlayer={isHuman}
               playerId={playerId}
               canDrag={isHuman && canPlayCards}
+              onMobilePlacement={onMobilePlacement}
             />
           </div>
           

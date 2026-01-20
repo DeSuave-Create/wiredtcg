@@ -85,8 +85,11 @@ export function NetworkBoardDroppable({
           </div>
         )}
         
-        {/* Connected Switches with cables and computers */}
-        <div className="flex flex-wrap justify-center gap-2">
+        {/* Connected Switches with cables and computers - horizontal scroll on mobile */}
+        <div className={cn(
+          "flex gap-2",
+          isMobile ? "flex-nowrap overflow-x-auto pb-2 min-w-min" : "flex-wrap justify-center"
+        )}>
           {network.switches.map((sw) => (
             <SwitchComponent
               key={sw.id}
@@ -103,7 +106,7 @@ export function NetworkBoardDroppable({
           
           {network.switches.length === 0 && isCurrentPlayer && (
             <div className="text-center text-muted-foreground text-xs py-4 w-full">
-              Drag equipment cards here to place them
+              {isMobile ? 'Tap equipment cards to place them' : 'Drag equipment cards here to place them'}
             </div>
           )}
         </div>
@@ -120,7 +123,10 @@ export function NetworkBoardDroppable({
             <span>Unconnected</span>
           </div>
           
-          <div className="flex flex-wrap gap-2 items-start">
+          <div className={cn(
+            "flex gap-2 items-start",
+            isMobile ? "flex-nowrap overflow-x-auto pb-2" : "flex-wrap"
+          )}>
             {/* Floating Cables with their computers */}
             {network.floatingCables.map((cable) => (
               <FloatingCableComponent
