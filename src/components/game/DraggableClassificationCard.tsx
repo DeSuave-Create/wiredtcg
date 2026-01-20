@@ -45,7 +45,8 @@ export function DraggableClassificationCard({
       )}
     >
       <div className={cn(
-        "rounded border-2 border-gray-600 overflow-hidden transition-all duration-200 w-28 h-40",
+        "rounded border-2 border-gray-600 overflow-hidden transition-all duration-200",
+        "w-16 h-24 md:w-28 md:h-40", // Responsive: smaller on mobile
         !disabled && "hover:scale-105 hover:border-yellow-400",
         isDragging && "scale-110 shadow-2xl ring-2 ring-yellow-400"
       )}>

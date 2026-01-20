@@ -37,7 +37,7 @@ const preferSpecificTargets: CollisionDetection = (args) => {
     return collisions;
   }
   
-  // Sort to prefer specific targets (switch, cable, floating-cable) over board
+  // Sort to prefer specific targets (cable, switch, floating-cable, computer) over board
   const sorted = [...collisions].sort((a, b) => {
     const aId = String(a.id);
     const bId = String(b.id);
@@ -45,6 +45,14 @@ const preferSpecificTargets: CollisionDetection = (args) => {
     // Board zones should have lowest priority
     const aIsBoard = aId.includes('-board');
     const bIsBoard = bId.includes('-board');
+    
+    // Cable zones should have highest priority for computer drops
+    const aIsCable = aId.includes('-cable-');
+    const bIsCable = bId.includes('-cable-');
+    
+    // Prioritize cable > switch > other > board
+    if (aIsCable && !bIsCable) return -1; // a (cable) before b
+    if (!aIsCable && bIsCable) return 1;  // b (cable) before a
     
     if (aIsBoard && !bIsBoard) return 1;  // a goes after b
     if (!aIsBoard && bIsBoard) return -1; // a goes before b
