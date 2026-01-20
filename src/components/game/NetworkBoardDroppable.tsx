@@ -93,7 +93,7 @@ export function NetworkBoardDroppable({
       >
         {/* Row 1: Internet Logo */}
         <div className={cn(
-          "flex items-center justify-center border-b border-accent-green/20",
+          "flex items-center justify-center",
           isMobile ? "h-[50px]" : "h-[60px]"
         )}>
           <div data-internet className="flex items-center justify-center">
@@ -107,8 +107,8 @@ export function NetworkBoardDroppable({
         
         {/* Row 2: All Switches */}
         <div className={cn(
-          "flex items-center justify-center gap-2 border-b border-accent-green/20",
-          isMobile ? "min-h-[55px] overflow-x-auto py-1" : "min-h-[65px] py-2"
+          "flex items-center justify-center gap-2",
+          isMobile ? "h-[55px] overflow-x-auto py-1" : "h-[65px] py-2"
         )}>
           {network.switches.length > 0 ? (
             <div className={cn(
@@ -130,16 +130,14 @@ export function NetworkBoardDroppable({
               ))}
             </div>
           ) : (
-            <div className="text-center text-muted-foreground text-[10px]">
-              {isMobile ? 'Tap Switch to place' : 'Drop Switch here'}
-            </div>
+            <span className="text-muted-foreground/40 text-[10px]">Switches</span>
           )}
         </div>
         
         {/* Row 3: All Cables */}
         <div className={cn(
-          "flex items-center justify-center gap-2 border-b border-accent-green/20",
-          isMobile ? "min-h-[55px] overflow-x-auto py-1" : "min-h-[65px] py-2"
+          "flex items-center justify-center gap-2",
+          isMobile ? "h-[55px] overflow-x-auto py-1" : "h-[65px] py-2"
         )}>
           {allCables.length > 0 ? (
             <div className={cn(
@@ -162,16 +160,14 @@ export function NetworkBoardDroppable({
               ))}
             </div>
           ) : (
-            <div className="text-center text-muted-foreground text-[10px]">
-              {network.switches.length > 0 ? (isMobile ? 'Tap Cable to connect' : 'Drop Cable here') : 'No cables yet'}
-            </div>
+            <span className="text-muted-foreground/40 text-[10px]">Cables</span>
           )}
         </div>
         
         {/* Row 4: All Computers */}
         <div className={cn(
           "flex items-center justify-center gap-2",
-          isMobile ? "min-h-[55px] overflow-x-auto py-1" : "min-h-[65px] py-2"
+          isMobile ? "h-[55px] overflow-x-auto py-1" : "h-[65px] py-2"
         )}>
           {allComputers.length > 0 ? (
             <div className={cn(
@@ -194,68 +190,64 @@ export function NetworkBoardDroppable({
               ))}
             </div>
           ) : (
-            <div className="text-center text-muted-foreground text-[10px]">
-              {allCables.length > 0 ? (isMobile ? 'Tap Computer to connect' : 'Drop Computer here') : 'No computers yet'}
-            </div>
+            <span className="text-muted-foreground/40 text-[10px]">Computers</span>
           )}
         </div>
       </DroppableZone>
       
-      {/* Row 5: Unconnected Equipment Section */}
-      {(hasFloatingEquipment || (network.switches.length === 0 && isCurrentPlayer)) && (
-        <div className={cn(
-          "relative z-10 border-t border-yellow-500/30",
-          isMobile ? "mt-1 pt-1 min-h-[50px]" : "mt-2 pt-2 min-h-[70px]"
-        )}>
-          <div className="flex items-center gap-1 text-muted-foreground mb-1 text-[10px]">
-            <Unplug className="w-3 h-3" />
-            <span>Unconnected</span>
-          </div>
-          
-          <div className={cn(
-            "flex gap-2 items-start",
-            isMobile ? "flex-nowrap overflow-x-auto pb-2" : "flex-wrap"
-          )}>
-            {/* Floating Cables */}
-            {network.floatingCables.map((cable) => (
-              <FloatingCableCard
-                key={cable.id}
-                cable={cable}
-                isCurrentPlayer={isCurrentPlayer}
-                playerId={playerId}
-                canReceiveAttacks={canReceiveAttacks}
-                canReceiveResolutions={canReceiveResolutions}
-                canRearrange={canRearrange}
-                cardSize={CARD_SIZE}
-                showEasyModeHints={showEasyModeHints}
-                onMobilePlacement={onMobilePlacement}
-              />
-            ))}
-            
-            {/* Floating Computers */}
-            {network.floatingComputers.map((comp) => (
-              <FloatingComputerCard
-                key={comp.id}
-                computer={comp}
-                isCurrentPlayer={isCurrentPlayer}
-                playerId={playerId}
-                canReceiveAttacks={canReceiveAttacks}
-                canReceiveResolutions={canReceiveResolutions}
-                canRearrange={canRearrange}
-                cardSize={CARD_SIZE}
-                showEasyModeHints={showEasyModeHints}
-                onMobilePlacement={onMobilePlacement}
-              />
-            ))}
-            
-            {!hasFloatingEquipment && network.switches.length === 0 && (
-              <div className="text-center text-muted-foreground text-xs py-2 w-full">
-                {isMobile ? 'Tap equipment to place' : 'Drag equipment here'}
-              </div>
-            )}
-          </div>
+      {/* Row 5: Unconnected Equipment Section - Always visible */}
+      <div className={cn(
+        "relative z-10",
+        isMobile ? "mt-1 pt-1 h-[55px]" : "mt-2 pt-2 h-[70px]"
+      )}>
+        <div className="flex items-center gap-1 text-muted-foreground mb-1 text-[10px]">
+          <Unplug className="w-3 h-3" />
+          <span>Unconnected</span>
         </div>
-      )}
+        
+        <div className={cn(
+          "flex gap-2 items-start",
+          isMobile ? "flex-nowrap overflow-x-auto pb-2" : "flex-wrap"
+        )}>
+          {/* Floating Cables */}
+          {network.floatingCables.map((cable) => (
+            <FloatingCableCard
+              key={cable.id}
+              cable={cable}
+              isCurrentPlayer={isCurrentPlayer}
+              playerId={playerId}
+              canReceiveAttacks={canReceiveAttacks}
+              canReceiveResolutions={canReceiveResolutions}
+              canRearrange={canRearrange}
+              cardSize={CARD_SIZE}
+              showEasyModeHints={showEasyModeHints}
+              onMobilePlacement={onMobilePlacement}
+            />
+          ))}
+          
+          {/* Floating Computers */}
+          {network.floatingComputers.map((comp) => (
+            <FloatingComputerCard
+              key={comp.id}
+              computer={comp}
+              isCurrentPlayer={isCurrentPlayer}
+              playerId={playerId}
+              canReceiveAttacks={canReceiveAttacks}
+              canReceiveResolutions={canReceiveResolutions}
+              canRearrange={canRearrange}
+              cardSize={CARD_SIZE}
+              showEasyModeHints={showEasyModeHints}
+              onMobilePlacement={onMobilePlacement}
+            />
+          ))}
+          
+          {!hasFloatingEquipment && (
+            <span className="text-muted-foreground/40 text-[10px]">
+              No unconnected equipment
+            </span>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
