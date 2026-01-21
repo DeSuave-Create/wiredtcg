@@ -2529,15 +2529,18 @@ export function useGameEngine() {
                 gameLog = [...gameLog.slice(-19), `🎯 ${currentPlayer.name} plays Head Hunter targeting ${targetClass.card.name}! Can you block?`];
                 
                 // Set battle state and exit AI turn - player needs to respond
-                setGameState(prev => ({
-                  ...prev!,
-                  players: [humanPlayer, currentPlayer],
-                  phase: 'headhunter-battle',
-                  headHunterBattle,
-                  discardPile: [...prev!.discardPile, ...newDiscardPile],
-                  gameLog,
-                  aiLastTurnActions: aiActions,
-                }));
+                setGameState(prev => {
+                  if (!prev) return prev;
+                  return {
+                    ...prev,
+                    players: [humanPlayer, currentPlayer],
+                    phase: 'headhunter-battle',
+                    headHunterBattle,
+                    discardPile: [...prev.discardPile, ...newDiscardPile],
+                    gameLog,
+                    aiLastTurnActions: aiActions,
+                  };
+                });
                 return; // Exit AI turn - player responds via dialog
               }
               
