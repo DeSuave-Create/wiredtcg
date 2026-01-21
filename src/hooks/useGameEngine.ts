@@ -15,6 +15,7 @@ const STARTING_HAND_SIZE = 6;
 const MAX_HAND_SIZE = 6;
 const BASE_MOVES_PER_TURN = 3;
 const WINNING_SCORE = 25;
+const DECK_RESHUFFLE_THRESHOLD = 18; // 1/8 of 144-card deck
 
 // Helper: Calculate base moves per turn (not including Field Tech equipment bonus)
 function getBaseMovesForPlayer(): number {
@@ -2019,15 +2020,18 @@ export function useGameEngine() {
       
       let newDrawPile = [...prev.drawPile];
       let newDiscardPile = [...prev.discardPile];
+      let reshuffled = false;
       
-      // Reshuffle if needed
-      if (newDrawPile.length < cardsToDraw) {
+      // Reshuffle when draw pile drops to 1/8 of deck (18 cards) or less
+      if (newDrawPile.length <= DECK_RESHUFFLE_THRESHOLD && newDiscardPile.length > 0) {
         newDrawPile = [...newDrawPile, ...shuffleDeck(newDiscardPile)];
         newDiscardPile = [];
+        reshuffled = true;
       }
       
-      const drawnCards = newDrawPile.slice(0, cardsToDraw);
-      newDrawPile = newDrawPile.slice(cardsToDraw);
+      const actualCardsToDraw = Math.min(cardsToDraw, newDrawPile.length);
+      const drawnCards = newDrawPile.slice(0, actualCardsToDraw);
+      newDrawPile = newDrawPile.slice(actualCardsToDraw);
       
       currentPlayer.hand = [...currentPlayer.hand, ...drawnCards];
       newPlayers[prev.currentPlayerIndex] = currentPlayer;
@@ -2059,14 +2063,18 @@ export function useGameEngine() {
         
         let newDrawPile = [...prev.drawPile];
         let newDiscardPile = [...prev.discardPile];
+        let reshuffled = false;
         
-        if (newDrawPile.length < cardsToDraw) {
+        // Reshuffle when draw pile drops to 1/8 of deck (18 cards) or less
+        if (newDrawPile.length <= DECK_RESHUFFLE_THRESHOLD && newDiscardPile.length > 0) {
           newDrawPile = [...newDrawPile, ...shuffleDeck(newDiscardPile)];
           newDiscardPile = [];
+          reshuffled = true;
         }
         
-        const drawnCards = newDrawPile.slice(0, cardsToDraw);
-        newDrawPile = newDrawPile.slice(cardsToDraw);
+        const actualCardsToDraw = Math.min(cardsToDraw, newDrawPile.length);
+        const drawnCards = newDrawPile.slice(0, actualCardsToDraw);
+        newDrawPile = newDrawPile.slice(actualCardsToDraw);
         
         // 2. Score connected computers
         const connectedComputers = countConnectedComputers(currentPlayer.network);
