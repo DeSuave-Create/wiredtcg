@@ -1181,6 +1181,23 @@ const SimulationContent = () => {
     showCardHint(card);
   }, [selectedCard, gameState, playSwitch, playCable, playComputer, playAttack, playResolution, playClassification, startAudit, clearSelection]);
 
+  // Handle mobile tap-to-discard
+  const handleMobileDiscard = useCallback(() => {
+    if (!selectedCard || !gameState) return;
+    
+    const isHumanTurn = gameState.players[gameState.currentPlayerIndex].isHuman;
+    const canDiscard = isHumanTurn && (gameState.phase === 'moves' || gameState.phase === 'discard');
+    
+    if (!canDiscard) {
+      toast.error("You can't discard right now!");
+      return;
+    }
+    
+    discardCard(selectedCard.id);
+    toast.success('Card discarded');
+    clearSelection();
+  }, [selectedCard, gameState, discardCard, clearSelection]);
+
 
   if (showIntro) {
     return (
@@ -1323,6 +1340,7 @@ const SimulationContent = () => {
               opponentScore={computerPlayer.score}
               aiDifficulty={aiDifficulty}
               onMobilePlacement={handleMobilePlacement}
+              onMobileDiscard={handleMobileDiscard}
             />
 
             {/* Opponent Section - Center */}

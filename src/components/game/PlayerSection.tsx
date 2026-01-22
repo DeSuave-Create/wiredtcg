@@ -33,6 +33,7 @@ interface PlayerSectionProps {
   humanCanPlayCards?: boolean; // Whether the human player can play cards (for attack targeting)
   aiDifficulty?: AIDifficulty; // Current AI difficulty for showing hints
   onMobilePlacement?: (dropZoneId: string, dropZoneType: string) => void; // Mobile tap-to-place handler
+  onMobileDiscard?: () => void; // Mobile tap-to-discard handler
 }
 
 export function PlayerSection({
@@ -57,6 +58,7 @@ export function PlayerSection({
   humanCanPlayCards = false,
   aiDifficulty,
   onMobilePlacement,
+  onMobileDiscard,
 }: PlayerSectionProps) {
   const mobileContext = useMobileGameOptional();
   const isMobile = mobileContext?.isMobile ?? false;
@@ -249,6 +251,7 @@ export function PlayerSection({
                 isActive={canDiscard || isDiscardPhase}
                 playerId={playerId}
                 isDiscardPhase={isDiscardPhase}
+                onMobileDiscard={onMobileDiscard}
               />
             ) : (
               <div className="flex items-center gap-2">

@@ -1,7 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { AIDifficulty } from '@/utils/ai';
-import { Bot, Cpu, BrainCircuit } from 'lucide-react';
 
 interface DifficultySelectorProps {
   isOpen: boolean;
@@ -12,7 +10,7 @@ interface DifficultySelectorProps {
 const difficulties: { 
   id: AIDifficulty; 
   name: string; 
-  icon: React.ElementType;
+  image: string;
   description: string; 
   details: string[];
   color: string;
@@ -20,7 +18,7 @@ const difficulties: {
   {
     id: 'easy',
     name: 'Easy',
-    icon: Bot,
+    image: '/lovable-uploads/equipment-switch.png',
     description: 'Beginner-friendly opponent',
     details: [
       'Plays cards immediately',
@@ -33,7 +31,7 @@ const difficulties: {
   {
     id: 'normal',
     name: 'Normal',
-    icon: Cpu,
+    image: '/lovable-uploads/classification-supervisor.png',
     description: 'Balanced challenge',
     details: [
       'Holds attacks for timing',
@@ -41,12 +39,12 @@ const difficulties: {
       'Builds network redundancy',
       'Balanced offense/defense',
     ],
-    color: 'from-yellow-500 to-orange-500',
+    color: 'from-purple-500 to-indigo-600',
   },
   {
     id: 'hard',
     name: 'Hard',
-    icon: BrainCircuit,
+    image: '/lovable-uploads/attack-hacked-v2.png',
     description: 'Expert AI opponent',
     details: [
       'Deep strategic planning',
@@ -73,7 +71,6 @@ export function DifficultySelector({ isOpen, onSelect, onClose }: DifficultySele
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
           {difficulties.map((diff) => {
-            const Icon = diff.icon;
             return (
               <button
                 key={diff.id}
@@ -86,15 +83,18 @@ export function DifficultySelector({ isOpen, onSelect, onClose }: DifficultySele
                 <div className={`absolute inset-0 rounded-lg bg-gradient-to-br ${diff.color} opacity-0 
                                 group-hover:opacity-10 transition-opacity duration-300`} />
                 
-                {/* Icon */}
-                <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${diff.color} 
-                                flex items-center justify-center mb-3 
-                                group-hover:scale-110 transition-transform duration-300`}>
-                  <Icon className="w-8 h-8 text-white" />
+                {/* Card Image */}
+                <div className={`w-20 h-28 rounded-lg bg-gradient-to-br ${diff.color} p-0.5
+                                group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                  <img 
+                    src={diff.image} 
+                    alt={diff.name}
+                    className="w-full h-full object-cover rounded-md"
+                  />
                 </div>
                 
                 {/* Name */}
-                <h3 className="text-lg font-bold text-white mb-1 font-orbitron">
+                <h3 className="text-lg font-bold text-white mb-1 font-orbitron mt-3">
                   {diff.name}
                 </h3>
                 
