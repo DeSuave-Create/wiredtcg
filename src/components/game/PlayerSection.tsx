@@ -185,21 +185,32 @@ export function PlayerSection({
               </Button>
               
               {gamePhase === 'moves' && (
-                <div className="flex items-center gap-2 text-xs">
-                  <span 
-                    className={cn(
-                      "w-6 h-6 rounded flex items-center justify-center font-bold transition-all duration-300",
-                      totalMoves > 0 
-                        ? "bg-accent-green/20 text-accent-green" 
-                        : "bg-red-500/20 text-red-400",
-                      isAnimating && "animate-bounce scale-125 bg-yellow-500/30 text-yellow-300"
-                    )}
-                  >
-                    {totalMoves}
-                  </span>
-                  <span className="text-muted-foreground">
-                    moves{equipmentMovesRemaining > 0 ? ` (${equipmentMovesRemaining}🔧)` : ''}
-                  </span>
+                <div className="flex flex-col items-center gap-1 text-xs">
+                  {/* Regular Moves */}
+                  <div className="flex items-center gap-2">
+                    <span 
+                      className={cn(
+                        "w-6 h-6 rounded flex items-center justify-center font-bold transition-all duration-300",
+                        movesRemaining > 0 
+                          ? "bg-accent-green/20 text-accent-green" 
+                          : "bg-red-500/20 text-red-400",
+                        isAnimating && "animate-bounce scale-125 bg-yellow-500/30 text-yellow-300"
+                      )}
+                    >
+                      {movesRemaining}
+                    </span>
+                    <span className="text-muted-foreground">moves</span>
+                  </div>
+                  
+                  {/* Equipment Bonus Moves (only show when > 0) */}
+                  {equipmentMovesRemaining > 0 && (
+                    <div className="flex items-center gap-2 bg-blue-500/10 px-2 py-1 rounded border border-blue-500/30">
+                      <span className="w-5 h-5 rounded flex items-center justify-center font-bold bg-blue-500/20 text-blue-400">
+                        {equipmentMovesRemaining}
+                      </span>
+                      <span className="text-blue-400 text-[10px]">🔧 equip</span>
+                    </div>
+                  )}
                 </div>
               )}
               

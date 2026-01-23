@@ -22,7 +22,7 @@ const cardDefinitions: Record<string, { type: CardType; subtype: string; name: s
   
   // Classifications
   'facilities': { type: 'classification', subtype: 'facilities', name: 'Facilities', image: '/lovable-uploads/classification-facilities-new.png', description: 'Resolves all Power Outage cards. Blocks new Power Outage attacks.' },
-  'field-tech': { type: 'classification', subtype: 'field-tech', name: 'Field Tech', image: '/lovable-uploads/classification-fieldtech-new.png', description: 'Tap once per turn for +1 equipment move.' },
+  'field-tech': { type: 'classification', subtype: 'field-tech', name: 'Field Tech', image: '/lovable-uploads/classification-fieldtech-new.png', description: 'Each Field Tech grants +1 free Equipment-only move per turn. Can stack up to 2.' },
   'supervisor': { type: 'classification', subtype: 'supervisor', name: 'Supervisor', image: '/lovable-uploads/classification-supervisor.png', description: 'Resolves all New Hire cards. Blocks new New Hire attacks.' },
   'security-specialist': { type: 'classification', subtype: 'security-specialist', name: 'Security Specialist', image: '/lovable-uploads/classification-security.png', description: 'Resolves all Hacked cards. Blocks new Hacked attacks.' },
   'head-hunter': { type: 'classification', subtype: 'head-hunter', name: 'Head Hunter', image: '/lovable-uploads/classification-headhunter.png', description: 'Steal an opponent\'s classification card. Can be countered.' },

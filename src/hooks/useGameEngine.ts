@@ -22,9 +22,14 @@ function getBaseMovesForPlayer(): number {
   return BASE_MOVES_PER_TURN;
 }
 
-// Helper: Check if player has Field Tech (grants +1 equipment move per turn)
+// Helper: Count Field Tech cards (each grants +1 equipment move per turn, max 2)
+function countFieldTech(player: Player): number {
+  return player.classificationCards.filter(c => c.card.subtype === 'field-tech').length;
+}
+
+// Helper: Check if player has at least one Field Tech
 function hasFieldTech(player: Player): boolean {
-  return player.classificationCards.some(c => c.card.subtype === 'field-tech');
+  return countFieldTech(player) > 0;
 }
 
 // Helper: Count Head Hunter cards in player's classification area
@@ -1047,6 +1052,9 @@ export function useGameEngine() {
       return false;
     }
     
+    // Check if discarding a Field Tech - need to reduce equipment moves
+    const isFieldTech = classCard.card.subtype === 'field-tech';
+    
     setGameState(prev => {
       if (!prev) return prev;
       
@@ -1057,12 +1065,18 @@ export function useGameEngine() {
       player.classificationCards = player.classificationCards.filter(c => c.id !== classificationId);
       newPlayers[prev.currentPlayerIndex] = player;
       
+      // Reduce equipment moves if discarding Field Tech
+      const newEquipmentMoves = isFieldTech 
+        ? Math.max(0, prev.equipmentMovesRemaining - 1) 
+        : prev.equipmentMovesRemaining;
+      
       return {
         ...prev,
         players: newPlayers,
         discardPile: [...prev.discardPile, classCard.card],
         movesRemaining: prev.movesRemaining - 1,
-        gameLog: [...prev.gameLog.slice(-19), `🗑️ Discarded ${classCard.card.name} from board`],
+        equipmentMovesRemaining: newEquipmentMoves,
+        gameLog: [...prev.gameLog.slice(-19), `🗑️ Discarded ${classCard.card.name} from board${isFieldTech ? ' (lost equipment bonus)' : ''}`],
       };
     });
     
@@ -1709,11 +1723,19 @@ export function useGameEngine() {
               
               const resolveMsg = resolvedCount > 0 ? ` Resolved ${resolvedCount} attack(s)!` : '';
               
+              // Calculate equipment moves change for Field Tech
+              const isStolenFieldTech = stolenCard.card.subtype === 'field-tech';
+              const isDiscardedFieldTech = discardedCard.card.subtype === 'field-tech';
+              let equipmentMovesChange = 0;
+              if (isStolenFieldTech) equipmentMovesChange += 1;
+              if (isDiscardedFieldTech) equipmentMovesChange -= 1;
+              
               return {
                 ...prev,
                 players: newPlayers,
                 discardPile: [...prev.discardPile, classCard, discardedCard.card, ...resolvedIssues],
                 movesRemaining: prev.movesRemaining - 1,
+                equipmentMovesRemaining: Math.max(0, prev.equipmentMovesRemaining + equipmentMovesChange),
                 gameLog: [...prev.gameLog.slice(-19), `🎖️ ${isSealTheDeal ? 'Seal the Deal' : 'Head Hunter'}! Stole ${stolenCard.card.name}, discarded ${discardedCard.card.name}!${resolveMsg}`],
               };
             }
@@ -1728,6 +1750,7 @@ export function useGameEngine() {
             players: newPlayers,
             discardPile: [...prev.discardPile, classCard, stolenCard.card],
             movesRemaining: prev.movesRemaining - 1,
+            // Field Tech stolen but discarded - no benefit (already at max classifications)
             gameLog: [...prev.gameLog.slice(-19), `🎖️ ${isSealTheDeal ? 'Seal the Deal' : 'Head Hunter'}! Stole ${stolenCard.card.name} (discarded - already at max)`],
           };
         }
@@ -1831,12 +1854,17 @@ export function useGameEngine() {
         
         const resolveMsg = resolvedCount > 0 ? ` Resolved ${resolvedCount} existing attack(s)!` : '';
         
+        // If stealing Field Tech, grant immediate equipment move bonus
+        const isStolenFieldTech = stolenCard.card.subtype === 'field-tech';
+        const fieldTechMsg = isStolenFieldTech ? ' (+1 equipment move!)' : '';
+        
         return {
           ...prev,
           players: newPlayers,
           discardPile: [...prev.discardPile, classCard, ...resolvedIssues],
           movesRemaining: prev.movesRemaining - 1,
-          gameLog: [...prev.gameLog.slice(-19), `${isSealTheDeal ? '💎 Seal the Deal! UNBLOCKABLE -' : '🎖️ Head Hunter!'} Stole ${stolenCard.card.name}!${resolveMsg}`],
+          equipmentMovesRemaining: isStolenFieldTech ? prev.equipmentMovesRemaining + 1 : prev.equipmentMovesRemaining,
+          gameLog: [...prev.gameLog.slice(-19), `${isSealTheDeal ? '💎 Seal the Deal! UNBLOCKABLE -' : '🎖️ Head Hunter!'} Stole ${stolenCard.card.name}!${resolveMsg}${fieldTechMsg}`],
         };
       });
       
@@ -1982,18 +2010,29 @@ export function useGameEngine() {
         'security-specialist': 'Auto-resolves Hacked attacks',
         'facilities': 'Auto-resolves Power Outage attacks',
         'supervisor': 'Auto-resolves New Hire attacks',
-        'field-tech': '+1 move per turn',
+        'field-tech': '+1 equipment move per turn',
       };
       
       const resolveMsg = resolvedCount > 0 ? ` Resolved ${resolvedCount} existing attack(s)!` : '';
       const replaceMsg = discardedCard ? ` (replaced ${discardedCard.card.name})` : '';
+      
+      // Calculate equipment moves change:
+      // +1 if playing Field Tech, -1 if discarding Field Tech
+      const isPlayingFieldTech = classCard.subtype === 'field-tech';
+      const isDiscardingFieldTech = discardedCard?.card.subtype === 'field-tech';
+      let equipmentMovesChange = 0;
+      if (isPlayingFieldTech) equipmentMovesChange += 1;
+      if (isDiscardingFieldTech) equipmentMovesChange -= 1;
+      
+      const fieldTechMsg = isPlayingFieldTech ? ' (+1 equipment move this turn!)' : '';
       
       return {
         ...prev,
         players: newPlayers,
         discardPile: [...prev.discardPile, ...resolvedIssues, ...(discardedCard ? [discardedCard.card] : [])],
         movesRemaining: prev.movesRemaining - 1,
-        gameLog: [...prev.gameLog.slice(-19), `🎖️ ${classCard.name} played!${replaceMsg} ${abilities[classCard.subtype] || ''}${resolveMsg}`],
+        equipmentMovesRemaining: Math.max(0, prev.equipmentMovesRemaining + equipmentMovesChange),
+        gameLog: [...prev.gameLog.slice(-19), `🎖️ ${classCard.name} played!${replaceMsg} ${abilities[classCard.subtype] || ''}${resolveMsg}${fieldTechMsg}`],
       };
     });
     
@@ -2125,7 +2164,7 @@ export function useGameEngine() {
           currentPlayerIndex: nextPlayerIndex,
           phase: 'moves',
           movesRemaining: getBaseMovesForPlayer(),
-          equipmentMovesRemaining: hasFieldTech(nextPlayer) ? 1 : 0,
+          equipmentMovesRemaining: countFieldTech(nextPlayer),
           turnNumber: prev.turnNumber + 1,
           gameLog: [
             ...prev.gameLog.slice(-19),

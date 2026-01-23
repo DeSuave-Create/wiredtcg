@@ -641,7 +641,7 @@ function evaluateDisruptActions(
 // =============================================================================
 function evaluateSetupActions(boardState: BoardState, aiPlayer: Player, oppPlayer: Player): EvaluatedAction[] {
   const actions: EvaluatedAction[] = [];
-  const { difficulty } = boardState;
+  const { difficulty, myFieldTechCount, equipmentMovesRemaining, movesRemaining } = boardState;
   
   // Already at max classifications
   if (aiPlayer.classificationCards.length >= 2) {
@@ -656,9 +656,28 @@ function evaluateSetupActions(boardState: BoardState, aiPlayer: Player, oppPlaye
     
     let utility = 8;
     
-    // Field Tech is most valuable (+1 equipment move)
+    // Field Tech evaluation - consider stacking and timing
     if (classCard.subtype === 'field-tech') {
+      // Base utility for Field Tech
       utility = 15;
+      
+      // Already have 2 Field Techs? Max reached (can't have more than 2)
+      if (myFieldTechCount >= 2) {
+        utility = -10; // Don't play another
+        continue;
+      }
+      
+      // Prioritize playing Field Tech early in turn when equipment actions remain
+      const expectedEquipmentActionsThisTurn = boardState.equipmentInHand.length;
+      if (myFieldTechCount < 2 && expectedEquipmentActionsThisTurn >= 2 && movesRemaining >= 1) {
+        // High value - playing now gives immediate benefit
+        utility = 25;
+      }
+      
+      // Already have 1 Field Tech - second one has diminishing returns
+      if (myFieldTechCount === 1) {
+        utility *= 0.8; // Still valuable but less priority
+      }
     }
     
     // Defensive classifications - value based on vulnerability
@@ -691,7 +710,9 @@ function evaluateSetupActions(boardState: BoardState, aiPlayer: Player, oppPlaye
       type: 'play_classification',
       card: classCard,
       utility,
-      reasoning: `Play ${classCard.name}`,
+      reasoning: classCard.subtype === 'field-tech' 
+        ? `Play ${classCard.name} (+1 equipment move${myFieldTechCount > 0 ? ', stacking' : ''})`
+        : `Play ${classCard.name}`,
       risk: 0,
     });
   }
