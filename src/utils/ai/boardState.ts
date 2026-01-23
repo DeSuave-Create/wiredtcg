@@ -55,6 +55,7 @@ export interface BoardState {
   myHasFacilities: boolean;
   myHasSupervisor: boolean;
   myHasFieldTech: boolean;
+  myFieldTechCount: number; // 0, 1, or 2
   myIsStealProtected: boolean;
   
   // Game state
@@ -62,6 +63,7 @@ export interface BoardState {
   oppTurnsToWin: number;
   scoreDifference: number; // positive = AI ahead
   movesRemaining: number;
+  equipmentMovesRemaining: number; // Bonus moves from Field Tech
   
   // Difficulty-aware calculations
   difficulty: AIDifficulty;
@@ -115,6 +117,7 @@ export function computeBoardState(
   const myClassifications = aiPlayer.classificationCards.map(c => c.card.subtype);
   const myClassTypes = aiPlayer.classificationCards.map(c => c.card.subtype);
   const myIsStealProtected = myClassTypes.length === 2 && myClassTypes[0] === myClassTypes[1];
+  const myFieldTechCount = myClassifications.filter(c => c === 'field-tech').length;
   
   // Turns to win calculation
   const turnsToWin = aiNetwork.connectedComputers > 0 
@@ -172,6 +175,7 @@ export function computeBoardState(
     myHasFacilities: myClassifications.includes('facilities'),
     myHasSupervisor: myClassifications.includes('supervisor'),
     myHasFieldTech: myClassifications.includes('field-tech'),
+    myFieldTechCount,
     myIsStealProtected,
     
     // Game state
@@ -179,6 +183,7 @@ export function computeBoardState(
     oppTurnsToWin,
     scoreDifference: aiPlayer.score - oppPlayer.score,
     movesRemaining: gameState.movesRemaining,
+    equipmentMovesRemaining: gameState.equipmentMovesRemaining,
     
     difficulty,
   };
