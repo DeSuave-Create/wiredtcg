@@ -10,12 +10,12 @@ export type {
 
 export { 
   makeAIDecision, 
-  executeAITurnDecisions,
   decideAuditResponse,
   selectAuditTargets,
   resetAIMemory,
   getAIMemory,
   getAIDecisionDebug,
+  initializeAIForGame,
 } from './decisionEngine';
 
 export { getAIConfig, getUtilityWeights } from './config';
@@ -28,4 +28,6 @@ export {
 } from './analysis';
 
 export { computeBoardState, type BoardState } from './boardState';
-export { makePriorityDecision } from './priorityEngine';
+export { getMatchStateDebug, hasMatchState } from './matchState';
+export type { AIProfile } from './profiles';
+export { getProfileDescription } from './profiles';
