@@ -29,5 +29,6 @@ export {
 
 export { computeBoardState, type BoardState } from './boardState';
 export { getMatchStateDebug, hasMatchState } from './matchState';
+export { existsLegalEquipmentPlay } from './actionGenerator';
 export type { AIProfile } from './profiles';
 export { getProfileDescription } from './profiles';

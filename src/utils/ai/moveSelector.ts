@@ -66,6 +66,12 @@ export function selectBestAction(
   // Collect all evaluated actions
   const allActions: EvaluatedAction[] = [];
   
+  // Check if equipment in hand or floating - for BUILD category special handling
+  const hasEquipmentInHand = boardState.equipmentInHand.length > 0;
+  const hasFloatingEquipment = 
+    aiPlayer.network.floatingCables.length > 0 || 
+    aiPlayer.network.floatingComputers.length > 0;
+  
   // Process categories in priority order
   for (const category of CATEGORY_ORDER) {
     const categoryActions = generateActionsForCategory(category, boardState, gameState, aiPlayerIndex);
@@ -84,6 +90,7 @@ export function selectBestAction(
       // Store delta bitcoin for absolute priority rule
       (action as any).__deltaBitcoin = evaluation.deltaBitcoinThisTurn;
       (action as any).__deltaOpponentDenial = evaluation.deltaOpponentBitcoinPrevented;
+      (action as any).__parkingValue = evaluation.parkingValue;
     }
     
     allActions.push(...categoryActions);
@@ -120,7 +127,17 @@ export function selectBestAction(
     const threshold = getCategoryThreshold(category, matchState.difficulty);
     
     // Filter actions above threshold
-    const validActions = categoryActions.filter(a => a.utility >= threshold);
+    let validActions = categoryActions.filter(a => a.utility >= threshold);
+    
+    // SPECIAL BUILD CATEGORY HANDLING:
+    // Allow equipment plays even if utility is below threshold when equipment exists
+    // This ensures AI plays/parks equipment rather than discarding
+    if (category === 'build' && validActions.length === 0 && categoryActions.length > 0) {
+      if (hasEquipmentInHand || hasFloatingEquipment) {
+        // Take the best build action regardless of threshold
+        validActions = [categoryActions[0]];
+      }
+    }
     
     if (validActions.length === 0) {
       continue; // No valid actions in this category
