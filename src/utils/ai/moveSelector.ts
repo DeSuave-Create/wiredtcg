@@ -5,7 +5,7 @@
 import { GameState, Player } from '@/types/game';
 import { AIDifficulty, EvaluatedAction } from './types';
 import { BoardState, computeBoardState } from './boardState';
-import { ActionCategory, generateActionsForCategory } from './actionGenerator';
+import { ActionCategory, generateActionsForCategory, existsLegalEquipmentPlay } from './actionGenerator';
 import { evaluateActionUtility } from './evaluator';
 import { analyzeEndgame, applyEndgameModifiers, isWinningAction, findWinningLine } from './endgame';
 import { AIMatchState, getMatchState, recordAITurn } from './matchState';
@@ -19,6 +19,13 @@ import {
   rollSkipOptimalK,
   rollBluffChance,
 } from './difficulty';
+import { 
+  findAutoConnectActions, 
+  isAcceptableAutoConnect, 
+  scoreAutoConnect, 
+  hasAcceptableAutoConnect,
+  AutoConnectAction 
+} from './autoConnect';
 
 // Priority order of categories
 const CATEGORY_ORDER: ActionCategory[] = ['build', 'reroute', 'repair', 'disrupt', 'setup', 'cycle'];
@@ -63,14 +70,56 @@ export function selectBestAction(
   const baseMultipliers = getProfileMultipliers(matchState.profile, matchState.difficulty);
   const adjustedMultipliers = applyEndgameModifiers(baseMultipliers, endgame);
   
+  // ==========================================================================
+  // PRIORITY: Check for auto-connect actions FIRST (before category order)
+  // ==========================================================================
+  const autoConnectActions = findAutoConnectActions(boardState, gameState, aiPlayerIndex);
+  const acceptableAutoConnects = autoConnectActions.filter(a => isAcceptableAutoConnect(a.move));
+  
+  if (acceptableAutoConnects.length > 0) {
+    // Score all acceptable auto-connects
+    for (const action of acceptableAutoConnects) {
+      action.utility = scoreAutoConnect(action);
+    }
+    
+    // Apply utility noise
+    for (const action of acceptableAutoConnects) {
+      action.utility = applyUtilityNoise(action.utility, params);
+    }
+    
+    // Sort by utility and pick best
+    acceptableAutoConnects.sort((a, b) => b.utility - a.utility);
+    const bestAutoConnect = acceptableAutoConnects[0];
+    
+    // Apply skip optimal chance (Easy/Normal only)
+    let selectedAutoConnect: AutoConnectAction = bestAutoConnect;
+    
+    if (params.skipOptimalChanceMax > 0 && !endgame.canWinThisTurn && acceptableAutoConnects.length > 1) {
+      const skipChance = rollSkipOptimalChance(params);
+      
+      if (Math.random() < skipChance) {
+        const k = rollSkipOptimalK(params);
+        const topK = acceptableAutoConnects.slice(0, Math.min(k, acceptableAutoConnects.length));
+        selectedAutoConnect = weightedRandomSelect(topK) as AutoConnectAction;
+      }
+    }
+    
+    recordAITurn('build', selectedAutoConnect.card?.subtype);
+    
+    return {
+      action: selectedAutoConnect,
+      category: 'build', // Auto-connects are effectively BUILD actions
+      allActions: [...acceptableAutoConnects],
+      reasoning: `Auto-connect: ${selectedAutoConnect.reasoning} (utility: ${selectedAutoConnect.utility.toFixed(1)})`,
+    };
+  }
+  
+  // ==========================================================================
+  // NORMAL CATEGORY ORDER PROCESSING
+  // ==========================================================================
+  
   // Collect all evaluated actions
   const allActions: EvaluatedAction[] = [];
-  
-  // Check if equipment in hand or floating - for BUILD category special handling
-  const hasEquipmentInHand = boardState.equipmentInHand.length > 0;
-  const hasFloatingEquipment = 
-    aiPlayer.network.floatingCables.length > 0 || 
-    aiPlayer.network.floatingComputers.length > 0;
   
   // Process categories in priority order
   for (const category of CATEGORY_ORDER) {
@@ -133,6 +182,11 @@ export function selectBestAction(
     // Allow equipment plays even if utility is below threshold when equipment exists
     // This ensures AI plays/parks equipment rather than discarding
     if (category === 'build' && validActions.length === 0 && categoryActions.length > 0) {
+      const hasEquipmentInHand = boardState.equipmentInHand.length > 0;
+      const hasFloatingEquipment = 
+        aiPlayer.network.floatingCables.length > 0 || 
+        aiPlayer.network.floatingComputers.length > 0;
+      
       if (hasEquipmentInHand || hasFloatingEquipment) {
         // Take the best build action regardless of threshold
         validActions = [categoryActions[0]];

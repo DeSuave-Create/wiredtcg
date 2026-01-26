@@ -505,12 +505,18 @@ function generateCycleActions(boardState: BoardState, aiPlayer: Player): Evaluat
   // Check if any legal equipment play exists - if so, equipment discards are forbidden
   const equipmentPlayExists = existsLegalEquipmentPlay(boardState, aiPlayer);
   
+  // ALSO check for acceptable auto-connects (imported check happens at move selector level)
+  // For cycle actions, we use a simpler check here
+  const hasFloatingEquipment = 
+    aiPlayer.network.floatingCables.length > 0 || 
+    aiPlayer.network.floatingComputers.length > 0;
+  
   for (const card of aiPlayer.hand) {
     const isEquipment = card.type === 'equipment';
     
-    // RULE: EquipmentDiscardForbidden
-    // If any legal equipment play exists, discarding equipment is NOT allowed
-    if (isEquipment && equipmentPlayExists) {
+    // RULE: NoDiscardIfAutoConnectExists + EquipmentDiscardForbidden
+    // If any legal equipment play OR floating equipment exists, discarding equipment is NOT allowed
+    if (isEquipment && (equipmentPlayExists || hasFloatingEquipment)) {
       continue; // Skip this discard action entirely
     }
     
