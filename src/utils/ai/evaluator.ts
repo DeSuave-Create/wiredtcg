@@ -17,6 +17,8 @@ export interface UtilityComponents {
   futureAdvantageScore: number;
   riskPenalty: number;
   comboBonus: number;
+  parkingValue: number;
+  discardPenalty: number;
 }
 
 // Base utility weights
@@ -26,6 +28,9 @@ const UTILITY_WEIGHTS = {
   boardStability: 25,
   futureAdvantage: 15,
   riskPenalty: 20,
+  parkingValue: 20,
+  equipmentDiscardPenalty: 50,
+  computerDiscardPenalty: 30,
 };
 
 // Calculate delta bitcoin this turn from an action
@@ -313,6 +318,101 @@ export function calculateComboBonus(
   return bonus * 0.5;
 }
 
+// Calculate parking value for equipment placements that don't score now but improve future state
+export function calculateParkingValue(
+  action: EvaluatedAction,
+  boardState: BoardState,
+  aiPlayer: Player
+): number {
+  let value = 0;
+  
+  // Only applies to build/place actions that don't score immediately
+  if (action.type !== 'play_switch' && action.type !== 'play_cable' && action.type !== 'play_computer') {
+    return 0;
+  }
+  
+  // Calculate steps to activation reduction
+  const stepsReduced = calculateStepsToActivationReduction(action, boardState, aiPlayer);
+  
+  if (stepsReduced === 1) {
+    value += 6; // Very close to activation
+  } else if (stepsReduced >= 2) {
+    value += 3; // Making progress
+  }
+  
+  // +2 if action increases available ports
+  if (action.type === 'play_cable') {
+    value += 2; // Cable adds ports for computers
+  }
+  
+  if (action.type === 'play_switch') {
+    value += 2; // Switch adds cable capacity
+  }
+  
+  // +2 if reduces future draw dependency (already have pieces in play)
+  if (action.type === 'play_cable' && boardState.computersInHand.length > 0) {
+    value += 2; // Have computer ready to use this cable
+  }
+  
+  if (action.type === 'play_switch' && boardState.cablesInHand.length > 0) {
+    value += 2; // Have cable ready for this switch
+  }
+  
+  return Math.min(10, value); // Cap at 10
+}
+
+// Calculate how many steps closer to activation this action gets us
+function calculateStepsToActivationReduction(
+  action: EvaluatedAction,
+  boardState: BoardState,
+  aiPlayer: Player
+): number {
+  const network = aiPlayer.network;
+  
+  // For floating cable being connected to switch
+  if (action.type === 'play_cable' && action.targetId) {
+    // If cable has computers on it, connecting enables them
+    const floatingCable = network.floatingCables.find(c => c.id === action.sourceId);
+    if (floatingCable && floatingCable.computers.length > 0) {
+      return 1; // Immediate activation
+    }
+    return 1; // One step closer (cable is now ready for computers)
+  }
+  
+  // For computer going to floating cable
+  if (action.type === 'play_computer' && !action.targetId?.includes('cable')) {
+    return 2; // Need cable + switch still
+  }
+  
+  // For switch placement when we have cables ready
+  if (action.type === 'play_switch' && boardState.cablesInHand.length > 0) {
+    if (boardState.computersInHand.length > 0) {
+      return 2; // Can follow with cable + computer
+    }
+    return 1; // Can follow with cable
+  }
+  
+  return 0;
+}
+
+// Calculate discard penalty
+export function calculateDiscardPenalty(action: EvaluatedAction): number {
+  if (action.type !== 'discard') return 0;
+  
+  const card = action.card;
+  if (!card) return 0;
+  
+  // Equipment discard penalty (should rarely happen due to hard gate)
+  if (card.type === 'equipment') {
+    if (card.subtype === 'computer') {
+      return UTILITY_WEIGHTS.computerDiscardPenalty;
+    }
+    return UTILITY_WEIGHTS.equipmentDiscardPenalty;
+  }
+  
+  return 0;
+}
+
 // Calculate full utility for an action
 export function evaluateActionUtility(
   action: EvaluatedAction,
@@ -333,15 +433,19 @@ export function evaluateActionUtility(
   const futureAdvantageScore = calculateFutureAdvantage(boardState, action, aiPlayer);
   const riskPenalty = calculateRiskPenalty(boardState, action, aiPlayer, params.riskTolerance);
   const comboBonus = calculateComboBonus(boardState, action, aiPlayer, params.lookaheadDepth);
+  const parkingValue = calculateParkingValue(action, boardState, aiPlayer);
+  const discardPenalty = calculateDiscardPenalty(action);
   
   // Apply profile multipliers to utility
   const finalUtility = 
     UTILITY_WEIGHTS.bitcoinGain * deltaBitcoinThisTurn * profileMults.bitcoinGainMult +
     UTILITY_WEIGHTS.opponentDenial * deltaOpponentBitcoinPrevented * profileMults.denyOpponentMult +
     UTILITY_WEIGHTS.boardStability * boardStabilityScore * profileMults.stabilityMult +
-    UTILITY_WEIGHTS.futureAdvantage * futureAdvantageScore * profileMults.futureMult -
+    UTILITY_WEIGHTS.futureAdvantage * futureAdvantageScore * profileMults.futureMult +
+    UTILITY_WEIGHTS.parkingValue * parkingValue -
     UTILITY_WEIGHTS.riskPenalty * riskPenalty * profileMults.riskPenaltyMult +
-    comboBonus;
+    comboBonus -
+    discardPenalty;
   
   return {
     deltaBitcoinThisTurn,
@@ -350,6 +454,8 @@ export function evaluateActionUtility(
     futureAdvantageScore,
     riskPenalty,
     comboBonus,
+    parkingValue,
+    discardPenalty,
     finalUtility,
   };
 }
