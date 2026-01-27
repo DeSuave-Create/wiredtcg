@@ -1,29 +1,19 @@
 // =============================================================================
-// MOVE SELECTOR - Final action selection with difficulty randomness/bluff
+// MOVE SELECTOR - Final action selection with new difficulty/aggression system
 // =============================================================================
 
 import { GameState, Player } from '@/types/game';
-import { AIDifficulty, EvaluatedAction } from './types';
+import { EvaluatedAction } from './types';
 import { BoardState, computeBoardState } from './boardState';
 import { ActionCategory, generateActionsForCategory, existsLegalEquipmentPlay } from './actionGenerator';
-import { evaluateActionUtility } from './evaluator';
-import { analyzeEndgame, applyEndgameModifiers, isWinningAction, findWinningLine } from './endgame';
+import { evaluateActionUtility, calculateDeltaBitcoin } from './evaluator';
+import { analyzeEndgame, isWinningAction, findWinningLine } from './endgame';
 import { AIMatchState, getMatchState, recordAITurn } from './matchState';
-import { getProfileMultipliers } from './profiles';
-import { 
-  DifficultyParams, 
-  getDifficultyParams, 
-  getCategoryThreshold,
-  applyUtilityNoise,
-  rollSkipOptimalChance,
-  rollSkipOptimalK,
-  rollBluffChance,
-} from './difficulty';
+import { AIDifficulty, applyUtilityNoise, shouldMakeMistake } from './difficulty';
 import { 
   findAutoConnectActions, 
   isAcceptableAutoConnect, 
   scoreAutoConnect, 
-  hasAcceptableAutoConnect,
   AutoConnectAction 
 } from './autoConnect';
 
@@ -44,34 +34,30 @@ export function selectBestAction(
   matchState: AIMatchState
 ): SelectionResult {
   const aiPlayer = gameState.players[aiPlayerIndex];
-  const boardState = computeBoardState(gameState, aiPlayerIndex, matchState.difficulty);
-  const params = getDifficultyParams(matchState.difficulty);
+  const { diffCfg, aggCfg, difficulty } = matchState.profile;
+  const boardState = computeBoardState(gameState, aiPlayerIndex, difficulty);
   
   // Analyze endgame state
-  const endgame = analyzeEndgame(boardState, gameState, aiPlayerIndex, matchState.difficulty);
+  const endgame = analyzeEndgame(boardState, gameState, aiPlayerIndex, difficulty);
   
-  // CRITICAL: Check for winning line first
+  // CRITICAL: Check for winning line first (all difficulties)
   if (endgame.canWinThisTurn) {
-    const winLine = findWinningLine(
-      boardState, 
-      gameState, 
-      aiPlayerIndex,
-      gameState.movesRemaining,
-      gameState.equipmentMovesRemaining
-    );
-    
-    if (winLine) {
-      // Force winning actions - search all categories for best scoring action
-      return forceWinningAction(gameState, aiPlayerIndex, boardState, matchState);
-    }
+    const winResult = forceWinningAction(gameState, aiPlayerIndex, boardState, matchState);
+    if (winResult.action) return winResult;
   }
   
-  // Get profile multipliers with endgame adjustments
-  const baseMultipliers = getProfileMultipliers(matchState.profile, matchState.difficulty);
-  const adjustedMultipliers = applyEndgameModifiers(baseMultipliers, endgame);
+  // Generate all legal moves
+  let allLegalMoves = generateAllMoves(gameState, aiPlayerIndex, boardState, matchState);
+  
+  // Apply mistake rate (Easy/Normal only)
+  if (shouldMakeMistake(diffCfg) && allLegalMoves.length > 3) {
+    // Reduce search quality by sampling subset
+    const sampleSize = Math.max(3, Math.floor(allLegalMoves.length * 0.6));
+    allLegalMoves = shuffleAndSample(allLegalMoves, sampleSize);
+  }
   
   // ==========================================================================
-  // PRIORITY: Check for auto-connect actions FIRST (before category order)
+  // PRIORITY: Check for auto-connect actions FIRST
   // ==========================================================================
   const autoConnectActions = findAutoConnectActions(boardState, gameState, aiPlayerIndex);
   const acceptableAutoConnects = autoConnectActions.filter(a => isAcceptableAutoConnect(a.move));
@@ -80,154 +66,81 @@ export function selectBestAction(
     // Score all acceptable auto-connects
     for (const action of acceptableAutoConnects) {
       action.utility = scoreAutoConnect(action);
+      action.utility = applyUtilityNoise(action.utility, diffCfg);
     }
     
-    // Apply utility noise
-    for (const action of acceptableAutoConnects) {
-      action.utility = applyUtilityNoise(action.utility, params);
-    }
+    // Select with tie-breaking
+    const selected = selectMoveWithTies(acceptableAutoConnects, diffCfg.tieBreakerRandomness);
     
-    // Sort by utility and pick best
-    acceptableAutoConnects.sort((a, b) => b.utility - a.utility);
-    const bestAutoConnect = acceptableAutoConnects[0];
-    
-    // Apply skip optimal chance (Easy/Normal only)
-    let selectedAutoConnect: AutoConnectAction = bestAutoConnect;
-    
-    if (params.skipOptimalChanceMax > 0 && !endgame.canWinThisTurn && acceptableAutoConnects.length > 1) {
-      const skipChance = rollSkipOptimalChance(params);
-      
-      if (Math.random() < skipChance) {
-        const k = rollSkipOptimalK(params);
-        const topK = acceptableAutoConnects.slice(0, Math.min(k, acceptableAutoConnects.length));
-        selectedAutoConnect = weightedRandomSelect(topK) as AutoConnectAction;
-      }
-    }
-    
-    recordAITurn('build', selectedAutoConnect.card?.subtype);
+    recordAITurn('build', selected.card?.subtype);
     
     return {
-      action: selectedAutoConnect,
-      category: 'build', // Auto-connects are effectively BUILD actions
-      allActions: [...acceptableAutoConnects],
-      reasoning: `Auto-connect: ${selectedAutoConnect.reasoning} (utility: ${selectedAutoConnect.utility.toFixed(1)})`,
+      action: selected,
+      category: 'build',
+      allActions: [...acceptableAutoConnects, ...allLegalMoves],
+      reasoning: `Auto-connect: ${selected.reasoning} (utility: ${selected.utility.toFixed(1)})`,
     };
   }
   
   // ==========================================================================
   // NORMAL CATEGORY ORDER PROCESSING
   // ==========================================================================
-  
-  // Collect all evaluated actions
   const allActions: EvaluatedAction[] = [];
   
-  // Process categories in priority order
   for (const category of CATEGORY_ORDER) {
     const categoryActions = generateActionsForCategory(category, boardState, gameState, aiPlayerIndex);
+    if (categoryActions.length === 0) continue;
     
     // Evaluate each action
     for (const action of categoryActions) {
       const evaluation = evaluateActionUtility(action, boardState, gameState, aiPlayerIndex, matchState);
       action.utility = evaluation.finalUtility;
       
-      // Apply endgame future cap if needed
-      if (endgame.futureCap < 10 && evaluation.futureAdvantageScore > endgame.futureCap) {
-        // Reduce utility for over-planning near endgame
-        action.utility -= (evaluation.futureAdvantageScore - endgame.futureCap) * 15;
-      }
-      
-      // Store delta bitcoin for absolute priority rule
-      (action as any).__deltaBitcoin = evaluation.deltaBitcoinThisTurn;
-      (action as any).__deltaOpponentDenial = evaluation.deltaOpponentBitcoinPrevented;
-      (action as any).__parkingValue = evaluation.parkingValue;
+      // Apply utility noise
+      action.utility = applyUtilityNoise(action.utility, diffCfg);
     }
     
     allActions.push(...categoryActions);
     
-    // Apply utility noise
-    for (const action of categoryActions) {
-      action.utility = applyUtilityNoise(action.utility, params);
-    }
-    
     // Sort by utility
     categoryActions.sort((a, b) => b.utility - a.utility);
     
-    // Apply ABSOLUTE PRIORITY RULE
-    const scoringActions = categoryActions.filter(a => ((a as any).__deltaBitcoin || 0) >= 1);
-    const bestScoring = scoringActions[0];
+    // Apply ABSOLUTE PRIORITY RULE (scoring actions take precedence)
+    const scoringActions = categoryActions.filter(a => ((a as any).__deltaBitcoin ?? 0) >= 1);
+    let validActions = categoryActions;
     
-    if (bestScoring) {
-      // Must choose a scoring action unless denial prevents more
-      const nonScoringBetter = categoryActions.filter(a => {
-        const denial = (a as any).__deltaOpponentDenial || 0;
-        const scoring = (a as any).__deltaBitcoin || 0;
-        return scoring === 0 && denial > (bestScoring as any).__deltaBitcoin;
-      });
-      
-      if (nonScoringBetter.length === 0) {
-        // Force scoring action
-        categoryActions.length = 0;
-        categoryActions.push(...scoringActions);
-        categoryActions.sort((a, b) => b.utility - a.utility);
+    if (scoringActions.length > 0) {
+      // Force scoring action unless in denial mode with high threat
+      if (!endgame.opponentCanWinNextTurn) {
+        validActions = scoringActions;
       }
     }
     
-    // Get category threshold
-    const threshold = getCategoryThreshold(category, matchState.difficulty);
-    
-    // Filter actions above threshold
-    let validActions = categoryActions.filter(a => a.utility >= threshold);
-    
-    // SPECIAL BUILD CATEGORY HANDLING:
-    // Allow equipment plays even if utility is below threshold when equipment exists
-    // This ensures AI plays/parks equipment rather than discarding
+    // SPECIAL BUILD HANDLING: Always allow equipment plays
     if (category === 'build' && validActions.length === 0 && categoryActions.length > 0) {
-      const hasEquipmentInHand = boardState.equipmentInHand.length > 0;
-      const hasFloatingEquipment = 
-        aiPlayer.network.floatingCables.length > 0 || 
+      const hasEquipment = boardState.equipmentInHand.length > 0 ||
+        aiPlayer.network.floatingCables.length > 0 ||
         aiPlayer.network.floatingComputers.length > 0;
       
-      if (hasEquipmentInHand || hasFloatingEquipment) {
-        // Take the best build action regardless of threshold
+      if (hasEquipment) {
         validActions = [categoryActions[0]];
       }
     }
     
-    if (validActions.length === 0) {
-      continue; // No valid actions in this category
-    }
+    if (validActions.length === 0) continue;
     
-    // Apply skip optimal chance (intentional mistakes for Easy/Normal)
-    let selectedAction = validActions[0];
+    // Select action with tie-breaking
+    const selectedAction = selectMoveWithTies(validActions, diffCfg.tieBreakerRandomness);
     
-    if (params.skipOptimalChanceMax > 0 && !endgame.canWinThisTurn && !endgame.opponentCanWinNextTurn) {
-      const skipChance = rollSkipOptimalChance(params);
-      
-      if (Math.random() < skipChance && validActions.length > 1) {
-        // Pick from top K instead of top 1
-        const k = rollSkipOptimalK(params);
-        const topK = validActions.slice(0, Math.min(k, validActions.length));
-        
-        // Weighted random selection (higher utility = higher chance)
-        selectedAction = weightedRandomSelect(topK);
+    // Apply finish bias near endgame
+    if (endgame.aiTurnsToWin !== undefined && endgame.aiTurnsToWin <= 2) {
+      const deltaBitcoin = (selectedAction as any).__deltaBitcoin ?? 0;
+      if (deltaBitcoin > 0) {
+        // Boost utility for finish bias
+        selectedAction.utility *= aggCfg.finishBias;
       }
     }
     
-    // Apply bluff logic for Normal/Hard
-    if (params.bluffEnabled && !endgame.canWinThisTurn && !endgame.opponentCanWinNextTurn) {
-      const bluffAction = evaluateBluffOpportunity(
-        validActions, 
-        selectedAction, 
-        params, 
-        boardState
-      );
-      
-      if (bluffAction) {
-        selectedAction = bluffAction;
-      }
-    }
-    
-    // Record the action
     recordAITurn(category, selectedAction.card?.subtype);
     
     return {
@@ -239,7 +152,24 @@ export function selectBestAction(
   }
   
   // Fallback: Force discard if nothing else
-  return createFallbackDiscard(aiPlayer, allActions, matchState.difficulty);
+  return createFallbackDiscard(aiPlayer, allActions, difficulty);
+}
+
+// Generate all moves across categories
+function generateAllMoves(
+  gameState: GameState,
+  aiPlayerIndex: number,
+  boardState: BoardState,
+  matchState: AIMatchState
+): EvaluatedAction[] {
+  const allMoves: EvaluatedAction[] = [];
+  
+  for (const category of CATEGORY_ORDER) {
+    const actions = generateActionsForCategory(category, boardState, gameState, aiPlayerIndex);
+    allMoves.push(...actions);
+  }
+  
+  return allMoves;
 }
 
 // Force a winning action
@@ -250,28 +180,28 @@ function forceWinningAction(
   matchState: AIMatchState
 ): SelectionResult {
   const allActions: EvaluatedAction[] = [];
+  const aiPlayer = gameState.players[aiPlayerIndex];
   
-  // Generate all actions and find highest immediate scoring
+  // Generate and evaluate all actions
   for (const category of CATEGORY_ORDER) {
     const actions = generateActionsForCategory(category, boardState, gameState, aiPlayerIndex);
     
     for (const action of actions) {
       const evaluation = evaluateActionUtility(action, boardState, gameState, aiPlayerIndex, matchState);
       action.utility = evaluation.finalUtility;
-      (action as any).__deltaBitcoin = evaluation.deltaBitcoinThisTurn;
     }
     
     allActions.push(...actions);
   }
   
-  // Sort by immediate bitcoin gain
+  // Find highest immediate bitcoin gain
   allActions.sort((a, b) => {
-    const deltaA = (a as any).__deltaBitcoin || 0;
-    const deltaB = (b as any).__deltaBitcoin || 0;
+    const deltaA = (a as any).__deltaBitcoin ?? 0;
+    const deltaB = (b as any).__deltaBitcoin ?? 0;
     return deltaB - deltaA;
   });
   
-  const winningAction = allActions.find(a => ((a as any).__deltaBitcoin || 0) > 0);
+  const winningAction = allActions.find(a => ((a as any).__deltaBitcoin ?? 0) > 0);
   
   if (winningAction) {
     recordAITurn('build', winningAction.card?.subtype);
@@ -283,93 +213,55 @@ function forceWinningAction(
     };
   }
   
-  // No winning action found, fall back to normal selection
   return {
     action: null,
     category: null,
     allActions,
-    reasoning: 'No winning action available despite being close',
+    reasoning: 'No winning action available',
   };
 }
 
-// Evaluate bluff opportunity
-function evaluateBluffOpportunity(
-  validActions: EvaluatedAction[],
-  currentBest: EvaluatedAction,
-  params: DifficultyParams,
-  boardState: BoardState
-): EvaluatedAction | null {
-  const bluffChance = rollBluffChance(params);
-  
-  if (Math.random() > bluffChance) {
-    return null;
+// Select move with tie-breaking randomness
+function selectMoveWithTies(
+  scoredMoves: EvaluatedAction[],
+  tieBreakerRandomness: number
+): EvaluatedAction {
+  if (scoredMoves.length === 0) {
+    throw new Error('No moves to select from');
   }
   
-  // Find near-optimal actions within bluff delta
-  const nearOptimal = validActions.filter(a => 
-    currentBest.utility - a.utility <= params.bluffDeltaMax && a !== currentBest
-  );
-  
-  if (nearOptimal.length === 0) {
-    return null;
+  if (scoredMoves.length === 1) {
+    return scoredMoves[0];
   }
   
-  // Calculate trap value for each candidate
-  const trapCandidates = nearOptimal.map(action => {
-    // Simple trap value calculation
-    let trapValue = 0;
-    
-    // "Tempting weak link" - leave fragile path exposed while holding repair
-    if (action.type === 'play_switch' && boardState.resolutionsInHand.length > 0) {
-      trapValue += 2;
-    }
-    
-    // "Delay attack" - hold attack for bigger impact
-    if (action.type === 'discard' && action.card?.type !== 'attack') {
-      trapValue += 1;
-    }
-    
-    // "Decoy build" - build in one area while planning elsewhere
-    if (action.type === 'play_cable' && boardState.attacksInHand.length > 0) {
-      trapValue += 1.5;
-    }
-    
-    const expectedSwing = trapValue * 2;
-    const totalTrapValue = params.opponentMisplayChance * expectedSwing;
-    
-    return { action, trapValue: totalTrapValue };
-  });
+  // Sort descending by utility
+  const sorted = [...scoredMoves].sort((a, b) => b.utility - a.utility);
+  const bestScore = sorted[0].utility;
   
-  // Filter to meaningful trap values (>= 2 bitcoin swing potential)
-  const viableTraps = trapCandidates.filter(t => t.trapValue >= 1);
+  // Collect near-ties (within epsilon)
+  const epsilon = Math.abs(bestScore) * 0.03 + 0.5;
+  const candidates = sorted.filter(m => m.utility >= bestScore - epsilon);
   
-  if (viableTraps.length > 0) {
-    // Pick best trap
-    viableTraps.sort((a, b) => b.trapValue - a.trapValue);
-    return viableTraps[0].action;
+  if (candidates.length === 1) {
+    return candidates[0];
   }
   
-  return null;
+  // Random selection among ties based on tieBreakerRandomness
+  if (Math.random() < tieBreakerRandomness) {
+    return candidates[Math.floor(Math.random() * candidates.length)];
+  }
+  
+  return candidates[0];
 }
 
-// Weighted random selection from top actions
-function weightedRandomSelect(actions: EvaluatedAction[]): EvaluatedAction {
-  if (actions.length === 1) return actions[0];
-  
-  // Softmax-style weighting based on utility
-  const minUtility = Math.min(...actions.map(a => a.utility));
-  const weights = actions.map(a => Math.exp((a.utility - minUtility) / 10));
-  const totalWeight = weights.reduce((sum, w) => sum + w, 0);
-  
-  let random = Math.random() * totalWeight;
-  for (let i = 0; i < actions.length; i++) {
-    random -= weights[i];
-    if (random <= 0) {
-      return actions[i];
-    }
+// Shuffle and sample array
+function shuffleAndSample<T>(array: T[], sampleSize: number): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
-  
-  return actions[0];
+  return shuffled.slice(0, sampleSize);
 }
 
 // Create fallback discard action

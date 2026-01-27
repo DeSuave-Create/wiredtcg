@@ -3,7 +3,8 @@
 // =============================================================================
 
 import { GameState, Player, Card, AIAction } from '@/types/game';
-import { AIDifficulty, EvaluatedAction, AIStateMemory } from './types';
+import { EvaluatedAction, AIStateMemory } from './types';
+import { AIDifficulty } from './difficulty';
 import { selectBestAction } from './moveSelector';
 import { getMatchState, initializeMatchState, resetMatchState, hasMatchState, getMatchStateDebug } from './matchState';
 import { decideAuditResponse as auditResponse, selectAuditTargets as selectTargets } from './auditDecisions';
@@ -34,7 +35,7 @@ export function makeAIDecision(
   // Ensure match state exists (auto-initialize if needed)
   const matchState = getMatchState(difficulty);
   
-  // Use new modular selector
+  // Use modular selector
   const result = selectBestAction(gameState, aiPlayerIndex, matchState);
 
   return { 

@@ -3,8 +3,7 @@
 // =============================================================================
 
 import { GameState, Card } from '@/types/game';
-import { AIDifficulty } from './types';
-import { getDifficultyParams } from './difficulty';
+import { AIDifficulty, getDifficultyConfig } from './difficulty';
 
 // AI response to audit (decide whether to counter)
 export function decideAuditResponse(
@@ -12,7 +11,7 @@ export function decideAuditResponse(
   difficulty: AIDifficulty,
   isTargetTurn: boolean
 ): { shouldCounter: boolean; cardId: string | null; reasoning: string } {
-  const params = getDifficultyParams(difficulty);
+  const config = getDifficultyConfig(difficulty);
   const aiPlayerIndex = gameState.currentPlayerIndex;
   const aiPlayer = gameState.players[aiPlayerIndex];
   
@@ -54,7 +53,7 @@ export function decideAuditResponse(
   }
 
   // Risk tolerance adjustment
-  if (Math.random() > params.riskTolerance && chainLength >= 2) {
+  if (Math.random() > config.riskTolerance && chainLength >= 2) {
     shouldCounter = false;
     reasoning = 'Backing off - too risky';
   }
@@ -79,7 +78,7 @@ export function selectAuditTargets(
   availableComputers: { id: string; card: Card; location: string }[],
   count: number
 ): string[] {
-  const params = getDifficultyParams(difficulty);
+  const config = getDifficultyConfig(difficulty);
   
   if (difficulty === 'easy') {
     // Random selection
@@ -101,8 +100,8 @@ export function selectAuditTargets(
       score += 10;
     }
     
-    // Add randomness based on difficulty
-    score += (Math.random() - 0.5) * params.randomnessFactor * 40;
+    // Add randomness based on difficulty (use utility noise)
+    score += (Math.random() - 0.5) * config.utilityNoise * 100;
     
     return { ...comp, score };
   });

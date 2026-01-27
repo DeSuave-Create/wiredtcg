@@ -54,6 +54,19 @@ const difficulties: {
     ],
     color: 'from-red-500 to-rose-600',
   },
+  {
+    id: 'nightmare',
+    name: 'Nightmare',
+    image: '/lovable-uploads/attack-audit-v2.png',
+    description: 'Near-perfect AI',
+    details: [
+      'Zero mistakes',
+      'Maximum lookahead depth',
+      'Optimal move selection',
+      'Ruthless efficiency',
+    ],
+    color: 'from-purple-900 to-black',
+  },
 ];
 
 export function DifficultySelector({ isOpen, onSelect, onClose }: DifficultySelectorProps) {
@@ -69,7 +82,7 @@ export function DifficultySelector({ isOpen, onSelect, onClose }: DifficultySele
           </DialogDescription>
         </DialogHeader>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
           {difficulties.map((diff) => {
             return (
               <button

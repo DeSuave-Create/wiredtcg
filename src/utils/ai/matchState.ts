@@ -2,13 +2,20 @@
 // AI MATCH STATE - Persists for entire game, selected at start
 // =============================================================================
 
-import { AIDifficulty } from './types';
-import { AIProfile, selectRandomProfile, getProfileDescription } from './profiles';
+import { AIDifficulty, DifficultyConfig, getDifficultyConfig } from './difficulty';
+import { AIAggression, AggressionConfig, getAggressionConfig, selectRandomAggression, getAggressionDescription } from './profiles';
+
+// AI Profile - combines difficulty and aggression
+export interface AIProfile {
+  difficulty: AIDifficulty;
+  aggression: AIAggression;
+  diffCfg: DifficultyConfig;
+  aggCfg: AggressionConfig;
+}
 
 // Match state - initialized once per game, persists across turns
 export interface AIMatchState {
   profile: AIProfile;
-  difficulty: AIDifficulty;
   matchSeed: number;
   turnsPlayed: number;
   
@@ -24,14 +31,26 @@ export interface AIMatchState {
 // Global match state (reset per game)
 let currentMatchState: AIMatchState | null = null;
 
+// Create AI profile for a game
+export function createAIProfile(difficulty: AIDifficulty, seed?: number): AIProfile {
+  const matchSeed = seed ?? Date.now();
+  const aggression = selectRandomAggression(matchSeed);
+  
+  return {
+    difficulty,
+    aggression,
+    diffCfg: getDifficultyConfig(difficulty),
+    aggCfg: getAggressionConfig(aggression),
+  };
+}
+
 // Initialize match state at game start
 export function initializeMatchState(difficulty: AIDifficulty, seed?: number): AIMatchState {
   const matchSeed = seed ?? Date.now();
-  const profile = selectRandomProfile(matchSeed);
+  const profile = createAIProfile(difficulty, matchSeed);
   
   currentMatchState = {
     profile,
-    difficulty,
     matchSeed,
     turnsPlayed: 0,
     observedOpponentCards: [],
@@ -42,7 +61,7 @@ export function initializeMatchState(difficulty: AIDifficulty, seed?: number): A
   
   // Debug log (only in dev)
   if (typeof window !== 'undefined' && (window as any).__AI_DEBUG__) {
-    console.log(`[AI] Match initialized - Profile: ${profile} (${getProfileDescription(profile)}), Difficulty: ${difficulty}`);
+    console.log(`[AI] Match initialized - Aggression: ${profile.aggression} (${getAggressionDescription(profile.aggression)}), Difficulty: ${profile.difficulty}`);
   }
   
   return currentMatchState;
@@ -54,6 +73,11 @@ export function getMatchState(difficulty: AIDifficulty = 'normal'): AIMatchState
     return initializeMatchState(difficulty);
   }
   return currentMatchState;
+}
+
+// Get profile from match state
+export function getProfile(): AIProfile | null {
+  return currentMatchState?.profile ?? null;
 }
 
 // Update match state after AI turn
@@ -98,12 +122,12 @@ export function hasMatchState(): boolean {
 }
 
 // Get match state for debugging
-export function getMatchStateDebug(): { profile: string; difficulty: string; turns: number } | null {
+export function getMatchStateDebug(): { aggression: string; difficulty: string; turns: number } | null {
   if (!currentMatchState) return null;
   
   return {
-    profile: currentMatchState.profile,
-    difficulty: currentMatchState.difficulty,
+    aggression: currentMatchState.profile.aggression,
+    difficulty: currentMatchState.profile.difficulty,
     turns: currentMatchState.turnsPlayed,
   };
 }
