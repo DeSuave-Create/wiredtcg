@@ -1,7 +1,7 @@
 import { Card, PlayerNetwork, Player, GameState, PlacedCard } from '@/types/game';
 
-// AI Difficulty levels
-export type AIDifficulty = 'easy' | 'normal' | 'hard';
+// Re-export difficulty type
+export type { AIDifficulty } from './difficulty';
 
 // Action types the AI can take
 export type AIActionType = 
@@ -27,11 +27,11 @@ export interface EvaluatedAction {
   type: AIActionType;
   card?: Card;
   targetId?: string;
-  sourceId?: string; // For reroute actions - the equipment being moved
+  sourceId?: string;
   targetPlayerIndex?: number;
   utility: number;
   reasoning: string;
-  risk: number; // 0-1 risk factor
+  risk: number;
 }
 
 // Network analysis results
@@ -45,11 +45,11 @@ export interface NetworkAnalysis {
   disabledCables: number;
   floatingCables: number;
   floatingComputers: number;
-  redundancyScore: number; // 0-1, higher = more resilient
-  vulnerabilityScore: number; // 0-1, higher = more vulnerable
+  redundancyScore: number;
+  vulnerabilityScore: number;
   projectedScoring: number;
-  singlePointFailures: number; // Number of switches that if disabled would lose all scoring
-  availableCableSlots: number; // Space for more computers
+  singlePointFailures: number;
+  availableCableSlots: number;
 }
 
 // Hand analysis results
@@ -62,14 +62,14 @@ export interface HandAnalysis {
   classifications: Card[];
   stealCards: Card[];
   auditCards: Card[];
-  deadCards: Card[]; // Cards that can't be used effectively
+  deadCards: Card[];
   potentialMoves: number;
 }
 
 // Opponent analysis for tracking behavior
 export interface OpponentAnalysis {
-  likelyCounters: number; // Estimated Secured cards
-  likelyAttacks: number; // Estimated attack cards
+  likelyCounters: number;
+  likelyAttacks: number;
   threateningClassifications: string[];
   stealProtected: boolean;
   projectedScoring: number;
@@ -78,34 +78,12 @@ export interface OpponentAnalysis {
 
 // State memory for tracking game history
 export interface AIStateMemory {
-  observedCards: Card[]; // Cards seen played by opponent
-  attacksUsed: Record<string, number>; // Count of each attack type used
-  resolutionsRemaining: Record<string, number>; // Estimated remaining in deck
+  observedCards: Card[];
+  attacksUsed: Record<string, number>;
+  resolutionsRemaining: Record<string, number>;
   opponentBehavior: OpponentAnalysis;
-  lastDisruption: string | null; // What was last attack on AI
-  vulnerableStructures: string[]; // IDs of equipment that were previously attacked
-}
-
-// Configuration for different difficulty levels
-export interface AIConfig {
-  difficulty: AIDifficulty;
-  lookaheadDepth: number; // 1-5 turns ahead
-  randomnessFactor: number; // 0-1, higher = more random
-  holdProbability: number; // Chance to hold cards instead of playing immediately
-  bluffProbability: number; // Chance to bluff (discard good cards, hold bad)
-  riskTolerance: number; // 0-1, higher = more willing to take risks
-  counterEstimationAccuracy: number; // 0-1, how well it estimates opponent cards
-}
-
-// Utility weights for scoring actions
-export interface UtilityWeights {
-  bitcoinGain: number;
-  bitcoinDenial: number;
-  boardStability: number;
-  futureAdvantage: number;
-  riskPenalty: number;
-  redundancyBonus: number;
-  classificationValue: number;
+  lastDisruption: string | null;
+  vulnerableStructures: string[];
 }
 
 // Reroute opportunity
@@ -117,7 +95,32 @@ export interface RerouteOpportunity {
   bitcoinRecovery: number;
 }
 
-// Complete AI decision context
+// Import difficulty type locally for interface use
+import { AIDifficulty as DifficultyType } from './difficulty';
+
+// Legacy AIConfig interface for backwards compatibility
+export interface AIConfig {
+  difficulty: DifficultyType;
+  lookaheadDepth: number;
+  randomnessFactor: number;
+  holdProbability: number;
+  bluffProbability: number;
+  riskTolerance: number;
+  counterEstimationAccuracy: number;
+}
+
+// Legacy UtilityWeights for backwards compatibility
+export interface UtilityWeights {
+  bitcoinGain: number;
+  bitcoinDenial: number;
+  boardStability: number;
+  futureAdvantage: number;
+  riskPenalty: number;
+  redundancyBonus: number;
+  classificationValue: number;
+}
+
+// Complete AI decision context (includes legacy fields for backwards compatibility)
 export interface AIDecisionContext {
   gameState: GameState;
   aiPlayerIndex: number;
@@ -131,7 +134,7 @@ export interface AIDecisionContext {
   config: AIConfig;
   weights: UtilityWeights;
   movesRemaining: number;
-  scoreDifference: number; // AI score - Human score
-  turnsToWin: number; // Estimated turns for AI to win
-  humanTurnsToWin: number; // Estimated turns for human to win
+  scoreDifference: number;
+  turnsToWin: number;
+  humanTurnsToWin: number;
 }

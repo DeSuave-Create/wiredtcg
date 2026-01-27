@@ -1,21 +1,23 @@
 // =============================================================================
-// ENDGAME ANALYZER - Detects win/loss conditions and applies overrides
+// ENDGAME ANALYSIS - Winning/blocking detection
 // =============================================================================
 
 import { GameState, Player } from '@/types/game';
+import { EvaluatedAction } from './types';
 import { BoardState } from './boardState';
-import { AIDifficulty } from './types';
-import { ProfileMultipliers } from './profiles';
+import { AIDifficulty, DifficultyConfig, getDifficultyConfig } from './difficulty';
 
 export interface EndgameState {
   canWinThisTurn: boolean;
   opponentCanWinNextTurn: boolean;
+  aiTurnsToWin: number;
+  oppTurnsToWin: number;
+  futureCap: number;
+  denialMultiplier: number;
+  scoringMultiplier: number;
   aiCanWinNextTurn: boolean;
-  
-  // Multiplier adjustments for endgame situations
   denyMultiplierBoost: number;
   bitcoinMultiplierBoost: number;
-  futureCap: number; // Cap on future advantage contribution
 }
 
 const WIN_TARGET = 25;
@@ -27,143 +29,122 @@ export function analyzeEndgame(
   aiPlayerIndex: number,
   difficulty: AIDifficulty
 ): EndgameState {
+  const diffCfg = getDifficultyConfig(difficulty);
   const aiPlayer = gameState.players[aiPlayerIndex];
   const oppPlayer = gameState.players[aiPlayerIndex === 0 ? 1 : 0];
   
-  const aiBitcoin = aiPlayer.score;
-  const oppBitcoin = oppPlayer.score;
   const aiIncome = boardState.myConnectedComputers;
+  const aiPotential = boardState.myPotentialComputers;
   const oppIncome = boardState.oppConnectedComputers;
   
-  // Turns to win calculations
+  // Calculate turns to win
   const aiTurnsToWin = aiIncome > 0 
-    ? Math.ceil((WIN_TARGET - aiBitcoin) / aiIncome) 
+    ? Math.ceil((WIN_TARGET - aiPlayer.score) / aiIncome)
     : Infinity;
-  const oppTurnsToWin = oppIncome > 0 
-    ? Math.ceil((WIN_TARGET - oppBitcoin) / oppIncome) 
+  
+  const oppTurnsToWin = oppIncome > 0
+    ? Math.ceil((WIN_TARGET - oppPlayer.score) / oppIncome)
     : Infinity;
   
   // Can AI win this turn?
-  // Check if current score + potential scoring this turn >= WIN_TARGET
-  const potentialScoreThisTurn = aiBitcoin + aiIncome + boardState.myPotentialComputers;
-  const canWinThisTurn = potentialScoreThisTurn >= WIN_TARGET;
+  const movesAvailable = gameState.movesRemaining + gameState.equipmentMovesRemaining;
+  const canWinThisTurn = (aiPlayer.score + aiIncome + Math.min(aiPotential, movesAvailable)) >= WIN_TARGET;
   
   // Can opponent win next turn?
-  const opponentCanWinNextTurn = oppTurnsToWin <= 1;
+  const opponentCanWinNextTurn = oppPlayer.score + oppIncome >= WIN_TARGET;
   
-  // Can AI win next turn (but not this turn)?
+  // Can AI win next turn?
   const aiCanWinNextTurn = aiTurnsToWin <= 1 && !canWinThisTurn;
   
-  // Calculate multiplier adjustments based on endgame state
-  let denyMultiplierBoost = 1.0;
-  let bitcoinMultiplierBoost = 1.0;
-  let futureCap = 10; // Default no cap
+  // Calculate modifiers based on difficulty
+  let denialMultiplier = 1.0;
+  let scoringMultiplier = 1.0;
+  let futureCap = 10;
   
-  if (opponentCanWinNextTurn && !canWinThisTurn) {
-    // CRITICAL: Must deny opponent
+  // If opponent can win next turn, boost denial based on difficulty
+  if (opponentCanWinNextTurn) {
     switch (difficulty) {
-      case 'easy': denyMultiplierBoost = 1.2; break;
-      case 'normal': denyMultiplierBoost = 1.5; break;
-      case 'hard': denyMultiplierBoost = 2.0; break;
+      case 'easy': denialMultiplier = 1.2; break;
+      case 'normal': denialMultiplier = 1.5; break;
+      case 'hard': denialMultiplier = 2.0; break;
+      case 'nightmare': denialMultiplier = 2.5; break;
     }
   }
   
-  if (aiCanWinNextTurn) {
-    // Push for win - emphasize bitcoin gain
+  // If AI can win next turn, boost scoring based on difficulty
+  if (aiTurnsToWin <= 1) {
     switch (difficulty) {
-      case 'easy': bitcoinMultiplierBoost = 1.2; break;
-      case 'normal': bitcoinMultiplierBoost = 1.4; break;
-      case 'hard': bitcoinMultiplierBoost = 1.6; break;
+      case 'easy': scoringMultiplier = 1.2; break;
+      case 'normal': scoringMultiplier = 1.4; break;
+      case 'hard': scoringMultiplier = 1.6; break;
+      case 'nightmare': scoringMultiplier = 1.8; break;
     }
-    futureCap = 4; // Don't over-plan when about to win
+    futureCap = 4; // Don't over-plan near victory
   }
   
   return {
     canWinThisTurn,
     opponentCanWinNextTurn,
-    aiCanWinNextTurn,
-    denyMultiplierBoost,
-    bitcoinMultiplierBoost,
+    aiTurnsToWin,
+    oppTurnsToWin,
     futureCap,
+    denialMultiplier,
+    scoringMultiplier,
+    aiCanWinNextTurn,
+    denyMultiplierBoost: denialMultiplier,
+    bitcoinMultiplierBoost: scoringMultiplier,
   };
 }
 
-// Apply endgame modifiers to profile multipliers
-export function applyEndgameModifiers(
-  baseMultipliers: ProfileMultipliers,
-  endgame: EndgameState
-): ProfileMultipliers {
-  return {
-    ...baseMultipliers,
-    bitcoinGainMult: baseMultipliers.bitcoinGainMult * endgame.bitcoinMultiplierBoost,
-    denyOpponentMult: baseMultipliers.denyOpponentMult * endgame.denyMultiplierBoost,
-  };
-}
-
-// Check if this action could lead to a win this turn
+// Check if an action wins the game
 export function isWinningAction(
-  currentScore: number,
-  deltaBitcoin: number,
-  potentialFollowups: number = 0
+  action: EvaluatedAction,
+  boardState: BoardState,
+  aiPlayer: Player
 ): boolean {
-  return currentScore + deltaBitcoin + potentialFollowups >= WIN_TARGET;
+  const deltaBitcoin = (action as any).__deltaBitcoin ?? 0;
+  return aiPlayer.score + boardState.myConnectedComputers + deltaBitcoin >= WIN_TARGET;
 }
 
-// Find winning line if it exists (limited search)
+// Find a winning line of actions within available moves
 export function findWinningLine(
   boardState: BoardState,
   gameState: GameState,
   aiPlayerIndex: number,
   movesRemaining: number,
   equipmentMovesRemaining: number
-): { actionSequence: string[]; totalBitcoin: number } | null {
+): EvaluatedAction[] | null {
   const aiPlayer = gameState.players[aiPlayerIndex];
-  const currentScore = aiPlayer.score;
-  const neededToWin = WIN_TARGET - currentScore;
+  const neededBitcoin = WIN_TARGET - aiPlayer.score - boardState.myConnectedComputers;
   
-  // Quick check: can't possibly win if not enough potential
-  const maxPotential = boardState.myConnectedComputers + 
-    boardState.floatingComputers + 
-    boardState.computersInHand.length +
-    boardState.floatingCables * 2; // Rough estimate
-  
-  if (maxPotential < neededToWin) {
-    return null;
+  if (neededBitcoin <= 0) {
+    return [];
   }
   
-  // Simplified win-line search
-  // Priority: Connect floating computers/cables first (free moves), then play from hand
-  const actionSequence: string[] = [];
-  let totalBitcoin = boardState.myConnectedComputers;
-  let freeMovesLeft = equipmentMovesRemaining;
-  let regularMovesLeft = movesRemaining;
-  
-  // Connect floating computers (free)
-  const floatingComps = boardState.floatingComputers;
-  const slotsAvailable = boardState.availableCableSlots;
-  const connectableFloating = Math.min(floatingComps, slotsAvailable);
-  
-  if (connectableFloating > 0) {
-    totalBitcoin += connectableFloating;
-    actionSequence.push(`Connect ${connectableFloating} floating computer(s)`);
-  }
-  
-  // Connect floating cables with computers (free)
-  // This would need more detailed analysis of cable contents
-  
-  // Play computers from hand
-  let remainingSlots = slotsAvailable - connectableFloating;
-  const computersToPlay = Math.min(boardState.computersInHand.length, remainingSlots, regularMovesLeft);
-  
-  if (computersToPlay > 0) {
-    totalBitcoin += computersToPlay;
-    regularMovesLeft -= computersToPlay;
-    actionSequence.push(`Play ${computersToPlay} computer(s) from hand`);
-  }
-  
-  if (currentScore + totalBitcoin >= WIN_TARGET) {
-    return { actionSequence, totalBitcoin };
+  const totalMoves = movesRemaining + equipmentMovesRemaining;
+  if (boardState.myPotentialComputers >= neededBitcoin && totalMoves >= neededBitcoin) {
+    return [];
   }
   
   return null;
+}
+
+// Apply endgame modifiers to utility
+export function applyEndgameModifiers(
+  utility: number,
+  endgame: EndgameState,
+  action: EvaluatedAction
+): number {
+  let modified = utility;
+  
+  const deltaBitcoin = (action as any).__deltaBitcoin ?? 0;
+  if (deltaBitcoin > 0) {
+    modified *= endgame.scoringMultiplier;
+  }
+  
+  if (action.type === 'play_attack' || action.type === 'start_audit') {
+    modified *= endgame.denialMultiplier;
+  }
+  
+  return modified;
 }

@@ -101,7 +101,7 @@ export function useGameEngine() {
     
     // Create players
     const human = createPlayer('player-1', playerName, true);
-    const computerName = difficulty === 'easy' ? 'Bot (Easy)' : difficulty === 'hard' ? 'Bot (Hard)' : 'Bot (Normal)';
+    const computerName = difficulty === 'easy' ? 'Bot (Easy)' : difficulty === 'hard' ? 'Bot (Hard)' : difficulty === 'nightmare' ? 'Bot (Nightmare)' : 'Bot (Normal)';
     const computer = createPlayer('player-2', computerName, false);
     
     // Deal cards

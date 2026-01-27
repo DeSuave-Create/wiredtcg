@@ -1,6 +1,28 @@
-import { AIDifficulty, AIConfig, UtilityWeights } from './types';
+import { AIDifficulty } from './difficulty';
 
-// Get AI configuration based on difficulty
+// Legacy AI configuration for backwards compatibility
+export interface AIConfig {
+  difficulty: AIDifficulty;
+  lookaheadDepth: number;
+  randomnessFactor: number;
+  holdProbability: number;
+  bluffProbability: number;
+  riskTolerance: number;
+  counterEstimationAccuracy: number;
+}
+
+// Legacy utility weights for backwards compatibility
+export interface UtilityWeights {
+  bitcoinGain: number;
+  bitcoinDenial: number;
+  boardStability: number;
+  futureAdvantage: number;
+  riskPenalty: number;
+  redundancyBonus: number;
+  classificationValue: number;
+}
+
+// Get AI configuration based on difficulty (legacy function)
 export function getAIConfig(difficulty: AIDifficulty): AIConfig {
   switch (difficulty) {
     case 'easy':
@@ -32,6 +54,16 @@ export function getAIConfig(difficulty: AIDifficulty): AIConfig {
         bluffProbability: 0.25,
         riskTolerance: 0.3,
         counterEstimationAccuracy: 0.85,
+      };
+    case 'nightmare':
+      return {
+        difficulty: 'nightmare',
+        lookaheadDepth: 4,
+        randomnessFactor: 0.00,
+        holdProbability: 0.6,
+        bluffProbability: 0.3,
+        riskTolerance: 0.1,
+        counterEstimationAccuracy: 0.95,
       };
   }
 }
@@ -75,10 +107,10 @@ export function getUtilityWeights(
   if (difficulty === 'easy') {
     baseWeights.futureAdvantage *= 0.5;
     baseWeights.redundancyBonus *= 0.5;
-  } else if (difficulty === 'hard') {
-    baseWeights.futureAdvantage *= 1.5;
-    baseWeights.redundancyBonus *= 1.5;
-    baseWeights.riskPenalty *= 1.5;
+  } else if (difficulty === 'hard' || difficulty === 'nightmare') {
+    baseWeights.futureAdvantage *= difficulty === 'nightmare' ? 2.0 : 1.5;
+    baseWeights.redundancyBonus *= difficulty === 'nightmare' ? 2.0 : 1.5;
+    baseWeights.riskPenalty *= difficulty === 'nightmare' ? 2.0 : 1.5;
   }
 
   return baseWeights;

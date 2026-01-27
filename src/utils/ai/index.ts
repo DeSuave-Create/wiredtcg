@@ -1,6 +1,9 @@
 // AI Decision Engine exports
+
+// Types
+export type { AIDifficulty } from './difficulty';
+export type { AIAggression, AggressionConfig } from './profiles';
 export type { 
-  AIDifficulty, 
   EvaluatedAction, 
   AIStateMemory,
   AIDecisionContext,
@@ -8,6 +11,23 @@ export type {
   HandAnalysis,
 } from './types';
 
+// Difficulty and Profile configs
+export { getDifficultyConfig, type DifficultyConfig } from './difficulty';
+export { getAggressionConfig, getAggressionDescription } from './profiles';
+
+// Match state management
+export { 
+  initializeMatchState,
+  getMatchState,
+  resetMatchState,
+  hasMatchState,
+  getMatchStateDebug,
+  recordAITurn,
+  type AIMatchState,
+  type AIProfile,
+} from './matchState';
+
+// Decision engine
 export { 
   makeAIDecision, 
   decideAuditResponse,
@@ -18,8 +38,10 @@ export {
   initializeAIForGame,
 } from './decisionEngine';
 
+// Legacy config export (for backwards compatibility)
 export { getAIConfig, getUtilityWeights } from './config';
 
+// Analysis utilities
 export { 
   analyzeNetwork, 
   analyzeHand, 
@@ -27,9 +49,11 @@ export {
   estimateTurnsToWin,
 } from './analysis';
 
+// Board state
 export { computeBoardState, type BoardState } from './boardState';
-export { getMatchStateDebug, hasMatchState } from './matchState';
+
+// Action generation
 export { existsLegalEquipmentPlay } from './actionGenerator';
+
+// Auto-connect engine
 export { hasAcceptableAutoConnect, findAutoConnectActions } from './autoConnect';
-export type { AIProfile } from './profiles';
-export { getProfileDescription } from './profiles';
