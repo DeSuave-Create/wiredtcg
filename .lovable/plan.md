@@ -1,22 +1,23 @@
 
 
-# Apply ContentSection Background to Player Cards
+# Remove Card Border Glow, Add Glow to Score Number Only
 
 ## What Changes
-Update the `PlayerCard` component to use the same background styling as the `ContentSection` component:
-- Background image: `/lovable-uploads/a08479d2-01b1-41b6-8666-5ded32438273.png`
-- Semi-transparent overlay: `bg-card/60` with `backdrop-blur-[1px]`
+Move the yellow leader glow from the card's outer border to just the score number itself, so only the number glows when a player is winning.
 
 ## Technical Details
 
 ### File: `src/components/PlayerCard.tsx`
 
-1. **Replace** the current card background (`bg-gray-900`) with the circuit board background image, matching the `ContentSection` pattern:
-   - Add `backgroundImage`, `backgroundSize`, `backgroundPosition`, `backgroundRepeat` inline styles using the same image
-   - Add an inner overlay div with `bg-card/60 backdrop-blur-[1px] rounded-3xl` (same as ContentSection)
-   - Ensure existing content remains above the overlay via `relative z-10` (already in place for both mobile and desktop layouts)
+1. **Card border (line 55)**: Remove the leader override. The card border will always use the role color regardless of leader status:
+   - Change from: `isLeader ? 'border-yellow-400 shadow-yellow-400/30' : ...`
+   - Change to: always use `${colors.border} ${colors.shadow}`
 
-2. **Remove** the existing circuit board pattern overlay (the inverted `/images/card-circuit-bg.png` at 30% opacity) since it will be replaced by the new background approach.
+2. **Desktop score number (line 175)**: Add a yellow glow shadow directly on the score text when `isLeader` is true:
+   - Add inline `style` with `textShadow: '0 0 20px rgba(250, 204, 21, 0.8), 0 0 40px rgba(250, 204, 21, 0.4)'` when leading
+   - Keep the existing `animate-pulse-bitcoin` class
 
-This keeps the player cards visually consistent with the outer section container.
+3. **Mobile score number (line 119)**: Apply the same text glow treatment for consistency on mobile.
+
+This way the card keeps its role-colored border at all times, and only the score number gets the golden glow when that player is in the lead.
 
