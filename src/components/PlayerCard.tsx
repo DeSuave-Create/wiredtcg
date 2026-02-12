@@ -47,10 +47,9 @@ const PlayerCard = ({
   const borderColor = isLeader ? 'border-yellow-400 shadow-yellow-400/30' : 'border-blue-500 shadow-blue-500/20';
 
   return (
-    <div className={`relative overflow-hidden transition-all duration-300 hover:scale-[1.03] ${borderColor} border-2 rounded-3xl shadow-2xl`}>
-      {/* Circuit board background */}
-      <div className="absolute inset-0 bg-cover bg-center opacity-15" style={{ backgroundImage: "url('/images/card-circuit-bg.png')" }} />
-      <div className="absolute inset-0 bg-gray-900/90" />
+    <div className={`relative overflow-hidden transition-all duration-300 hover:scale-[1.03] ${borderColor} border-2 rounded-3xl shadow-2xl bg-gray-900`}>
+      {/* Circuit board pattern overlay */}
+      <div className="absolute inset-0 bg-cover bg-center opacity-30 invert" style={{ backgroundImage: "url('/images/card-circuit-bg.png')" }} />
 
       {/* ====== MOBILE LAYOUT ====== */}
       <div className="md:hidden relative z-10">
