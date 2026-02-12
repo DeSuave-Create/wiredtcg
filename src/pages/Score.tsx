@@ -10,7 +10,7 @@ const Score = () => {
       <Header />
       
       <main className="container mx-auto px-4 py-8 flex justify-center flex-grow">
-        <ContentSection>
+        <ContentSection className="w-full">
           <ScoreKeeper />
         </ContentSection>
       </main>
