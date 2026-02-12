@@ -56,8 +56,6 @@ const PlayerCard = ({
         backgroundRepeat: 'no-repeat'
       }}
     >
-      {/* Semi-transparent overlay matching ContentSection */}
-      <div className="absolute inset-0 bg-card/60 backdrop-blur-[1px] rounded-3xl" />
 
       {/* ====== MOBILE LAYOUT ====== */}
       <div className="md:hidden relative z-10">
