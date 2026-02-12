@@ -154,7 +154,7 @@ const ScoreKeeper = () => {
   console.log('ScoreKeeper rendering with players:', players);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full">
       <GameHeader 
         playerCount={players.length}
         maxPlayers={maxPlayers}
@@ -168,7 +168,7 @@ const ScoreKeeper = () => {
       />
 
       {/* Players - Mobile List / Desktop Grid */}
-      <div className="flex flex-col space-y-3 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0 [&>*]:md:min-w-0">
+      <div className="flex flex-col space-y-3 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:space-y-0">
         {players.map((player) => {
           const isLeader = player.score === getHighestScore() && player.score > 0;
           console.log('Rendering PlayerCard for:', player.id, player.name);
