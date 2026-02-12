@@ -52,7 +52,7 @@ const PlayerCard = ({
     'field-tech': { border: 'border-blue-500', text: 'text-blue-400', shadow: 'shadow-blue-500/20' },
   };
   const colors = roleColors[player.character] || roleColors['security-specialist'];
-  const borderColor = isLeader ? 'border-yellow-400 shadow-yellow-400/30' : `${colors.border} ${colors.shadow}`;
+  const borderColor = isLeader ? 'border-white shadow-[0_0_15px_rgba(255,255,255,0.4)]' : `${colors.border} ${colors.shadow}`;
 
   return (
     <div
@@ -110,7 +110,7 @@ const PlayerCard = ({
           </div>
 
           {/* Score controls */}
-          <div className="flex-shrink-0 flex items-center gap-1">
+          <div className="flex-shrink-0 flex items-center gap-1 bg-black/40 rounded-lg px-2 py-1">
             <Button onClick={() => onUpdateScore(player.id, -1)} variant="ghost" size="sm" className="text-red-400 hover:bg-gray-700 h-7 w-7 p-0" type="button">
               <Minus className="h-3 w-3" />
             </Button>
@@ -165,25 +165,28 @@ const PlayerCard = ({
           />
         </div>
 
-        {/* Bitcoins Mined label */}
-        <div className="flex items-center justify-center gap-2">
-          <Bitcoin className="h-5 w-5 text-yellow-400" />
-          <span className="text-sm text-gray-400">Bitcoins Mined</span>
-        </div>
+        {/* Score section with dark backdrop */}
+        <div className="bg-black/50 rounded-xl px-4 py-3 flex flex-col items-center space-y-3 w-full">
+          {/* Bitcoins Mined label */}
+          <div className="flex items-center justify-center gap-2">
+            <Bitcoin className="h-5 w-5 text-yellow-400" />
+            <span className="text-sm text-gray-300">Bitcoins Mined</span>
+          </div>
 
-        {/* Score */}
-        <div className={`text-5xl font-black text-red-500 ${isLeader ? 'animate-pulse-bitcoin' : ''}`}>
-          {player.score}
-        </div>
+          {/* Score */}
+          <div className={`text-5xl font-black text-red-500 ${isLeader ? 'animate-pulse-bitcoin' : ''}`}>
+            {player.score}
+          </div>
 
-        {/* +/- Buttons */}
-        <div className="flex justify-center gap-3">
-          <Button onClick={() => onUpdateScore(player.id, -1)} variant="outline" size="sm" className="border-gray-600 text-red-400 hover:bg-gray-700 rounded-xl bg-gray-800 w-20" type="button">
-            <Minus className="h-4 w-4" />
-          </Button>
-          <Button onClick={() => onUpdateScore(player.id, 1)} variant="outline" size="sm" className="border-gray-600 text-blue-400 hover:bg-gray-700 rounded-xl bg-gray-800 w-20" type="button">
-            <Plus className="h-4 w-4" />
-          </Button>
+          {/* +/- Buttons */}
+          <div className="flex justify-center gap-3">
+            <Button onClick={() => onUpdateScore(player.id, -1)} variant="outline" size="sm" className="border-gray-600 text-red-400 hover:bg-gray-700 rounded-xl bg-gray-800 w-20" type="button">
+              <Minus className="h-4 w-4" />
+            </Button>
+            <Button onClick={() => onUpdateScore(player.id, 1)} variant="outline" size="sm" className="border-gray-600 text-blue-400 hover:bg-gray-700 rounded-xl bg-gray-800 w-20" type="button">
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>
