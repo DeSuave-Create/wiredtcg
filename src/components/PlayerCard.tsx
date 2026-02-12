@@ -1,5 +1,4 @@
 
-import { useState } from 'react';
 import { Plus, Minus, Trash2, Bitcoin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,6 +15,7 @@ interface Character {
   id: string;
   name: string;
   icon: string;
+  image: string;
 }
 
 interface PlayerCardProps {
@@ -43,37 +43,21 @@ const PlayerCard = ({
     return characters.find(c => c.id === characterId) || characters[0];
   };
 
-  const getCharacterBorderColor = (characterId: string) => {
-    switch (characterId) {
-      case 'zerotrust':
-      case 'deskjockey':
-        return 'border-green-600';
-      case 'pingmaster':
-      case 'cloudcrafter':
-        return 'border-blue-600';
-      case 'redtaperipper':
-      case 'clutchcache':
-        return 'border-red-600';
-      default:
-        return 'border-green-600';
-    }
-  };
-
   const character = getCharacter(player.character);
-  const borderColor = isLeader ? 'border-yellow-400' : getCharacterBorderColor(player.character);
+  const borderColor = isLeader ? 'border-yellow-400' : 'border-blue-500';
 
   return (
-    <div className={`relative overflow-hidden transition-all duration-300 hover:scale-105 ${borderColor} border-2 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl bg-gray-50 dark:bg-gray-800/90`}>
+    <div className={`relative overflow-hidden transition-all duration-300 hover:scale-105 ${borderColor} border-2 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl bg-gray-900/95`}>
       {/* Circuit board pattern background */}
-      <div className="absolute inset-0 opacity-20" style={{
+      <div className="absolute inset-0 opacity-10" style={{
         backgroundImage: `
-          radial-gradient(circle at 20% 20%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
-          radial-gradient(circle at 80% 20%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
-          radial-gradient(circle at 20% 80%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
-          radial-gradient(circle at 80% 80%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
-          radial-gradient(circle at 50% 50%, rgba(200, 200, 200, 0.3) 2px, transparent 2px),
-          linear-gradient(rgba(200, 200, 200, 0.1) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(200, 200, 200, 0.1) 1px, transparent 1px)
+          radial-gradient(circle at 20% 20%, rgba(100, 150, 255, 0.3) 2px, transparent 2px),
+          radial-gradient(circle at 80% 20%, rgba(100, 150, 255, 0.3) 2px, transparent 2px),
+          radial-gradient(circle at 20% 80%, rgba(100, 150, 255, 0.3) 2px, transparent 2px),
+          radial-gradient(circle at 80% 80%, rgba(100, 150, 255, 0.3) 2px, transparent 2px),
+          radial-gradient(circle at 50% 50%, rgba(100, 150, 255, 0.3) 2px, transparent 2px),
+          linear-gradient(rgba(100, 150, 255, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(100, 150, 255, 0.08) 1px, transparent 1px)
         `,
         backgroundSize: '40px 40px, 40px 40px, 40px 40px, 40px 40px, 40px 40px, 20px 20px, 20px 20px'
       }}></div>
@@ -88,7 +72,7 @@ const PlayerCard = ({
                 onClick={() => onRemove(player.id)}
                 variant="outline"
                 size="sm"
-                className={`${borderColor} border-2 text-destructive hover:bg-destructive/10 h-7 w-7 p-0 bg-gray-50 dark:bg-gray-700/90 rounded-xl`}
+                className="border-gray-600 text-red-400 hover:bg-red-900/30 h-7 w-7 p-0 bg-gray-800 rounded-xl"
                 type="button"
               >
                 <Trash2 className="h-3 w-3" />
@@ -97,9 +81,13 @@ const PlayerCard = ({
             {!canRemove && <div className="h-7 w-7"></div>}
           </div>
           
-          {/* Character Icon */}
+          {/* Character Image */}
           <div className="flex-shrink-0">
-            <div className="text-xl">{character.icon}</div>
+            <img 
+              src={character.image} 
+              alt={character.name} 
+              className="h-8 w-8 object-contain rounded"
+            />
           </div>
           
           {/* Center: Player Name and Character Selection */}
@@ -107,15 +95,15 @@ const PlayerCard = ({
             <Input
               value={player.name}
               onChange={(e) => onUpdateName(player.id, e.target.value)}
-              className={`text-xs font-semibold ${borderColor} border-2 h-6 px-2 text-center bg-gray-50 dark:bg-gray-700/90 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0`}
+              className="text-xs font-semibold border-gray-600 border h-6 px-2 text-center bg-gray-800 text-white rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-blue-500 focus-visible:ring-0 focus-visible:ring-offset-0"
             />
             <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-              <SelectTrigger className={`${borderColor} border-2 bg-input text-xs h-5 px-2 bg-gray-50 dark:bg-gray-700/90 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none text-center justify-center`}>
+              <SelectTrigger className="border-gray-600 border bg-gray-800 text-gray-200 text-xs h-5 px-2 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none text-center justify-center">
                 <SelectValue className="text-center" />
               </SelectTrigger>
-              <SelectContent className="bg-popover border-primary/30">
+              <SelectContent className="bg-gray-800 border-gray-600">
                 {characters.map((char) => (
-                  <SelectItem key={char.id} value={char.id} className="hover:bg-primary/20 text-xs text-center">
+                  <SelectItem key={char.id} value={char.id} className="hover:bg-blue-900/40 text-xs text-center text-gray-200">
                     {char.name}
                   </SelectItem>
                 ))}
@@ -129,7 +117,7 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, -1)}
               variant="outline"
               size="sm"
-              className={`${borderColor} border-2 text-destructive hover:bg-gray-200 dark:hover:bg-gray-600/90 hover:text-destructive h-7 w-7 p-0 bg-gray-50 dark:bg-gray-700/90 rounded-xl`}
+              className="border-gray-600 text-red-400 hover:bg-gray-700 h-7 w-7 p-0 bg-gray-800 rounded-xl"
               type="button"
             >
               <Minus className="h-3 w-3" />
@@ -146,7 +134,7 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, 1)}
               variant="outline"
               size="sm"
-              className={`${borderColor} border-2 text-primary hover:bg-gray-200 dark:hover:bg-gray-600/90 hover:text-primary h-7 w-7 p-0 bg-gray-50 dark:bg-gray-700/90 rounded-xl`}
+              className="border-gray-600 text-blue-400 hover:bg-gray-700 h-7 w-7 p-0 bg-gray-800 rounded-xl"
               type="button"
             >
               <Plus className="h-3 w-3" />
@@ -156,14 +144,14 @@ const PlayerCard = ({
       </div>
 
       {/* Desktop Layout */}
-      <div className="hidden md:block p-6 space-y-4 relative z-10 bg-gray-50 dark:bg-gray-800/90">
+      <div className="hidden md:block p-6 space-y-4 relative z-10">
         {/* Remove Button - Top Right for Desktop */}
         {canRemove && (
           <Button
             onClick={() => onRemove(player.id)}
             variant="outline"
             size="sm"
-            className={`absolute top-2 right-2 ${borderColor} border-2 text-destructive hover:bg-destructive/10 h-6 w-6 p-0 z-10 rounded-xl bg-gray-50 dark:bg-gray-700/90`}
+            className="absolute top-2 right-2 border-gray-600 text-red-400 hover:bg-red-900/30 h-6 w-6 p-0 z-10 rounded-xl bg-gray-800"
             type="button"
           >
             <Trash2 className="h-3 w-3" />
@@ -172,14 +160,18 @@ const PlayerCard = ({
 
         {/* Character Display */}
         <div className="text-center">
-          <div className="text-4xl mb-2">{character.icon}</div>
+          <img 
+            src={character.image} 
+            alt={character.name} 
+            className="h-20 w-auto object-contain mx-auto mb-2 rounded-lg"
+          />
           <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-            <SelectTrigger className={`${borderColor} border-2 text-sm rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none text-center justify-center bg-gray-50 dark:bg-gray-700/90`}>
+            <SelectTrigger className="border-gray-600 border text-sm rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none text-center justify-center bg-gray-800 text-gray-200">
               <SelectValue className="text-center" />
             </SelectTrigger>
-            <SelectContent className="bg-popover border-primary/30">
+            <SelectContent className="bg-gray-800 border-gray-600">
               {characters.map((char) => (
-                <SelectItem key={char.id} value={char.id} className="hover:bg-primary/20 text-center">
+                <SelectItem key={char.id} value={char.id} className="hover:bg-blue-900/40 text-center text-gray-200">
                   {char.name}
                 </SelectItem>
               ))}
@@ -191,14 +183,14 @@ const PlayerCard = ({
         <Input
           value={player.name}
           onChange={(e) => onUpdateName(player.id, e.target.value)}
-          className={`text-center font-semibold text-lg ${borderColor} border-2 rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-inherit focus-visible:ring-0 focus-visible:ring-offset-0 bg-gray-50 dark:bg-gray-700/90`}
+          className="text-center font-semibold text-lg border-gray-600 border rounded-xl focus:ring-0 focus:ring-offset-0 focus:outline-none focus:border-blue-500 focus-visible:ring-0 focus-visible:ring-offset-0 bg-gray-800 text-white"
         />
 
         {/* Bitcoin Score Display */}
         <div className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-2">
             <Bitcoin className="h-6 w-6 text-yellow-400" />
-            <span className="text-sm text-muted-foreground">Bitcoins Mined</span>
+            <span className="text-sm text-gray-400">Bitcoins Mined</span>
           </div>
           <div className={`text-4xl font-bold mb-4 text-red-500 ${isLeader ? 'animate-pulse-bitcoin' : ''}`}>
             {player.score}
@@ -210,7 +202,7 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, -1)}
               variant="outline"
               size="sm"
-              className={`${borderColor} border-2 text-destructive hover:bg-gray-200 dark:hover:bg-gray-600/90 hover:text-destructive w-full xs:w-auto rounded-xl bg-gray-50 dark:bg-gray-700/90`}
+              className="border-gray-600 text-red-400 hover:bg-gray-700 w-full xs:w-auto rounded-xl bg-gray-800"
               type="button"
             >
               <Minus className="h-4 w-4" />
@@ -219,7 +211,7 @@ const PlayerCard = ({
               onClick={() => onUpdateScore(player.id, 1)}
               variant="outline"
               size="sm"
-              className={`${borderColor} border-2 text-primary hover:bg-gray-200 dark:hover:bg-gray-600/90 hover:text-primary w-full xs:w-auto rounded-xl bg-gray-50 dark:bg-gray-700/90`}
+              className="border-gray-600 text-blue-400 hover:bg-gray-700 w-full xs:w-auto rounded-xl bg-gray-800"
               type="button"
             >
               <Plus className="h-4 w-4" />
