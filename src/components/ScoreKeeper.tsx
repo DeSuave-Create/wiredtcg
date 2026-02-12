@@ -14,17 +14,15 @@ interface Player {
 }
 
 const characters = [
-  { id: 'zerotrust', name: '🔐 ZeroTrust', icon: '🕵️' },
-  { id: 'deskjockey', name: '🎧 DeskJockey', icon: '💬' },
-  { id: 'pingmaster', name: '🌐 PingMaster', icon: '📡' },
-  { id: 'redtaperipper', name: '📋 RedTapeRipper', icon: '⚖️' },
-  { id: 'clutchcache', name: '🎮 ClutchCache', icon: '🕹️' },
-  { id: 'cloudcrafter', name: '☁️ CloudCrafter', icon: '⚙️' },
+  { id: 'security-specialist', name: 'Security Specialist', icon: '🛡️', image: '/lovable-uploads/classification-security.png' },
+  { id: 'facilities', name: 'Facilities', icon: '⚡', image: '/lovable-uploads/classification-facilities-new.png' },
+  { id: 'supervisor', name: 'Supervisor', icon: '👔', image: '/lovable-uploads/classification-supervisor.png' },
+  { id: 'field-tech', name: 'Field Tech', icon: '🔧', image: '/lovable-uploads/classification-fieldtech-new.png' },
 ];
 
 const defaultPlayers: Player[] = [
-  { id: '1', name: 'Player 1', score: 0, character: 'zerotrust' },
-  { id: '2', name: 'Player 2', score: 0, character: 'deskjockey' }
+  { id: '1', name: 'Player 1', score: 0, character: 'security-specialist' },
+  { id: '2', name: 'Player 2', score: 0, character: 'facilities' }
 ];
 
 // Cookie helper functions
@@ -61,7 +59,7 @@ const ScoreKeeper = () => {
     return defaultPlayers;
   });
 
-  const maxPlayers = 6;
+  const maxPlayers = 4;
   const minPlayers = 2;
 
   // Save to cookie whenever players state changes
@@ -77,7 +75,7 @@ const ScoreKeeper = () => {
         id: Date.now().toString(),
         name: `Player ${players.length + 1}`,
         score: 0,
-        character: 'zerotrust'
+        character: 'security-specialist'
       };
       setPlayers(prevPlayers => {
         const updatedPlayers = [...prevPlayers, newPlayer];
