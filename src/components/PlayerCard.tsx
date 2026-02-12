@@ -44,7 +44,15 @@ const PlayerCard = ({
   };
 
   const character = getCharacter(player.character);
-  const borderColor = isLeader ? 'border-yellow-400 shadow-yellow-400/30' : 'border-blue-500 shadow-blue-500/20';
+
+  const roleColors: Record<string, { border: string; text: string; shadow: string }> = {
+    'security-specialist': { border: 'border-red-500', text: 'text-red-400', shadow: 'shadow-red-500/20' },
+    'facilities': { border: 'border-yellow-400', text: 'text-yellow-400', shadow: 'shadow-yellow-400/20' },
+    'supervisor': { border: 'border-green-500', text: 'text-green-400', shadow: 'shadow-green-500/20' },
+    'field-tech': { border: 'border-blue-500', text: 'text-blue-400', shadow: 'shadow-blue-500/20' },
+  };
+  const colors = roleColors[player.character] || roleColors['security-specialist'];
+  const borderColor = isLeader ? 'border-yellow-400 shadow-yellow-400/30' : `${colors.border} ${colors.shadow}`;
 
   return (
     <div
@@ -135,7 +143,7 @@ const PlayerCard = ({
         {/* Classification name AS the dropdown */}
         <div className="w-full">
           <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-            <SelectTrigger className="border-none text-xl font-black tracking-wide rounded-xl focus:ring-0 text-center justify-center bg-transparent text-blue-400 uppercase h-auto py-1 [&>svg]:hidden [&>span]:truncate w-full">
+            <SelectTrigger className={`border-none text-xl font-black tracking-wide rounded-xl focus:ring-0 text-center justify-center bg-transparent ${colors.text} uppercase h-auto py-1 [&>svg]:hidden [&>span]:truncate w-full`}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-gray-800 border-gray-600">
