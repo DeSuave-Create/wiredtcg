@@ -52,7 +52,8 @@ const PlayerCard = ({
     'field-tech': { border: 'border-blue-500', text: 'text-blue-400', shadow: 'shadow-blue-500/20' },
   };
   const colors = roleColors[player.character] || roleColors['security-specialist'];
-  const borderColor = isLeader ? 'border-yellow-400 shadow-yellow-400/30' : `${colors.border} ${colors.shadow}`;
+  const borderColor = `${colors.border} ${colors.shadow}`;
+  const leaderGlow = isLeader ? { textShadow: '0 0 20px rgba(250, 204, 21, 0.8), 0 0 40px rgba(250, 204, 21, 0.4)' } : undefined;
 
   return (
     <div
@@ -116,7 +117,7 @@ const PlayerCard = ({
             </Button>
             <div className="flex flex-col items-center min-w-[35px]">
               <Bitcoin className="h-3 w-3 text-yellow-400" />
-              <div className={`text-sm font-bold text-red-500 leading-none ${isLeader ? 'animate-pulse-bitcoin' : ''}`}>{player.score}</div>
+              <div className={`text-sm font-bold text-red-500 leading-none ${isLeader ? 'animate-pulse-bitcoin' : ''}`} style={leaderGlow}>{player.score}</div>
             </div>
             <Button onClick={() => onUpdateScore(player.id, 1)} variant="ghost" size="sm" className="text-blue-400 hover:bg-gray-700 h-7 w-7 p-0" type="button">
               <Plus className="h-3 w-3" />
@@ -172,7 +173,7 @@ const PlayerCard = ({
         </div>
 
         {/* Score */}
-        <div className={`text-5xl font-black text-red-500 ${isLeader ? 'animate-pulse-bitcoin' : ''}`}>
+        <div className={`text-5xl font-black text-red-500 ${isLeader ? 'animate-pulse-bitcoin' : ''}`} style={leaderGlow}>
           {player.score}
         </div>
 
