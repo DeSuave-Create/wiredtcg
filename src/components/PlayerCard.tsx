@@ -110,7 +110,7 @@ const PlayerCard = ({
       </div>
 
       {/* ====== DESKTOP LAYOUT ====== */}
-      <div className="hidden md:block relative z-10">
+      <div className="hidden md:flex flex-col items-center relative z-10 px-5 py-6 space-y-4">
         {/* Remove button */}
         {canRemove && (
           <Button
@@ -124,62 +124,50 @@ const PlayerCard = ({
           </Button>
         )}
 
-        {/* Full card image as background */}
-        <div className="relative w-full">
-          <img
-            src={character.image}
-            alt={character.name}
-            className="w-full h-auto object-contain rounded-3xl"
+        {/* Classification name AS the dropdown */}
+        <div className="w-full">
+          <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
+            <SelectTrigger className="border-none text-2xl font-black tracking-wide rounded-xl focus:ring-0 text-center justify-center bg-transparent text-blue-400 uppercase h-auto py-1 [&>svg]:hidden">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-gray-800 border-gray-600">
+              {characters.map((char) => (
+                <SelectItem key={char.id} value={char.id} className="hover:bg-blue-900/40 text-gray-200">
+                  {char.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Player Name */}
+        <div className="w-full">
+          <Input
+            value={player.name}
+            onChange={(e) => onUpdateName(player.id, e.target.value)}
+            className="text-center font-bold text-lg border-gray-600 rounded-xl bg-gray-800 text-white h-10 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-blue-500"
           />
+        </div>
 
-          {/* Overlays on top of the card image */}
-          <div className="absolute inset-0 flex flex-col items-center justify-between py-[6%] px-[8%]">
-            {/* Top: Classification selector */}
-            <div className="w-full">
-              <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-                <SelectTrigger className="border-blue-400/60 text-sm rounded-xl focus:ring-0 text-center justify-center bg-blue-900/70 text-white backdrop-blur-sm h-8">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-gray-600">
-                  {characters.map((char) => (
-                    <SelectItem key={char.id} value={char.id} className="hover:bg-blue-900/40 text-gray-200">
-                      {char.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+        {/* Bitcoins Mined label */}
+        <div className="flex items-center justify-center gap-2">
+          <Bitcoin className="h-5 w-5 text-yellow-400" />
+          <span className="text-sm text-gray-400">Bitcoins Mined</span>
+        </div>
 
-            {/* Player Name */}
-            <div className="w-full">
-              <Input
-                value={player.name}
-                onChange={(e) => onUpdateName(player.id, e.target.value)}
-                className="text-center font-bold text-lg border-red-400/60 rounded-xl bg-red-900/60 text-white backdrop-blur-sm h-9 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-red-400"
-              />
-            </div>
+        {/* Score */}
+        <div className={`text-5xl font-black text-red-500 ${isLeader ? 'animate-pulse-bitcoin' : ''}`}>
+          {player.score}
+        </div>
 
-            {/* Bitcoins Mined label */}
-            <div className="w-full flex items-center justify-center gap-2 bg-yellow-500/70 backdrop-blur-sm rounded-xl py-1 px-3">
-              <Bitcoin className="h-4 w-4 text-gray-900" />
-              <span className="text-sm font-bold text-gray-900">Bitcoins Mined</span>
-            </div>
-
-            {/* Score */}
-            <div className={`text-5xl font-black text-red-500 drop-shadow-lg ${isLeader ? 'animate-pulse-bitcoin' : ''}`}>
-              {player.score}
-            </div>
-
-            {/* +/- Buttons */}
-            <div className="flex justify-center gap-3">
-              <Button onClick={() => onUpdateScore(player.id, -1)} variant="outline" size="sm" className="border-blue-400/60 text-red-400 hover:bg-gray-700/80 rounded-xl bg-blue-900/70 backdrop-blur-sm w-16 h-8" type="button">
-                <Minus className="h-4 w-4" />
-              </Button>
-              <Button onClick={() => onUpdateScore(player.id, 1)} variant="outline" size="sm" className="border-blue-400/60 text-blue-400 hover:bg-gray-700/80 rounded-xl bg-blue-900/70 backdrop-blur-sm w-16 h-8" type="button">
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+        {/* +/- Buttons */}
+        <div className="flex justify-center gap-3">
+          <Button onClick={() => onUpdateScore(player.id, -1)} variant="outline" size="sm" className="border-gray-600 text-red-400 hover:bg-gray-700 rounded-xl bg-gray-800 w-20" type="button">
+            <Minus className="h-4 w-4" />
+          </Button>
+          <Button onClick={() => onUpdateScore(player.id, 1)} variant="outline" size="sm" className="border-gray-600 text-blue-400 hover:bg-gray-700 rounded-xl bg-gray-800 w-20" type="button">
+            <Plus className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     </div>
