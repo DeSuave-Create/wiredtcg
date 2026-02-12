@@ -47,7 +47,10 @@ const PlayerCard = ({
   const borderColor = isLeader ? 'border-yellow-400 shadow-yellow-400/30' : 'border-blue-500 shadow-blue-500/20';
 
   return (
-    <div className={`relative overflow-hidden transition-all duration-300 hover:scale-[1.03] ${borderColor} border-2 rounded-3xl shadow-2xl bg-gray-900`}>
+    <div className={`relative overflow-hidden transition-all duration-300 hover:scale-[1.03] ${borderColor} border-2 rounded-3xl shadow-2xl`}>
+      {/* Circuit board background */}
+      <div className="absolute inset-0 bg-cover bg-center opacity-15" style={{ backgroundImage: "url('/images/card-circuit-bg.png')" }} />
+      <div className="absolute inset-0 bg-gray-900/90" />
 
       {/* ====== MOBILE LAYOUT ====== */}
       <div className="md:hidden relative z-10">
@@ -127,7 +130,7 @@ const PlayerCard = ({
         {/* Classification name AS the dropdown */}
         <div className="w-full">
           <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-            <SelectTrigger className="border-none text-2xl font-black tracking-wide rounded-xl focus:ring-0 text-center justify-center bg-transparent text-blue-400 uppercase h-auto py-1 [&>svg]:hidden">
+            <SelectTrigger className="border-none text-xl font-black tracking-wide rounded-xl focus:ring-0 text-center justify-center bg-transparent text-blue-400 uppercase h-auto py-1 [&>svg]:hidden [&>span]:truncate">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-gray-800 border-gray-600">
