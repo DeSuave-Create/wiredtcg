@@ -1,33 +1,22 @@
 
 
-# Player Card Readability and Leader Indicator Fixes
+# Apply ContentSection Background to Player Cards
 
-## Problem 1: "Bitcoins Mined" text is hard to read
-The label, score, and buttons sit directly on the light circuit board background with no contrast.
-
-## Problem 2: Facilities yellow border looks like the winning player
-The leader highlight uses `border-yellow-400`, which is the same color as the Facilities role border, causing confusion.
-
-## Solutions
-
-### 1. Dark pill behind the score section (desktop and mobile)
-Wrap the Bitcoin icon, "Bitcoins Mined" label, score number, and +/- buttons in a `bg-black/50 rounded-xl px-4 py-3` container on desktop. On mobile, the score controls area already has a darker context but will get a similar subtle backdrop if needed.
-
-### 2. Change the leader indicator style
-Instead of a yellow border (which clashes with Facilities), use a distinct leader style that no role uses:
-- A **white/silver glowing border** (`border-white shadow-white/40`) with a subtle pulsing glow effect
-- This is visually distinct from all four role colors (red, yellow, green, blue)
+## What Changes
+Update the `PlayerCard` component to use the same background styling as the `ContentSection` component:
+- Background image: `/lovable-uploads/a08479d2-01b1-41b6-8666-5ded32438273.png`
+- Semi-transparent overlay: `bg-card/60` with `backdrop-blur-[1px]`
 
 ## Technical Details
 
 ### File: `src/components/PlayerCard.tsx`
 
-**Leader border change (line ~54):**
-- Change `border-yellow-400 shadow-yellow-400/30` to `border-white shadow-[0_0_15px_rgba(255,255,255,0.4)]`
+1. **Replace** the current card background (`bg-gray-900`) with the circuit board background image, matching the `ContentSection` pattern:
+   - Add `backgroundImage`, `backgroundSize`, `backgroundPosition`, `backgroundRepeat` inline styles using the same image
+   - Add an inner overlay div with `bg-card/60 backdrop-blur-[1px] rounded-3xl` (same as ContentSection)
+   - Ensure existing content remains above the overlay via `relative z-10` (already in place for both mobile and desktop layouts)
 
-**Desktop score section (~lines 155-175):**
-- Wrap the "Bitcoins Mined" label, score, and +/- buttons in a `bg-black/50 rounded-xl px-4 py-3` div
+2. **Remove** the existing circuit board pattern overlay (the inverted `/images/card-circuit-bg.png` at 30% opacity) since it will be replaced by the new background approach.
 
-**Mobile layout:**
-- Add a subtle `bg-black/40 rounded-lg px-2 py-1` behind the score controls group for consistency
+This keeps the player cards visually consistent with the outer section container.
 
