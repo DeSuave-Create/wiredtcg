@@ -133,7 +133,7 @@ const PlayerCard = ({
       </div>
 
       {/* ====== DESKTOP LAYOUT ====== */}
-      <div className="hidden md:flex flex-col items-center relative z-10 px-5 py-6 space-y-4 aspect-[5/7]">
+      <div className="hidden md:flex flex-col items-center relative z-10 px-5 py-6 space-y-3 aspect-[5/7]">
         {/* Remove button */}
         {canRemove && (
           <Button
@@ -191,6 +191,15 @@ const PlayerCard = ({
           <Button onClick={() => onUpdateScore(player.id, 1)} variant="outline" size="sm" className="border-gray-600 text-blue-400 hover:bg-gray-700 rounded-xl bg-gray-800 w-20" type="button">
             <Plus className="h-4 w-4" />
           </Button>
+        </div>
+
+        {/* Classification card image */}
+        <div className="flex-1 flex items-end justify-center w-full overflow-hidden">
+          <img
+            src={character.image}
+            alt={character.name}
+            className="w-3/4 h-auto object-contain opacity-80 rounded-xl"
+          />
         </div>
       </div>
     </div>
