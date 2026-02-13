@@ -183,6 +183,15 @@ const PlayerCard = ({
           {player.score}
         </div>
 
+        {/* Classification card image */}
+        <div className="flex-1 flex items-center justify-center w-full overflow-hidden">
+          <img
+            src={character.image}
+            alt={character.name}
+            className="w-3/4 h-auto object-contain opacity-80 border-0 shadow-none"
+          />
+        </div>
+
         {/* +/- Buttons */}
         <div className="flex justify-center gap-3">
           <Button onClick={() => onUpdateScore(player.id, -1)} variant="outline" size="sm" className="border-gray-600 text-red-400 hover:bg-gray-700 rounded-xl bg-gray-800 w-20" type="button">
@@ -191,15 +200,6 @@ const PlayerCard = ({
           <Button onClick={() => onUpdateScore(player.id, 1)} variant="outline" size="sm" className="border-gray-600 text-blue-400 hover:bg-gray-700 rounded-xl bg-gray-800 w-20" type="button">
             <Plus className="h-4 w-4" />
           </Button>
-        </div>
-
-        {/* Classification card image */}
-        <div className="flex-1 flex items-end justify-center w-full overflow-hidden">
-          <img
-            src={character.image}
-            alt={character.name}
-            className="w-3/4 h-auto object-contain opacity-80 rounded-xl"
-          />
         </div>
       </div>
     </div>
