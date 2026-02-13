@@ -1,23 +1,29 @@
 
 
-# Remove Card Border Glow, Add Glow to Score Number Only
+# Prismatic Glow Border for the Leading Player
 
 ## What Changes
-Move the yellow leader glow from the card's outer border to just the score number itself, so only the number glows when a player is winning.
+The winning player's card will get a prismatic (white/lavender/purple) neon glow border -- matching the holographic look from the reference image -- while non-leading players keep their standard role-colored border with no glow aura.
+
+## Visual Result
+- **Leading player**: Border shifts to a bright white/lavender color with a multi-layered purple-pink glow radiating outward, creating the prismatic "neon tube" effect from the reference image. Border stays at the current 2px thickness.
+- **Other players**: No change -- they keep their role-colored border (red/yellow/green/blue) with the subtle role shadow.
 
 ## Technical Details
 
 ### File: `src/components/PlayerCard.tsx`
 
-1. **Card border (line 55)**: Remove the leader override. The card border will always use the role color regardless of leader status:
-   - Change from: `isLeader ? 'border-yellow-400 shadow-yellow-400/30' : ...`
-   - Change to: always use `${colors.border} ${colors.shadow}`
+1. **Add a `leaderBorderGlow` style object** when `isLeader` is true, containing:
+   - `borderColor: 'rgba(200, 180, 255, 0.9)'` -- lavender/white border color
+   - `boxShadow` with 4 layered glows:
+     - `0 0 4px rgba(255, 255, 255, 0.7)` -- tight white core
+     - `0 0 10px rgba(200, 170, 255, 0.5)` -- lavender mid
+     - `0 0 20px rgba(160, 120, 255, 0.3)` -- purple spread
+     - `0 0 35px rgba(140, 100, 255, 0.15)` -- soft outer purple
 
-2. **Desktop score number (line 175)**: Add a yellow glow shadow directly on the score text when `isLeader` is true:
-   - Add inline `style` with `textShadow: '0 0 20px rgba(250, 204, 21, 0.8), 0 0 40px rgba(250, 204, 21, 0.4)'` when leading
-   - Keep the existing `animate-pulse-bitcoin` class
+2. **Conditionally apply** this inline style on the card container `div` only when `isLeader` is true. Non-leaders keep the Tailwind `border-*` and `shadow-*` classes as-is.
 
-3. **Mobile score number (line 119)**: Apply the same text glow treatment for consistency on mobile.
+3. **Keep existing leader score glow** (the golden `textShadow` on the score number) unchanged.
 
-This way the card keeps its role-colored border at all times, and only the score number gets the golden glow when that player is in the lead.
+No other files are affected.
 
