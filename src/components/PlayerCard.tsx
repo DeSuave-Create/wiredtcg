@@ -55,14 +55,20 @@ const PlayerCard = ({
   const borderColor = `${colors.border} ${colors.shadow}`;
   const leaderGlow = isLeader ? { textShadow: '0 0 20px rgba(250, 204, 21, 0.8), 0 0 40px rgba(250, 204, 21, 0.4)' } : undefined;
 
+  const leaderBorderStyle = isLeader ? {
+    borderColor: 'rgba(200, 180, 255, 0.9)',
+    boxShadow: '0 0 4px rgba(255, 255, 255, 0.7), 0 0 10px rgba(200, 170, 255, 0.5), 0 0 20px rgba(160, 120, 255, 0.3), 0 0 35px rgba(140, 100, 255, 0.15)',
+  } : undefined;
+
   return (
     <div
-      className={`relative overflow-hidden transition-all duration-300 hover:scale-[1.03] ${borderColor} border-2 rounded-3xl shadow-2xl`}
+      className={`relative overflow-hidden transition-all duration-300 hover:scale-[1.03] ${isLeader ? '' : borderColor} border-2 rounded-3xl ${isLeader ? '' : 'shadow-2xl'}`}
       style={{
         backgroundImage: `url('/lovable-uploads/a08479d2-01b1-41b6-8666-5ded32438273.png')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
+        backgroundRepeat: 'no-repeat',
+        ...leaderBorderStyle,
       }}
     >
 
