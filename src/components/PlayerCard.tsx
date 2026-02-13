@@ -51,6 +51,7 @@ const PlayerCard = ({
     'facilities': { border: 'border-yellow-400', text: 'text-yellow-400', shadow: 'shadow-yellow-400/20' },
     'supervisor': { border: 'border-green-500', text: 'text-green-400', shadow: 'shadow-green-500/20' },
     'field-tech': { border: 'border-blue-500', text: 'text-blue-400', shadow: 'shadow-blue-500/20' },
+    'headhunter': { border: 'border-purple-500', text: 'text-purple-400', shadow: 'shadow-purple-500/20' },
   };
   const colors = roleColors[player.character] || roleColors['security-specialist'];
   const borderColor = `${colors.border} ${colors.shadow}`;
