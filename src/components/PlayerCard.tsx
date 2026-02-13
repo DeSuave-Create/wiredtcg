@@ -133,7 +133,7 @@ const PlayerCard = ({
       </div>
 
       {/* ====== DESKTOP LAYOUT ====== */}
-      <div className="hidden md:flex flex-col items-center relative z-10 px-5 py-6 space-y-4">
+      <div className="hidden md:flex flex-col items-center relative z-10 px-5 py-6 space-y-4 aspect-[5/7]">
         {/* Remove button */}
         {canRemove && (
           <Button
@@ -150,7 +150,7 @@ const PlayerCard = ({
         {/* Classification name AS the dropdown */}
         <div className="w-full">
           <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-            <SelectTrigger className={`border-none text-xl font-black tracking-wide rounded-xl focus:ring-0 text-center justify-center bg-transparent ${colors.text} uppercase h-auto py-1 hover:underline cursor-pointer [&>span]:truncate w-full`}>
+            <SelectTrigger className={`border-none text-lg font-black tracking-wide rounded-xl focus:ring-0 text-center justify-center bg-transparent ${colors.text} uppercase h-auto py-1 hover:underline cursor-pointer [&>span]:truncate w-full whitespace-nowrap`}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-gray-800 border-gray-600">
