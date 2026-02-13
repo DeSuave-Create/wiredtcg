@@ -185,11 +185,13 @@ const PlayerCard = ({
 
         {/* Classification card image */}
         <div className="flex-1 flex items-center justify-center w-full overflow-hidden">
-          <img
-            src={character.image}
-            alt={character.name}
-            className="w-3/4 h-auto object-contain opacity-80 border-0 shadow-none"
-          />
+          <div className="w-3/4 h-full overflow-hidden flex items-center justify-center">
+            <img
+              src={character.image}
+              alt={character.name}
+              className="w-full object-cover object-[center_65%] scale-125 opacity-80 border-0 shadow-none"
+            />
+          </div>
         </div>
 
         {/* +/- Buttons */}
