@@ -1,37 +1,36 @@
 
 
-# Fill Empty Space on Player Cards
+# Crop Classification Card to Hide Role Title
 
 ## Problem
-The 5:7 aspect ratio creates too much empty space below the +/- buttons on desktop.
+The classification card image (`character.image`) is a full card PNG that includes the role name at the top (e.g., "Security Specialist"). Since the role is already shown as the dropdown at the top of the player card, it's redundant.
 
 ## Solution
-Add the classification card image (already available per character) below the +/- buttons to fill the remaining space. This reinforces the player's chosen role visually and uses the existing `character.image` data.
-
-## Visual Result
-- Role name (dropdown) at top
-- Player name input
-- "Bitcoins Mined" label + score
-- +/- buttons
-- **Classification card artwork filling the remaining space** (contained, rounded, with slight opacity to not overpower the score)
+Use CSS cropping to hide the top portion of the card image (the role title area) and only display the character artwork and description text from the middle/bottom of the card.
 
 ## Technical Details
 
 ### File: `src/components/PlayerCard.tsx`
 
-In the desktop layout section (after the +/- buttons div, around line 175), add:
+Update the classification card image section (lines 186-193) to crop out the top title area:
+
+- Wrap the `img` in a container with `overflow-hidden` and a fixed height
+- Use `object-cover` with `object-position: center 60%` (or similar) to shift the visible area down, cutting off the role title at the top while keeping the character artwork and description visible
+- The container uses `flex-1` to fill remaining space, and the image is scaled to fill that area with the top cropped out
 
 ```tsx
-{/* Classification card image */}
-<div className="flex-1 flex items-end justify-center w-full overflow-hidden">
-  <img
-    src={character.image}
-    alt={character.name}
-    className="w-3/4 h-auto object-contain opacity-80 rounded-xl"
-  />
+{/* Classification card image - cropped to hide role title */}
+<div className="flex-1 flex items-center justify-center w-full overflow-hidden">
+  <div className="w-3/4 h-full overflow-hidden flex items-center justify-center">
+    <img
+      src={character.image}
+      alt={character.name}
+      className="w-full object-cover object-[center_65%] scale-125 opacity-80 border-0 shadow-none"
+    />
+  </div>
 </div>
 ```
 
-Also update the desktop container to use `flex-1` properly so the image stretches into remaining space — change `space-y-4` to `space-y-3 gap-0` and ensure the image container grows with `flex-1`.
+The `object-position: center 65%` shifts the focal point downward (past the title), and `scale-125` zooms in slightly so the cropped area fills the space without blank edges. These values may need minor tuning based on the exact card image layout.
 
-No other files are affected.
+No other files affected.
