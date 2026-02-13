@@ -14,10 +14,10 @@ interface Player {
 }
 
 const characters = [
-  { id: 'security-specialist', name: 'Security Specialist', icon: '🛡️', image: '/lovable-uploads/classification-security.png' },
-  { id: 'facilities', name: 'Facilities', icon: '⚡', image: '/lovable-uploads/classification-facilities-new.png' },
-  { id: 'supervisor', name: 'Supervisor', icon: '👔', image: '/lovable-uploads/classification-supervisor.png' },
-  { id: 'field-tech', name: 'Field Tech', icon: '🔧', image: '/lovable-uploads/classification-fieldtech-new.png' },
+  { id: 'security-specialist', name: 'Security Specialist', icon: '🛡️', image: '/lovable-uploads/classification-security.png', artwork: '/lovable-uploads/artwork-security.png' },
+  { id: 'facilities', name: 'Facilities', icon: '⚡', image: '/lovable-uploads/classification-facilities-new.png', artwork: '/lovable-uploads/artwork-facilities.png' },
+  { id: 'supervisor', name: 'Supervisor', icon: '👔', image: '/lovable-uploads/classification-supervisor.png', artwork: '/lovable-uploads/artwork-supervisor.png' },
+  { id: 'field-tech', name: 'Field Tech', icon: '🔧', image: '/lovable-uploads/classification-fieldtech-new.png', artwork: '/lovable-uploads/artwork-fieldtech.png' },
 ];
 
 const defaultPlayers: Player[] = [

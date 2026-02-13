@@ -16,6 +16,7 @@ interface Character {
   name: string;
   icon: string;
   image: string;
+  artwork?: string;
 }
 
 interface PlayerCardProps {
@@ -183,15 +184,13 @@ const PlayerCard = ({
           {player.score}
         </div>
 
-        {/* Classification card image */}
+        {/* Classification artwork */}
         <div className="flex-1 flex items-center justify-center w-full overflow-hidden">
-          <div className="w-3/4 h-full overflow-hidden flex items-center justify-center">
-            <img
-              src={character.image}
-              alt={character.name}
-              className="w-full object-cover object-[center_65%] scale-125 opacity-80 border-0 shadow-none"
-            />
-          </div>
+          <img
+            src={character.artwork || character.image}
+            alt={character.name}
+            className="w-3/4 h-auto object-contain opacity-90 border-0 shadow-none"
+          />
         </div>
 
         {/* +/- Buttons */}
