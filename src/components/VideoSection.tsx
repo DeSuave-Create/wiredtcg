@@ -52,7 +52,7 @@ const VideoSection = ({ src, title, description, className = "", isYouTube = fal
             <video 
               controls 
               className="w-full h-auto"
-              preload="metadata"
+              preload="none"
               onClick={() => setShowCustomControls(false)}
             >
               <source src={src} type="video/mp4" />

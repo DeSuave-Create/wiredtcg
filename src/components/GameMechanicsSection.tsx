@@ -17,88 +17,38 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
   const [showDeck, setShowDeck] = useState(true);
   const isDealingRef = useRef(false);
   const timeoutsRef = useRef<number[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isVisibleRef = useRef(false);
 
   // Build the complete deck with actual card quantities (144 cards total)
   const buildDeck = (): Card[] => {
     const deck: Card[] = [];
     
     // Equipment cards (75 total)
-    // Computers: 32 cards
-    for (let i = 0; i < 32; i++) {
-      deck.push({ name: 'Computer', bg: 'bg-green-50', image: '/lovable-uploads/equipment-computer-new.png', borderColor: 'border-green-500', type: 'equipment' });
-    }
-    // 2-Cables: 16 cards
-    for (let i = 0; i < 16; i++) {
-      deck.push({ name: 'Cabling (2x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-2cable.png', borderColor: 'border-green-500', type: 'equipment' });
-    }
-    // 3-Cables: 9 cards
-    for (let i = 0; i < 9; i++) {
-      deck.push({ name: 'Cabling (3x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-3cable.png', borderColor: 'border-green-500', type: 'equipment' });
-    }
-    // Switches: 18 cards
-    for (let i = 0; i < 18; i++) {
-      deck.push({ name: 'Switch', bg: 'bg-green-50', image: '/lovable-uploads/equipment-switch.png', borderColor: 'border-green-500', type: 'equipment' });
-    }
+    for (let i = 0; i < 32; i++) deck.push({ name: 'Computer', bg: 'bg-green-50', image: '/lovable-uploads/equipment-computer-new.png', borderColor: 'border-green-500', type: 'equipment' });
+    for (let i = 0; i < 16; i++) deck.push({ name: 'Cabling (2x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-2cable.png', borderColor: 'border-green-500', type: 'equipment' });
+    for (let i = 0; i < 9; i++) deck.push({ name: 'Cabling (3x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-3cable.png', borderColor: 'border-green-500', type: 'equipment' });
+    for (let i = 0; i < 18; i++) deck.push({ name: 'Switch', bg: 'bg-green-50', image: '/lovable-uploads/equipment-switch.png', borderColor: 'border-green-500', type: 'equipment' });
     
     // Attack cards (27 total)
-    // Audit: 4 cards
-    for (let i = 0; i < 4; i++) {
-      deck.push({ name: 'Audit', bg: 'bg-red-50', image: '/lovable-uploads/attack-audit-v2.png', borderColor: 'border-red-500', type: 'attack' });
-    }
-    // Hacked: 9 cards
-    for (let i = 0; i < 9; i++) {
-      deck.push({ name: 'Hacked', bg: 'bg-red-50', image: '/lovable-uploads/attack-hacked-v2.png', borderColor: 'border-red-500', type: 'attack' });
-    }
-    // New Hire: 7 cards
-    for (let i = 0; i < 7; i++) {
-      deck.push({ name: 'New Hire', bg: 'bg-red-50', image: '/lovable-uploads/attack-newhire-v2.png', borderColor: 'border-red-500', type: 'attack' });
-    }
-    // Power Outage: 7 cards
-    for (let i = 0; i < 7; i++) {
-      deck.push({ name: 'Power Outage', bg: 'bg-red-50', image: '/lovable-uploads/attack-poweroutage-v2.png', borderColor: 'border-red-500', type: 'attack' });
-    }
+    for (let i = 0; i < 4; i++) deck.push({ name: 'Audit', bg: 'bg-red-50', image: '/lovable-uploads/attack-audit-v2.png', borderColor: 'border-red-500', type: 'attack' });
+    for (let i = 0; i < 9; i++) deck.push({ name: 'Hacked', bg: 'bg-red-50', image: '/lovable-uploads/attack-hacked-v2.png', borderColor: 'border-red-500', type: 'attack' });
+    for (let i = 0; i < 7; i++) deck.push({ name: 'New Hire', bg: 'bg-red-50', image: '/lovable-uploads/attack-newhire-v2.png', borderColor: 'border-red-500', type: 'attack' });
+    for (let i = 0; i < 7; i++) deck.push({ name: 'Power Outage', bg: 'bg-red-50', image: '/lovable-uploads/attack-poweroutage-v2.png', borderColor: 'border-red-500', type: 'attack' });
     
     // Classification cards (15 total)
-    // Facilities: 2 cards
-    for (let i = 0; i < 2; i++) {
-      deck.push({ name: 'Facilities', bg: 'bg-blue-50', image: '/lovable-uploads/classification-facilities-new.png', borderColor: 'border-blue-500', type: 'classification' });
-    }
-    // Field Tech: 2 cards
-    for (let i = 0; i < 2; i++) {
-      deck.push({ name: 'Field Tech', bg: 'bg-blue-50', image: '/lovable-uploads/classification-fieldtech-new.png', borderColor: 'border-blue-500', type: 'classification' });
-    }
-    // Supervisor: 2 cards
-    for (let i = 0; i < 2; i++) {
-      deck.push({ name: 'Supervisor', bg: 'bg-blue-50', image: '/lovable-uploads/classification-supervisor.png', borderColor: 'border-blue-500', type: 'classification' });
-    }
-    // Security Specialist: 2 cards
-    for (let i = 0; i < 2; i++) {
-      deck.push({ name: 'Security Specialist', bg: 'bg-blue-50', image: '/lovable-uploads/classification-security.png', borderColor: 'border-blue-500', type: 'classification' });
-    }
-    // Head Hunter: 6 cards
-    for (let i = 0; i < 6; i++) {
-      deck.push({ name: 'Head Hunter', bg: 'bg-blue-50', image: '/lovable-uploads/classification-headhunter.png', borderColor: 'border-blue-500', type: 'classification' });
-    }
-    // Seal the Deal: 1 card
+    for (let i = 0; i < 2; i++) deck.push({ name: 'Facilities', bg: 'bg-blue-50', image: '/lovable-uploads/classification-facilities-new.png', borderColor: 'border-blue-500', type: 'classification' });
+    for (let i = 0; i < 2; i++) deck.push({ name: 'Field Tech', bg: 'bg-blue-50', image: '/lovable-uploads/classification-fieldtech-new.png', borderColor: 'border-blue-500', type: 'classification' });
+    for (let i = 0; i < 2; i++) deck.push({ name: 'Supervisor', bg: 'bg-blue-50', image: '/lovable-uploads/classification-supervisor.png', borderColor: 'border-blue-500', type: 'classification' });
+    for (let i = 0; i < 2; i++) deck.push({ name: 'Security Specialist', bg: 'bg-blue-50', image: '/lovable-uploads/classification-security.png', borderColor: 'border-blue-500', type: 'classification' });
+    for (let i = 0; i < 6; i++) deck.push({ name: 'Head Hunter', bg: 'bg-blue-50', image: '/lovable-uploads/classification-headhunter.png', borderColor: 'border-blue-500', type: 'classification' });
     deck.push({ name: 'Seal the Deal', bg: 'bg-blue-50', image: '/lovable-uploads/classification-sealthedeal.png', borderColor: 'border-blue-500', type: 'classification' });
     
     // Resolution cards (27 total)
-    // Helpdesk: 4 cards
-    for (let i = 0; i < 4; i++) {
-      deck.push({ name: 'Helpdesk', bg: 'bg-purple-50', image: '/lovable-uploads/resolution-helpdesk-v2.png', borderColor: 'border-purple-500', type: 'classification' });
-    }
-    // Trained: 7 cards
-    for (let i = 0; i < 7; i++) {
-      deck.push({ name: 'Trained', bg: 'bg-purple-50', image: '/lovable-uploads/resolution-trained-v2.png', borderColor: 'border-purple-500', type: 'classification' });
-    }
-    // Powered: 7 cards
-    for (let i = 0; i < 7; i++) {
-      deck.push({ name: 'Powered', bg: 'bg-purple-50', image: '/lovable-uploads/resolution-powered-v2.png', borderColor: 'border-purple-500', type: 'classification' });
-    }
-    // Secured: 9 cards
-    for (let i = 0; i < 9; i++) {
-      deck.push({ name: 'Secured', bg: 'bg-purple-50', image: '/lovable-uploads/resolution-secured-v2.png', borderColor: 'border-purple-500', type: 'classification' });
-    }
+    for (let i = 0; i < 4; i++) deck.push({ name: 'Helpdesk', bg: 'bg-purple-50', image: '/lovable-uploads/resolution-helpdesk-v2.png', borderColor: 'border-purple-500', type: 'classification' });
+    for (let i = 0; i < 7; i++) deck.push({ name: 'Trained', bg: 'bg-purple-50', image: '/lovable-uploads/resolution-trained-v2.png', borderColor: 'border-purple-500', type: 'classification' });
+    for (let i = 0; i < 7; i++) deck.push({ name: 'Powered', bg: 'bg-purple-50', image: '/lovable-uploads/resolution-powered-v2.png', borderColor: 'border-purple-500', type: 'classification' });
+    for (let i = 0; i < 9; i++) deck.push({ name: 'Secured', bg: 'bg-purple-50', image: '/lovable-uploads/resolution-secured-v2.png', borderColor: 'border-purple-500', type: 'classification' });
     
     return deck;
   };
@@ -106,19 +56,15 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
   const allCards = buildDeck();
 
   const dealCards = () => {
-    // Prevent multiple simultaneous dealing cycles
-    if (isDealingRef.current) return;
+    if (isDealingRef.current || !isVisibleRef.current) return;
     isDealingRef.current = true;
 
-    // Clear any existing timeouts
     timeoutsRef.current.forEach(clearTimeout);
     timeoutsRef.current = [];
 
-    // Shuffle and pick 6 random cards
     const shuffled = [...allCards].sort(() => Math.random() - 0.5);
     const selectedCards = shuffled.slice(0, 6);
 
-    // Reset state and hide deck
     setDealtCards([]);
     
     const hideTimeout = window.setTimeout(() => {
@@ -126,7 +72,6 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
     }, 100);
     timeoutsRef.current.push(hideTimeout);
 
-    // Deal cards one by one with delay
     selectedCards.forEach((card, index) => {
       const timeout = window.setTimeout(() => {
         setDealtCards(prev => [...prev, card]);
@@ -134,7 +79,6 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
       timeoutsRef.current.push(timeout);
     });
 
-    // Reset after 3 second display (200ms start + 5*600ms dealing + 600ms animation + 3000ms display)
     const resetTimeout = window.setTimeout(() => {
       setDealtCards([]);
       
@@ -142,7 +86,6 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
         setShowDeck(true);
         isDealingRef.current = false;
         
-        // Restart the cycle after showing deck for 1 second
         const restartTimeout = window.setTimeout(() => {
           dealCards();
         }, 1000);
@@ -153,52 +96,69 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
     timeoutsRef.current.push(resetTimeout);
   };
 
-  // Preload images
+  // IntersectionObserver: preload images + start dealing only when visible
   useEffect(() => {
-    const imagesToPreload = [
-      '/lovable-uploads/equipment-computer-new.png',
-      '/lovable-uploads/equipment-3cable.png',
-      '/lovable-uploads/equipment-2cable.png',
-      '/lovable-uploads/equipment-switch.png',
-      '/lovable-uploads/attack-hacked-v2.png',
-      '/lovable-uploads/attack-newhire-v2.png',
-      '/lovable-uploads/attack-poweroutage-v2.png',
-      '/lovable-uploads/attack-audit-v2.png',
-      '/lovable-uploads/classification-facilities-new.png',
-      '/lovable-uploads/classification-fieldtech-new.png',
-      '/lovable-uploads/classification-supervisor.png',
-      '/lovable-uploads/classification-security.png',
-      '/lovable-uploads/classification-headhunter.png',
-      '/lovable-uploads/classification-sealthedeal.png',
-      '/lovable-uploads/resolution-trained-v2.png',
-      '/lovable-uploads/resolution-helpdesk-v2.png',
-      '/lovable-uploads/resolution-powered-v2.png',
-      '/lovable-uploads/resolution-secured-v2.png',
-      '/lovable-uploads/card-back.png',
-      '/wire-logo-official.png'
-    ];
+    const el = containerRef.current;
+    if (!el) return;
 
-    imagesToPreload.forEach(src => {
-      const img = new Image();
-      img.src = src;
-    });
-  }, []);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting;
+        if (entry.isIntersecting) {
+          // Preload images on first visibility
+          const imagesToPreload = [
+            '/lovable-uploads/equipment-computer-new.png',
+            '/lovable-uploads/equipment-3cable.png',
+            '/lovable-uploads/equipment-2cable.png',
+            '/lovable-uploads/equipment-switch.png',
+            '/lovable-uploads/attack-hacked-v2.png',
+            '/lovable-uploads/attack-newhire-v2.png',
+            '/lovable-uploads/attack-poweroutage-v2.png',
+            '/lovable-uploads/attack-audit-v2.png',
+            '/lovable-uploads/classification-facilities-new.png',
+            '/lovable-uploads/classification-fieldtech-new.png',
+            '/lovable-uploads/classification-supervisor.png',
+            '/lovable-uploads/classification-security.png',
+            '/lovable-uploads/classification-headhunter.png',
+            '/lovable-uploads/classification-sealthedeal.png',
+            '/lovable-uploads/resolution-trained-v2.png',
+            '/lovable-uploads/resolution-helpdesk-v2.png',
+            '/lovable-uploads/resolution-powered-v2.png',
+            '/lovable-uploads/resolution-secured-v2.png',
+            '/lovable-uploads/card-back.png',
+            '/wire-logo-official.png'
+          ];
+          imagesToPreload.forEach(src => {
+            const img = new Image();
+            img.src = src;
+          });
 
-  // Start dealing animation after 1 second
-  useEffect(() => {
-    const startDelay = window.setTimeout(() => {
-      dealCards();
-    }, 1000);
+          // Start dealing if not already
+          if (!isDealingRef.current) {
+            const startDelay = window.setTimeout(() => dealCards(), 1000);
+            timeoutsRef.current.push(startDelay);
+          }
+        } else {
+          // Pause dealing when off-screen
+          timeoutsRef.current.forEach(clearTimeout);
+          timeoutsRef.current = [];
+          isDealingRef.current = false;
+          setDealtCards([]);
+          setShowDeck(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
 
+    observer.observe(el);
     return () => {
-      // Cleanup all timeouts on unmount
-      clearTimeout(startDelay);
+      observer.disconnect();
       timeoutsRef.current.forEach(clearTimeout);
     };
   }, []);
 
   return (
-    <div className="flex justify-center items-center min-h-[300px] sm:min-h-[400px] lg:min-h-[500px] relative py-4 sm:py-6 lg:py-8">
+    <div ref={containerRef} className="flex justify-center items-center min-h-[300px] sm:min-h-[400px] lg:min-h-[500px] relative py-4 sm:py-6 lg:py-8">
       {/* Ghost logo background */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
         <img 
@@ -230,15 +190,13 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
           const totalCards = 6;
           const centerIndex = (totalCards - 1) / 2;
           const offset = index - centerIndex;
-          const rotation = offset * 8; // Reduced rotation for mobile
-          const translateY = Math.abs(offset) * 12; // Slight rise for outer cards
-          // Responsive horizontal spread
+          const rotation = offset * 8;
+          const translateY = Math.abs(offset) * 12;
           const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
           const isTablet = typeof window !== 'undefined' && window.innerWidth >= 640 && window.innerWidth < 1024;
           const translateX = isMobile ? offset * 35 : isTablet ? offset * 50 : offset * 75;
-          // Cards dealt later have higher z-index during animation
-          const baseZIndex = 30 + index; // Each card gets higher z-index as it's dealt
-          const hoverZIndex = 100; // Very high z-index on hover
+          const baseZIndex = 30 + index;
+          const hoverZIndex = 100;
 
           return (
             <div

@@ -1266,3 +1266,34 @@
     opacity: 0;
   }
 }
+
+/* ========== REDUCED MOTION ========== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .animate-neon-flicker,
+  .animate-pulse-neon,
+  .animate-pulse-bitcoin,
+  .electric-pulse,
+  .lightning-bolt,
+  .wired-pulse {
+    animation: none !important;
+  }
+
+  .neon-border {
+    backdrop-filter: none;
+  }
+}
+
+/* GPU compositing hints for animated elements */
+.animate-neon-flicker,
+.animate-pulse-neon,
+.electric-fill,
+.lightning-overlay,
+.electric-wave {
+  will-change: transform, opacity;
+}
