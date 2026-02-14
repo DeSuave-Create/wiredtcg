@@ -1,36 +1,29 @@
 
 
-# Crop Classification Card to Hide Role Title
+## Fix Facilities Artwork Size to Match Other Characters
 
-## Problem
-The classification card image (`character.image`) is a full card PNG that includes the role name at the top (e.g., "Security Specialist"). Since the role is already shown as the dropdown at the top of the player card, it's redundant.
+### Problem
+The Facilities character artwork appears much smaller than other characters (like Security Specialist) on the player card. This is because the source image file has excessive transparent/empty space surrounding the stick figure and lightbulb, making it look smaller when displayed at the same scale as other artwork.
 
-## Solution
-Use CSS cropping to hide the top portion of the card image (the role title area) and only display the character artwork and description text from the middle/bottom of the card.
+### Solution
+Apply per-character scaling so that each artwork fills its card area consistently, rather than using a single universal scale for all characters.
 
-## Technical Details
+### Implementation
 
-### File: `src/components/PlayerCard.tsx`
+**File: `src/components/ScoreKeeper.tsx`**
+- Add an optional `artworkScale` property to each character definition
+- Set a larger scale value for Facilities (e.g., `scale-[1.8]` or `scale-[2]`) while keeping the default `scale-125` for others
 
-Update the classification card image section (lines 186-193) to crop out the top title area:
+**File: `src/components/PlayerCard.tsx`**
+- Accept the `artworkScale` class from the character data
+- Apply the per-character scale class to the artwork image instead of the hardcoded `scale-125`
 
-- Wrap the `img` in a container with `overflow-hidden` and a fixed height
-- Use `object-cover` with `object-position: center 60%` (or similar) to shift the visible area down, cutting off the role title at the top while keeping the character artwork and description visible
-- The container uses `flex-1` to fill remaining space, and the image is scaled to fill that area with the top cropped out
+### Technical Details
 
-```tsx
-{/* Classification card image - cropped to hide role title */}
-<div className="flex-1 flex items-center justify-center w-full overflow-hidden">
-  <div className="w-3/4 h-full overflow-hidden flex items-center justify-center">
-    <img
-      src={character.image}
-      alt={character.name}
-      className="w-full object-cover object-[center_65%] scale-125 opacity-80 border-0 shadow-none"
-    />
-  </div>
-</div>
-```
+1. Update the `Character` interface in both files to include an optional `artworkScale` string field
+2. In `ScoreKeeper.tsx`, add `artworkScale: 'scale-[1.8]'` to the Facilities character entry; other characters keep `scale-125` as default
+3. In `PlayerCard.tsx`, replace the hardcoded `scale-125` class with `{character.artworkScale || 'scale-125'}` on the artwork image element
+4. Fine-tune the exact scale value for Facilities after visual testing
 
-The `object-position: center 65%` shifts the focal point downward (past the title), and `scale-125` zooms in slightly so the cropped area fills the space without blank edges. These values may need minor tuning based on the exact card image layout.
+This approach is clean and extensible -- if any future character artwork also needs size adjustments, it can be handled per-character without affecting others.
 
-No other files affected.
