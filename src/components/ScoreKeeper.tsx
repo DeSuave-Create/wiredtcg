@@ -14,11 +14,11 @@ interface Player {
 }
 
 const characters = [
-  { id: 'security-specialist', name: 'Security Specialist', icon: '🛡️', image: '/lovable-uploads/classification-security.png', artwork: '/lovable-uploads/artwork-security.png', defaultScale: 1.25 },
-  { id: 'facilities', name: 'Facilities', icon: '⚡', image: '/lovable-uploads/classification-facilities-new.png', artwork: '/lovable-uploads/artwork-facilities.png', defaultScale: 1.8 },
-  { id: 'supervisor', name: 'Supervisor', icon: '👔', image: '/lovable-uploads/classification-supervisor.png', artwork: '/lovable-uploads/artwork-supervisor.png', defaultScale: 1.25 },
-  { id: 'field-tech', name: 'Field Tech', icon: '🔧', image: '/lovable-uploads/classification-fieldtech-new.png', artwork: '/lovable-uploads/artwork-fieldtech.png', defaultScale: 1.25 },
-  { id: 'headhunter', name: 'Headhunter', icon: '🎯', image: '/lovable-uploads/classification-headhunter.png', artwork: '/lovable-uploads/artwork-headhunter.png', defaultScale: 1.25 },
+  { id: 'security-specialist', name: 'Security Specialist', icon: '🛡️', image: '/lovable-uploads/classification-security.png', artwork: '/lovable-uploads/artwork-security.png', defaultScale: 0.9 },
+  { id: 'facilities', name: 'Facilities', icon: '⚡', image: '/lovable-uploads/classification-facilities-new.png', artwork: '/lovable-uploads/artwork-facilities.png', defaultScale: 1.6 },
+  { id: 'supervisor', name: 'Supervisor', icon: '👔', image: '/lovable-uploads/classification-supervisor.png', artwork: '/lovable-uploads/artwork-supervisor.png', defaultScale: 0.9 },
+  { id: 'field-tech', name: 'Field Tech', icon: '🔧', image: '/lovable-uploads/classification-fieldtech-new.png', artwork: '/lovable-uploads/artwork-fieldtech.png', defaultScale: 0.9 },
+  { id: 'headhunter', name: 'Headhunter', icon: '🎯', image: '/lovable-uploads/classification-headhunter.png', artwork: '/lovable-uploads/artwork-headhunter.png', defaultScale: 0.9 },
 ];
 
 const defaultPlayers: Player[] = [
