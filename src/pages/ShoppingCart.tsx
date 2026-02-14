@@ -109,7 +109,7 @@ const ShoppingCartPage = () => {
                           <img
                             src={item.image}
                             alt={item.name}
-                            className="w-20 h-20 object-cover rounded neon-border"
+                            className="w-24 h-32 object-contain rounded"
                           />
                           <div className="flex-1">
                             <h3 className="font-semibold text-green-600">{item.name}</h3>
