@@ -90,7 +90,7 @@ const ProductsSection = () => {
         const IconComponent = getIcon(product.card_color);
 
         return (
-          <div key={product.id} className={`relative w-full h-[380px] overflow-hidden transition-all duration-300 hover:scale-105 ${cardStyles.border} border-2 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl bg-gray-50 dark:bg-gray-800/90 group circuit-card`}>
+          <div key={product.id} className={`relative w-full h-[560px] overflow-hidden transition-all duration-300 hover:scale-[1.03] ${cardStyles.border} border-2 rounded-3xl shadow-2xl drop-shadow-lg hover:shadow-3xl hover:drop-shadow-2xl bg-gray-50 dark:bg-gray-800/90 group circuit-card`}>
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-green-400 to-transparent opacity-0 group-hover:opacity-100 transform translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-1500 ease-in-out z-20"></div>
             <div className="absolute top-4 left-4 w-2 h-2 bg-green-400 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-pulse z-20"></div>
             <div className="absolute bottom-4 right-4 w-2 h-2 bg-green-400 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-ping z-20" style={{animationDelay: '0.3s'}}></div>
@@ -107,55 +107,58 @@ const ProductsSection = () => {
               backgroundSize: '40px 40px, 40px 40px, 40px 40px, 40px 40px, 40px 40px, 20px 20px, 20px 20px'
             }}></div>
 
-            <div className="relative h-full flex flex-col p-4">
+            <div className="relative h-full flex flex-col p-5">
               <div className="absolute top-3 left-3">
-                <div className={`w-4 h-4 ${cardStyles.iconColor}`}>
+                <div className={`w-5 h-5 ${cardStyles.iconColor}`}>
                   <IconComponent className="w-full h-full" />
                 </div>
               </div>
 
-              <div className="mb-3 mt-6 h-11 flex items-center justify-center">
-                <h2 className={`text-lg font-black text-center tracking-wider uppercase leading-tight font-sans ${cardStyles.titleColor}`}>
+              {/* Title */}
+              <div className="mb-4 mt-6 flex items-center justify-center">
+                <h2 className={`text-xl font-black text-center tracking-wider uppercase leading-tight font-sans ${cardStyles.titleColor}`}>
                   {product.name}
                 </h2>
               </div>
 
-              {/* Product Image or Icon */}
-              <div className="flex items-center justify-center mb-3 h-20">
+              {/* Product Image — takes up ~2/3 of card */}
+              <div className="flex items-center justify-center flex-1 mb-4" style={{ minHeight: '60%' }}>
                 {product.image_url ? (
-                  <img src={product.image_url} alt={product.name} className="max-h-20 max-w-full object-contain rounded-lg" />
+                  <img src={product.image_url} alt={product.name} className="max-h-full max-w-full object-contain rounded-xl drop-shadow-lg" />
                 ) : (
-                  <div className={`w-16 h-16 flex items-center justify-center ${cardStyles.iconColor}`}>
+                  <div className={`w-28 h-28 flex items-center justify-center ${cardStyles.iconColor}`}>
                     <IconComponent className="w-full h-full" />
                   </div>
                 )}
               </div>
 
-              <div className="mb-2 text-center h-12 flex items-center justify-center">
-                <p className="text-xs text-foreground leading-relaxed font-medium line-clamp-3">
+              {/* Description */}
+              <div className="mb-2 text-center">
+                <p className="text-sm text-foreground leading-relaxed font-medium line-clamp-2">
                   {product.description}
                 </p>
               </div>
 
               {/* Price */}
-              <div className="text-center mb-3">
-                <span className={`text-xl font-black ${cardStyles.titleColor}`}>
+              <div className="text-center mb-4">
+                <span className={`text-2xl font-black ${cardStyles.titleColor}`}>
                   ${product.price.toFixed(2)}
                 </span>
               </div>
 
-              <div className="mt-auto">
+              {/* Add to Cart */}
+              <div>
                 <button
                   onClick={() => handleAddToCart(product)}
-                  className="w-full bg-primary text-white hover:bg-primary/90 neon-glow text-sm font-bold h-8 flex items-center justify-center rounded-3xl"
+                  className="w-full bg-primary text-white hover:bg-primary/90 neon-glow text-base font-bold h-11 flex items-center justify-center rounded-3xl"
                 >
-                  <ShoppingCart className="h-3 w-3 mr-2" />
+                  <ShoppingCart className="h-4 w-4 mr-2" />
                   Add to Cart
                 </button>
               </div>
 
               <div className="absolute bottom-3 right-3">
-                <div className={`w-3 h-3 transform rotate-180 ${cardStyles.iconColor}`}>
+                <div className={`w-4 h-4 transform rotate-180 ${cardStyles.iconColor}`}>
                   <IconComponent className="w-full h-full" />
                 </div>
               </div>
