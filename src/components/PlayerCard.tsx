@@ -60,7 +60,7 @@ const PlayerCard = ({
   };
   const colors = roleColors[player.character] || roleColors['security-specialist'];
   const borderColor = `${colors.border} ${colors.shadow}`;
-  const leaderGlow = isLeader ? { textShadow: '0 0 20px rgba(250, 204, 21, 0.8), 0 0 40px rgba(250, 204, 21, 0.4)' } : undefined;
+  const leaderGlow = undefined;
 
   const leaderBorderStyle = isLeader ? {
     borderColor: 'rgba(200, 180, 255, 0.9)',
@@ -175,14 +175,14 @@ const PlayerCard = ({
           <Input
             value={player.name}
             onChange={(e) => onUpdateName(player.id, e.target.value)}
-            className="text-center font-bold text-lg border-gray-600 rounded-xl bg-gray-800 text-white h-10 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-blue-500" />
+            className="text-center font-bold text-[24px] border-gray-600 rounded-xl bg-gray-800 text-white h-10 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-blue-500" />
 
         </div>
 
         {/* Bitcoins Mined label */}
         <div className="flex items-center justify-center gap-2">
-          <Bitcoin className="h-5 w-5 text-yellow-400" />
-          <span className="text-sm text-gray-400">Bitcoins Mined</span>
+          <Bitcoin className="h-6 w-6 text-yellow-400" />
+          <span className="text-[20px] text-gray-400">Bitcoins Mined</span>
         </div>
 
         {/* Score */}
