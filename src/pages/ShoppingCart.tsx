@@ -57,7 +57,7 @@ const ShoppingCartPage = () => {
   };
 
   const handleContinueShopping = () => {
-    window.location.href = '/cart'; // Navigate to shop page
+    window.location.href = '/shop';
   };
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
