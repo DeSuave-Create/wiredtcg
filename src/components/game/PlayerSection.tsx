@@ -272,33 +272,17 @@ export function PlayerSection({
             )}
           </div>
 
-          {/* Audited Cards */}
-          <div className="flex flex-col items-center justify-center p-2 rounded-lg border border-gray-700/50 bg-black/20 h-40 overflow-hidden">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs text-gray-500">Audited:</span>
-              <span className="text-xs text-muted-foreground">
-                {player.auditedComputers.length} cards
-              </span>
-            </div>
-            {player.auditedComputers.length > 0 && (
-              <div className="flex gap-1 flex-wrap justify-center max-h-[80px] overflow-hidden">
-                {player.auditedComputers.slice(0, 4).map((card, index) => (
-                  <div 
-                    key={`audit-preview-${card.id}-${index}`}
-                    className="w-10 h-14 rounded border border-yellow-500/50 overflow-hidden bg-yellow-500/10"
-                  >
-                    <img 
-                      src={card.image} 
-                      alt={card.name}
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                ))}
-                {player.auditedComputers.length > 4 && (
-                  <div className="w-10 h-14 rounded border border-yellow-500/30 bg-yellow-500/10 flex items-center justify-center">
-                    <span className="text-xs text-yellow-400">+{player.auditedComputers.length - 4}</span>
-                  </div>
-                )}
+          {/* Audited Cards - interactive for human, display for AI */}
+          <div className="flex flex-col p-2 rounded-lg border border-yellow-500/30 bg-black/20 h-40 overflow-y-auto">
+            {player.auditedComputers.length > 0 ? (
+              <AuditedComputersSection
+                auditedComputers={player.auditedComputers}
+                isCurrentPlayer={isHuman && isCurrentTurn}
+                canPlay={isHuman && canPlayCards}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <span className="text-xs text-gray-500">No audited cards</span>
               </div>
             )}
           </div>
