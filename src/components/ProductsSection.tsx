@@ -108,11 +108,6 @@ const ProductsSection = () => {
             }}></div>
 
             <div className="relative h-full flex flex-col p-5">
-              <div className="absolute top-3 left-3">
-                <div className={`w-5 h-5 ${cardStyles.iconColor}`}>
-                  <IconComponent className="w-full h-full" />
-                </div>
-              </div>
 
               {/* Title */}
               <div className="mb-4 mt-6 flex items-center justify-center">
@@ -157,11 +152,6 @@ const ProductsSection = () => {
                 </button>
               </div>
 
-              <div className="absolute bottom-3 right-3">
-                <div className={`w-4 h-4 transform rotate-180 ${cardStyles.iconColor}`}>
-                  <IconComponent className="w-full h-full" />
-                </div>
-              </div>
             </div>
           </div>
         );
