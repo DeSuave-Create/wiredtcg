@@ -1,41 +1,64 @@
 
 
-# Fix Video Thumbnail Previews
+# Generate WIRED Kickstarter TOC Artwork -- Admin Page
 
-## Problem
-The thumbnail navigation bar at the bottom of the video carousel shows the WIRED logo instead of actual video preview frames. This happens because:
-- No `thumbnail` property is set in the `tutorialVideos` array in `Extras.tsx`
-- The fallback in `VideoCarousel.tsx` (line 729) renders `<Logo>` when no thumbnail exists
+## Overview
+Create a new `/admin/artwork` page (password-protected like `/admin/products`) with an edge function that generates a cyberpunk/neon table of contents image using the Lovable AI image generation model. The page will display the generated artwork and allow downloading it.
 
-## Solution
+## What Gets Built
 
-Generate thumbnails dynamically from each video's first frame using a small React hook that loads the video into a hidden `<video>` element, seeks to a frame, and captures it to a canvas as a data URL.
+### 1. Edge Function: `generate-toc-art`
+- Uses `google/gemini-2.5-flash-image` model via `https://ai.gateway.lovable.dev/v1/chat/completions`
+- Authenticated with `x-admin-password` header (same pattern as `admin-products`)
+- Sends a detailed image generation prompt that references WIRED's cyberpunk aesthetic and includes:
+  - TOC sections: Welcome to WIRED, How to Play, What's in the Box, Game Modes, Reward Tiers, Add-Ons, Stretch Goals
+  - Art direction: dark background, neon green/blue/purple glows, circuit board traces, network cables
+  - References to the classification character artwork (Security Specialist, Headhunter, Field Tech, Facilities Manager, Auditor, Supervisor) -- described in the prompt so the AI creates characters inspired by them
+  - Playing card elements woven through the design
+- Returns the base64 image data to the client
 
-### 1. Create a `useVideoThumbnail` hook (`src/hooks/useVideoThumbnail.ts`)
-- Accepts a video `src` URL and an optional `time` (default 1 second)
-- Creates a temporary `<video>` element off-screen
-- Sets `preload="metadata"`, seeks to the specified time
-- On `seeked` event, draws the frame to a `<canvas>` and returns the data URL
-- Returns `null` while loading, so the Logo fallback still shows briefly
+### 2. New Page: `src/pages/AdminArtwork.tsx`
+- Password-protected login screen (reuses the same admin password pattern from AdminProducts)
+- "Generate Artwork" button that calls the edge function
+- Loading state with progress indication while generating
+- Displays the generated image full-size
+- "Download" button that saves the image as a PNG file
+- "Regenerate" button to try again if the result needs iteration
+- Shows thumbnails of available character artwork assets for reference
 
-### 2. Update thumbnail rendering in `VideoCarousel.tsx` (lines 706-736)
-- Create a small `VideoThumbnail` sub-component that uses the hook
-- Replace the current fallback block so that when no `video.thumbnail` is provided, it auto-generates one from the video file
-- Keep the Logo as a loading placeholder while the thumbnail generates
+### 3. Route Registration
+- Add `/admin/artwork` route to `App.tsx` (lazy-loaded, not in navbar)
 
-### Technical Details
+### 4. Config Update
+- Add `generate-toc-art` function to `supabase/config.toml` with `verify_jwt = false`
 
-**New file:** `src/hooks/useVideoThumbnail.ts`
-```
-- Creates hidden video element
-- Seeks to 1s, captures frame via canvas.toDataURL()
-- Returns the data URL string or null
-```
+## Available Assets Referenced in Prompt
+The prompt will describe characters inspired by these existing assets:
+- `artwork-security.png`, `artwork-headhunter.png`, `artwork-fieldtech.png`
+- `artwork-facilities.png`, `artwork-auditor.png`, `artwork-supervisor.png`
+- Card images: `classification-*`, `attack-*`, `resolution-*`, `equipment-*`
 
-**Modified file:** `src/components/VideoCarousel.tsx` (lines ~706-736)
-- Add a `VideoThumbnail` component that wraps each thumbnail button
-- Uses the hook to auto-generate previews from the MP4 source
-- Falls back to Logo while generating
+Note: The AI image model cannot directly use these images as input in a text-only prompt, but the prompt will describe the cyberpunk character styles so the generated art matches the WIRED aesthetic. For higher fidelity, the page will also display the existing character art alongside the generated TOC so you can composite them in a design tool if needed.
 
-No changes needed to `Extras.tsx` -- thumbnails will be generated automatically from the existing video sources.
+## Technical Details
+
+### Edge Function (`supabase/functions/generate-toc-art/index.ts`)
+- CORS headers included
+- Admin password check via `x-admin-password` header
+- Calls Lovable AI gateway with `modalities: ["image", "text"]`
+- Returns `{ image: "data:image/png;base64,..." }` on success
+- Handles 429/402 rate limit errors
+
+### Frontend Page (`src/pages/AdminArtwork.tsx`)
+- Same Header/Footer/ContentSection layout as AdminProducts
+- Password state stored in component (same UX as AdminProducts)
+- Uses `fetch` to call the edge function
+- Download implemented via creating an `<a>` element with `download` attribute
+- Shows existing character artwork cards in a gallery section for reference
+
+### Files Changed
+- **New**: `supabase/functions/generate-toc-art/index.ts`
+- **New**: `src/pages/AdminArtwork.tsx`
+- **Modified**: `src/App.tsx` -- add lazy route for `/admin/artwork`
+- **Modified**: `supabase/config.toml` -- add function config
 
