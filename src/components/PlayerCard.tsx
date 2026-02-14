@@ -41,17 +41,17 @@ const PlayerCard = ({
   onRemove
 }: PlayerCardProps) => {
   const getCharacter = (characterId: string) => {
-    return characters.find(c => c.id === characterId) || characters[0];
+    return characters.find((c) => c.id === characterId) || characters[0];
   };
 
   const character = getCharacter(player.character);
 
-  const roleColors: Record<string, { border: string; text: string; shadow: string }> = {
+  const roleColors: Record<string, {border: string;text: string;shadow: string;}> = {
     'security-specialist': { border: 'border-red-500', text: 'text-red-400', shadow: 'shadow-red-500/20' },
     'facilities': { border: 'border-yellow-400', text: 'text-yellow-400', shadow: 'shadow-yellow-400/20' },
     'supervisor': { border: 'border-green-500', text: 'text-green-400', shadow: 'shadow-green-500/20' },
     'field-tech': { border: 'border-blue-500', text: 'text-blue-400', shadow: 'shadow-blue-500/20' },
-    'headhunter': { border: 'border-purple-500', text: 'text-purple-400', shadow: 'shadow-purple-500/20' },
+    'headhunter': { border: 'border-purple-500', text: 'text-purple-400', shadow: 'shadow-purple-500/20' }
   };
   const colors = roleColors[player.character] || roleColors['security-specialist'];
   const borderColor = `${colors.border} ${colors.shadow}`;
@@ -59,7 +59,7 @@ const PlayerCard = ({
 
   const leaderBorderStyle = isLeader ? {
     borderColor: 'rgba(200, 180, 255, 0.9)',
-    boxShadow: '0 0 4px rgba(255, 255, 255, 0.7), 0 0 10px rgba(200, 170, 255, 0.5), 0 0 20px rgba(160, 120, 255, 0.3), 0 0 35px rgba(140, 100, 255, 0.15)',
+    boxShadow: '0 0 4px rgba(255, 255, 255, 0.7), 0 0 10px rgba(200, 170, 255, 0.5), 0 0 20px rgba(160, 120, 255, 0.3), 0 0 35px rgba(140, 100, 255, 0.15)'
   } : undefined;
 
   return (
@@ -70,26 +70,26 @@ const PlayerCard = ({
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        ...leaderBorderStyle,
-      }}
-    >
+        ...leaderBorderStyle
+      }}>
+
 
       {/* ====== MOBILE LAYOUT ====== */}
       <div className="md:hidden relative z-10">
         <div className="flex items-center gap-2 p-2">
           {/* Left: Trash */}
           <div className="flex-shrink-0">
-            {canRemove ? (
-              <Button
-                onClick={() => onRemove(player.id)}
-                variant="ghost"
-                size="sm"
-                className="text-red-400 hover:bg-red-900/30 h-7 w-7 p-0"
-                type="button"
-              >
+            {canRemove ?
+            <Button
+              onClick={() => onRemove(player.id)}
+              variant="ghost"
+              size="sm"
+              className="text-red-400 hover:bg-red-900/30 h-7 w-7 p-0"
+              type="button">
+
                 <Trash2 className="h-3 w-3" />
-              </Button>
-            ) : <div className="h-7 w-7" />}
+              </Button> :
+            <div className="h-7 w-7" />}
           </div>
 
           {/* Card image thumbnail */}
@@ -102,18 +102,18 @@ const PlayerCard = ({
             <Input
               value={player.name}
               onChange={(e) => onUpdateName(player.id, e.target.value)}
-              className="text-xs font-semibold border-gray-600 h-6 px-2 text-center bg-gray-800 text-white rounded-xl focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-blue-500"
-            />
+              className="text-xs font-semibold border-gray-600 h-6 px-2 text-center bg-gray-800 text-white rounded-xl focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-blue-500" />
+
             <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
               <SelectTrigger className="border-gray-600 bg-gray-800 text-gray-200 text-xs h-5 px-2 rounded-xl focus:ring-0 text-center justify-center">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-gray-800 border-gray-600">
-                {characters.map((char) => (
-                  <SelectItem key={char.id} value={char.id} className="hover:bg-blue-900/40 text-xs text-gray-200">
+                {characters.map((char) =>
+                <SelectItem key={char.id} value={char.id} className="hover:bg-blue-900/40 text-xs text-gray-200">
                     {char.name}
                   </SelectItem>
-                ))}
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -137,17 +137,17 @@ const PlayerCard = ({
       {/* ====== DESKTOP LAYOUT ====== */}
       <div className="hidden md:flex flex-col items-center relative z-10 px-5 py-6 space-y-3 aspect-[5/7]">
         {/* Remove button */}
-        {canRemove && (
-          <Button
-            onClick={() => onRemove(player.id)}
-            variant="ghost"
-            size="sm"
-            className="absolute top-2 right-2 text-red-400 hover:bg-red-900/30 h-6 w-6 p-0 z-30"
-            type="button"
-          >
+        {canRemove &&
+        <Button
+          onClick={() => onRemove(player.id)}
+          variant="ghost"
+          size="sm"
+          className="absolute top-2 right-2 text-red-400 hover:bg-red-900/30 h-6 w-6 p-0 z-30"
+          type="button">
+
             <Trash2 className="h-3 w-3" />
           </Button>
-        )}
+        }
 
         {/* Classification name AS the dropdown */}
         <div className="w-full">
@@ -156,11 +156,11 @@ const PlayerCard = ({
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-gray-800 border-gray-600">
-              {characters.map((char) => (
-                <SelectItem key={char.id} value={char.id} className="hover:bg-blue-900/40 text-gray-200">
+              {characters.map((char) =>
+              <SelectItem key={char.id} value={char.id} className="hover:bg-blue-900/40 text-gray-200">
                   {char.name}
                 </SelectItem>
-              ))}
+              )}
             </SelectContent>
           </Select>
         </div>
@@ -170,8 +170,8 @@ const PlayerCard = ({
           <Input
             value={player.name}
             onChange={(e) => onUpdateName(player.id, e.target.value)}
-            className="text-center font-bold text-lg border-gray-600 rounded-xl bg-gray-800 text-white h-10 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-blue-500"
-          />
+            className="text-center font-bold text-lg border-gray-600 rounded-xl bg-gray-800 text-white h-10 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-blue-500" />
+
         </div>
 
         {/* Bitcoins Mined label */}
@@ -190,8 +190,8 @@ const PlayerCard = ({
           <img
             src={character.artwork || character.image}
             alt={character.name}
-            className="w-full h-full object-contain opacity-90 border-0 shadow-none scale-125"
-          />
+            className="w-full h-full object-contain opacity-90 border-0 shadow-none scale-100" />
+
         </div>
 
         {/* +/- Buttons */}
@@ -204,8 +204,8 @@ const PlayerCard = ({
           </Button>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default PlayerCard;
