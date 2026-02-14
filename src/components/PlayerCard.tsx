@@ -157,7 +157,10 @@ const PlayerCard = ({
         {/* Classification name AS the dropdown */}
         <div className="w-full">
           <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-            <SelectTrigger className={`!border-0 !shadow-none !outline-none !ring-0 focus:!ring-0 focus:!border-0 focus:!outline-none focus-visible:!ring-0 focus-visible:!outline-none focus-visible:!border-0 data-[state=open]:!border-0 text-[26px] font-black tracking-wide rounded-xl text-center justify-center bg-transparent ${colors.text} uppercase h-auto py-1 hover:underline cursor-pointer [&>span]:truncate w-full whitespace-nowrap`}>
+            <SelectTrigger
+              className={`text-[26px] font-black tracking-wide rounded-xl text-center justify-center bg-transparent ${colors.text} uppercase h-auto py-1 hover:underline cursor-pointer [&>span]:truncate w-full whitespace-nowrap`}
+              style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-gray-800 border-gray-600">
