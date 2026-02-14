@@ -108,6 +108,8 @@ const SimulationLogContent = () => {
   const [decisionHistory, setDecisionHistory] = useState<AIDecisionLog[]>([]);
   const [showDebugPanel, setShowDebugPanel] = useState(true);
   const lastCaptureRef = useRef<string>('');
+  const gameStateRef = useRef(gameState);
+  gameStateRef.current = gameState;
 
   const [activeCard, setActiveCard] = useState<Card | null>(null);
   const [activePlacedCard, setActivePlacedCard] = useState<{
@@ -494,10 +496,16 @@ const SimulationLogContent = () => {
           const result = playCable(card.id, switchId);
           if (result.success) {
             toast.success('Cable connected to switch!');
-            const humanPlayer = gameState.players[0];
-            if (humanPlayer.network.floatingComputers.length > 0 && result.cableId && result.maxComputers) {
-              setConnectDialog({ isOpen: true, cableId: result.cableId, maxConnections: result.maxComputers, cableType: card.subtype });
-            }
+            const cableSubtype = card.subtype;
+            setTimeout(() => {
+              const latestState = gameStateRef.current;
+              if (latestState) {
+                const hp = latestState.players[0];
+                if (hp.network.floatingComputers.length > 0 && result.cableId && result.maxComputers) {
+                  setConnectDialog({ isOpen: true, cableId: result.cableId, maxConnections: result.maxComputers, cableType: cableSubtype });
+                }
+              }
+            }, 0);
           }
         } else {
           const humanPlayer = gameState.players[0];
@@ -506,13 +514,19 @@ const SimulationLogContent = () => {
             setPlacementChoiceDialog({
               isOpen: true, cardType: 'cable', card,
               pendingAction: () => {
+                const cableSubtype = card.subtype;
                 const result = playCable(card.id, undefined);
                 if (result.success) {
                   toast.success('Cable placed (floating)');
-                  const hp = gameState.players[0];
-                  if (hp.network.floatingComputers.length > 0 && result.cableId && result.maxComputers) {
-                    setConnectDialog({ isOpen: true, cableId: result.cableId, maxConnections: result.maxComputers, cableType: card.subtype });
-                  }
+                  setTimeout(() => {
+                    const latestState = gameStateRef.current;
+                    if (latestState) {
+                      const hp = latestState.players[0];
+                      if (hp.network.floatingComputers.length > 0 && result.cableId && result.maxComputers) {
+                        setConnectDialog({ isOpen: true, cableId: result.cableId, maxConnections: result.maxComputers, cableType: cableSubtype });
+                      }
+                    }
+                  }, 0);
                 }
               },
             });

@@ -2247,7 +2247,7 @@ export function useGameEngine() {
       const aiActions: AIAction[] = [];
       
       // Helper functions for AI actions (same as before)
-      const findAttackTarget = (humanNetwork: PlayerNetwork): { type: 'switch' | 'cable' | 'computer', switchIndex: number, cableIndex?: number, computerIndex?: number, equipmentId: string } | null => {
+      const findAttackTarget = (humanNetwork: PlayerNetwork): { type: 'switch' | 'cable' | 'computer' | 'floatingCable' | 'floatingComputer', switchIndex: number, cableIndex?: number, computerIndex?: number, floatingIndex?: number, equipmentId: string } | null => {
         for (let si = 0; si < humanNetwork.switches.length; si++) {
           if (!humanNetwork.switches[si].isDisabled) {
             return { type: 'switch', switchIndex: si, equipmentId: humanNetwork.switches[si].id };
@@ -2269,10 +2269,28 @@ export function useGameEngine() {
             }
           }
         }
+        // Search floating cables
+        for (let fi = 0; fi < humanNetwork.floatingCables.length; fi++) {
+          if (!humanNetwork.floatingCables[fi].isDisabled) {
+            return { type: 'floatingCable', switchIndex: -1, floatingIndex: fi, equipmentId: humanNetwork.floatingCables[fi].id };
+          }
+          // Computers on floating cables
+          for (let coi = 0; coi < humanNetwork.floatingCables[fi].computers.length; coi++) {
+            if (!humanNetwork.floatingCables[fi].computers[coi].isDisabled) {
+              return { type: 'floatingComputer', switchIndex: -1, floatingIndex: fi, computerIndex: coi, equipmentId: humanNetwork.floatingCables[fi].computers[coi].id };
+            }
+          }
+        }
+        // Search floating computers
+        for (let fi = 0; fi < humanNetwork.floatingComputers.length; fi++) {
+          if (!humanNetwork.floatingComputers[fi].isDisabled) {
+            return { type: 'floatingComputer', switchIndex: -1, floatingIndex: fi, equipmentId: humanNetwork.floatingComputers[fi].id };
+          }
+        }
         return null;
       };
       
-      const findResolutionTarget = (aiNetwork: PlayerNetwork, resolutionSubtype: string): { type: 'switch' | 'cable' | 'computer', switchIndex: number, cableIndex?: number, computerIndex?: number, equipmentId: string } | null => {
+      const findResolutionTarget = (aiNetwork: PlayerNetwork, resolutionSubtype: string): { type: 'switch' | 'cable' | 'computer' | 'floatingCable' | 'floatingComputer', switchIndex: number, cableIndex?: number, computerIndex?: number, floatingIndex?: number, equipmentId: string } | null => {
         const resolutionMap: Record<string, string> = {
           'secured': 'hacked',
           'powered': 'power-outage',
@@ -2305,10 +2323,36 @@ export function useGameEngine() {
             }
           }
         }
+        // Search floating cables
+        for (let fi = 0; fi < aiNetwork.floatingCables.length; fi++) {
+          const fc = aiNetwork.floatingCables[fi];
+          if (fc.attachedIssues.length > 0) {
+            if (targetIssueType === 'any' || fc.attachedIssues.some(i => i.subtype === targetIssueType)) {
+              return { type: 'floatingCable', switchIndex: -1, floatingIndex: fi, equipmentId: fc.id };
+            }
+          }
+          for (let coi = 0; coi < fc.computers.length; coi++) {
+            const comp = fc.computers[coi];
+            if (comp.attachedIssues.length > 0) {
+              if (targetIssueType === 'any' || comp.attachedIssues.some(i => i.subtype === targetIssueType)) {
+                return { type: 'floatingComputer', switchIndex: -1, floatingIndex: fi, computerIndex: coi, equipmentId: comp.id };
+              }
+            }
+          }
+        }
+        // Search standalone floating computers
+        for (let fi = 0; fi < aiNetwork.floatingComputers.length; fi++) {
+          const comp = aiNetwork.floatingComputers[fi];
+          if (comp.attachedIssues.length > 0) {
+            if (targetIssueType === 'any' || comp.attachedIssues.some(i => i.subtype === targetIssueType)) {
+              return { type: 'floatingComputer', switchIndex: -1, floatingIndex: fi, equipmentId: comp.id };
+            }
+          }
+        }
         return null;
       };
       
-      const applyAttack = (targetNetwork: PlayerNetwork, target: { type: string, switchIndex: number, cableIndex?: number, computerIndex?: number }, attackCard: Card) => {
+      const applyAttack = (targetNetwork: PlayerNetwork, target: { type: string, switchIndex: number, cableIndex?: number, computerIndex?: number, floatingIndex?: number }, attackCard: Card) => {
         if (target.type === 'switch') {
           const sw = targetNetwork.switches[target.switchIndex];
           sw.attachedIssues.push(attackCard);
@@ -2326,10 +2370,26 @@ export function useGameEngine() {
           const comp = targetNetwork.switches[target.switchIndex].cables[target.cableIndex].computers[target.computerIndex];
           comp.attachedIssues.push(attackCard);
           comp.isDisabled = true;
+        } else if (target.type === 'floatingCable' && target.floatingIndex !== undefined) {
+          const fc = targetNetwork.floatingCables[target.floatingIndex];
+          fc.attachedIssues.push(attackCard);
+          fc.isDisabled = true;
+          fc.computers.forEach(comp => comp.isDisabled = true);
+        } else if (target.type === 'floatingComputer' && target.floatingIndex !== undefined) {
+          // Could be a computer on a floating cable or a standalone floating computer
+          if (target.computerIndex !== undefined) {
+            const comp = targetNetwork.floatingCables[target.floatingIndex].computers[target.computerIndex];
+            comp.attachedIssues.push(attackCard);
+            comp.isDisabled = true;
+          } else {
+            const comp = targetNetwork.floatingComputers[target.floatingIndex];
+            comp.attachedIssues.push(attackCard);
+            comp.isDisabled = true;
+          }
         }
       };
       
-      const applyResolution = (aiNetwork: PlayerNetwork, target: { type: string, switchIndex: number, cableIndex?: number, computerIndex?: number }, resolutionCard: Card, isHelpdesk: boolean) => {
+      const applyResolution = (aiNetwork: PlayerNetwork, target: { type: string, switchIndex: number, cableIndex?: number, computerIndex?: number, floatingIndex?: number }, resolutionCard: Card, isHelpdesk: boolean) => {
         const targetIssueType = isHelpdesk ? null : ({
           'secured': 'hacked',
           'powered': 'power-outage',
@@ -2378,6 +2438,28 @@ export function useGameEngine() {
           const comp = cable.computers[target.computerIndex];
           comp.attachedIssues = removeIssue(comp.attachedIssues);
           comp.isDisabled = comp.attachedIssues.length > 0 || cable.isDisabled || sw.isDisabled;
+        } else if (target.type === 'floatingCable' && target.floatingIndex !== undefined) {
+          const fc = aiNetwork.floatingCables[target.floatingIndex];
+          fc.attachedIssues = removeIssue(fc.attachedIssues);
+          fc.isDisabled = fc.attachedIssues.length > 0;
+          if (!fc.isDisabled) {
+            fc.computers.forEach(comp => {
+              comp.isDisabled = comp.attachedIssues.length > 0;
+            });
+          }
+        } else if (target.type === 'floatingComputer' && target.floatingIndex !== undefined) {
+          if (target.computerIndex !== undefined) {
+            // Computer on a floating cable
+            const fc = aiNetwork.floatingCables[target.floatingIndex];
+            const comp = fc.computers[target.computerIndex];
+            comp.attachedIssues = removeIssue(comp.attachedIssues);
+            comp.isDisabled = comp.attachedIssues.length > 0 || fc.isDisabled;
+          } else {
+            // Standalone floating computer
+            const comp = aiNetwork.floatingComputers[target.floatingIndex];
+            comp.attachedIssues = removeIssue(comp.attachedIssues);
+            comp.isDisabled = comp.attachedIssues.length > 0;
+          }
         }
       };
       
@@ -2465,6 +2547,14 @@ export function useGameEngine() {
                   issueBeingFixed = network.switches[target.switchIndex].cables[target.cableIndex].attachedIssues[0]?.name || 'issue';
                 } else if (target.type === 'computer' && target.cableIndex !== undefined && target.computerIndex !== undefined) {
                   issueBeingFixed = network.switches[target.switchIndex].cables[target.cableIndex].computers[target.computerIndex].attachedIssues[0]?.name || 'issue';
+                } else if (target.type === 'floatingCable' && target.floatingIndex !== undefined) {
+                  issueBeingFixed = network.floatingCables[target.floatingIndex].attachedIssues[0]?.name || 'issue';
+                } else if (target.type === 'floatingComputer' && target.floatingIndex !== undefined) {
+                  if (target.computerIndex !== undefined) {
+                    issueBeingFixed = network.floatingCables[target.floatingIndex].computers[target.computerIndex].attachedIssues[0]?.name || 'issue';
+                  } else {
+                    issueBeingFixed = network.floatingComputers[target.floatingIndex].attachedIssues[0]?.name || 'issue';
+                  }
                 }
                 
                 applyResolution(network, target, card, isHelpdesk);
@@ -2966,6 +3056,58 @@ export function useGameEngine() {
               }
             }
             break;
+          
+          case 'start_audit': {
+            // AI initiates an audit attack against the human player
+            const auditCard = card && card.subtype === 'audit' ? card : currentPlayer.hand.find(c => c.subtype === 'audit');
+            if (auditCard) {
+              currentPlayer.hand = currentPlayer.hand.filter(c => c.id !== auditCard.id);
+              
+              // Count human player's computers
+              let humanComputerCount = 0;
+              humanPlayer.network.switches.forEach(sw => {
+                sw.cables.forEach(cable => {
+                  humanComputerCount += cable.computers.length;
+                });
+              });
+              humanPlayer.network.floatingCables.forEach(fc => {
+                humanComputerCount += fc.computers.length;
+              });
+              humanComputerCount += humanPlayer.network.floatingComputers.length;
+              
+              const computersToReturn = Math.max(1, Math.floor(humanComputerCount / 2));
+              
+              aiActions.push({ type: 'attack', card: auditCard, target: 'audit on human player' });
+              gameLog = [...gameLog.slice(-19), `📋 ${currentPlayer.name} initiates an Audit! ${humanPlayer.name} must return ${computersToReturn} computer(s)!`];
+              
+              // Set up audit battle - break out of AI loop to let audit flow handle the rest
+              // We need to set the state with the audit battle
+              const auditBattle: AuditBattle = {
+                auditorIndex: aiPlayerIndex,
+                targetIndex: humanPlayerIndex,
+                auditCardId: auditCard.id,
+                chain: [],
+                currentTurn: humanPlayerIndex,
+                computersToReturn,
+                phase: 'counter',
+              };
+              
+              setGameState({
+                ...prev,
+                players: newPlayers,
+                phase: 'audit',
+                movesRemaining,
+                equipmentMovesRemaining,
+                discardPile: newDiscardPile,
+                drawPile: newDrawPile,
+                gameLog,
+                aiLastTurnActions: aiActions,
+                auditBattle,
+              });
+              return; // Exit executeAITurn entirely to let audit UI handle it
+            }
+            break;
+          }
           
           default:
             // No action or pass
