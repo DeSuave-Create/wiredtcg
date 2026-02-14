@@ -41,24 +41,6 @@ export function NetworkBoardDroppable({
   
   const CARD_SIZE = isMobile ? "w-10 h-12" : "w-12 h-15";
   
-  // Flatten all cables from all switches
-  const allCables: { cable: CableNode; parentSwitchId: string }[] = [];
-  network.switches.forEach(sw => {
-    sw.cables.forEach(cable => {
-      allCables.push({ cable, parentSwitchId: sw.id });
-    });
-  });
-  
-  // Flatten all computers from all cables
-  const allComputers: { computer: PlacedCard; parentCableId: string }[] = [];
-  network.switches.forEach(sw => {
-    sw.cables.forEach(cable => {
-      cable.computers.forEach(comp => {
-        allComputers.push({ computer: comp, parentCableId: cable.id });
-      });
-    });
-  });
-  
   return (
     <div 
       ref={boardRef}
@@ -83,7 +65,7 @@ export function NetworkBoardDroppable({
       
       <h3 className="font-semibold text-accent-green relative z-10 text-xs mb-1">{label}</h3>
       
-      {/* Connected Network Area with Fixed Rows */}
+      {/* Connected Network Area - Column-based layout */}
       <DroppableZone
         id={`${playerId}-board`}
         type="internet"
@@ -105,19 +87,16 @@ export function NetworkBoardDroppable({
           </div>
         </div>
         
-        {/* Row 2: All Switches */}
-        <div className={cn(
-          "flex items-center justify-center gap-2",
-          isMobile ? "h-[85px] overflow-x-auto py-1" : "h-[100px] py-2"
-        )}>
-          {network.switches.length > 0 ? (
-            <div className={cn(
-              "flex gap-14",
-              isMobile && "flex-nowrap min-w-min px-2"
-            )}>
-              {network.switches.map((sw) => (
+        {/* Switch Columns - each switch with its cables and computers grouped vertically */}
+        {network.switches.length > 0 ? (
+          <div className={cn(
+            "flex justify-center gap-14 py-2",
+            isMobile && "overflow-x-auto flex-nowrap min-w-min px-2"
+          )}>
+            {network.switches.map((sw) => (
+              <div key={sw.id} className="flex flex-col items-center gap-6">
+                {/* Switch */}
                 <SwitchCard
-                  key={sw.id}
                   switchNode={sw}
                   isCurrentPlayer={isCurrentPlayer}
                   playerId={playerId}
@@ -127,72 +106,59 @@ export function NetworkBoardDroppable({
                   cardSize={CARD_SIZE}
                   onMobilePlacement={onMobilePlacement}
                 />
-              ))}
-            </div>
-          ) : (
-            <span className="text-muted-foreground/40 text-[10px]">Switches</span>
-          )}
-        </div>
-        
-        {/* Row 3: All Cables */}
-        <div className={cn(
-          "flex items-center justify-center gap-2",
-          isMobile ? "h-[85px] overflow-x-auto py-1" : "h-[100px] py-2"
-        )}>
-          {allCables.length > 0 ? (
-            <div className={cn(
-              "flex gap-14",
-              isMobile && "flex-nowrap min-w-min px-2"
-            )}>
-              {allCables.map(({ cable, parentSwitchId }) => (
-                <CableCard
-                  key={cable.id}
-                  cable={cable}
-                  switchId={parentSwitchId}
-                  isCurrentPlayer={isCurrentPlayer}
-                  playerId={playerId}
-                  canReceiveAttacks={canReceiveAttacks}
-                  canReceiveResolutions={canReceiveResolutions}
-                  canRearrange={canRearrange}
-                  cardSize={CARD_SIZE}
-                  onMobilePlacement={onMobilePlacement}
-                />
-              ))}
-            </div>
-          ) : (
-            <span className="text-muted-foreground/40 text-[10px]">Cables</span>
-          )}
-        </div>
-        
-        {/* Row 4: All Computers */}
-        <div className={cn(
-          "flex items-center justify-center gap-2",
-          isMobile ? "h-[85px] overflow-x-auto py-1" : "h-[100px] py-2"
-        )}>
-          {allComputers.length > 0 ? (
-            <div className={cn(
-              "flex gap-14",
-              isMobile && "flex-nowrap min-w-min px-2"
-            )}>
-              {allComputers.map(({ computer, parentCableId }) => (
-                <ComputerCard
-                  key={computer.id}
-                  computer={computer}
-                  cableId={parentCableId}
-                  isCurrentPlayer={isCurrentPlayer}
-                  playerId={playerId}
-                  canReceiveAttacks={canReceiveAttacks}
-                  canReceiveResolutions={canReceiveResolutions}
-                  canRearrange={canRearrange}
-                  cardSize={CARD_SIZE}
-                  onMobilePlacement={onMobilePlacement}
-                />
-              ))}
-            </div>
-          ) : (
-            <span className="text-muted-foreground/40 text-[10px]">Computers</span>
-          )}
-        </div>
+                
+                {/* Cables under this switch */}
+                {sw.cables.length > 0 ? (
+                  <div className="flex flex-col items-center gap-6">
+                    {sw.cables.map((cable) => (
+                      <div key={cable.id} className="flex flex-col items-center gap-4">
+                        {/* Cable */}
+                        <CableCard
+                          cable={cable}
+                          switchId={sw.id}
+                          isCurrentPlayer={isCurrentPlayer}
+                          playerId={playerId}
+                          canReceiveAttacks={canReceiveAttacks}
+                          canReceiveResolutions={canReceiveResolutions}
+                          canRearrange={canRearrange}
+                          cardSize={CARD_SIZE}
+                          onMobilePlacement={onMobilePlacement}
+                        />
+                        
+                        {/* Computers under this cable */}
+                        {cable.computers.length > 0 && (
+                          <div className="flex gap-2 justify-center">
+                            {cable.computers.map((comp) => (
+                              <ComputerCard
+                                key={comp.id}
+                                computer={comp}
+                                cableId={cable.id}
+                                isCurrentPlayer={isCurrentPlayer}
+                                playerId={playerId}
+                                canReceiveAttacks={canReceiveAttacks}
+                                canReceiveResolutions={canReceiveResolutions}
+                                canRearrange={canRearrange}
+                                cardSize={CARD_SIZE}
+                                onMobilePlacement={onMobilePlacement}
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className={cn(
+            "flex items-center justify-center",
+            isMobile ? "h-[85px]" : "h-[100px]"
+          )}>
+            <span className="text-muted-foreground/40 text-[10px]">Switches / Cables / Computers</span>
+          </div>
+        )}
       </DroppableZone>
       
       {/* Row 5: Unconnected Equipment Section - Always visible with 3 rows of space */}
