@@ -1,10 +1,8 @@
 
-import { useState } from 'react';
 import { Plus, Minus, Trash2, Bitcoin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider';
 
 interface Player {
   id: string;
@@ -49,7 +47,7 @@ const PlayerCard = ({
   };
 
   const character = getCharacter(player.character);
-  const [artworkScale, setArtworkScale] = useState(character.defaultScale || 1.25);
+  const artworkScale = character.defaultScale || 0.9;
 
   const roleColors: Record<string, {border: string;text: string;shadow: string;}> = {
     'security-specialist': { border: 'border-red-500', text: 'text-red-400', shadow: 'shadow-red-500/20' },
@@ -199,18 +197,6 @@ const PlayerCard = ({
             style={{ transform: `scale(${artworkScale})` }} />
         </div>
 
-        {/* Scale slider */}
-        <div className="w-full px-2">
-          <Slider
-            value={[artworkScale]}
-            onValueChange={(val) => setArtworkScale(val[0])}
-            min={0.5}
-            max={3}
-            step={0.05}
-            className="w-full"
-          />
-          <p className="text-xs text-gray-500 text-center mt-1">Scale: {artworkScale.toFixed(2)}</p>
-        </div>
 
         {/* +/- Buttons */}
         <div className="flex justify-center gap-3">
