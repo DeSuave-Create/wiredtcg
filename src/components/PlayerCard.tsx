@@ -19,6 +19,7 @@ interface Character {
   artwork?: string;
   artworkScale?: string;
   defaultScale?: number;
+  artworkOffsetY?: string;
 }
 
 interface PlayerCardProps {
@@ -194,7 +195,7 @@ const PlayerCard = ({
             src={character.artwork || character.image}
             alt={character.name}
             className="w-full h-full object-contain opacity-90 border-0 shadow-none"
-            style={{ transform: `scale(${artworkScale})` }} />
+            style={{ transform: `scale(${artworkScale}) translateY(${character.artworkOffsetY || '0px'})` }} />
         </div>
 
 
