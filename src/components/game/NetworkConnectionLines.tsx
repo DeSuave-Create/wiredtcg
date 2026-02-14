@@ -1,11 +1,11 @@
 import { PlayerNetwork } from '@/types/game';
-import { useLayoutEffect, useState, RefObject } from 'react';
+import { useLayoutEffect, useState, useRef, RefObject, useId } from 'react';
 
 interface Line {
   from: { x: number; y: number };
   to: { x: number; y: number };
   type: 'internet-switch' | 'switch-cable' | 'cable-computer';
-  branchIndex: number; // which switch branch this belongs to
+  branchIndex: number;
 }
 
 const BRANCH_COLORS = [
@@ -42,6 +42,7 @@ function getTopCenter(element: Element, container: Element): { x: number; y: num
 export function NetworkConnectionLines({ network, containerRef }: NetworkConnectionLinesProps) {
   const [lines, setLines] = useState<Line[]>([]);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const filterId = useId().replace(/:/g, '_'); // Unique filter ID per instance
 
   useLayoutEffect(() => {
     const updateLines = () => {
@@ -92,18 +93,26 @@ export function NetworkConnectionLines({ network, containerRef }: NetworkConnect
       setLines(newLines);
     };
 
+    // Multiple update passes to catch layout settling
     updateLines();
     const resizeObserver = new ResizeObserver(updateLines);
     if (containerRef.current) resizeObserver.observe(containerRef.current);
-    const timeoutId = setTimeout(updateLines, 100);
+    
+    const t1 = setTimeout(updateLines, 50);
+    const t2 = setTimeout(updateLines, 200);
+    const t3 = setTimeout(updateLines, 500);
 
     return () => {
       resizeObserver.disconnect();
-      clearTimeout(timeoutId);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
     };
   }, [network, containerRef]);
 
   if (lines.length === 0) return null;
+
+  const glowId = `glow-${filterId}`;
 
   return (
     <svg
@@ -113,7 +122,7 @@ export function NetworkConnectionLines({ network, containerRef }: NetworkConnect
       style={{ overflow: 'visible' }}
     >
       <defs>
-        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+        <filter id={glowId} x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="2" result="coloredBlur" />
           <feMerge>
             <feMergeNode in="coloredBlur" />
@@ -128,7 +137,6 @@ export function NetworkConnectionLines({ network, containerRef }: NetworkConnect
         const strokeWidth = line.type === 'internet-switch' ? 3 : line.type === 'switch-cable' ? 2.5 : 2;
         const strokeDasharray = line.type === 'cable-computer' ? '4,3' : 'none';
 
-        // Bezier: drop vertically from parent, then curve to child
         const { from, to } = line;
         const midY = from.y + (to.y - from.y) * 0.5;
         const d = `M ${from.x} ${from.y} Q ${from.x} ${midY}, ${to.x} ${to.y}`;
@@ -143,7 +151,7 @@ export function NetworkConnectionLines({ network, containerRef }: NetworkConnect
             strokeWidth={strokeWidth}
             strokeDasharray={strokeDasharray}
             strokeLinecap="round"
-            filter="url(#glow)"
+            filter={`url(#${glowId})`}
           />
         );
       })}
