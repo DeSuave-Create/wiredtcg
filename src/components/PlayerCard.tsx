@@ -186,7 +186,7 @@ const PlayerCard = ({
         </div>
 
         {/* Score */}
-        <div className={`font-black ${isLeader ? 'text-[54px] text-yellow-600' : 'text-5xl text-red-500'}`}>
+        <div className={`font-black h-[60px] flex items-center justify-center ${isLeader ? 'text-[54px] text-yellow-600' : 'text-5xl text-red-500'}`}>
           {player.score}
         </div>
 
