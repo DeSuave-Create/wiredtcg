@@ -1,31 +1,41 @@
 
 
-# Fix Video Player Empty Space in VideoCarousel
+# Fix Video Thumbnail Previews
 
 ## Problem
-The video player on `/extras` shows a large white empty area below the video controls. This happens because:
-- `preload="none"` prevents the browser from fetching video metadata, so it doesn't know the video's dimensions
-- The video element collapses to near-zero height while the container (`bg-gray-100`) fills the remaining space with white
-- The carousel counter badge floats over empty white space
+The thumbnail navigation bar at the bottom of the video carousel shows the WIRED logo instead of actual video preview frames. This happens because:
+- No `thumbnail` property is set in the `tutorialVideos` array in `Extras.tsx`
+- The fallback in `VideoCarousel.tsx` (line 729) renders `<Logo>` when no thumbnail exists
 
 ## Solution
 
-### 1. Give the video container a fixed aspect ratio (`VideoCarousel.tsx`)
-- Add `aspect-video` (16:9) to the video container so it maintains proper dimensions even before the video loads
-- Change `preload="none"` to `preload="metadata"` -- this is a good middle ground: it fetches only a few KB of metadata (dimensions, duration) without downloading the full video file
-- Set the video element to fill the container with `w-full h-full object-cover`
-- Apply a dark background (`bg-black` or `bg-gray-900`) instead of `bg-gray-100` so the letterboxing matches the video aesthetic
+Generate thumbnails dynamically from each video's first frame using a small React hook that loads the video into a hidden `<video>` element, seeks to a frame, and captures it to a canvas as a data URL.
 
-### 2. Apply same fix to mobile/tablet video sections
-- The mobile video section (below line 550) uses the same pattern and needs the same aspect-ratio treatment
+### 1. Create a `useVideoThumbnail` hook (`src/hooks/useVideoThumbnail.ts`)
+- Accepts a video `src` URL and an optional `time` (default 1 second)
+- Creates a temporary `<video>` element off-screen
+- Sets `preload="metadata"`, seeks to the specified time
+- On `seeked` event, draws the frame to a `<canvas>` and returns the data URL
+- Returns `null` while loading, so the Logo fallback still shows briefly
 
-## Technical Details
+### 2. Update thumbnail rendering in `VideoCarousel.tsx` (lines 706-736)
+- Create a small `VideoThumbnail` sub-component that uses the hook
+- Replace the current fallback block so that when no `video.thumbnail` is provided, it auto-generates one from the video file
+- Keep the Logo as a loading placeholder while the thumbnail generates
 
-**File: `src/components/VideoCarousel.tsx`**
-- Line 500: Change `bg-gray-100` to `bg-black` on the video container
-- Add `aspect-video` class to ensure 16:9 ratio before video loads
-- Line 547: Change `preload="none"` to `preload="metadata"`
-- Line 546: Change `h-auto` to `h-full` and add `object-contain` so the video fills the aspect-ratio container
+### Technical Details
 
-These are small, targeted changes -- no structural modifications needed.
+**New file:** `src/hooks/useVideoThumbnail.ts`
+```
+- Creates hidden video element
+- Seeks to 1s, captures frame via canvas.toDataURL()
+- Returns the data URL string or null
+```
+
+**Modified file:** `src/components/VideoCarousel.tsx` (lines ~706-736)
+- Add a `VideoThumbnail` component that wraps each thumbnail button
+- Uses the hook to auto-generate previews from the MP4 source
+- Falls back to Logo while generating
+
+No changes needed to `Extras.tsx` -- thumbnails will be generated automatically from the existing video sources.
 
