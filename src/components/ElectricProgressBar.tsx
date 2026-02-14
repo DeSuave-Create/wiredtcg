@@ -1,5 +1,5 @@
 import { Cable, Monitor, Bitcoin } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import './ElectricProgressBar.css';
 
 interface Segment {
@@ -12,6 +12,7 @@ const ElectricProgressBar = () => {
   const [progress, setProgress] = useState(0);
   const [currentSegment, setCurrentSegment] = useState(0);
   const [poweredSegments, setPoweredSegments] = useState<Set<number>>(new Set());
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const segments: Segment[] = [
     { color: 'from-primary to-primary/80', icon: <Cable className="w-6 h-6" />, label: 'Connect' },
@@ -45,54 +46,82 @@ const ElectricProgressBar = () => {
   ];
 
   useEffect(() => {
-    const duration = 6000; // 6 seconds total
-    const pauseDuration = 1000; // 1 second pause before restart
-    let startTime = Date.now();
-    let isPaused = false;
-    let pauseStartTime = 0;
+    const el = containerRef.current;
+    if (!el) return;
 
-    const interval = setInterval(() => {
-      if (isPaused) {
-        if (Date.now() - pauseStartTime >= pauseDuration) {
-          // Restart
-          isPaused = false;
-          startTime = Date.now();
-          setProgress(0);
-          setCurrentSegment(0);
-          setPoweredSegments(new Set()); // Reset powered segments
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+
+    const startAnimation = () => {
+      if (intervalId) return;
+      const duration = 6000;
+      const pauseDuration = 1000;
+      let startTime = Date.now();
+      let isPaused = false;
+      let pauseStartTime = 0;
+
+      intervalId = setInterval(() => {
+        if (isPaused) {
+          if (Date.now() - pauseStartTime >= pauseDuration) {
+            isPaused = false;
+            startTime = Date.now();
+            setProgress(0);
+            setCurrentSegment(0);
+            setPoweredSegments(new Set());
+          }
+          return;
         }
-        return;
-      }
 
-      const elapsed = Date.now() - startTime;
-      const newProgress = Math.min((elapsed / duration) * 100, 100);
-      setProgress(newProgress);
-      
-      const segmentIndex = Math.min(
-        Math.floor((newProgress / 100) * segments.length),
-        segments.length - 1
-      );
-      setCurrentSegment(segmentIndex);
+        const elapsed = Date.now() - startTime;
+        const newProgress = Math.min((elapsed / duration) * 100, 100);
+        setProgress(newProgress);
+        
+        const segmentIndex = Math.min(
+          Math.floor((newProgress / 100) * segments.length),
+          segments.length - 1
+        );
+        setCurrentSegment(segmentIndex);
 
-      // Track which segments have been powered up
-      segments.forEach((_, index) => {
-        const segmentProgress = (index + 1) / segments.length * 100;
-        if (newProgress >= segmentProgress) {
-          setPoweredSegments(prev => new Set(prev).add(index));
+        segments.forEach((_, index) => {
+          const segmentProgress = (index + 1) / segments.length * 100;
+          if (newProgress >= segmentProgress) {
+            setPoweredSegments(prev => new Set(prev).add(index));
+          }
+        });
+
+        if (newProgress >= 100 && !isPaused) {
+          isPaused = true;
+          pauseStartTime = Date.now();
         }
-      });
+      }, 32);
+    };
 
-      if (newProgress >= 100 && !isPaused) {
-        isPaused = true;
-        pauseStartTime = Date.now();
+    const stopAnimation = () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
       }
-    }, 32); // Reduced update frequency from 16ms to 32ms for better Chrome performance
+    };
 
-    return () => clearInterval(interval);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          startAnimation();
+        } else {
+          stopAnimation();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      stopAnimation();
+    };
   }, []);
 
   return (
-    <div className="electric-progress-container">
+    <div ref={containerRef} className="electric-progress-container">
       <div className="electric-progress-bar">
         {/* WIRED Logo at start */}
         <div className="progress-logo">
@@ -114,7 +143,7 @@ const ElectricProgressBar = () => {
           ))}
         </div>
 
-        {/* Animated fill with electric effect - Multiple segments */}
+        {/* Animated fill with electric effect */}
         {segments.map((segment, index) => {
           const segmentProgress = getSegmentProgress(index);
           const segmentWidth = 100 / segments.length;

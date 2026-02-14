@@ -544,7 +544,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
               ref={videoRef}
               controls 
               className="w-full h-auto"
-              preload="metadata"
+              preload="none"
               onError={(e) => {
                 console.error('Video failed to load:', currentVideo.src);
               }}
@@ -686,7 +686,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
             ref={videoRef}
             controls 
             className="w-full h-auto"
-            preload="metadata"
+            preload="none"
             onError={(e) => {
               console.error('Video failed to load:', currentVideo.src);
             }}

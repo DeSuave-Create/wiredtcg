@@ -1,10 +1,14 @@
 
+import { useId } from 'react';
+
 interface LogoProps {
   className?: string;
   size?: number;
 }
 
 const Logo = ({ className = "", size = 32 }: LogoProps) => {
+  const filterId = useId();
+
   return (
     <div className="relative inline-block">
       <img 
@@ -13,14 +17,13 @@ const Logo = ({ className = "", size = 32 }: LogoProps) => {
         className={`animate-neon-flicker ${className}`}
         style={{ width: size, height: size }}
       />
-      {/* Lightning bolt effect - overlays the logo */}
       <svg 
         className="absolute top-0 left-0 pointer-events-none lightning-bolt"
         style={{ width: size, height: size }}
         viewBox="0 0 32 32"
       >
         <defs>
-          <filter id="glow">
+          <filter id={filterId}>
             <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
             <feMerge>
               <feMergeNode in="coloredBlur"/>
@@ -35,7 +38,7 @@ const Logo = ({ className = "", size = 32 }: LogoProps) => {
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          filter="url(#glow)"
+          filter={`url(#${filterId})`}
           className="bolt-path"
         />
       </svg>
