@@ -100,6 +100,9 @@ const SimulationLogContent = () => {
     respondToHeadHunterBattle,
     passHeadHunterBattle,
     aiDifficulty,
+    hasSavedGame,
+    loadSavedGame,
+    clearSavedGame,
   } = useGameEngine();
   
   const { currentEvent, triggerEvent, clearEvent } = useGameEventAnimation();
@@ -177,18 +180,27 @@ const SimulationLogContent = () => {
   };
 
   const handleStartGame = useCallback((difficulty: AIDifficulty) => {
+    clearSavedGame();
     initializeGame('You', difficulty);
     setShowDifficultySelector(false);
     setDecisionHistory([]);
     lastCaptureRef.current = '';
     toast.success(`Game started! AI difficulty: ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`);
-  }, [initializeGame]);
+  }, [initializeGame, clearSavedGame]);
+
+  const handleContinueGame = useCallback(() => {
+    if (loadSavedGame()) {
+      setShowDifficultySelector(false);
+      toast.success('Game resumed!');
+    }
+  }, [loadSavedGame]);
 
   const handleNewGame = useCallback(() => {
+    clearSavedGame();
     setShowDifficultySelector(true);
     setDecisionHistory([]);
     lastCaptureRef.current = '';
-  }, []);
+  }, [clearSavedGame]);
 
   useEffect(() => {
     if (!gameState && !showDifficultySelector && !showIntro) {
@@ -644,7 +656,15 @@ const SimulationLogContent = () => {
       <div className="min-h-screen flex flex-col bg-background relative">
         <div className={cn("fixed inset-0 bg-black z-40 pointer-events-none transition-opacity duration-700", isTransitioning ? 'opacity-100' : 'opacity-0')} onTransitionEnd={() => setIsTransitioning(false)} />
         <Header />
-        <div className="flex-grow flex items-center justify-center">
+        <div className="flex-grow flex flex-col items-center justify-center gap-4">
+          {hasSavedGame() && (
+            <Button
+              onClick={handleContinueGame}
+              className="px-8 py-3 bg-accent-green hover:bg-accent-green/80 text-black font-bold rounded-full text-lg"
+            >
+              Continue Game
+            </Button>
+          )}
           <DifficultySelector isOpen={showDifficultySelector} onSelect={handleStartGame} onClose={() => setShowDifficultySelector(false)} />
         </div>
         <Footer />

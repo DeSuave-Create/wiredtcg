@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { GameState, Player, Card, GamePhase, PlayerNetwork, SwitchNode, CableNode, PlacedCard, FloatingCable, AIAction, AuditBattle, HeadHunterBattle } from '@/types/game';
 import { buildDeck, shuffleDeck, dealCards } from '@/utils/deckBuilder';
 import { 
@@ -16,6 +16,7 @@ const MAX_HAND_SIZE = 6;
 const BASE_MOVES_PER_TURN = 3;
 const WINNING_SCORE = 25;
 const DECK_RESHUFFLE_THRESHOLD = 18; // 1/8 of 144-card deck
+const SAVE_KEY = 'wired-game-save';
 
 // Helper: Calculate base moves per turn (not including Field Tech equipment bonus)
 function getBaseMovesForPlayer(): number {
@@ -90,6 +91,59 @@ export function useGameEngine() {
   const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
   const [aiDifficulty, setAIDifficulty] = useState<AIDifficulty>('normal');
   const [aiDebugInfo, setAIDebugInfo] = useState<{ topActions: EvaluatedAction[]; reasoning: string[] } | null>(null);
+
+  // Auto-save game state to localStorage whenever it changes
+  useEffect(() => {
+    if (gameState && gameState.phase !== 'game-over') {
+      try {
+        const saveData = {
+          gameState,
+          aiDifficulty,
+          savedAt: Date.now(),
+        };
+        localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
+      } catch (e) {
+        console.warn('Failed to save game state:', e);
+      }
+    }
+  }, [gameState, aiDifficulty]);
+
+  // Check if a saved game exists
+  const hasSavedGame = useCallback((): boolean => {
+    try {
+      const saved = localStorage.getItem(SAVE_KEY);
+      if (!saved) return false;
+      const data = JSON.parse(saved);
+      return data.gameState && data.gameState.phase !== 'game-over';
+    } catch {
+      return false;
+    }
+  }, []);
+
+  // Load saved game
+  const loadSavedGame = useCallback((): boolean => {
+    try {
+      const saved = localStorage.getItem(SAVE_KEY);
+      if (!saved) return false;
+      const data = JSON.parse(saved);
+      if (!data.gameState || data.gameState.phase === 'game-over') return false;
+      
+      setGameState(data.gameState);
+      setAIDifficulty(data.aiDifficulty || 'normal');
+      setSelectedCard(null);
+      setSelectedTarget(null);
+      setAIDebugInfo(null);
+      return true;
+    } catch (e) {
+      console.warn('Failed to load saved game:', e);
+      return false;
+    }
+  }, []);
+
+  // Clear saved game
+  const clearSavedGame = useCallback(() => {
+    localStorage.removeItem(SAVE_KEY);
+  }, []);
 
   const initializeGame = useCallback((playerName: string = 'Player', difficulty: AIDifficulty = 'normal') => {
     // Reset AI memory for new game
@@ -2141,7 +2195,7 @@ export function useGameEngine() {
             players: newPlayers,
             drawPile: newDrawPile,
             discardPile: newDiscardPile,
-            phase: 'game-over',
+            phase: 'game-over' as const,
             winner: newPlayers[prev.currentPlayerIndex],
             gameLog: [
               ...prev.gameLog.slice(-19),
@@ -3734,5 +3788,8 @@ export function useGameEngine() {
     passHeadHunterBattle,
     aiDifficulty,
     aiDebugInfo,
+    hasSavedGame,
+    loadSavedGame,
+    clearSavedGame,
   };
 }

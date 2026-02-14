@@ -93,6 +93,9 @@ const SimulationContent = () => {
     respondToHeadHunterBattle,
     passHeadHunterBattle,
     aiDifficulty,
+    hasSavedGame,
+    loadSavedGame,
+    clearSavedGame,
   } = useGameEngine();
   
   // Animation hook for game events
@@ -180,15 +183,24 @@ const SimulationContent = () => {
 
   // Start new game with selected difficulty
   const handleStartGame = useCallback((difficulty: AIDifficulty) => {
+    clearSavedGame();
     initializeGame('You', difficulty);
     setShowDifficultySelector(false);
     toast.success(`Game started! AI difficulty: ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`);
-  }, [initializeGame]);
+  }, [initializeGame, clearSavedGame]);
+
+  const handleContinueGame = useCallback(() => {
+    if (loadSavedGame()) {
+      setShowDifficultySelector(false);
+      toast.success('Game resumed!');
+    }
+  }, [loadSavedGame]);
 
   // Handle new game button click
   const handleNewGame = useCallback(() => {
+    clearSavedGame();
     setShowDifficultySelector(true);
-  }, []);
+  }, [clearSavedGame]);
 
   // Navigate to home if difficulty selector is closed without starting a game
   useEffect(() => {
@@ -1225,7 +1237,15 @@ const SimulationContent = () => {
         />
         
         <Header />
-        <div className="flex-grow flex items-center justify-center">
+        <div className="flex-grow flex flex-col items-center justify-center gap-4">
+          {hasSavedGame() && (
+            <Button
+              onClick={handleContinueGame}
+              className="px-8 py-3 bg-accent-green hover:bg-accent-green/80 text-black font-bold rounded-full text-lg"
+            >
+              Continue Game
+            </Button>
+          )}
           <DifficultySelector
             isOpen={showDifficultySelector}
             onSelect={handleStartGame}
