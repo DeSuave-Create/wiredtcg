@@ -186,11 +186,11 @@ const PlayerCard = ({
         </div>
 
         {/* Classification artwork */}
-        <div className="flex-1 flex items-center justify-center w-full overflow-hidden p-2">
+        <div className="flex-1 flex items-center justify-center w-full overflow-hidden p-0">
           <img
             src={character.artwork || character.image}
             alt={character.name}
-            className="max-w-full max-h-full object-contain opacity-90 border-0 shadow-none"
+            className="w-full h-full object-contain opacity-90 border-0 shadow-none scale-125"
           />
         </div>
 
