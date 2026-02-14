@@ -116,7 +116,7 @@ const ProductsSection = () => {
 
               {/* Title */}
               <div className="mb-4 mt-6 flex items-center justify-center">
-                <h2 className={`text-xl font-black text-center tracking-wider uppercase leading-tight font-sans ${cardStyles.titleColor}`}>
+                <h2 className={`text-[36px] font-black text-center tracking-wider uppercase leading-tight font-sans ${cardStyles.titleColor}`}>
                   {product.name}
                 </h2>
               </div>
