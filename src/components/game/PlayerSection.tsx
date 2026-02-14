@@ -119,7 +119,7 @@ export function PlayerSection({
         {/* Network Board - with score in top right corner */}
         <div className={cn(
           "relative",
-          isMobile ? "min-h-[200px] overflow-x-auto" : "min-h-[300px] overflow-visible"
+          isMobile ? "min-h-[300px] overflow-x-auto" : "min-h-[420px] overflow-visible"
         )}>
           {/* Score Badge - Top Right Corner */}
           <div className={cn(

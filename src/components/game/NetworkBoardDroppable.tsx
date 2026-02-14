@@ -108,11 +108,11 @@ export function NetworkBoardDroppable({
         {/* Row 2: All Switches */}
         <div className={cn(
           "flex items-center justify-center gap-2",
-          isMobile ? "h-[70px] overflow-x-auto py-1" : "h-[80px] py-2"
+          isMobile ? "h-[85px] overflow-x-auto py-1" : "h-[100px] py-2"
         )}>
           {network.switches.length > 0 ? (
             <div className={cn(
-              "flex gap-10",
+              "flex gap-14",
               isMobile && "flex-nowrap min-w-min px-2"
             )}>
               {network.switches.map((sw) => (
@@ -137,11 +137,11 @@ export function NetworkBoardDroppable({
         {/* Row 3: All Cables */}
         <div className={cn(
           "flex items-center justify-center gap-2",
-          isMobile ? "h-[70px] overflow-x-auto py-1" : "h-[80px] py-2"
+          isMobile ? "h-[85px] overflow-x-auto py-1" : "h-[100px] py-2"
         )}>
           {allCables.length > 0 ? (
             <div className={cn(
-              "flex gap-10",
+              "flex gap-14",
               isMobile && "flex-nowrap min-w-min px-2"
             )}>
               {allCables.map(({ cable, parentSwitchId }) => (
@@ -167,11 +167,11 @@ export function NetworkBoardDroppable({
         {/* Row 4: All Computers */}
         <div className={cn(
           "flex items-center justify-center gap-2",
-          isMobile ? "h-[70px] overflow-x-auto py-1" : "h-[80px] py-2"
+          isMobile ? "h-[85px] overflow-x-auto py-1" : "h-[100px] py-2"
         )}>
           {allComputers.length > 0 ? (
             <div className={cn(
-              "flex gap-10",
+              "flex gap-14",
               isMobile && "flex-nowrap min-w-min px-2"
             )}>
               {allComputers.map(({ computer, parentCableId }) => (
@@ -198,7 +198,7 @@ export function NetworkBoardDroppable({
       {/* Row 5: Unconnected Equipment Section - Always visible with 3 rows of space */}
       <div className={cn(
         "relative z-10",
-        isMobile ? "mt-1 pt-1 h-[165px]" : "mt-2 pt-2 h-[200px]"
+        isMobile ? "mt-1 pt-1 h-[165px]" : "mt-2 pt-2 h-[220px]"
       )}>
         <div className="flex items-center gap-1 text-muted-foreground mb-1 text-[10px]">
           <Unplug className="w-3 h-3" />
