@@ -132,6 +132,52 @@ function generateBuildActions(boardState: BoardState, aiPlayer: Player): Evaluat
     });
   }
   
+  // Audited computers - same placements as hand computers, with utility bonus
+  for (let auditIdx = 0; auditIdx < aiPlayer.auditedComputers.length; auditIdx++) {
+    const computerCard = aiPlayer.auditedComputers[auditIdx];
+    
+    // PRIORITY: Cables on enabled switches with slots
+    for (const sw of network.switches) {
+      if (sw.isDisabled) continue;
+      
+      for (const cable of sw.cables) {
+        if (!cable.isDisabled && cable.computers.length < cable.maxComputers) {
+          actions.push({
+            type: 'play_computer',
+            card: computerCard,
+            targetId: cable.id,
+            utility: 8, // Bonus: audited computers don't cost a draw
+            reasoning: 'Play AUDITED computer to enabled cable (SCORES IMMEDIATELY, FREE)',
+            risk: 0,
+          });
+        }
+      }
+    }
+    
+    // Floating cables with slots
+    for (const cable of network.floatingCables) {
+      if (!cable.isDisabled && cable.computers.length < cable.maxComputers) {
+        actions.push({
+          type: 'play_computer',
+          card: computerCard,
+          targetId: cable.id,
+          utility: 5, // Bonus for audited
+          reasoning: 'Play AUDITED computer to floating cable (FREE)',
+          risk: 0,
+        });
+      }
+    }
+    
+    // Play as floating computer
+    actions.push({
+      type: 'play_computer',
+      card: computerCard,
+      utility: 3, // Small bonus for audited
+      reasoning: 'Play AUDITED computer as floating (FREE)',
+      risk: 0,
+    });
+  }
+  
   // 2) BUILD_FROM_FLOATING_POOL - Already floating equipment
   // (These are handled in REROUTE as connecting floating items)
   

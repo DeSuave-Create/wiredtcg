@@ -2831,7 +2831,13 @@ export function useGameEngine() {
                 isDisabled: false,
               };
               
-              currentPlayer.hand = hand.filter(c => c.id !== card.id);
+              // Check if this computer comes from auditedComputers
+              const isFromAudited = currentPlayer.auditedComputers.some(c => c.id === card.id);
+              if (isFromAudited) {
+                currentPlayer.auditedComputers = currentPlayer.auditedComputers.filter(c => c.id !== card.id);
+              } else {
+                currentPlayer.hand = hand.filter(c => c.id !== card.id);
+              }
               
               // Find cable with space on enabled switch
               let placed = false;
