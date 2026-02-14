@@ -8,8 +8,9 @@ import { Plus, Minus, Trash2, CreditCard, ShoppingCart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface CartItem {
-  id: number;
+  id: string | number;
   name: string;
+  price: number;
   quantity: number;
   image: string;
 }
@@ -34,7 +35,7 @@ const ShoppingCartPage = () => {
     return 'border-green-600';
   };
 
-  const updateQuantity = (id: number, change: number) => {
+  const updateQuantity = (id: string | number, change: number) => {
     setCartItems(items =>
       items.map(item =>
         item.id === id
@@ -44,7 +45,7 @@ const ShoppingCartPage = () => {
     );
   };
 
-  const removeItem = (id: number) => {
+  const removeItem = (id: string | number) => {
     setCartItems(items => items.filter(item => item.id !== id));
   };
 
@@ -60,6 +61,7 @@ const ShoppingCartPage = () => {
   };
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = cartItems.reduce((sum, item) => sum + (item.price || 0) * item.quantity, 0);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -111,6 +113,7 @@ const ShoppingCartPage = () => {
                           />
                           <div className="flex-1">
                             <h3 className="font-semibold text-green-600">{item.name}</h3>
+                            <p className="text-sm text-muted-foreground">${(item.price || 0).toFixed(2)} each</p>
                           </div>
                           <div className="flex items-center space-x-2">
                             <Button
@@ -155,10 +158,14 @@ const ShoppingCartPage = () => {
               <div className="lg:col-span-1">
                 <ContentSection title="Order Summary">
                   <div className="space-y-4">
-                    <div className="border-t border-primary/20 pt-4">
+                    <div className="border-t border-primary/20 pt-4 space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Items:</span>
+                        <span>{totalItems}</span>
+                      </div>
                       <div className="flex justify-between text-lg font-bold">
-                        <span className="text-green-600">Items in Cart:</span>
-                        <span className="text-green-600">{totalItems}</span>
+                        <span className="text-green-600">Total:</span>
+                        <span className="text-green-600">${totalPrice.toFixed(2)}</span>
                       </div>
                     </div>
 
