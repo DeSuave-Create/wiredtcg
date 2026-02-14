@@ -24,6 +24,7 @@ const BotnetInstructions = lazy(() => import("./pages/BotnetInstructions"));
 const Simulation = lazy(() => import("./pages/Simulation"));
 const SimulationLog = lazy(() => import("./pages/SimulationLog"));
 const AdminProducts = lazy(() => import("./pages/AdminProducts"));
+const AdminArtwork = lazy(() => import("./pages/AdminArtwork"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -52,6 +53,7 @@ const App = () => (
               <Route path="/simulation" element={<Simulation />} />
               <Route path="/simulation-log" element={<SimulationLog />} />
               <Route path="/admin/products" element={<AdminProducts />} />
+              <Route path="/admin/artwork" element={<AdminArtwork />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>

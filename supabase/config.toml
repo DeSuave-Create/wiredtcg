@@ -1,1 +1,4 @@
 project_id = "ptygikixnrdpleyntwrj"
+
+[functions.generate-toc-art]
+verify_jwt = false
