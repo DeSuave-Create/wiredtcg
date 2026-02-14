@@ -15,7 +15,7 @@ interface Player {
 
 const characters = [
   { id: 'security-specialist', name: 'Security Specialist', icon: '🛡️', image: '/lovable-uploads/classification-security.png', artwork: '/lovable-uploads/artwork-security.png' },
-  { id: 'facilities', name: 'Facilities', icon: '⚡', image: '/lovable-uploads/classification-facilities-new.png', artwork: '/lovable-uploads/artwork-facilities.png' },
+  { id: 'facilities', name: 'Facilities', icon: '⚡', image: '/lovable-uploads/classification-facilities-new.png', artwork: '/lovable-uploads/artwork-facilities.png', artworkScale: 'scale-[1.8]' },
   { id: 'supervisor', name: 'Supervisor', icon: '👔', image: '/lovable-uploads/classification-supervisor.png', artwork: '/lovable-uploads/artwork-supervisor.png' },
   { id: 'field-tech', name: 'Field Tech', icon: '🔧', image: '/lovable-uploads/classification-fieldtech-new.png', artwork: '/lovable-uploads/artwork-fieldtech.png' },
   { id: 'headhunter', name: 'Headhunter', icon: '🎯', image: '/lovable-uploads/classification-headhunter.png', artwork: '/lovable-uploads/artwork-headhunter.png' },
