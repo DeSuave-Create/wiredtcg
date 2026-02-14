@@ -1,25 +1,69 @@
 
 
-## Rename `/cart` route to `/shop`
+## Fix AI Freeze After Floating Equipment Attacks/Audit + Cable Placement Prompt
 
-This is a simple find-and-replace across 3 files. Button text like "Add to Cart" and localStorage keys like `cartItems` will stay unchanged.
+Three bugs need to be fixed in `src/hooks/useGameEngine.ts` and one in `src/pages/SimulationLog.tsx`.
 
-### Changes
+---
 
-**1. `src/App.tsx`**
-- Change route path from `/cart` to `/shop`
+### Bug 1: AI cannot resolve issues on floating equipment
 
-**2. `src/components/Footer.tsx`**
-- Change link from `/cart` to `/shop`
-- Change link text from "View Cart" to "View Shop"
+**Root cause**: `findResolutionTarget` (line 2275) only searches `aiNetwork.switches` and their nested cables/computers. It never checks `floatingCables`, computers on floating cables, or `floatingComputers`. When the AI's floating equipment is attacked, the AI generates a valid `play_resolution` action but execution fails because the target isn't found, causing consecutive failures until the AI freezes.
 
-**3. `src/pages/ShoppingCart.tsx`**
-- Change `handleContinueShopping` URL from `/cart` to `/shop`
+**Fix in `useGameEngine.ts`**:
 
-### Technical Details
+1. Expand the return type of `findResolutionTarget` to include `'floatingCable' | 'floatingComputer'` with a `floatingIndex` field.
+2. After the existing switch loop, add searches through:
+   - `aiNetwork.floatingCables` and their `attachedIssues`
+   - Computers on floating cables
+   - `aiNetwork.floatingComputers` and their `attachedIssues`
+3. Expand `applyResolution` (line 2332) to handle the new floating target types -- remove issues and update `isDisabled`.
+4. Update the `play_resolution` case (line 2456) to extract `issueBeingFixed` from floating targets.
 
-- Only 3 files need editing, each with a single-line change
-- The page component file `src/pages/Cart.tsx` keeps its filename (optional rename, but not required for functionality)
-- All internal logic (`cartItems`, `localStorage`, "Add to Cart" buttons) stays as-is per your request
-- The Header nav does not link to `/cart`, so no change needed there
+---
+
+### Bug 2: AI cannot attack floating equipment
+
+**Root cause**: `findAttackTarget` (line 2250) also only searches connected switches. If the human only has floating equipment, the AI can't find any attack targets.
+
+**Fix in `useGameEngine.ts`**:
+
+1. Extend `findAttackTarget` to also search `humanNetwork.floatingCables` and `humanNetwork.floatingComputers`.
+2. Extend `applyAttack` (line 2311) to handle floating target types.
+
+---
+
+### Bug 3: AI cannot execute audit attacks
+
+**Root cause**: The AI action generator produces `start_audit` actions, but there is no `case 'start_audit'` handler in the `executeAITurn` switch statement (falls through to `default` which does nothing).
+
+**Fix in `useGameEngine.ts`**:
+
+Add a `case 'start_audit'` handler before the `default` case (~line 2970) that:
+- Finds the audit card in the AI's hand
+- Removes it from hand
+- Counts the human player's computers
+- Calculates `computersToReturn` (1 per 2 computers, minimum 1)
+- Sets game phase to `'audit'` with an `auditBattle` object
+- Pushes to `aiActions` and `gameLog`
+- Breaks out of the AI turn loop to let the audit resolution flow handle the rest
+
+---
+
+### Bug 4: Cable placement doesn't prompt to connect floating computers
+
+**Root cause**: In `SimulationLog.tsx` (lines 491-501), `gameState.players[0]` is read from the closure's `gameState`, which is the state snapshot from the current render -- before `playCable`'s `setGameState` has been applied. The floating computer check reads stale data.
+
+**Fix in `SimulationLog.tsx`**:
+
+Use `setTimeout(() => { ... }, 0)` to defer the floating computer check until after React has processed the state update from `playCable`. Inside the timeout, read the latest state via a ref or by checking the `playCable` result directly. Apply this fix to all three places where `setConnectDialog` is triggered after cable placement (lines 498, 513, and the similar block around line 520).
+
+---
+
+### Summary of file changes
+
+| File | Changes |
+|------|---------|
+| `src/hooks/useGameEngine.ts` | Extend `findResolutionTarget`, `applyResolution`, `findAttackTarget`, and `applyAttack` to handle floating equipment. Add `case 'start_audit'` handler. |
+| `src/pages/SimulationLog.tsx` | Defer floating computer dialog check after cable placement using `setTimeout`. |
 
