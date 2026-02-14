@@ -161,7 +161,7 @@ const PlayerCard = ({
               className={`text-[26px] font-black tracking-wide rounded-xl text-center justify-center bg-transparent ${colors.text} uppercase h-auto py-1 hover:underline cursor-pointer [&>span]:truncate w-full whitespace-nowrap`}
               style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
             >
-              <SelectValue />
+              <SelectValue>{character.name}</SelectValue>
             </SelectTrigger>
             <SelectContent className="bg-gray-800 border-gray-600">
               {characters.map((char) =>
