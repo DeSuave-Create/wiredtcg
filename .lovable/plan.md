@@ -1,29 +1,25 @@
 
 
-## Fix Facilities Artwork Size to Match Other Characters
+## Rename `/cart` route to `/shop`
 
-### Problem
-The Facilities character artwork appears much smaller than other characters (like Security Specialist) on the player card. This is because the source image file has excessive transparent/empty space surrounding the stick figure and lightbulb, making it look smaller when displayed at the same scale as other artwork.
+This is a simple find-and-replace across 3 files. Button text like "Add to Cart" and localStorage keys like `cartItems` will stay unchanged.
 
-### Solution
-Apply per-character scaling so that each artwork fills its card area consistently, rather than using a single universal scale for all characters.
+### Changes
 
-### Implementation
+**1. `src/App.tsx`**
+- Change route path from `/cart` to `/shop`
 
-**File: `src/components/ScoreKeeper.tsx`**
-- Add an optional `artworkScale` property to each character definition
-- Set a larger scale value for Facilities (e.g., `scale-[1.8]` or `scale-[2]`) while keeping the default `scale-125` for others
+**2. `src/components/Footer.tsx`**
+- Change link from `/cart` to `/shop`
+- Change link text from "View Cart" to "View Shop"
 
-**File: `src/components/PlayerCard.tsx`**
-- Accept the `artworkScale` class from the character data
-- Apply the per-character scale class to the artwork image instead of the hardcoded `scale-125`
+**3. `src/pages/ShoppingCart.tsx`**
+- Change `handleContinueShopping` URL from `/cart` to `/shop`
 
 ### Technical Details
 
-1. Update the `Character` interface in both files to include an optional `artworkScale` string field
-2. In `ScoreKeeper.tsx`, add `artworkScale: 'scale-[1.8]'` to the Facilities character entry; other characters keep `scale-125` as default
-3. In `PlayerCard.tsx`, replace the hardcoded `scale-125` class with `{character.artworkScale || 'scale-125'}` on the artwork image element
-4. Fine-tune the exact scale value for Facilities after visual testing
-
-This approach is clean and extensible -- if any future character artwork also needs size adjustments, it can be handled per-character without affecting others.
+- Only 3 files need editing, each with a single-line change
+- The page component file `src/pages/Cart.tsx` keeps its filename (optional rename, but not required for functionality)
+- All internal logic (`cartItems`, `localStorage`, "Add to Cart" buttons) stays as-is per your request
+- The Header nav does not link to `/cart`, so no change needed there
 
