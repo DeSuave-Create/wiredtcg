@@ -107,9 +107,9 @@ export function NetworkBoardDroppable({
                   onMobilePlacement={onMobilePlacement}
                 />
                 
-                {/* Cables under this switch */}
+                {/* Cables under this switch - laid out horizontally */}
                 {sw.cables.length > 0 ? (
-                  <div className="flex flex-col items-center gap-6">
+                  <div className="flex gap-6 justify-center">
                     {sw.cables.map((cable) => (
                       <div key={cable.id} className="flex flex-col items-center gap-4">
                         {/* Cable */}
