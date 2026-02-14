@@ -497,7 +497,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
         </div>
 
         {/* Desktop Center Video Player */}
-        <div className="lg:col-span-8 relative bg-gray-100 border-green-600 border-2 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg">
+        <div className="lg:col-span-8 relative bg-black border-green-600 border-2 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg aspect-video">
           {/* Navigation Buttons */}
           <button
             onClick={handlePrevious}
@@ -543,8 +543,8 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
               key={currentVideo.src}
               ref={videoRef}
               controls 
-              className="w-full h-auto"
-              preload="none"
+              className="w-full h-full object-contain"
+              preload="metadata"
               onError={(e) => {
                 console.error('Video failed to load:', currentVideo.src);
               }}
@@ -639,7 +639,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
       </div>
 
       {/* Mobile: Video Player */}
-      <div className="lg:hidden relative bg-gray-100 border-green-600 border-2 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg z-10">
+      <div className="lg:hidden relative bg-black border-green-600 border-2 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg z-10 aspect-video">
         {/* Navigation Buttons */}
         <button
           onClick={handlePrevious}
@@ -685,8 +685,8 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
             key={currentVideo.src}
             ref={videoRef}
             controls 
-            className="w-full h-auto"
-            preload="none"
+            className="w-full h-full object-contain"
+            preload="metadata"
             onError={(e) => {
               console.error('Video failed to load:', currentVideo.src);
             }}
