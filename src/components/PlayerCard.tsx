@@ -130,7 +130,7 @@ const PlayerCard = ({
             </Button>
             <div className="flex flex-col items-center min-w-[35px]">
               <Bitcoin className="h-3 w-3 text-yellow-400" />
-              <div className={`text-sm font-bold text-red-500 leading-none ${isLeader ? 'animate-pulse-bitcoin' : ''}`} style={leaderGlow}>{player.score}</div>
+              <div className={`text-sm font-bold text-red-500 leading-none`}>{player.score}</div>
             </div>
             <Button onClick={() => onUpdateScore(player.id, 1)} variant="ghost" size="sm" className="text-blue-400 hover:bg-gray-700 h-7 w-7 p-0" type="button">
               <Plus className="h-3 w-3" />
@@ -186,7 +186,7 @@ const PlayerCard = ({
         </div>
 
         {/* Score */}
-        <div className={`text-5xl font-black text-red-500 ${isLeader ? 'animate-pulse-bitcoin' : ''}`} style={leaderGlow}>
+        <div className={`text-5xl font-black text-red-500`}>
           {player.score}
         </div>
 
