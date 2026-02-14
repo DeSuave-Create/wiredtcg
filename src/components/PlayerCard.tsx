@@ -17,6 +17,7 @@ interface Character {
   icon: string;
   image: string;
   artwork?: string;
+  artworkScale?: string;
 }
 
 interface PlayerCardProps {
@@ -190,7 +191,7 @@ const PlayerCard = ({
           <img
             src={character.artwork || character.image}
             alt={character.name}
-            className="w-full h-full object-contain opacity-90 border-0 shadow-none scale-100" />
+            className={`w-full h-full object-contain opacity-90 border-0 shadow-none ${character.artworkScale || 'scale-125'}`} />
 
         </div>
 
