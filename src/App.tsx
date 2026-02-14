@@ -19,6 +19,7 @@ import AIInstructions from "./pages/AIInstructions";
 import BotnetInstructions from "./pages/BotnetInstructions";
 import Simulation from "./pages/Simulation";
 import SimulationLog from "./pages/SimulationLog";
+import AdminProducts from "./pages/AdminProducts";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,6 +46,7 @@ const App = () => (
             <Route path="/botnet-instructions" element={<BotnetInstructions />} />
             <Route path="/simulation" element={<Simulation />} />
             <Route path="/simulation-log" element={<SimulationLog />} />
+            <Route path="/admin/products" element={<AdminProducts />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
