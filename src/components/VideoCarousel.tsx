@@ -1,6 +1,40 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import Logo from './Logo';
+import { useVideoThumbnail } from '@/hooks/useVideoThumbnail';
+
+const VideoThumbnailButton = ({ video, index, isActive, onClick }: {
+  video: Video;
+  index: number;
+  isActive: boolean;
+  onClick: () => void;
+}) => {
+  const generatedThumb = useVideoThumbnail(!video.isYouTube && !video.thumbnail ? video.src : '', 1);
+  const thumbSrc = video.thumbnail || generatedThumb;
+
+  return (
+    <button
+      onClick={onClick}
+      className={`flex-shrink-0 relative rounded-2xl overflow-hidden transition-all ${
+        isActive
+          ? 'border-4 border-green-600 neon-glow scale-105'
+          : 'border-2 border-gray-300 hover:border-green-600 opacity-70 hover:opacity-100'
+      }`}
+      style={{ width: '120px', height: '80px' }}
+    >
+      <div className="w-full h-full flex items-center justify-center bg-black">
+        {thumbSrc ? (
+          <img src={thumbSrc} alt={video.title} className="w-full h-full object-cover" />
+        ) : (
+          <Logo size={30} />
+        )}
+      </div>
+      <div className="absolute bottom-0 left-0 right-0 bg-green-600/90 text-white text-xs px-2 py-1 truncate">
+        Video {index + 1}
+      </div>
+    </button>
+  );
+};
 
 interface Video {
   id: string;
@@ -705,34 +739,16 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
       {/* Thumbnail Navigation */}
       <div className="flex gap-3 overflow-x-auto pb-2 justify-center relative z-10">
         {videos.map((video, index) => (
-          <button
+          <VideoThumbnailButton
             key={video.id}
+            video={video}
+            index={index}
+            isActive={index === currentIndex}
             onClick={() => {
               setCurrentIndex(index);
               setIsPlaying(false);
             }}
-            className={`flex-shrink-0 relative bg-gray-100 rounded-2xl overflow-hidden transition-all ${
-              index === currentIndex
-                ? 'border-4 border-green-600 neon-glow scale-105'
-                : 'border-2 border-gray-300 hover:border-green-600 opacity-70 hover:opacity-100'
-            }`}
-            style={{ width: '120px', height: '80px' }}
-          >
-            <div className="w-full h-full flex items-center justify-center bg-gray-200">
-              {video.thumbnail ? (
-                <img 
-                  src={video.thumbnail} 
-                  alt={video.title}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <Logo size={30} />
-              )}
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 bg-green-600/90 text-white text-xs px-2 py-1 truncate">
-              Video {index + 1}
-            </div>
-          </button>
+          />
         ))}
       </div>
     </div>
