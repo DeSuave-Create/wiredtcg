@@ -1,64 +1,86 @@
 
 
-# Generate WIRED Kickstarter TOC Artwork -- Admin Page
+# Electric Progress Stepper Redesign
 
 ## Overview
-Create a new `/admin/artwork` page (password-protected like `/admin/products`) with an edge function that generates a cyberpunk/neon table of contents image using the Lovable AI image generation model. The page will display the generated artwork and allow downloading it.
+Replace the current `ElectricProgressBar` with a completely new node-based stepper that feels like electricity flowing between circuit nodes. No progress bars, no buttons -- just 4 circular nodes connected by SVG lightning arcs that fire sequentially.
 
-## What Gets Built
+## Visual Design
 
-### 1. Edge Function: `generate-toc-art`
-- Uses `google/gemini-2.5-flash-image` model via `https://ai.gateway.lovable.dev/v1/chat/completions`
-- Authenticated with `x-admin-password` header (same pattern as `admin-products`)
-- Sends a detailed image generation prompt that references WIRED's cyberpunk aesthetic and includes:
-  - TOC sections: Welcome to WIRED, How to Play, What's in the Box, Game Modes, Reward Tiers, Add-Ons, Stretch Goals
-  - Art direction: dark background, neon green/blue/purple glows, circuit board traces, network cables
-  - References to the classification character artwork (Security Specialist, Headhunter, Field Tech, Facilities Manager, Auditor, Supervisor) -- described in the prompt so the AI creates characters inspired by them
-  - Playing card elements woven through the design
-- Returns the base64 image data to the client
+```text
+  [WIRED]----⚡----[Connect]----⚡----[Plan]----⚡----[Mine]
+     o                o                 o               o
+   (logo)          (cable)          (monitor)       (bitcoin)
+```
 
-### 2. New Page: `src/pages/AdminArtwork.tsx`
-- Password-protected login screen (reuses the same admin password pattern from AdminProducts)
-- "Generate Artwork" button that calls the edge function
-- Loading state with progress indication while generating
-- Displays the generated image full-size
-- "Download" button that saves the image as a PNG file
-- "Regenerate" button to try again if the result needs iteration
-- Shows thumbnails of available character artwork assets for reference
+- Dark background section with subtle radial bloom behind active node
+- Cyan/teal energy palette (not neon green/red/yellow)
+- Circular nodes: thin ring border, soft inner glow, icon centered inside
+- Dim inactive nodes, softly glowing completed nodes, bright pulsing active node
 
-### 3. Route Registration
-- Add `/admin/artwork` route to `App.tsx` (lazy-loaded, not in navbar)
+## Animation Sequence (loops every ~7.2s)
 
-### 4. Config Update
-- Add `generate-toc-art` function to `supabase/config.toml` with `verify_jwt = false`
+1. **Node 1 (WIRED)** starts active and glowing (0s)
+2. **Lightning arc 1→2** fires at 1.8s: jagged SVG bolt travels from node 1 to node 2 over ~400ms
+3. **Node 2 (Connect)** charges up: spark particles eject, glow expands, micro-jitter, radial bloom shifts
+4. **Lightning arc 2→3** fires at 3.6s: same effect
+5. **Node 3 (Plan)** charges up
+6. **Lightning arc 3→4** fires at 5.4s
+7. **Node 4 (Mine)** charges up
+8. Pause 1.8s, then reset and loop
 
-## Available Assets Referenced in Prompt
-The prompt will describe characters inspired by these existing assets:
-- `artwork-security.png`, `artwork-headhunter.png`, `artwork-fieldtech.png`
-- `artwork-facilities.png`, `artwork-auditor.png`, `artwork-supervisor.png`
-- Card images: `classification-*`, `attack-*`, `resolution-*`, `equipment-*`
+## Lightning Bolt Implementation
 
-Note: The AI image model cannot directly use these images as input in a text-only prompt, but the prompt will describe the cyberpunk character styles so the generated art matches the WIRED aesthetic. For higher fidelity, the page will also display the existing character art alongside the generated TOC so you can composite them in a design tool if needed.
+- SVG overlay positioned between each pair of nodes
+- Jagged path generated with randomized midpoints (6-8 segments with vertical offsets)
+- Path re-randomized on each cycle for organic feel
+- Animated with `stroke-dasharray` + `stroke-dashoffset` for the "traveling" effect
+- Cyan glow via SVG filter (`feGaussianBlur` + `feComposite`)
+- Lightning visible ONLY during the ~400ms transition window
 
-## Technical Details
+## Spark Particles
 
-### Edge Function (`supabase/functions/generate-toc-art/index.ts`)
-- CORS headers included
-- Admin password check via `x-admin-password` header
-- Calls Lovable AI gateway with `modalities: ["image", "text"]`
-- Returns `{ image: "data:image/png;base64,..." }` on success
-- Handles 429/402 rate limit errors
+- 6-8 tiny circles ejected radially from destination node when lightning lands
+- Each particle: random angle, random distance (20-40px), fades out over 300ms
+- CSS animations with randomized `--angle` and `--distance` custom properties
 
-### Frontend Page (`src/pages/AdminArtwork.tsx`)
-- Same Header/Footer/ContentSection layout as AdminProducts
-- Password state stored in component (same UX as AdminProducts)
-- Uses `fetch` to call the edge function
-- Download implemented via creating an `<a>` element with `download` attribute
-- Shows existing character artwork cards in a gallery section for reference
+## Node States
 
-### Files Changed
-- **New**: `supabase/functions/generate-toc-art/index.ts`
-- **New**: `src/pages/AdminArtwork.tsx`
-- **Modified**: `src/App.tsx` -- add lazy route for `/admin/artwork`
-- **Modified**: `supabase/config.toml` -- add function config
+| State | Visual |
+|-------|--------|
+| Inactive | Dim ring, no glow, muted icon color |
+| Active (charging) | Bright ring, expanding glow, micro-jitter animation, radial bloom behind |
+| Completed | Soft steady glow, full opacity icon, thin bright ring |
+
+## Files Changed
+
+### Modified: `src/components/ElectricProgressBar.tsx`
+Complete rewrite:
+- 4 steps: WIRED (logo), Connect (Cable icon), Plan (Monitor icon), Mine (Bitcoin icon)
+- State: `activeStep` (0-3), `transitioning` (boolean), `completedSteps` Set
+- `useEffect` timer: advances every 1.8s, resets after all complete + pause
+- SVG overlay between nodes for lightning bolts
+- `generateLightningPath()` utility: creates jagged SVG path with random vertical offsets
+- Spark particle component rendered on charge-up
+- IntersectionObserver to pause when off-screen (kept from current)
+
+### Modified: `src/components/ElectricProgressBar.css`
+Complete rewrite with:
+- Node styling (`.stepper-node`, `.node-ring`, `.node-icon`)
+- Glow/bloom keyframes (`@keyframes node-charge`, `@keyframes node-bloom`)
+- Micro-jitter animation (`@keyframes micro-jitter` -- subtle 1-2px random translate)
+- Spark particle animation (`@keyframes spark-eject`)
+- Lightning glow filter styles
+- Responsive adjustments for mobile
+- Cyan/teal color variables throughout
+
+### No other files change
+The component name and import path stay the same (`ElectricProgressBar`), so all 7 pages using it automatically get the new stepper.
+
+## Technical Notes
+- Lightning path randomization uses `Math.random()` seeded per cycle for organic variation
+- `requestAnimationFrame` used for smooth spark particle animations
+- SVG lightning uses `stroke-dasharray` animation for the traveling bolt effect
+- Mobile: reduced particle count and simplified glow for performance
+- The WIRED logo node uses the existing `/wire-logo-official.png` asset
 
