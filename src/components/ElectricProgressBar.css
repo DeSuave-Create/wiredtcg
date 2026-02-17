@@ -1,505 +1,324 @@
-.electric-progress-container {
+/* === Electric Stepper Container === */
+.stepper-container {
   width: 100%;
-  padding: 1.5rem 0;
+  padding: 2.5rem 1.5rem;
 }
 
-.electric-progress-bar {
+.stepper-track {
   position: relative;
-  height: 4px;
-  width: calc(100% - 60px);
-  margin-left: 60px;
-  border-radius: 9999px;
-  overflow: visible;
-  margin-top: 2.5rem;
-  margin-bottom: 2.5rem;
-}
-
-.progress-logo {
-  position: absolute;
-  left: -60px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 20;
-  width: 48px;
-  height: 48px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  background: hsl(var(--background));
-  border-radius: 50%;
-  border: 2px solid hsl(var(--primary));
-  padding: 6px;
-  box-shadow: 
-    0 0 20px hsl(var(--primary) / 0.5),
-    0 4px 12px rgba(0, 0, 0, 0.3);
-  animation: logo-glow 2s ease-in-out infinite;
-  overflow: hidden;
+  justify-content: space-between;
+  max-width: 700px;
+  margin: 0 auto;
+  height: 120px;
 }
 
-.progress-logo::before {
-  content: '';
+/* Subtle connection line between nodes */
+.stepper-line {
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    135deg,
-    transparent 0%,
-    transparent 40%,
-    rgba(255, 255, 255, 0.6) 50%,
-    rgba(255, 255, 255, 0.8) 55%,
-    rgba(255, 255, 255, 0.6) 60%,
-    transparent 70%,
-    transparent 100%
-  );
-  animation: shine-sweep 3s ease-in-out infinite;
+  top: 50%;
+  left: 8%;
+  right: 8%;
+  height: 1px;
+  background: hsl(185, 30%, 20%);
+  transform: translateY(-12px);
+  z-index: 0;
+}
+
+/* === Lightning SVG Overlay === */
+.lightning-svg {
+  position: absolute;
+  top: 50%;
+  left: 8%;
+  right: 8%;
+  width: 84%;
+  height: 30px;
+  transform: translateY(-27px);
+  z-index: 5;
+  overflow: visible;
   pointer-events: none;
 }
 
-@keyframes shine-sweep {
-  0% {
-    transform: rotate(0deg) translateX(-100%);
+.bolt-animate {
+  animation: bolt-travel 400ms ease-out forwards;
+}
+
+@keyframes bolt-travel {
+  from {
+    stroke-dashoffset: var(--path-length);
+    opacity: 0.3;
   }
-  100% {
-    transform: rotate(0deg) translateX(100%);
-  }
-}
-
-.logo-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-@keyframes logo-glow {
-  0%, 100% {
-    box-shadow: 
-      0 0 20px hsl(var(--primary) / 0.5),
-      0 4px 12px rgba(0, 0, 0, 0.3);
-  }
-  50% {
-    box-shadow: 
-      0 0 30px hsl(var(--primary) / 0.8),
-      0 0 50px hsl(var(--primary) / 0.4),
-      0 4px 12px rgba(0, 0, 0, 0.3);
-  }
-}
-
-.segments-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  border-radius: 9999px;
-  overflow: hidden;
-  background: hsl(var(--muted) / 0.3);
-  border: 1px solid hsl(var(--border) / 0.5);
-}
-
-.segment-bg {
-  height: 100%;
-  border-right: 1px solid hsl(var(--border) / 0.3);
-}
-
-.segment-bg:last-child {
-  border-right: none;
-}
-
-/* Segment container for multi-colored bar */
-.electric-fill-segment {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  overflow: visible;
-  will-change: contents;
-  transform: translateZ(0);
-}
-
-/* Electric fill with lightning effects */
-.electric-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  border-radius: 9999px;
-  transition: width 0.1s linear;
-  overflow: visible;
-  animation: electric-pulse-glow 0.8s ease-in-out infinite;
-  will-change: width;
-  transform: translateZ(0);
-}
-
-/* Pulsing glow effect - now controlled inline */
-@keyframes electric-pulse-glow {
-  0%, 100% {
-    filter: brightness(1);
-  }
-  50% {
-    filter: brightness(1.2);
-  }
-}
-
-/* Lightning overlay effect - disabled on mobile for performance */
-.lightning-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.4) 25%,
-    transparent 50%,
-    rgba(255, 255, 255, 0.4) 75%,
-    transparent 100%
-  );
-  background-size: 200% 100%;
-  opacity: 0.6;
-}
-
-@media (min-width: 641px) {
-  .lightning-overlay {
-    animation: lightning-slide 1.5s linear infinite;
-  }
-}
-
-@keyframes lightning-slide {
-  0% {
-    background-position: 200% 0%;
-  }
-  100% {
-    background-position: -200% 0%;
-  }
-}
-
-/* Electric wave effect - creates a traveling wave - disabled on mobile */
-.electric-wave {
-  position: absolute;
-  top: -4px;
-  left: 0;
-  width: 100%;
-  height: calc(100% + 8px);
-  background: repeating-linear-gradient(
-    90deg,
-    transparent 0px,
-    rgba(255, 255, 255, 0.3) 10px,
-    transparent 20px
-  );
-  border-radius: 9999px;
-  mix-blend-mode: overlay;
-}
-
-@media (min-width: 641px) {
-  .electric-wave {
-    animation: wave-travel 1s linear infinite;
-  }
-}
-
-@keyframes wave-travel {
-  0% {
-    transform: translateX(-20px);
-  }
-  100% {
-    transform: translateX(0px);
-  }
-}
-
-/* Electric pulse - traveling pulse effect */
-.electric-pulse {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 30px;
-  height: 200%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.8) 50%,
-    transparent 100%
-  );
-  transform: translateY(-50%);
-  animation: pulse-travel 2s ease-in-out infinite;
-  filter: blur(4px);
-}
-
-@keyframes pulse-travel {
-  0% {
-    left: -30px;
-    opacity: 0;
-  }
-  10% {
+  20% {
     opacity: 1;
   }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    left: 100%;
-    opacity: 0;
+  to {
+    stroke-dashoffset: 0;
+    opacity: 0.9;
   }
 }
 
-/* Electric sparks effect */
-.electric-sparks {
+/* === Node Styles === */
+.stepper-node {
   position: absolute;
-  top: -3px;
-  right: -3px;
-  width: 10px;
-  height: 18px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
-  box-shadow: 
-    0 0 15px currentColor,
-    0 0 30px currentColor,
-    0 0 45px currentColor;
-  animation: spark-flicker 0.2s ease-in-out infinite, spark-float 1s ease-in-out infinite;
-}
-
-@keyframes spark-flicker {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.4);
-  }
-}
-
-@keyframes spark-float {
-  0%, 100% {
-    top: -3px;
-  }
-  50% {
-    top: -6px;
-  }
-}
-
-/* Segment icons */
-.segment-icon {
-  position: absolute;
-  top: 50%;
-  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
+  transform: translateX(-50%);
   z-index: 10;
-  margin-top: -24px; /* Half of icon height to center on bar */
+  gap: 0.6rem;
 }
 
-.icon-wrapper {
+.node-ring {
   position: relative;
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  border: 2px solid hsl(var(--border) / 0.3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
-  background-clip: padding-box;
-  overflow: hidden;
+  border: 2px solid hsl(185, 30%, 25%);
+  background: hsl(200, 20%, 8%);
+  transition: all 0.4s ease;
+  z-index: 2;
 }
 
-.icon-wrapper::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    135deg,
-    transparent 0%,
-    transparent 40%,
-    rgba(255, 255, 255, 0.4) 50%,
-    rgba(255, 255, 255, 0.6) 55%,
-    rgba(255, 255, 255, 0.4) 60%,
-    transparent 70%,
-    transparent 100%
-  );
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
+.node-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: hsl(185, 20%, 35%);
+  transition: color 0.4s ease;
 }
 
-.segment-icon.powered .icon-wrapper::before {
+/* === Node States === */
+
+/* Inactive */
+.stepper-node.inactive .node-ring {
+  border-color: hsl(185, 15%, 18%);
+  background: hsl(200, 15%, 6%);
+}
+
+.stepper-node.inactive .node-icon {
+  color: hsl(185, 10%, 25%);
+  opacity: 0.5;
+}
+
+.stepper-node.inactive .node-label {
+  color: hsl(185, 10%, 30%);
+}
+
+/* Active */
+.stepper-node.active .node-ring {
+  border-color: hsl(185, 70%, 50%);
+  background: hsl(200, 30%, 10%);
+  box-shadow:
+    0 0 15px hsl(185, 80%, 50% / 0.4),
+    0 0 30px hsl(185, 80%, 50% / 0.15),
+    inset 0 0 8px hsl(185, 80%, 60% / 0.15);
+  animation: node-pulse 2s ease-in-out infinite;
+}
+
+.stepper-node.active .node-icon {
+  color: hsl(185, 80%, 65%);
   opacity: 1;
-  animation: shine-sweep 3s ease-in-out infinite;
 }
 
-.segment-icon.powered .icon-wrapper {
-  border-color: transparent;
-  box-shadow: 
-    0 0 20px currentColor,
-    0 0 40px currentColor,
-    0 4px 12px rgba(0, 0, 0, 0.5);
+.stepper-node.active .node-label {
+  color: hsl(185, 70%, 65%);
 }
 
-/* Disable heavy animations on mobile for better performance */
-@media (min-width: 641px) {
-  .segment-icon.powered .icon-wrapper {
-    animation: powered-glow 2s ease-in-out infinite;
-  }
+/* Completed */
+.stepper-node.completed .node-ring {
+  border-color: hsl(185, 50%, 40%);
+  background: hsl(200, 25%, 9%);
+  box-shadow:
+    0 0 10px hsl(185, 60%, 50% / 0.2),
+    inset 0 0 6px hsl(185, 60%, 50% / 0.1);
 }
 
-@keyframes powered-glow {
-  0%, 100% {
-    box-shadow: 
-      0 0 20px currentColor,
-      0 0 40px currentColor,
-      0 4px 12px rgba(0, 0, 0, 0.5);
-  }
-  50% {
-    box-shadow: 
-      0 0 30px currentColor,
-      0 0 60px currentColor,
-      0 4px 12px rgba(0, 0, 0, 0.5);
-  }
+.stepper-node.completed .node-icon {
+  color: hsl(185, 60%, 55%);
+  opacity: 0.85;
 }
 
-.segment-icon.current .icon-wrapper {
-  animation: icon-pulse 0.5s ease-in-out infinite;
+.stepper-node.completed .node-label {
+  color: hsl(185, 40%, 50%);
 }
 
-.electric-pulse {
+/* Charging (destination node receiving lightning) */
+.stepper-node.charging .node-ring {
+  border-color: hsl(185, 85%, 60%);
+  background: hsl(200, 35%, 12%);
+  box-shadow:
+    0 0 25px hsl(185, 90%, 55% / 0.6),
+    0 0 50px hsl(185, 90%, 55% / 0.25),
+    inset 0 0 12px hsl(185, 90%, 65% / 0.3);
+  animation: micro-jitter 80ms linear infinite, node-charge 400ms ease-out forwards;
+}
+
+.stepper-node.charging .node-icon {
+  color: hsl(185, 90%, 75%);
+  opacity: 1;
+}
+
+/* === Radial Bloom === */
+.node-bloom {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
+  width: 120px;
+  height: 120px;
   transform: translate(-50%, -50%);
-  border: 2px solid currentColor;
-  animation: pulse-ring 1s ease-out infinite;
-}
-
-.segment-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: hsl(var(--muted-foreground));
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition: color 0.3s ease;
-}
-
-.segment-icon.powered .segment-label {
-  color: hsl(var(--foreground));
-  text-shadow: 0 0 10px currentColor;
-}
-
-/* Connection text */
-.connection-text {
-  text-align: center;
-  margin-top: 2rem;
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: all 0.5s ease;
-}
-
-.connection-text.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.electric-text {
-  font-size: 1.5rem;
-  font-weight: 800;
-  background: linear-gradient(
-    90deg,
-    hsl(var(--primary)),
-    hsl(var(--primary) / 0.7),
-    hsl(var(--primary))
+  background: radial-gradient(
+    circle,
+    hsl(185, 80%, 50% / 0.15) 0%,
+    hsl(185, 80%, 50% / 0.05) 40%,
+    transparent 70%
   );
-  background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: electric-shimmer 2s linear infinite;
-  text-shadow: 0 0 30px hsl(var(--primary) / 0.5);
-  letter-spacing: 0.1em;
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+  animation: bloom-breathe 2s ease-in-out infinite;
 }
 
-/* Animations */
-@keyframes electric-shimmer {
-  0% {
-    background-position: 0% center;
-  }
-  100% {
-    background-position: 200% center;
-  }
+/* === Node Label === */
+.node-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: hsl(185, 20%, 40%);
+  transition: color 0.4s ease;
+  white-space: nowrap;
 }
 
-@keyframes icon-pulse {
+/* === Spark Particles === */
+.spark-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.spark-particle {
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  background: hsl(185, 90%, 75%);
+  border-radius: 50%;
+  box-shadow: 0 0 6px hsl(185, 90%, 65%);
+  animation: spark-eject 350ms ease-out forwards;
+  animation-delay: var(--delay, 0ms);
+}
+
+/* === Keyframes === */
+
+@keyframes node-pulse {
   0%, 100% {
-    transform: scale(1);
+    box-shadow:
+      0 0 15px hsl(185, 80%, 50% / 0.4),
+      0 0 30px hsl(185, 80%, 50% / 0.15),
+      inset 0 0 8px hsl(185, 80%, 60% / 0.15);
   }
   50% {
+    box-shadow:
+      0 0 20px hsl(185, 80%, 50% / 0.55),
+      0 0 40px hsl(185, 80%, 50% / 0.2),
+      inset 0 0 12px hsl(185, 80%, 60% / 0.2);
+  }
+}
+
+@keyframes node-charge {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.12);
+  }
+  100% {
     transform: scale(1.05);
   }
 }
 
-@keyframes pulse-ring {
-  0% {
+@keyframes micro-jitter {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(1px, -1px); }
+  50% { transform: translate(-1px, 1px); }
+  75% { transform: translate(1px, 1px); }
+  100% { transform: translate(-1px, -1px); }
+}
+
+@keyframes bloom-breathe {
+  0%, 100% {
+    opacity: 0.7;
     transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+@keyframes spark-eject {
+  0% {
+    transform: translate(0, 0) scale(1);
     opacity: 1;
   }
   100% {
-    transform: translate(-50%, -50%) scale(2);
+    transform:
+      translate(
+        calc(cos(var(--angle)) * var(--distance)),
+        calc(sin(var(--angle)) * var(--distance))
+      )
+      scale(0);
     opacity: 0;
   }
 }
 
-@keyframes electric-shimmer {
-  0% {
-    background-position: 0% center;
-  }
-  100% {
-    background-position: 200% center;
-  }
-}
-
-/* Responsive */
+/* === Responsive === */
 @media (max-width: 640px) {
-  .electric-progress-bar {
-    width: calc(100% - 50px);
-    margin-left: 50px;
+  .stepper-container {
+    padding: 1.5rem 1rem;
   }
 
-  .progress-logo {
-    left: -50px;
-    width: 40px;
-    height: 40px;
-    padding: 5px;
+  .stepper-track {
+    height: 100px;
+    max-width: 100%;
   }
 
-  .icon-wrapper {
-    width: 40px;
-    height: 40px;
+  .node-ring {
+    width: 42px;
+    height: 42px;
   }
 
-  .icon-wrapper svg {
-    width: 20px;
-    height: 20px;
+  .node-bloom {
+    width: 80px;
+    height: 80px;
   }
 
-  .segment-label {
-    font-size: 0.625rem;
+  .node-label {
+    font-size: 0.6rem;
   }
 
-  .segment-icon {
-    margin-top: -20px;
+  .stepper-line {
+    transform: translateY(-8px);
   }
 
-  .electric-text {
-    font-size: 1.25rem;
+  .lightning-svg {
+    transform: translateY(-22px);
+  }
+
+  /* Reduce sparks on mobile */
+  .spark-particle:nth-child(n+5) {
+    display: none;
+  }
+
+  /* Simplify glow on mobile */
+  .stepper-node.charging .node-ring {
+    animation: node-charge 400ms ease-out forwards;
   }
 }

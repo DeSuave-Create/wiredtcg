@@ -1,113 +1,150 @@
 import { Cable, Monitor, Bitcoin } from 'lucide-react';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import './ElectricProgressBar.css';
 
-interface Segment {
-  color: string;
-  icon: React.ReactNode;
+interface Step {
   label: string;
+  icon: React.ReactNode | 'logo';
 }
 
+const STEPS: Step[] = [
+  { label: 'Wired', icon: 'logo' },
+  { label: 'Connect', icon: <Cable className="w-5 h-5 sm:w-6 sm:h-6" /> },
+  { label: 'Plan', icon: <Monitor className="w-5 h-5 sm:w-6 sm:h-6" /> },
+  { label: 'Mine', icon: <Bitcoin className="w-5 h-5 sm:w-6 sm:h-6" /> },
+];
+
+const STEP_DURATION = 1800;
+const BOLT_DURATION = 400;
+const SPARK_COUNT = 8;
+
+function generateLightningPath(x1: number, x2: number, segments = 7): string {
+  const points: [number, number][] = [[x1, 0]];
+  const dx = (x2 - x1) / segments;
+  for (let i = 1; i < segments; i++) {
+    const x = x1 + dx * i;
+    const y = (Math.random() - 0.5) * 18;
+    points.push([x, y]);
+  }
+  points.push([x2, 0]);
+  return points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p[0]},${p[1]}`).join(' ');
+}
+
+const SparkParticles = ({ active }: { active: boolean }) => {
+  const sparks = useMemo(() => {
+    return Array.from({ length: SPARK_COUNT }, (_, i) => ({
+      angle: (360 / SPARK_COUNT) * i + Math.random() * 30 - 15,
+      distance: 20 + Math.random() * 25,
+      delay: Math.random() * 100,
+      size: 2 + Math.random() * 2,
+    }));
+  }, [active]); // regenerate on each activation
+
+  if (!active) return null;
+
+  return (
+    <div className="spark-container">
+      {sparks.map((s, i) => (
+        <div
+          key={i}
+          className="spark-particle"
+          style={{
+            '--angle': `${s.angle}deg`,
+            '--distance': `${s.distance}px`,
+            '--size': `${s.size}px`,
+            animationDelay: `${s.delay}ms`,
+          } as React.CSSProperties}
+        />
+      ))}
+    </div>
+  );
+};
+
 const ElectricProgressBar = () => {
-  const [progress, setProgress] = useState(0);
-  const [currentSegment, setCurrentSegment] = useState(0);
-  const [poweredSegments, setPoweredSegments] = useState<Set<number>>(new Set());
+  const [activeStep, setActiveStep] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set([0]));
+  const [transitioning, setTransitioning] = useState(false);
+  const [boltIndex, setBoltIndex] = useState(-1);
+  const [chargingNode, setChargingNode] = useState(-1);
+  const [boltPaths, setBoltPaths] = useState<string[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isVisibleRef = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const segments: Segment[] = [
-    { color: 'from-primary to-primary/80', icon: <Cable className="w-6 h-6" />, label: 'Connect' },
-    { color: 'from-red-500 to-rose-400', icon: <Monitor className="w-6 h-6" />, label: 'Plan' },
-    { color: 'from-yellow-500 to-amber-400', icon: <Bitcoin className="w-6 h-6" />, label: 'Mine' },
-  ];
+  const nodePositions = useMemo(() => {
+    // Percentage positions for each node
+    return STEPS.map((_, i) => (i / (STEPS.length - 1)) * 100);
+  }, []);
 
-  const getSegmentProgress = (segmentIndex: number) => {
-    const segmentWidth = 100 / segments.length;
-    const segmentStart = segmentIndex * segmentWidth;
-    const segmentEnd = (segmentIndex + 1) * segmentWidth;
-    
-    if (progress <= segmentStart) return 0;
-    if (progress >= segmentEnd) return 100;
-    return ((progress - segmentStart) / segmentWidth) * 100;
-  };
+  const advanceStep = useCallback(() => {
+    if (!isVisibleRef.current) return;
 
-  const segmentColors = [
-    {
-      gradient: 'linear-gradient(90deg, hsl(96, 48%, 54%) 0%, hsl(96, 48%, 64%) 100%)',
-      glow: '0 0 20px hsla(96, 48%, 54%, 0.8), 0 0 40px hsla(96, 48%, 54%, 0.6), inset 0 0 10px hsla(96, 48%, 54%, 0.8)'
-    },
-    {
-      gradient: 'linear-gradient(90deg, #dc2626 0%, #ff1a1a 100%)',
-      glow: '0 0 20px rgba(220, 38, 38, 0.8), 0 0 40px rgba(220, 38, 38, 0.6), inset 0 0 10px rgba(220, 38, 38, 0.8)'
-    },
-    {
-      gradient: 'linear-gradient(90deg, #facc15 0%, #fde047 100%)',
-      glow: '0 0 20px rgba(250, 204, 21, 0.8), 0 0 40px rgba(250, 204, 21, 0.6), inset 0 0 10px rgba(250, 204, 21, 0.8)'
+    const next = activeStep + 1;
+
+    if (next >= STEPS.length) {
+      // All done, pause then reset
+      timerRef.current = setTimeout(() => {
+        setActiveStep(0);
+        setCompletedSteps(new Set([0]));
+        setTransitioning(false);
+        setBoltIndex(-1);
+        setChargingNode(-1);
+      }, STEP_DURATION);
+      return;
     }
-  ];
+
+    // Fire lightning bolt
+    setTransitioning(true);
+    setBoltIndex(activeStep);
+    // Generate new random path for this bolt
+    const svgWidth = 100; // percentage-based
+    const fromX = nodePositions[activeStep] * (svgWidth / 100) * 10;
+    const toX = nodePositions[next] * (svgWidth / 100) * 10;
+    setBoltPaths(prev => {
+      const newPaths = [...prev];
+      newPaths[activeStep] = generateLightningPath(fromX, toX);
+      return newPaths;
+    });
+
+    // After bolt lands, charge up destination
+    setTimeout(() => {
+      setChargingNode(next);
+    }, BOLT_DURATION * 0.6);
+
+    // Complete transition
+    setTimeout(() => {
+      setActiveStep(next);
+      setCompletedSteps(prev => new Set(prev).add(next));
+      setTransitioning(false);
+      setBoltIndex(-1);
+      setChargingNode(-1);
+    }, BOLT_DURATION);
+  }, [activeStep, nodePositions]);
+
+  useEffect(() => {
+    if (!isVisibleRef.current) return;
+    timerRef.current = setTimeout(advanceStep, STEP_DURATION);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [activeStep, advanceStep]);
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
 
-    let intervalId: ReturnType<typeof setInterval> | null = null;
-
-    const startAnimation = () => {
-      if (intervalId) return;
-      const duration = 6000;
-      const pauseDuration = 1000;
-      let startTime = Date.now();
-      let isPaused = false;
-      let pauseStartTime = 0;
-
-      intervalId = setInterval(() => {
-        if (isPaused) {
-          if (Date.now() - pauseStartTime >= pauseDuration) {
-            isPaused = false;
-            startTime = Date.now();
-            setProgress(0);
-            setCurrentSegment(0);
-            setPoweredSegments(new Set());
-          }
-          return;
-        }
-
-        const elapsed = Date.now() - startTime;
-        const newProgress = Math.min((elapsed / duration) * 100, 100);
-        setProgress(newProgress);
-        
-        const segmentIndex = Math.min(
-          Math.floor((newProgress / 100) * segments.length),
-          segments.length - 1
-        );
-        setCurrentSegment(segmentIndex);
-
-        segments.forEach((_, index) => {
-          const segmentProgress = (index + 1) / segments.length * 100;
-          if (newProgress >= segmentProgress) {
-            setPoweredSegments(prev => new Set(prev).add(index));
-          }
-        });
-
-        if (newProgress >= 100 && !isPaused) {
-          isPaused = true;
-          pauseStartTime = Date.now();
-        }
-      }, 32);
-    };
-
-    const stopAnimation = () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-        intervalId = null;
-      }
-    };
-
     const observer = new IntersectionObserver(
       ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting;
         if (entry.isIntersecting) {
-          startAnimation();
+          // Reset and start
+          setActiveStep(0);
+          setCompletedSteps(new Set([0]));
+          setTransitioning(false);
+          setBoltIndex(-1);
+          setChargingNode(-1);
         } else {
-          stopAnimation();
+          if (timerRef.current) clearTimeout(timerRef.current);
         }
       },
       { threshold: 0.1 }
@@ -116,82 +153,99 @@ const ElectricProgressBar = () => {
     observer.observe(el);
     return () => {
       observer.disconnect();
-      stopAnimation();
+      if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, []);
 
   return (
-    <div ref={containerRef} className="electric-progress-container">
-      <div className="electric-progress-bar">
-        {/* WIRED Logo at start */}
-        <div className="progress-logo">
-          <img 
-            src="/wire-logo-official.png" 
-            alt="WIRED Logo" 
-            className="logo-image"
-          />
-        </div>
+    <div ref={containerRef} className="stepper-container">
+      <div className="stepper-track">
+        {/* Connection lines between nodes */}
+        <div className="stepper-line" />
 
-        {/* Background segments */}
-        <div className="segments-background">
-          {segments.map((segment, index) => (
-            <div
-              key={index}
-              className="segment-bg"
-              style={{ width: `${100 / segments.length}%` }}
-            />
-          ))}
-        </div>
+        {/* SVG overlay for lightning bolts */}
+        <svg className="lightning-svg" viewBox="0 -15 1000 30" preserveAspectRatio="none">
+          <defs>
+            <filter id="bolt-glow">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+          {STEPS.slice(0, -1).map((_, i) => {
+            const isActive = boltIndex === i;
+            const fromX = nodePositions[i] * 10;
+            const toX = nodePositions[i + 1] * 10;
+            const path = boltPaths[i] || generateLightningPath(fromX, toX);
+            const pathLength = 1200;
 
-        {/* Animated fill with electric effect */}
-        {segments.map((segment, index) => {
-          const segmentProgress = getSegmentProgress(index);
-          const segmentWidth = 100 / segments.length;
-          const colors = segmentColors[index];
-          
-          return segmentProgress > 0 ? (
-            <div
-              key={index}
-              className="electric-fill-segment"
-              style={{ 
-                left: `${index * segmentWidth}%`,
-                width: `${segmentWidth}%`
-              }}
-            >
-              <div
-                className="electric-fill"
-                style={{ 
-                  width: `${segmentProgress}%`,
-                  background: colors.gradient,
-                  boxShadow: colors.glow
-                }}
-              >
-                <div className="lightning-overlay" />
-                <div className="electric-wave" />
-                <div className="electric-pulse" />
-                {segmentProgress > 95 && <div className="electric-sparks" />}
-              </div>
-            </div>
-          ) : null;
-        })}
+            return (
+              <g key={i} opacity={isActive ? 1 : 0}>
+                {/* Glow layer */}
+                <path
+                  d={path}
+                  fill="none"
+                  stroke="hsl(185, 80%, 60%)"
+                  strokeWidth="4"
+                  filter="url(#bolt-glow)"
+                  strokeDasharray={pathLength}
+                  strokeDashoffset={isActive ? 0 : pathLength}
+                  className={isActive ? 'bolt-animate' : ''}
+                  style={{ '--path-length': pathLength } as React.CSSProperties}
+                />
+                {/* Core bolt */}
+                <path
+                  d={path}
+                  fill="none"
+                  stroke="hsl(185, 90%, 80%)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeDasharray={pathLength}
+                  strokeDashoffset={isActive ? 0 : pathLength}
+                  className={isActive ? 'bolt-animate' : ''}
+                  style={{ '--path-length': pathLength } as React.CSSProperties}
+                />
+              </g>
+            );
+          })}
+        </svg>
 
-        {/* Segment icons */}
-        {segments.map((segment, index) => {
-          const segmentProgress = (index + 1) / segments.length * 100;
-          const isPowered = poweredSegments.has(index);
-          const isCurrent = currentSegment === index && progress < 100;
+        {/* Nodes */}
+        {STEPS.map((step, i) => {
+          const isCompleted = completedSteps.has(i);
+          const isActive = activeStep === i;
+          const isCharging = chargingNode === i;
+          const isInactive = !isCompleted && !isActive && !isCharging;
 
           return (
             <div
-              key={index}
-              className={`segment-icon ${isPowered ? 'powered' : ''} ${isCurrent ? 'current' : ''}`}
-              style={{ left: `${((index + 1) / segments.length) * 100}%` }}
+              key={i}
+              className={`stepper-node ${isActive ? 'active' : ''} ${isCompleted && !isActive ? 'completed' : ''} ${isCharging ? 'charging' : ''} ${isInactive ? 'inactive' : ''}`}
+              style={{ left: `${nodePositions[i]}%` }}
             >
-              <div className={`icon-wrapper bg-gradient-to-br ${segment.color}`}>
-                {segment.icon}
-                {isCurrent && <div className="electric-pulse" />}
+              {/* Radial bloom */}
+              {(isActive || isCharging) && <div className="node-bloom" />}
+
+              {/* Node ring */}
+              <div className="node-ring">
+                <div className="node-icon">
+                  {step.icon === 'logo' ? (
+                    <img
+                      src="/wire-logo-official.png"
+                      alt="WIRED"
+                      className="w-6 h-6 sm:w-7 sm:h-7 object-contain"
+                    />
+                  ) : (
+                    step.icon
+                  )}
+                </div>
               </div>
-              <span className="segment-label">{segment.label}</span>
+
+              {/* Spark particles */}
+              <SparkParticles active={isCharging} />
+
+              {/* Label */}
+              <span className="node-label">{step.label}</span>
             </div>
           );
         })}
