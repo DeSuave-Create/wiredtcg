@@ -14,15 +14,10 @@
   height: 120px;
 }
 
-.stepper-line {
-  position: absolute;
-  top: 50%;
-  left: 8%;
-  right: 8%;
-  height: 1px;
-  background: hsl(185, 30%, 20%);
-  transform: translateY(-12px);
-  z-index: 0;
+/* bolt-static: completed bolts stay visible */
+.bolt-static {
+  stroke-dashoffset: 0 !important;
+  opacity: 0.75;
 }
 
 /* === Lightning SVG Overlay === */
@@ -292,10 +287,6 @@
 
   .node-label {
     font-size: 0.6rem;
-  }
-
-  .stepper-line {
-    transform: translateY(-8px);
   }
 
   .lightning-svg {

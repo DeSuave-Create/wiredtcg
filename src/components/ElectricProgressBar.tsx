@@ -16,7 +16,7 @@ const STEPS: Step[] = [
   { label: 'Mine', icon: <Bitcoin className="w-5 h-5 sm:w-6 sm:h-6" />, hue: 45, sat: 85 },
 ];
 
-const STEP_DURATION = 1800;
+const STEP_DURATION = 1200;
 const BOLT_DURATION = 400;
 const SPARK_COUNT = 8;
 
@@ -75,6 +75,7 @@ const ElectricProgressBar = () => {
   const [boltIndex, setBoltIndex] = useState(-1);
   const [chargingNode, setChargingNode] = useState(-1);
   const [boltPaths, setBoltPaths] = useState<string[]>([]);
+  const [completedBolts, setCompletedBolts] = useState<Set<number>>(new Set());
   const [running, setRunning] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -87,13 +88,18 @@ const ElectricProgressBar = () => {
     const next = activeStep + 1;
 
     if (next >= STEPS.length) {
+      // Add final bolt to completed, then hold 1s before reset
+      setCompletedBolts(prev => new Set(prev).add(activeStep));
+      setBoltIndex(-1);
       timerRef.current = setTimeout(() => {
         setActiveStep(0);
         setCompletedSteps(new Set([0]));
         setTransitioning(false);
         setBoltIndex(-1);
         setChargingNode(-1);
-      }, STEP_DURATION);
+        setCompletedBolts(new Set());
+        setBoltPaths([]);
+      }, 1000);
       return;
     }
 
@@ -112,6 +118,7 @@ const ElectricProgressBar = () => {
     }, BOLT_DURATION * 0.6);
 
     setTimeout(() => {
+      setCompletedBolts(prev => new Set(prev).add(activeStep));
       setActiveStep(next);
       setCompletedSteps(prev => new Set(prev).add(next));
       setTransitioning(false);
@@ -143,6 +150,7 @@ const ElectricProgressBar = () => {
           setRunning(true);
         } else {
           setRunning(false);
+          setCompletedBolts(new Set());
           if (timerRef.current) clearTimeout(timerRef.current);
         }
       },
@@ -159,7 +167,7 @@ const ElectricProgressBar = () => {
   return (
     <div ref={containerRef} className="stepper-container">
       <div className="stepper-track">
-        <div className="stepper-line" />
+        
 
         <svg className="lightning-svg" viewBox="0 -15 1000 30" preserveAspectRatio="none">
           <defs>
@@ -176,8 +184,11 @@ const ElectricProgressBar = () => {
             const pathLength = 1200;
             const destStep = STEPS[i + 1];
 
+            const isCompleted = completedBolts.has(i);
+            const isVisible = isActive || isCompleted;
+
             return (
-              <g key={i} opacity={isActive ? 1 : 0}>
+              <g key={i} opacity={isVisible ? 1 : 0}>
                 <path
                   d={path}
                   fill="none"
@@ -185,8 +196,8 @@ const ElectricProgressBar = () => {
                   strokeWidth="4"
                   filter="url(#bolt-glow)"
                   strokeDasharray={pathLength}
-                  strokeDashoffset={isActive ? 0 : pathLength}
-                  className={isActive ? 'bolt-animate' : ''}
+                  strokeDashoffset={isCompleted ? 0 : (isActive ? 0 : pathLength)}
+                  className={isActive ? 'bolt-animate' : isCompleted ? 'bolt-static' : ''}
                   style={{ '--path-length': pathLength } as React.CSSProperties}
                 />
                 <path
@@ -197,8 +208,8 @@ const ElectricProgressBar = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeDasharray={pathLength}
-                  strokeDashoffset={isActive ? 0 : pathLength}
-                  className={isActive ? 'bolt-animate' : ''}
+                  strokeDashoffset={isCompleted ? 0 : (isActive ? 0 : pathLength)}
+                  className={isActive ? 'bolt-animate' : isCompleted ? 'bolt-static' : ''}
                   style={{ '--path-length': pathLength } as React.CSSProperties}
                 />
               </g>
