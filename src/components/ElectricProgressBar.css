@@ -14,7 +14,6 @@
   height: 120px;
 }
 
-/* Subtle connection line between nodes */
 .stepper-line {
   position: absolute;
   top: 50%;
@@ -60,6 +59,8 @@
 
 /* === Node Styles === */
 .stepper-node {
+  --node-hue: 185;
+  --node-sat: 80%;
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -77,7 +78,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid hsl(185, 30%, 25%);
+  border: 2px solid hsl(var(--node-hue), 30%, 25%);
   background: hsl(200, 20%, 8%);
   transition: all 0.4s ease;
   z-index: 2;
@@ -87,7 +88,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: hsl(185, 20%, 35%);
+  color: hsl(var(--node-hue), 20%, 35%);
   transition: color 0.4s ease;
 }
 
@@ -95,70 +96,70 @@
 
 /* Inactive */
 .stepper-node.inactive .node-ring {
-  border-color: hsl(185, 15%, 18%);
+  border-color: hsl(var(--node-hue), 15%, 18%);
   background: hsl(200, 15%, 6%);
 }
 
 .stepper-node.inactive .node-icon {
-  color: hsl(185, 10%, 25%);
+  color: hsl(var(--node-hue), 10%, 25%);
   opacity: 0.5;
 }
 
 .stepper-node.inactive .node-label {
-  color: hsl(185, 10%, 30%);
+  color: hsl(var(--node-hue), 10%, 30%);
 }
 
 /* Active */
 .stepper-node.active .node-ring {
-  border-color: hsl(185, 70%, 50%);
-  background: hsl(200, 30%, 10%);
+  border-color: hsl(var(--node-hue), var(--node-sat), 50%);
+  background: hsl(var(--node-hue), 30%, 10%);
   box-shadow:
-    0 0 15px hsl(185, 80%, 50% / 0.4),
-    0 0 30px hsl(185, 80%, 50% / 0.15),
-    inset 0 0 8px hsl(185, 80%, 60% / 0.15);
+    0 0 15px hsl(var(--node-hue), var(--node-sat), 50% / 0.4),
+    0 0 30px hsl(var(--node-hue), var(--node-sat), 50% / 0.15),
+    inset 0 0 8px hsl(var(--node-hue), var(--node-sat), 60% / 0.15);
   animation: node-pulse 2s ease-in-out infinite;
 }
 
 .stepper-node.active .node-icon {
-  color: hsl(185, 80%, 65%);
+  color: hsl(var(--node-hue), var(--node-sat), 65%);
   opacity: 1;
 }
 
 .stepper-node.active .node-label {
-  color: hsl(185, 70%, 65%);
+  color: hsl(var(--node-hue), calc(var(--node-sat) - 10%), 65%);
 }
 
 /* Completed */
 .stepper-node.completed .node-ring {
-  border-color: hsl(185, 50%, 40%);
-  background: hsl(200, 25%, 9%);
+  border-color: hsl(var(--node-hue), calc(var(--node-sat) - 30%), 40%);
+  background: hsl(var(--node-hue), 25%, 9%);
   box-shadow:
-    0 0 10px hsl(185, 60%, 50% / 0.2),
-    inset 0 0 6px hsl(185, 60%, 50% / 0.1);
+    0 0 10px hsl(var(--node-hue), calc(var(--node-sat) - 20%), 50% / 0.2),
+    inset 0 0 6px hsl(var(--node-hue), calc(var(--node-sat) - 20%), 50% / 0.1);
 }
 
 .stepper-node.completed .node-icon {
-  color: hsl(185, 60%, 55%);
+  color: hsl(var(--node-hue), calc(var(--node-sat) - 20%), 55%);
   opacity: 0.85;
 }
 
 .stepper-node.completed .node-label {
-  color: hsl(185, 40%, 50%);
+  color: hsl(var(--node-hue), calc(var(--node-sat) - 40%), 50%);
 }
 
-/* Charging (destination node receiving lightning) */
+/* Charging */
 .stepper-node.charging .node-ring {
-  border-color: hsl(185, 85%, 60%);
-  background: hsl(200, 35%, 12%);
+  border-color: hsl(var(--node-hue), calc(var(--node-sat) + 5%), 60%);
+  background: hsl(var(--node-hue), 35%, 12%);
   box-shadow:
-    0 0 25px hsl(185, 90%, 55% / 0.6),
-    0 0 50px hsl(185, 90%, 55% / 0.25),
-    inset 0 0 12px hsl(185, 90%, 65% / 0.3);
+    0 0 25px hsl(var(--node-hue), calc(var(--node-sat) + 10%), 55% / 0.6),
+    0 0 50px hsl(var(--node-hue), calc(var(--node-sat) + 10%), 55% / 0.25),
+    inset 0 0 12px hsl(var(--node-hue), calc(var(--node-sat) + 10%), 65% / 0.3);
   animation: micro-jitter 80ms linear infinite, node-charge 400ms ease-out forwards;
 }
 
 .stepper-node.charging .node-icon {
-  color: hsl(185, 90%, 75%);
+  color: hsl(var(--node-hue), calc(var(--node-sat) + 10%), 75%);
   opacity: 1;
 }
 
@@ -172,8 +173,8 @@
   transform: translate(-50%, -50%);
   background: radial-gradient(
     circle,
-    hsl(185, 80%, 50% / 0.15) 0%,
-    hsl(185, 80%, 50% / 0.05) 40%,
+    hsl(var(--node-hue), var(--node-sat), 50% / 0.15) 0%,
+    hsl(var(--node-hue), var(--node-sat), 50% / 0.05) 40%,
     transparent 70%
   );
   border-radius: 50%;
@@ -188,7 +189,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: hsl(185, 20%, 40%);
+  color: hsl(var(--node-hue), 20%, 40%);
   transition: color 0.4s ease;
   white-space: nowrap;
 }
@@ -208,9 +209,9 @@
   position: absolute;
   width: var(--size);
   height: var(--size);
-  background: hsl(185, 90%, 75%);
+  background: hsl(var(--spark-hue, 185), var(--spark-sat, 80%), 75%);
   border-radius: 50%;
-  box-shadow: 0 0 6px hsl(185, 90%, 65%);
+  box-shadow: 0 0 6px hsl(var(--spark-hue, 185), var(--spark-sat, 80%), 65%);
   animation: spark-eject 350ms ease-out forwards;
   animation-delay: var(--delay, 0ms);
 }
@@ -220,28 +221,22 @@
 @keyframes node-pulse {
   0%, 100% {
     box-shadow:
-      0 0 15px hsl(185, 80%, 50% / 0.4),
-      0 0 30px hsl(185, 80%, 50% / 0.15),
-      inset 0 0 8px hsl(185, 80%, 60% / 0.15);
+      0 0 15px hsl(var(--node-hue), var(--node-sat), 50% / 0.4),
+      0 0 30px hsl(var(--node-hue), var(--node-sat), 50% / 0.15),
+      inset 0 0 8px hsl(var(--node-hue), var(--node-sat), 60% / 0.15);
   }
   50% {
     box-shadow:
-      0 0 20px hsl(185, 80%, 50% / 0.55),
-      0 0 40px hsl(185, 80%, 50% / 0.2),
-      inset 0 0 12px hsl(185, 80%, 60% / 0.2);
+      0 0 20px hsl(var(--node-hue), var(--node-sat), 50% / 0.55),
+      0 0 40px hsl(var(--node-hue), var(--node-sat), 50% / 0.2),
+      inset 0 0 12px hsl(var(--node-hue), var(--node-sat), 60% / 0.2);
   }
 }
 
 @keyframes node-charge {
-  0% {
-    transform: scale(1);
-  }
-  40% {
-    transform: scale(1.12);
-  }
-  100% {
-    transform: scale(1.05);
-  }
+  0% { transform: scale(1); }
+  40% { transform: scale(1.12); }
+  100% { transform: scale(1.05); }
 }
 
 @keyframes micro-jitter {
@@ -269,12 +264,7 @@
     opacity: 1;
   }
   100% {
-    transform:
-      translate(
-        calc(cos(var(--angle)) * var(--distance)),
-        calc(sin(var(--angle)) * var(--distance))
-      )
-      scale(0);
+    transform: translate(var(--tx), var(--ty)) scale(0);
     opacity: 0;
   }
 }
@@ -312,12 +302,10 @@
     transform: translateY(-22px);
   }
 
-  /* Reduce sparks on mobile */
   .spark-particle:nth-child(n+5) {
     display: none;
   }
 
-  /* Simplify glow on mobile */
   .stepper-node.charging .node-ring {
     animation: node-charge 400ms ease-out forwards;
   }
