@@ -5,13 +5,15 @@ import './ElectricProgressBar.css';
 interface Step {
   label: string;
   icon: React.ReactNode | 'logo';
+  hue: number;
+  sat: number;
 }
 
 const STEPS: Step[] = [
-  { label: 'Wired', icon: 'logo' },
-  { label: 'Connect', icon: <Cable className="w-5 h-5 sm:w-6 sm:h-6" /> },
-  { label: 'Plan', icon: <Monitor className="w-5 h-5 sm:w-6 sm:h-6" /> },
-  { label: 'Mine', icon: <Bitcoin className="w-5 h-5 sm:w-6 sm:h-6" /> },
+  { label: 'Wired', icon: 'logo', hue: 185, sat: 80 },
+  { label: 'Connect', icon: <Cable className="w-5 h-5 sm:w-6 sm:h-6" />, hue: 140, sat: 70 },
+  { label: 'Plan', icon: <Monitor className="w-5 h-5 sm:w-6 sm:h-6" />, hue: 0, sat: 70 },
+  { label: 'Mine', icon: <Bitcoin className="w-5 h-5 sm:w-6 sm:h-6" />, hue: 45, sat: 85 },
 ];
 
 const STEP_DURATION = 1800;
@@ -30,15 +32,19 @@ function generateLightningPath(x1: number, x2: number, segments = 7): string {
   return points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p[0]},${p[1]}`).join(' ');
 }
 
-const SparkParticles = ({ active }: { active: boolean }) => {
+const SparkParticles = ({ active, hue, sat }: { active: boolean; hue: number; sat: number }) => {
   const sparks = useMemo(() => {
-    return Array.from({ length: SPARK_COUNT }, (_, i) => ({
-      angle: (360 / SPARK_COUNT) * i + Math.random() * 30 - 15,
-      distance: 20 + Math.random() * 25,
-      delay: Math.random() * 100,
-      size: 2 + Math.random() * 2,
-    }));
-  }, [active]); // regenerate on each activation
+    return Array.from({ length: SPARK_COUNT }, (_, i) => {
+      const angle = ((360 / SPARK_COUNT) * i + Math.random() * 30 - 15) * (Math.PI / 180);
+      const distance = 20 + Math.random() * 25;
+      return {
+        tx: Math.cos(angle) * distance,
+        ty: Math.sin(angle) * distance,
+        delay: Math.random() * 100,
+        size: 2 + Math.random() * 2,
+      };
+    });
+  }, [active]);
 
   if (!active) return null;
 
@@ -49,9 +55,11 @@ const SparkParticles = ({ active }: { active: boolean }) => {
           key={i}
           className="spark-particle"
           style={{
-            '--angle': `${s.angle}deg`,
-            '--distance': `${s.distance}px`,
+            '--tx': `${s.tx}px`,
+            '--ty': `${s.ty}px`,
             '--size': `${s.size}px`,
+            '--spark-hue': hue,
+            '--spark-sat': `${sat}%`,
             animationDelay: `${s.delay}ms`,
           } as React.CSSProperties}
         />
@@ -67,22 +75,18 @@ const ElectricProgressBar = () => {
   const [boltIndex, setBoltIndex] = useState(-1);
   const [chargingNode, setChargingNode] = useState(-1);
   const [boltPaths, setBoltPaths] = useState<string[]>([]);
+  const [running, setRunning] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const isVisibleRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const nodePositions = useMemo(() => {
-    // Percentage positions for each node
     return STEPS.map((_, i) => (i / (STEPS.length - 1)) * 100);
   }, []);
 
   const advanceStep = useCallback(() => {
-    if (!isVisibleRef.current) return;
-
     const next = activeStep + 1;
 
     if (next >= STEPS.length) {
-      // All done, pause then reset
       timerRef.current = setTimeout(() => {
         setActiveStep(0);
         setCompletedSteps(new Set([0]));
@@ -93,25 +97,20 @@ const ElectricProgressBar = () => {
       return;
     }
 
-    // Fire lightning bolt
     setTransitioning(true);
     setBoltIndex(activeStep);
-    // Generate new random path for this bolt
-    const svgWidth = 100; // percentage-based
-    const fromX = nodePositions[activeStep] * (svgWidth / 100) * 10;
-    const toX = nodePositions[next] * (svgWidth / 100) * 10;
+    const fromX = nodePositions[activeStep] * 10;
+    const toX = nodePositions[next] * 10;
     setBoltPaths(prev => {
       const newPaths = [...prev];
       newPaths[activeStep] = generateLightningPath(fromX, toX);
       return newPaths;
     });
 
-    // After bolt lands, charge up destination
     setTimeout(() => {
       setChargingNode(next);
     }, BOLT_DURATION * 0.6);
 
-    // Complete transition
     setTimeout(() => {
       setActiveStep(next);
       setCompletedSteps(prev => new Set(prev).add(next));
@@ -122,12 +121,12 @@ const ElectricProgressBar = () => {
   }, [activeStep, nodePositions]);
 
   useEffect(() => {
-    if (!isVisibleRef.current) return;
+    if (!running) return;
     timerRef.current = setTimeout(advanceStep, STEP_DURATION);
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [activeStep, advanceStep]);
+  }, [activeStep, running, advanceStep]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -135,15 +134,15 @@ const ElectricProgressBar = () => {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        isVisibleRef.current = entry.isIntersecting;
         if (entry.isIntersecting) {
-          // Reset and start
           setActiveStep(0);
           setCompletedSteps(new Set([0]));
           setTransitioning(false);
           setBoltIndex(-1);
           setChargingNode(-1);
+          setRunning(true);
         } else {
+          setRunning(false);
           if (timerRef.current) clearTimeout(timerRef.current);
         }
       },
@@ -160,10 +159,8 @@ const ElectricProgressBar = () => {
   return (
     <div ref={containerRef} className="stepper-container">
       <div className="stepper-track">
-        {/* Connection lines between nodes */}
         <div className="stepper-line" />
 
-        {/* SVG overlay for lightning bolts */}
         <svg className="lightning-svg" viewBox="0 -15 1000 30" preserveAspectRatio="none">
           <defs>
             <filter id="bolt-glow">
@@ -177,14 +174,14 @@ const ElectricProgressBar = () => {
             const toX = nodePositions[i + 1] * 10;
             const path = boltPaths[i] || generateLightningPath(fromX, toX);
             const pathLength = 1200;
+            const destStep = STEPS[i + 1];
 
             return (
               <g key={i} opacity={isActive ? 1 : 0}>
-                {/* Glow layer */}
                 <path
                   d={path}
                   fill="none"
-                  stroke="hsl(185, 80%, 60%)"
+                  stroke={`hsl(${destStep.hue}, ${destStep.sat}%, 60%)`}
                   strokeWidth="4"
                   filter="url(#bolt-glow)"
                   strokeDasharray={pathLength}
@@ -192,11 +189,10 @@ const ElectricProgressBar = () => {
                   className={isActive ? 'bolt-animate' : ''}
                   style={{ '--path-length': pathLength } as React.CSSProperties}
                 />
-                {/* Core bolt */}
                 <path
                   d={path}
                   fill="none"
-                  stroke="hsl(185, 90%, 80%)"
+                  stroke={`hsl(${destStep.hue}, ${destStep.sat}%, 80%)`}
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -210,7 +206,6 @@ const ElectricProgressBar = () => {
           })}
         </svg>
 
-        {/* Nodes */}
         {STEPS.map((step, i) => {
           const isCompleted = completedSteps.has(i);
           const isActive = activeStep === i;
@@ -221,12 +216,14 @@ const ElectricProgressBar = () => {
             <div
               key={i}
               className={`stepper-node ${isActive ? 'active' : ''} ${isCompleted && !isActive ? 'completed' : ''} ${isCharging ? 'charging' : ''} ${isInactive ? 'inactive' : ''}`}
-              style={{ left: `${nodePositions[i]}%` }}
+              style={{
+                left: `${nodePositions[i]}%`,
+                '--node-hue': step.hue,
+                '--node-sat': `${step.sat}%`,
+              } as React.CSSProperties}
             >
-              {/* Radial bloom */}
               {(isActive || isCharging) && <div className="node-bloom" />}
 
-              {/* Node ring */}
               <div className="node-ring">
                 <div className="node-icon">
                   {step.icon === 'logo' ? (
@@ -241,10 +238,8 @@ const ElectricProgressBar = () => {
                 </div>
               </div>
 
-              {/* Spark particles */}
-              <SparkParticles active={isCharging} />
+              <SparkParticles active={isCharging} hue={step.hue} sat={step.sat} />
 
-              {/* Label */}
               <span className="node-label">{step.label}</span>
             </div>
           );
