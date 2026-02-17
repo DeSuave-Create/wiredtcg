@@ -1,45 +1,54 @@
 
 
-# Fix Electric Stepper: Progression Bug + Node Colors
+# Electric Stepper: Remove Line, Persistent Bolts, Faster Timing
 
-## Problems Found
+## Changes
 
-1. **Stepper never advances** -- The IntersectionObserver sets `isVisibleRef = true` and calls `setActiveStep(0)`, but since `activeStep` is already `0`, React skips the re-render. The timer effect never re-fires, so the stepper stays stuck on node 1 forever.
+### 1. Remove the static line
+Delete `<div className="stepper-line" />` from the TSX and remove the `.stepper-line` CSS rule (plus its mobile override). The lightning bolts alone will connect the nodes.
 
-2. **Spark particles don't animate** -- The CSS `spark-eject` keyframe uses `cos()` and `sin()` CSS functions, which are not supported in all browsers. The sparks appear but don't fly outward.
+### 2. Keep lightning bolts visible after they fire
+Currently, bolts disappear immediately after the 400ms transition (`setBoltIndex(-1)`). Instead:
+- Track which bolts have completed using a `Set<number>` state (`completedBolts`)
+- When a bolt finishes traveling, add it to `completedBolts` instead of hiding it
+- Completed bolts stay rendered at full opacity (no dashoffset animation, just static)
+- On reset (after Mine completes), clear `completedBolts` along with everything else
 
-3. **All nodes are the same cyan color** -- Connect should be green, Plan should be red, Mine should be yellow.
+### 3. Hold all bolts visible for 1 second after Mine activates, then reset
+When `activeStep` reaches the last node (Mine, index 3):
+- Wait 1 second with all 3 lightning bolts still showing
+- Then clear everything and restart from node 1
 
-## Fix 1: Stepper Progression
+This replaces the current behavior of waiting `STEP_DURATION` (1.8s) before reset.
 
-In the IntersectionObserver callback, instead of setting `activeStep(0)` (which is a no-op on mount), use a separate trigger state or force a re-render. The simplest fix: add a `running` state that the timer effect depends on. When the observer fires, toggle `running` to `true`, which triggers the timer effect to schedule the first advance.
+### 4. Faster lightning -- reduce step duration
+Reduce `STEP_DURATION` from 1800ms to 1200ms so the lightning fires more frequently. The bolt travel animation stays at 400ms.
 
-## Fix 2: Spark Particles
+## Revised Animation Timeline (loops every ~4.6s)
 
-Replace CSS `cos()`/`sin()` in the `spark-eject` keyframe with pre-computed inline `transform` values calculated in JavaScript. Each spark particle will get its final `translate(Xpx, Ypx)` baked into an inline CSS variable, using `Math.cos()` and `Math.sin()` in the React component.
+```text
+0.0s  - Node 1 (Wired) active
+1.2s  - Bolt 1->2 fires (400ms), bolt stays visible
+1.6s  - Node 2 (Connect) active
+2.8s  - Bolt 2->3 fires (400ms), bolt stays visible
+3.2s  - Node 3 (Plan) active
+4.4s  - Bolt 3->4 fires (400ms), bolt stays visible
+4.8s  - Node 4 (Mine) active, all 3 bolts visible
+5.8s  - Hold complete, reset everything, restart
+```
 
-## Fix 3: Per-Node Colors
-
-Add a `color` property to each step definition:
-- **Wired** (node 0): Cyan/teal (unchanged, the default energy color)
-- **Connect** (node 1): Green -- `hsl(140, 70%, 50%)`
-- **Plan** (node 2): Red -- `hsl(0, 70%, 55%)`
-- **Mine** (node 3): Yellow -- `hsl(45, 85%, 55%)`
-
-Apply per-node colors using CSS custom properties (`--node-color`, `--node-glow`) set as inline styles on each node. The CSS will reference these variables for border, glow, icon color, label color, bloom gradient, and spark color. Lightning bolts between nodes will also use the destination node's color.
-
-## Files Changed
+## Technical Details
 
 ### `src/components/ElectricProgressBar.tsx`
-- Add `running` state; IntersectionObserver sets it to `true`; timer effect checks `running` instead of `isVisibleRef` for scheduling
-- Add color config to each step (`hue` and `saturation` values)
-- Compute spark particle end positions with `Math.cos()` / `Math.sin()` and pass as `--tx` and `--ty` CSS variables
-- Set `--node-hue` and `--node-sat` inline style on each node element
-- Lightning bolt stroke colors use destination node's hue
+- Remove `<div className="stepper-line" />`
+- Add `completedBolts` state (`Set<number>`)
+- Change `STEP_DURATION` from 1800 to 1200
+- In `advanceStep`: after bolt travel completes, add `boltIndex` to `completedBolts` instead of setting `setBoltIndex(-1)`
+- Bolt SVG rendering: show bolt if `boltIndex === i` (animating) OR `completedBolts.has(i)` (static)
+- End-of-sequence logic: when `next >= STEPS.length`, wait 1000ms then reset all states including `completedBolts`
 
 ### `src/components/ElectricProgressBar.css`
-- Replace all hardcoded `hsl(185, ...)` in node states with `hsl(var(--node-hue), ...)` references
-- Update `spark-eject` keyframe to use `--tx` and `--ty` instead of `cos()`/`sin()`
-- Add node-bloom gradient using `--node-hue`
-- Keep the Wired/default cyan as fallback values for `--node-hue: 185` and `--node-sat: 80%`
+- Remove `.stepper-line` rule block (lines 17-26)
+- Remove `.stepper-line` mobile override (lines 297-299)
+- Add `.bolt-static` class for completed bolts (no animation, `stroke-dashoffset: 0`, slight opacity fade)
 
