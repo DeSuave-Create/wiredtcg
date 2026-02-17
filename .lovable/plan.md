@@ -1,86 +1,45 @@
 
 
-# Electric Progress Stepper Redesign
+# Fix Electric Stepper: Progression Bug + Node Colors
 
-## Overview
-Replace the current `ElectricProgressBar` with a completely new node-based stepper that feels like electricity flowing between circuit nodes. No progress bars, no buttons -- just 4 circular nodes connected by SVG lightning arcs that fire sequentially.
+## Problems Found
 
-## Visual Design
+1. **Stepper never advances** -- The IntersectionObserver sets `isVisibleRef = true` and calls `setActiveStep(0)`, but since `activeStep` is already `0`, React skips the re-render. The timer effect never re-fires, so the stepper stays stuck on node 1 forever.
 
-```text
-  [WIRED]----⚡----[Connect]----⚡----[Plan]----⚡----[Mine]
-     o                o                 o               o
-   (logo)          (cable)          (monitor)       (bitcoin)
-```
+2. **Spark particles don't animate** -- The CSS `spark-eject` keyframe uses `cos()` and `sin()` CSS functions, which are not supported in all browsers. The sparks appear but don't fly outward.
 
-- Dark background section with subtle radial bloom behind active node
-- Cyan/teal energy palette (not neon green/red/yellow)
-- Circular nodes: thin ring border, soft inner glow, icon centered inside
-- Dim inactive nodes, softly glowing completed nodes, bright pulsing active node
+3. **All nodes are the same cyan color** -- Connect should be green, Plan should be red, Mine should be yellow.
 
-## Animation Sequence (loops every ~7.2s)
+## Fix 1: Stepper Progression
 
-1. **Node 1 (WIRED)** starts active and glowing (0s)
-2. **Lightning arc 1→2** fires at 1.8s: jagged SVG bolt travels from node 1 to node 2 over ~400ms
-3. **Node 2 (Connect)** charges up: spark particles eject, glow expands, micro-jitter, radial bloom shifts
-4. **Lightning arc 2→3** fires at 3.6s: same effect
-5. **Node 3 (Plan)** charges up
-6. **Lightning arc 3→4** fires at 5.4s
-7. **Node 4 (Mine)** charges up
-8. Pause 1.8s, then reset and loop
+In the IntersectionObserver callback, instead of setting `activeStep(0)` (which is a no-op on mount), use a separate trigger state or force a re-render. The simplest fix: add a `running` state that the timer effect depends on. When the observer fires, toggle `running` to `true`, which triggers the timer effect to schedule the first advance.
 
-## Lightning Bolt Implementation
+## Fix 2: Spark Particles
 
-- SVG overlay positioned between each pair of nodes
-- Jagged path generated with randomized midpoints (6-8 segments with vertical offsets)
-- Path re-randomized on each cycle for organic feel
-- Animated with `stroke-dasharray` + `stroke-dashoffset` for the "traveling" effect
-- Cyan glow via SVG filter (`feGaussianBlur` + `feComposite`)
-- Lightning visible ONLY during the ~400ms transition window
+Replace CSS `cos()`/`sin()` in the `spark-eject` keyframe with pre-computed inline `transform` values calculated in JavaScript. Each spark particle will get its final `translate(Xpx, Ypx)` baked into an inline CSS variable, using `Math.cos()` and `Math.sin()` in the React component.
 
-## Spark Particles
+## Fix 3: Per-Node Colors
 
-- 6-8 tiny circles ejected radially from destination node when lightning lands
-- Each particle: random angle, random distance (20-40px), fades out over 300ms
-- CSS animations with randomized `--angle` and `--distance` custom properties
+Add a `color` property to each step definition:
+- **Wired** (node 0): Cyan/teal (unchanged, the default energy color)
+- **Connect** (node 1): Green -- `hsl(140, 70%, 50%)`
+- **Plan** (node 2): Red -- `hsl(0, 70%, 55%)`
+- **Mine** (node 3): Yellow -- `hsl(45, 85%, 55%)`
 
-## Node States
-
-| State | Visual |
-|-------|--------|
-| Inactive | Dim ring, no glow, muted icon color |
-| Active (charging) | Bright ring, expanding glow, micro-jitter animation, radial bloom behind |
-| Completed | Soft steady glow, full opacity icon, thin bright ring |
+Apply per-node colors using CSS custom properties (`--node-color`, `--node-glow`) set as inline styles on each node. The CSS will reference these variables for border, glow, icon color, label color, bloom gradient, and spark color. Lightning bolts between nodes will also use the destination node's color.
 
 ## Files Changed
 
-### Modified: `src/components/ElectricProgressBar.tsx`
-Complete rewrite:
-- 4 steps: WIRED (logo), Connect (Cable icon), Plan (Monitor icon), Mine (Bitcoin icon)
-- State: `activeStep` (0-3), `transitioning` (boolean), `completedSteps` Set
-- `useEffect` timer: advances every 1.8s, resets after all complete + pause
-- SVG overlay between nodes for lightning bolts
-- `generateLightningPath()` utility: creates jagged SVG path with random vertical offsets
-- Spark particle component rendered on charge-up
-- IntersectionObserver to pause when off-screen (kept from current)
+### `src/components/ElectricProgressBar.tsx`
+- Add `running` state; IntersectionObserver sets it to `true`; timer effect checks `running` instead of `isVisibleRef` for scheduling
+- Add color config to each step (`hue` and `saturation` values)
+- Compute spark particle end positions with `Math.cos()` / `Math.sin()` and pass as `--tx` and `--ty` CSS variables
+- Set `--node-hue` and `--node-sat` inline style on each node element
+- Lightning bolt stroke colors use destination node's hue
 
-### Modified: `src/components/ElectricProgressBar.css`
-Complete rewrite with:
-- Node styling (`.stepper-node`, `.node-ring`, `.node-icon`)
-- Glow/bloom keyframes (`@keyframes node-charge`, `@keyframes node-bloom`)
-- Micro-jitter animation (`@keyframes micro-jitter` -- subtle 1-2px random translate)
-- Spark particle animation (`@keyframes spark-eject`)
-- Lightning glow filter styles
-- Responsive adjustments for mobile
-- Cyan/teal color variables throughout
-
-### No other files change
-The component name and import path stay the same (`ElectricProgressBar`), so all 7 pages using it automatically get the new stepper.
-
-## Technical Notes
-- Lightning path randomization uses `Math.random()` seeded per cycle for organic variation
-- `requestAnimationFrame` used for smooth spark particle animations
-- SVG lightning uses `stroke-dasharray` animation for the traveling bolt effect
-- Mobile: reduced particle count and simplified glow for performance
-- The WIRED logo node uses the existing `/wire-logo-official.png` asset
+### `src/components/ElectricProgressBar.css`
+- Replace all hardcoded `hsl(185, ...)` in node states with `hsl(var(--node-hue), ...)` references
+- Update `spark-eject` keyframe to use `--tx` and `--ty` instead of `cos()`/`sin()`
+- Add node-bloom gradient using `--node-hue`
+- Keep the Wired/default cyan as fallback values for `--node-hue: 185` and `--node-sat: 80%`
 
