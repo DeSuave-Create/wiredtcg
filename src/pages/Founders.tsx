@@ -30,6 +30,13 @@ const Founders = () => {
         <div className="w-full max-w-5xl space-y-8">
           
           <ContentSection title="" glowEffect>
+            <div
+              className="absolute inset-0 rounded-3xl pointer-events-none z-20 transition-all duration-1000"
+              style={{
+                border: `1.5px solid ${tierColors[colorIndex]}`,
+                boxShadow: `0 0 12px ${tierColors[colorIndex]}33, inset 0 0 8px ${tierColors[colorIndex]}11`,
+              }}
+            />
             <h2
               className="text-3xl sm:text-4xl font-bold font-orbitron tracking-wider text-center mb-4 transition-colors duration-1000"
               style={{ color: tierColors[colorIndex] }}
