@@ -311,56 +311,82 @@ const FounderTrophyRow = ({ tier, mounted, index }: { tier: FounderTier; mounted
       </div>
 
       {/* === RIBBON PANEL (RIGHT) === */}
-      <div className="relative flex-1 w-full sm:w-auto min-h-[60px] sm:min-h-0 mt-[-4px] sm:mt-0 sm:ml-[-8px]">
+      <div
+        className="relative flex-1 w-full sm:w-auto mt-[-4px] sm:mt-0 sm:ml-[-12px]"
+        style={{
+          /* Match trophy plaque height exactly */
+          height: 'auto',
+          alignSelf: 'stretch',
+        }}
+      >
+        {/* Notch cutout — creates physical connection illusion */}
+        <div
+          className="hidden sm:block absolute left-0 top-[15%] bottom-[15%] w-[14px] z-20"
+          style={{
+            background: `linear-gradient(180deg, 
+              rgba(${rgbDark},0.6) 0%, 
+              rgba(${rgb},0.15) 20%, 
+              rgba(${rgb},0.10) 50%, 
+              rgba(${rgb},0.15) 80%, 
+              rgba(${rgbDark},0.6) 100%
+            )`,
+            borderRight: `1px solid rgba(${rgb},0.25)`,
+            boxShadow: `
+              inset -3px 0 6px rgba(0,0,0,0.5),
+              inset 2px 0 4px rgba(${rgb},0.08)
+            `,
+            borderRadius: '0 2px 2px 0',
+          }}
+        />
+
         {/* Ribbon body */}
         <div
-          className="relative h-full rounded-xl sm:rounded-l-none overflow-hidden"
+          className="relative h-full rounded-xl sm:rounded-l-none overflow-hidden flex flex-col justify-center"
           style={{
-            minHeight: 100,
-            border: '3px solid rgba(120,125,140,0.5)',
-            borderLeft: undefined,
-            background: 'linear-gradient(135deg, rgba(40,42,55,0.95) 0%, rgba(25,27,35,0.98) 100%)',
+            minHeight: 260,
+            border: `4px solid rgba(120,125,140,0.45)`,
+            borderLeft: '0px',
+            background: 'linear-gradient(135deg, rgba(35,37,48,0.97) 0%, rgba(22,24,32,0.99) 100%)',
             boxShadow: `
-              inset 4px 0 8px rgba(0,0,0,0.4),
-              inset 0 2px 0 rgba(255,255,255,0.06),
-              0 0 15px rgba(${rgb}, ${outerGlowOpacity * 0.4}),
-              0 4px 12px rgba(0,0,0,0.3)
+              inset 6px 0 12px rgba(0,0,0,0.5),
+              inset 0 2px 0 rgba(255,255,255,0.05),
+              inset 0 -2px 0 rgba(0,0,0,0.3),
+              0 0 18px rgba(${rgb}, ${outerGlowOpacity * 0.35}),
+              0 4px 16px rgba(0,0,0,0.35)
             `,
           }}
         >
-          {/* Top metallic edge highlight */}
+          {/* Top bevel highlight */}
           <div
             className="absolute top-0 left-0 right-0 h-[1px]"
-            style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 30%, rgba(255,255,255,0.08) 70%, transparent 100%)' }}
+            style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.12) 20%, rgba(255,255,255,0.06) 80%, transparent 100%)' }}
           />
-          {/* Bottom edge shadow */}
+          {/* Bottom bevel shadow */}
           <div
             className="absolute bottom-0 left-0 right-0 h-[1px]"
-            style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.2) 70%, transparent 100%)' }}
+            style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.4) 20%, rgba(0,0,0,0.25) 80%, transparent 100%)' }}
           />
           {/* Diagonal sheen */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              borderRadius: 'inherit',
-              background: 'linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.04) 48%, transparent 52%)',
+              background: 'linear-gradient(135deg, transparent 38%, rgba(255,255,255,0.03) 46%, transparent 54%)',
             }}
           />
-
-          {/* Left notch/connection shadow */}
+          {/* Inner left depth shadow (where ribbon meets trophy) */}
           <div
-            className="hidden sm:block absolute left-0 top-0 bottom-0 w-3"
+            className="hidden sm:block absolute left-0 top-0 bottom-0 w-5"
             style={{
-              background: `linear-gradient(90deg, rgba(0,0,0,0.5) 0%, transparent 100%)`,
+              background: 'linear-gradient(90deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 60%, transparent 100%)',
             }}
           />
 
           {/* Founder names content */}
-          <div className="relative z-10 p-4 sm:p-5 sm:pl-6 flex flex-col justify-center h-full min-h-[100px]">
+          <div className="relative z-10 p-5 sm:p-6 sm:pl-8 flex flex-col justify-center">
             {/* Tier indicator line */}
             <div className="flex items-center gap-2 mb-3">
               <div
-                className="w-8 h-[2px] rounded"
+                className="w-10 h-[2px] rounded"
                 style={{ background: `rgba(${rgb}, 0.5)` }}
               />
               <span
