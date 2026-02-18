@@ -29,14 +29,14 @@ const Founders = () => {
       <main className="container mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8 flex justify-center flex-grow">
         <div className="w-full max-w-5xl space-y-8">
           
+          <div
+            className="relative rounded-[1.6rem] p-[2px] transition-all duration-1000"
+            style={{
+              background: tierColors[colorIndex],
+              boxShadow: `0 0 14px ${tierColors[colorIndex]}44, 0 0 30px ${tierColors[colorIndex]}18`,
+            }}
+          >
           <ContentSection title="" glowEffect>
-            <div
-              className="absolute inset-0 rounded-3xl pointer-events-none z-20 transition-all duration-1000"
-              style={{
-                border: `1.5px solid ${tierColors[colorIndex]}`,
-                boxShadow: `0 0 12px ${tierColors[colorIndex]}33, inset 0 0 8px ${tierColors[colorIndex]}11`,
-              }}
-            />
             <h2
               className="text-3xl sm:text-4xl font-bold font-orbitron tracking-wider text-center mb-4 transition-colors duration-1000"
               style={{ color: tierColors[colorIndex] }}
@@ -61,6 +61,7 @@ const Founders = () => {
               </p>
             </div>
           </ContentSection>
+          </div>
         </div>
       </main>
       
