@@ -312,11 +312,9 @@ const FounderTrophyRow = ({ tier, mounted, index }: { tier: FounderTier; mounted
 
       {/* === RIBBON PANEL (RIGHT) === */}
       <div
-        className="relative flex-1 w-full sm:w-auto mt-[-4px] sm:mt-0 sm:ml-[-12px]"
+        className="relative flex-1 w-full sm:w-auto mt-[-4px] sm:mt-0 sm:ml-[-12px] sm:self-center"
         style={{
-          /* Match trophy plaque height exactly */
-          height: 'auto',
-          alignSelf: 'stretch',
+          height: '66.6%',
         }}
       >
         {/* Notch cutout — creates physical connection illusion */}
@@ -343,7 +341,7 @@ const FounderTrophyRow = ({ tier, mounted, index }: { tier: FounderTier; mounted
         <div
           className="relative h-full rounded-xl sm:rounded-l-none overflow-hidden flex flex-col justify-center"
           style={{
-            minHeight: 260,
+            minHeight: 170,
             border: `4px solid rgba(120,125,140,0.45)`,
             borderLeft: '0px',
             background: 'linear-gradient(135deg, rgba(35,37,48,0.97) 0%, rgba(22,24,32,0.99) 100%)',
