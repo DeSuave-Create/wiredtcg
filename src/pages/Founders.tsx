@@ -36,7 +36,7 @@ const Founders = () => {
               boxShadow: `0 0 14px ${tierColors[colorIndex]}44, 0 0 30px ${tierColors[colorIndex]}18`,
             }}
           >
-          <ContentSection title="" glowEffect>
+          <ContentSection title="" className="[&>div]:border-0 [&>div]:shadow-none">
             <h2
               className="text-3xl sm:text-4xl font-bold font-orbitron tracking-wider text-center mb-4 transition-colors duration-1000"
               style={{ color: tierColors[colorIndex] }}
