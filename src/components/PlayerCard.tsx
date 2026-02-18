@@ -63,17 +63,13 @@ const PlayerCard = ({
 
   const cardBorderStyle: React.CSSProperties = isLeader
     ? {
-        border: '3px solid rgba(200, 180, 255, 0.9)',
-        boxShadow: `0 0 4px rgba(255,255,255,0.7), 0 0 10px rgba(200,170,255,0.5), 0 0 20px rgba(160,120,255,0.3), 0 0 35px rgba(140,100,255,0.15), 0 0 50px rgba(255,255,255,0.08), inset 0 0 18px rgba(255,255,255,0.10), inset 0 0 1px rgba(255,255,255,0.45)`,
+        border: '5px solid rgba(200, 180, 255, 0.9)',
+        boxShadow: `0 0 20px rgba(160,120,255,0.35), 0 0 50px rgba(255,255,255,0.10), inset 0 0 1px rgba(255,255,255,0.40)`,
       }
     : {
-        border: `3px solid rgba(${rgb}, 0.85)`,
-        boxShadow: `0 0 18px rgba(${rgb}, 0.35), 0 0 42px rgba(255,255,255,0.12), 0 0 50px rgba(255,255,255,0.08), inset 0 0 18px rgba(255,255,255,0.10), inset 0 0 1px rgba(255,255,255,0.45)`,
+        border: `5px solid rgba(${rgb}, 0.85)`,
+        boxShadow: `0 0 20px rgba(${rgb}, 0.35), 0 0 50px rgba(255,255,255,0.10), inset 0 0 1px rgba(255,255,255,0.40)`,
       };
-
-  const prismaticBg = isLeader
-    ? `linear-gradient(135deg, rgba(200,180,255,0.15) 0%, rgba(255,255,255,0.08) 50%, rgba(200,180,255,0.12) 100%)`
-    : `linear-gradient(135deg, rgba(${rgb},0.15) 0%, rgba(255,255,255,0.08) 50%, rgba(${rgb},0.12) 100%)`;
 
   return (
     <div
@@ -87,13 +83,9 @@ const PlayerCard = ({
       }}>
 
       {/* Glass edge highlight — stronger on top/left */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none', borderRadius: 'inherit', background: 'linear-gradient(160deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.12) 30%, transparent 60%)', maskImage: 'linear-gradient(white, white) padding-box, linear-gradient(white, white)', maskComposite: 'exclude', WebkitMaskComposite: 'xor', padding: '1px', boxSizing: 'border-box' }} />
-      {/* Prismatic sheen band */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none', borderRadius: 'inherit', background: 'linear-gradient(125deg, transparent 20%, rgba(255,255,255,0.15) 40%, transparent 50%, rgba(255,255,255,0.12) 70%, transparent 85%)' }} />
-      {/* Prismatic gradient overlay */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 3, pointerEvents: 'none', borderRadius: 'inherit', background: prismaticBg }} />
+      <div style={{ position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none', borderRadius: 'inherit', background: 'linear-gradient(160deg, rgba(255,255,255,0.40) 0%, rgba(255,255,255,0.10) 30%, transparent 60%)', maskImage: 'linear-gradient(white, white) padding-box, linear-gradient(white, white)', maskComposite: 'exclude', WebkitMaskComposite: 'xor', padding: '1px', boxSizing: 'border-box' }} />
       {/* Corner illumination */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 4, pointerEvents: 'none', borderRadius: 'inherit', background: 'radial-gradient(ellipse at 8% 8%, rgba(255,255,255,0.15) 0%, transparent 45%), radial-gradient(ellipse at 92% 92%, rgba(255,255,255,0.10) 0%, transparent 45%)' }} />
+      <div style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none', borderRadius: 'inherit', background: 'radial-gradient(ellipse at 8% 8%, rgba(255,255,255,0.10) 0%, transparent 45%), radial-gradient(ellipse at 92% 92%, rgba(255,255,255,0.07) 0%, transparent 45%)' }} />
 
 
       {/* ====== MOBILE LAYOUT ====== */}
