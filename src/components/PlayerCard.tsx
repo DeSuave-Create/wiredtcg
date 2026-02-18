@@ -50,33 +50,46 @@ const PlayerCard = ({
   const character = getCharacter(player.character);
   const artworkScale = character.defaultScale || 0.9;
 
-  const roleColors: Record<string, {border: string;text: string;shadow: string;}> = {
-    'security-specialist': { border: 'border-red-500', text: 'text-red-400', shadow: 'shadow-red-500/20' },
-    'facilities': { border: 'border-yellow-400', text: 'text-yellow-400', shadow: 'shadow-yellow-400/20' },
-    'supervisor': { border: 'border-green-500', text: 'text-green-400', shadow: 'shadow-green-500/20' },
-    'field-tech': { border: 'border-blue-500', text: 'text-blue-400', shadow: 'shadow-blue-500/20' },
-    'headhunter': { border: 'border-teal-500', text: 'text-teal-400', shadow: 'shadow-teal-500/20' },
-    'auditor': { border: 'border-pink-500', text: 'text-pink-400', shadow: 'shadow-pink-500/20' }
+  const roleColors: Record<string, {text: string; rgb: string;}> = {
+    'security-specialist': { text: 'text-red-400', rgb: '239, 68, 68' },
+    'facilities': { text: 'text-yellow-400', rgb: '250, 204, 21' },
+    'supervisor': { text: 'text-green-400', rgb: '34, 197, 94' },
+    'field-tech': { text: 'text-blue-400', rgb: '59, 130, 246' },
+    'headhunter': { text: 'text-teal-400', rgb: '20, 184, 166' },
+    'auditor': { text: 'text-pink-400', rgb: '236, 72, 153' }
   };
   const colors = roleColors[player.character] || roleColors['security-specialist'];
-  const borderColor = `${colors.border} ${colors.shadow}`;
-  const leaderGlow = undefined;
+  const rgb = colors.rgb;
 
-  const leaderBorderStyle = isLeader ? {
-    borderColor: 'rgba(200, 180, 255, 0.9)',
-    boxShadow: '0 0 4px rgba(255, 255, 255, 0.7), 0 0 10px rgba(200, 170, 255, 0.5), 0 0 20px rgba(160, 120, 255, 0.3), 0 0 35px rgba(140, 100, 255, 0.15)'
-  } : undefined;
+  const cardBorderStyle: React.CSSProperties = isLeader
+    ? {
+        border: '3px solid rgba(200, 180, 255, 0.9)',
+        boxShadow: `0 0 4px rgba(255,255,255,0.7), 0 0 10px rgba(200,170,255,0.5), 0 0 20px rgba(160,120,255,0.3), 0 0 35px rgba(140,100,255,0.15), inset 0 0 12px rgba(255,255,255,0.10), inset 0 0 1px rgba(255,255,255,0.40)`,
+      }
+    : {
+        border: `3px solid rgba(${rgb}, 0.85)`,
+        boxShadow: `0 0 18px rgba(${rgb}, 0.35), 0 0 42px rgba(255,255,255,0.12), inset 0 0 12px rgba(255,255,255,0.10), inset 0 0 1px rgba(255,255,255,0.40)`,
+      };
+
+  const prismaticBg = isLeader
+    ? `linear-gradient(135deg, rgba(200,180,255,0.15) 0%, rgba(255,255,255,0.08) 50%, rgba(200,180,255,0.12) 100%)`
+    : `linear-gradient(135deg, rgba(${rgb},0.15) 0%, rgba(255,255,255,0.08) 50%, rgba(${rgb},0.12) 100%)`;
 
   return (
     <div
-      className={`relative overflow-hidden transition-all duration-300 hover:scale-[1.03] ${isLeader ? '' : borderColor} border-2 rounded-3xl ${isLeader ? '' : 'shadow-2xl'}`}
+      className="relative overflow-hidden transition-all duration-300 hover:scale-[1.03] rounded-3xl"
       style={{
         backgroundImage: `url('/lovable-uploads/a08479d2-01b1-41b6-8666-5ded32438273.png')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        ...leaderBorderStyle
+        ...cardBorderStyle,
       }}>
+
+      {/* Prismatic gradient overlay */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none', borderRadius: 'inherit', background: prismaticBg }} />
+      {/* Corner illumination */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none', borderRadius: 'inherit', background: 'radial-gradient(ellipse at 10% 10%, rgba(255,255,255,0.12) 0%, transparent 50%), radial-gradient(ellipse at 90% 90%, rgba(255,255,255,0.08) 0%, transparent 50%)' }} />
 
 
       {/* ====== MOBILE LAYOUT ====== */}
