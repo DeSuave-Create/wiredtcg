@@ -565,7 +565,8 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
             </div>
           ) : currentVideo.isYouTube ? (
             <iframe
-              src={`${currentVideo.src}?autoplay=1`}
+              key={`yt-desktop-${currentIndex}`}
+              src={`${currentVideo.src}?autoplay=1&enablejsapi=1`}
               className="w-full h-64 md:h-96"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -707,7 +708,8 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
           </div>
         ) : currentVideo.isYouTube ? (
           <iframe
-            src={`${currentVideo.src}?autoplay=1`}
+            key={`yt-mobile-${currentIndex}`}
+            src={`${currentVideo.src}?autoplay=1&enablejsapi=1`}
             className="w-full h-64 md:h-96"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
