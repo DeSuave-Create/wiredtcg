@@ -20,7 +20,7 @@ const Extras = () => {
   const tutorialVideos = [
     {
       id: '1',
-      src: 'https://www.youtube.com/embed/midg5KG75B4',
+      src: 'https://www.youtube.com/embed/UzE9E9ukdGk',
       title: 'Official Gameplay Tutorial',
       description: 'Learn the basics of WIRED in this comprehensive tutorial covering setup, gameplay mechanics, and winning strategies.',
       isYouTube: true
