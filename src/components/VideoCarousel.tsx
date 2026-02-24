@@ -57,7 +57,26 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
   const [classificationCardIndex, setClassificationCardIndex] = useState(0);
   const [attackCardIndex, setAttackCardIndex] = useState(0);
   const [resolutionCardIndex, setResolutionCardIndex] = useState(0);
+  const [isDesktopView, setIsDesktopView] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    return window.innerWidth >= 1024;
+  });
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Track viewport so only one player instance is mounted (desktop OR mobile)
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 1024px)');
+    const handleViewportChange = (event: MediaQueryListEvent) => {
+      setIsDesktopView(event.matches);
+    };
+
+    setIsDesktopView(mediaQuery.matches);
+    mediaQuery.addEventListener('change', handleViewportChange);
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleViewportChange);
+    };
+  }, []);
 
   // Pause video when switching
   useEffect(() => {
@@ -550,43 +569,45 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
           </button>
 
           {/* Video Container */}
-          {currentVideo.isYouTube && !isPlaying ? (
-            <div 
-              className="relative w-full h-64 md:h-96 bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
-              onClick={handlePlay}
-            >
-              <div className="text-center space-y-4">
-                <Logo size={100} className="mx-auto" />
-                <div className="flex items-center justify-center space-x-2 text-green-600">
-                  <Play className="h-10 w-10" />
-                  <span className="text-xl font-semibold">Play Video</span>
+          {isDesktopView && (
+            currentVideo.isYouTube && !isPlaying ? (
+              <div 
+                className="relative w-full h-64 md:h-96 bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+                onClick={handlePlay}
+              >
+                <div className="text-center space-y-4">
+                  <Logo size={100} className="mx-auto" />
+                  <div className="flex items-center justify-center space-x-2 text-green-600">
+                    <Play className="h-10 w-10" />
+                    <span className="text-xl font-semibold">Play Video</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : currentVideo.isYouTube ? (
-            <iframe
-              key={`yt-desktop-${currentIndex}`}
-              src={`${currentVideo.src}?autoplay=1&enablejsapi=1`}
-              className="w-full h-64 md:h-96"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              title={currentVideo.title}
-            />
-          ) : (
-            <video 
-              key={currentVideo.src}
-              ref={videoRef}
-              controls 
-              className="w-full h-full object-contain"
-              preload="metadata"
-              onError={(e) => {
-                console.error('Video failed to load:', currentVideo.src);
-              }}
-            >
-              <source src={currentVideo.src} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
+            ) : currentVideo.isYouTube ? (
+              <iframe
+                key={`yt-desktop-${currentIndex}`}
+                src={`${currentVideo.src}?autoplay=1&enablejsapi=1`}
+                className="w-full h-64 md:h-96"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title={currentVideo.title}
+              />
+            ) : (
+              <video 
+                key={currentVideo.src}
+                ref={videoRef}
+                controls 
+                className="w-full h-full object-contain"
+                preload="metadata"
+                onError={(e) => {
+                  console.error('Video failed to load:', currentVideo.src);
+                }}
+              >
+                <source src={currentVideo.src} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            )
           )}
 
           {/* Video Counter */}
@@ -693,43 +714,45 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
         </button>
 
         {/* Video Container */}
-        {currentVideo.isYouTube && !isPlaying ? (
-          <div 
-            className="relative w-full h-64 md:h-96 bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
-            onClick={handlePlay}
-          >
-            <div className="text-center space-y-4">
-              <Logo size={100} className="mx-auto" />
-              <div className="flex items-center justify-center space-x-2 text-green-600">
-                <Play className="h-10 w-10" />
-                <span className="text-xl font-semibold">Play Video</span>
+        {!isDesktopView && (
+          currentVideo.isYouTube && !isPlaying ? (
+            <div 
+              className="relative w-full h-64 md:h-96 bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+              onClick={handlePlay}
+            >
+              <div className="text-center space-y-4">
+                <Logo size={100} className="mx-auto" />
+                <div className="flex items-center justify-center space-x-2 text-green-600">
+                  <Play className="h-10 w-10" />
+                  <span className="text-xl font-semibold">Play Video</span>
+                </div>
               </div>
             </div>
-          </div>
-        ) : currentVideo.isYouTube ? (
-          <iframe
-            key={`yt-mobile-${currentIndex}`}
-            src={`${currentVideo.src}?autoplay=1&enablejsapi=1`}
-            className="w-full h-64 md:h-96"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            title={currentVideo.title}
-          />
-        ) : (
-          <video 
-            key={currentVideo.src}
-            ref={videoRef}
-            controls 
-            className="w-full h-full object-contain"
-            preload="metadata"
-            onError={(e) => {
-              console.error('Video failed to load:', currentVideo.src);
-            }}
-          >
-            <source src={currentVideo.src} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          ) : currentVideo.isYouTube ? (
+            <iframe
+              key={`yt-mobile-${currentIndex}`}
+              src={`${currentVideo.src}?autoplay=1&enablejsapi=1`}
+              className="w-full h-64 md:h-96"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title={currentVideo.title}
+            />
+          ) : (
+            <video 
+              key={currentVideo.src}
+              ref={videoRef}
+              controls 
+              className="w-full h-full object-contain"
+              preload="metadata"
+              onError={(e) => {
+                console.error('Video failed to load:', currentVideo.src);
+              }}
+            >
+              <source src={currentVideo.src} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          )
         )}
 
         {/* Video Counter */}
