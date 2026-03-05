@@ -245,14 +245,26 @@ const Extras = () => {
               <div className="bg-gray-50 dark:bg-gray-800/90 border-primary border-2 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
                 <FileText className="h-12 w-12 text-primary mx-auto" />
                 <h3 className="text-lg font-semibold font-orbitron text-primary">Card Reference</h3>
-                <p className="text-sm text-muted-foreground flex-grow">All unique cards organized by type: Classification, Attack, Resolution, and Equipment (PDF)</p>
-                <button 
-                  onClick={() => handleDownload('Card Reference')}
-                  className="bg-gray-50 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-primary mt-auto flex items-center justify-center"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Download
-                </button>
+                <p className="text-sm text-muted-foreground flex-grow">All unique cards organized by type: Classification, Attack, Resolution, and Equipment</p>
+                <div className="flex flex-col sm:flex-row gap-2 mt-auto">
+                  <button 
+                    onClick={() => navigate('/card-reference')}
+                    className="bg-gray-50 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-primary flex items-center justify-center"
+                  >
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    View
+                  </button>
+                  <button 
+                    onClick={() => {
+                      navigate('/card-reference');
+                      setTimeout(() => window.print(), 1000);
+                    }}
+                    className="bg-gray-50 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-primary flex items-center justify-center"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Print
+                  </button>
+                </div>
               </div>
             </div>
           </ContentSection>
