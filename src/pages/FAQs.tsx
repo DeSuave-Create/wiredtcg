@@ -4,33 +4,16 @@ import ContentSection from '@/components/ContentSection';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import ElectricProgressBar from '@/components/ElectricProgressBar';
 import { HelpCircle } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
 
 const FAQs = () => {
-  const { toast } = useToast();
-
-  const handleContactSupport = () => {
-    toast({
-      title: "Support Contact",
-      description: "Our support team will get back to you within 24 hours!",
-    });
-  };
-
-  const handleJoinYouTube = () => {
-    toast({
-      title: "YouTube Community",
-      description: "Subscribe to our channel for tips, tutorials, and more!",
-    });
-  };
-
   const faqs = [
     {
       question: "How many players can play WIRED?",
-      answer: "WIRED supports 2-6 players. The game has different modes: Internet mode (2-6 players), A.I. mode (1-2 players), and BotNet mode (4-6 players)."
+      answer: "WIRED supports 2-6 players. The game has different modes: Internet mode (2-6 players), A.I. mode (TBA), and BotNet mode (TBA)."
     },
     {
       question: "How long does a typical game take?",
-      answer: "A typical 2-3 player game takes 5-10 minutes, while 4-6 player games take 20-30 minutes."
+      answer: "A typical 2-3 player game takes 5-10 minutes, while 4-6 player games take 20-30 minutes. For new players, times may vary."
     },
     {
       question: "What's the recommended age for players?",
@@ -46,23 +29,23 @@ const FAQs = () => {
     },
     {
       question: "What comes in the base game box?",
-      answer: "The base game includes 146 cards plus one informational card, giving you everything you need to start playing."
+      answer: "The base game includes 145 cards plus one informational card, giving you everything you need to start playing."
     },
     {
       question: "Are there expansion packs available?",
-      answer: "Expansion packs are currently in development and coming soon! Stay tuned for updates on new content."
+      answer: "Expansion packs will be announced at a future date! Stay tuned for updates on new content."
     },
     {
       question: "How do I win the game?",
-      answer: "The goal is to be the first player to mine 25 bitcoin (points). Each COMPUTER in your network that can reach the INTERNET scores one bitcoin per turn. In 2-3 player games, the first to 25 wins immediately. In 4-6 player games, once someone reaches 25, each remaining player gets one final turn to try to beat that score."
+      answer: "The goal in INTERNET mode is to be the first player to mine 25 bitcoin (points). Each COMPUTER in your network that can reach the INTERNET scores one bitcoin per turn. In 2-3 player games, the first to 25 wins immediately. In 4-6 player games, once someone reaches 25, each remaining player gets one final turn to try to beat that score."
     },
     {
       question: "Can I mix different expansion packs?",
-      answer: "Yes! All WIRED expansions are designed to work together. Mixing expansions creates more complex and varied gameplay experiences with additional strategies."
+      answer: "Yes! All WIRED expansions will be designed to work together. Mixing expansions creates more complex and varied gameplay experiences with additional strategies."
     },
     {
       question: "Is there a tournament scene for WIRED?",
-      answer: "We're building a competitive community! Check our YouTube channel for local tournaments and online competitions. Official tournament rules and additional game variants are available in the extras section."
+      answer: "TBA"
     }
   ];
 
@@ -77,7 +60,7 @@ const FAQs = () => {
             <div className="text-center space-y-4">
               <HelpCircle className="h-16 w-16 text-primary mx-auto animate-pulse" />
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Find answers to common questions about WIRED, from gameplay mechanics to purchasing information.
+                Find answers to common questions about WIRED, from gameplay mechanics to Kickstarter information.
               </p>
             </div>
           </ContentSection>
@@ -114,19 +97,13 @@ const FAQs = () => {
               <p className="text-muted-foreground">
                 Can't find what you're looking for? Our support team is here to help.
               </p>
-              <div className="flex justify-center space-x-4">
-                <button 
-                  onClick={handleContactSupport}
+              <div className="flex justify-center">
+                <a 
+                  href="mailto:wiredtcg@gmail.com"
                   className="bg-gray-50 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg"
                 >
                   Contact Support
-                </button>
-                <button 
-                  onClick={handleJoinYouTube}
-                  className="bg-gray-50 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 px-6 py-2 font-medium shadow-2xl drop-shadow-lg"
-                >
-                  Subscribe on YouTube
-                </button>
+                </a>
               </div>
             </div>
           </ContentSection>

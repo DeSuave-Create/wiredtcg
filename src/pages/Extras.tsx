@@ -3,10 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
-import ImageSection from '@/components/ImageSection';
 import VideoCarousel from '@/components/VideoCarousel';
 import ElectricProgressBar from '@/components/ElectricProgressBar';
-import TextSection from '@/components/TextSection';
 import { Button } from '@/components/ui/button';
 import { Download, BookOpen, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -16,13 +14,12 @@ const Extras = () => {
   const navigate = useNavigate();
   const [gameModeIndex, setGameModeIndex] = useState(0);
 
-  // Mock video data for the carousel
   const tutorialVideos = [
     {
       id: '1',
       src: 'https://www.youtube.com/embed/UzE9E9ukdGk',
       title: 'Official Gameplay Tutorial',
-      description: 'Learn the basics of WIRED in this comprehensive tutorial covering setup, gameplay mechanics, and winning strategies.',
+      description: 'Learn the basics of WIRED in this comprehensive video covering setup, gameplay mechanics, and winning strategies.',
       isYouTube: true
     },
     {
@@ -50,7 +47,6 @@ const Extras = () => {
 
   const handleDownload = (item: string) => {
     if (item === 'Rulebook PDF' || item === 'Official Rulebook') {
-      // Download the actual rulebook
       const link = document.createElement('a');
       link.href = '/WIRED_Instructions.pdf';
       link.download = 'WIRED_Instructions.pdf';
@@ -68,29 +64,14 @@ const Extras = () => {
   };
 
   const handleViewOnline = () => {
-    // Navigate to the protected viewer page
     window.location.href = '/rulebook';
-  };
-
-  const handleJoinYouTube = () => {
-    toast({
-      title: "Join Our Community",
-      description: "Subscribe to our YouTube channel for tutorials, strategies, and gameplay!",
-    });
-  };
-
-  const handleFollowUpdates = () => {
-    toast({
-      title: "Follow Us",
-      description: "Stay updated with the latest WIRED news!",
-    });
   };
 
   // Game modes data
   const gameModes = [
     { name: 'Internet', image: '/lovable-uploads/gamemode-internet.png', players: '2-6 Players', borderColor: 'border-green-600' },
-    { name: 'A.I.', image: '/lovable-uploads/gamemode-ai.png', players: '1-2 Players', borderColor: 'border-blue-600' },
-    { name: 'BotNet', image: '/lovable-uploads/gamemode-botnet.png', players: '4-6 Players', borderColor: 'border-red-600' }
+    { name: 'A.I.', image: '/lovable-uploads/gamemode-ai.png', players: 'TBA', borderColor: 'border-blue-600' },
+    { name: 'BotNet', image: '/lovable-uploads/gamemode-botnet.png', players: 'TBA', borderColor: 'border-red-600' }
   ];
 
   const cycleGameMode = () => {
@@ -111,12 +92,11 @@ const Extras = () => {
           <ContentSection title="Game Extras & Resources" glowEffect>
             <div className="text-center">
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Everything you need to master WIRED - from gameplay tutorials to official rules and downloads.
+                Everything you need to master WIRED - from gameplay videos to official rules and downloads.
               </p>
             </div>
           </ContentSection>
           
-          {/* Electric Progress Bar */}
           <ElectricProgressBar />
 
           {/* Video Carousel Section */}
@@ -124,13 +104,11 @@ const Extras = () => {
             <VideoCarousel videos={tutorialVideos} />
           </ContentSection>
           
-          {/* Electric Progress Bar */}
           <ElectricProgressBar />
 
           {/* Rule Book Section */}
           <ContentSection title="Official Rulebook">
             <div className="space-y-8">
-              {/* Centered Title and Description */}
               <div className="text-center space-y-4">
                 <h3 className="text-2xl font-bold font-orbitron text-primary">Complete Game Manual</h3>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -140,7 +118,6 @@ const Extras = () => {
 
               {/* Game Modes Card Deck */}
               <div className="flex justify-center items-center min-h-[200px] sm:min-h-[240px] lg:min-h-[300px] relative py-2 sm:py-3 lg:py-4">
-                {/* Ghost logo background */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
                   <img 
                     src="/wire-logo-official.png" 
@@ -149,7 +126,6 @@ const Extras = () => {
                   />
                 </div>
 
-                {/* Card Deck - matching VideoCarousel styling */}
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
                   <div 
                     className="relative w-28 h-40 sm:w-36 sm:h-52 lg:w-44 lg:h-64 xl:w-52 xl:h-80 group cursor-pointer transition-transform duration-300 hover:scale-105"
@@ -175,7 +151,6 @@ const Extras = () => {
                         </div>
                       );
                     })}
-                    {/* Card indicator dots */}
                     <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-30">
                       {gameModes.map((_, idx) => (
                         <div
@@ -192,11 +167,9 @@ const Extras = () => {
 
               {/* Centered Buttons */}
               <div className="flex flex-col items-center gap-6 pt-4">
-                {/* Game Mode Selection */}
                 <div className="w-full max-w-2xl">
                   <h3 className="text-lg font-semibold font-orbitron text-primary text-center mb-4">Select Game Mode Instructions:</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    {/* Internet Mode - Green */}
                     <button 
                       onClick={() => navigate('/internet-instructions')}
                       className="bg-gray-50 dark:bg-gray-800/90 rounded-xl text-green-500 hover:bg-gray-200 dark:hover:bg-gray-700/90 px-6 py-4 font-medium shadow-lg border-2 border-green-500 flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
@@ -207,7 +180,6 @@ const Extras = () => {
                       <span className="text-xs mt-1 text-green-500">2-6 Players</span>
                     </button>
                     
-                    {/* A.I. Mode - Blue */}
                     <button 
                       onClick={() => navigate('/ai-instructions')}
                       className="bg-gray-50 dark:bg-gray-800/90 rounded-xl text-blue-500 hover:bg-gray-200 dark:hover:bg-gray-700/90 px-6 py-4 font-medium shadow-lg border-2 border-blue-500 flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
@@ -215,10 +187,9 @@ const Extras = () => {
                     >
                       <BookOpen className="h-6 w-6 mb-2 text-blue-500" />
                       <span className="font-bold text-blue-500">A.I. Mode</span>
-                      <span className="text-xs mt-1 text-blue-500">1-2 Players</span>
+                      <span className="text-xs mt-1 text-blue-500">TBA</span>
                     </button>
                     
-                    {/* BotNet Mode - Red */}
                     <button 
                       onClick={() => navigate('/botnet-instructions')}
                       className="bg-gray-50 dark:bg-gray-800/90 rounded-xl text-red-500 hover:bg-gray-200 dark:hover:bg-gray-700/90 px-6 py-4 font-medium shadow-lg border-2 border-red-500 flex flex-col items-center justify-center transition-all duration-300 hover:scale-105"
@@ -226,12 +197,11 @@ const Extras = () => {
                     >
                       <BookOpen className="h-6 w-6 mb-2 text-red-500" />
                       <span className="font-bold text-red-500">BotNet Mode</span>
-                      <span className="text-xs mt-1 text-red-500">4-6 Players</span>
+                      <span className="text-xs mt-1 text-red-500">TBA</span>
                     </button>
                   </div>
                 </div>
 
-                {/* PDF Download Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                   <button 
                     onClick={() => handleDownload('Rulebook PDF')}
@@ -252,31 +222,16 @@ const Extras = () => {
             </div>
           </ContentSection>
           
-          {/* Electric Progress Bar */}
           <ElectricProgressBar />
 
           {/* Downloads Section */}
           <ContentSection title="Downloads & Resources">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Rulebook Download */}
-              <div className="bg-gray-50 dark:bg-gray-800/90 border-primary border-2 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
-                <FileText className="h-12 w-12 text-primary mx-auto" />
-                <h3 className="text-lg font-semibold font-orbitron text-primary">Official Rulebook</h3>
-                <p className="text-sm text-muted-foreground flex-grow">Complete game rules and strategies (PDF, 7 pages)</p>
-                <button
-                  onClick={() => handleDownload('Official Rulebook')}
-                  className="bg-gray-50 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-primary mt-auto flex items-center justify-center"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Download
-                </button>
-              </div>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
               {/* Score Sheets */}
               <div className="bg-gray-50 dark:bg-gray-800/90 border-primary border-2 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
                 <FileText className="h-12 w-12 text-primary mx-auto" />
                 <h3 className="text-lg font-semibold font-orbitron text-primary">Score Sheets</h3>
-                <p className="text-sm text-muted-foreground flex-grow">Printable score tracking sheets (PDF, 0.5MB)</p>
+                <p className="text-sm text-muted-foreground flex-grow">Printable score tracking sheets matching our digital Score Keeper design (PDF)</p>
                 <button 
                   onClick={() => handleDownload('Score Sheets')}
                   className="bg-gray-50 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-primary mt-auto flex items-center justify-center"
@@ -290,7 +245,7 @@ const Extras = () => {
               <div className="bg-gray-50 dark:bg-gray-800/90 border-primary border-2 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
                 <FileText className="h-12 w-12 text-primary mx-auto" />
                 <h3 className="text-lg font-semibold font-orbitron text-primary">Card Reference</h3>
-                <p className="text-sm text-muted-foreground flex-grow">Quick reference for all cards (PDF, 1.1MB)</p>
+                <p className="text-sm text-muted-foreground flex-grow">All unique cards organized by type: Classification, Attack, Resolution, and Equipment (PDF)</p>
                 <button 
                   onClick={() => handleDownload('Card Reference')}
                   className="bg-gray-50 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-primary mt-auto flex items-center justify-center"
@@ -300,35 +255,6 @@ const Extras = () => {
                 </button>
               </div>
             </div>
-          </ContentSection>
-          
-          {/* Electric Progress Bar */}
-          <ElectricProgressBar />
-          
-          {/* Community Section */}
-          <ContentSection title="Join the Community">
-            <TextSection>
-              <div className="text-center space-y-4">
-                <p className="text-lg">
-                  Subscribe to our YouTube channel for tutorials, strategies, and stay updated on tournaments and new releases.
-                </p>
-                <div className="flex justify-center space-x-4">
-                  <Button 
-                    onClick={handleJoinYouTube}
-                    className="bg-primary text-white hover:bg-primary/90 neon-glow"
-                  >
-                    Subscribe on YouTube
-                  </Button>
-                  <Button 
-                    onClick={handleFollowUpdates}
-                    variant="outline" 
-                    className="neon-border"
-                  >
-                    Follow Updates
-                  </Button>
-                </div>
-              </div>
-            </TextSection>
           </ContentSection>
         </div>
       </main>
