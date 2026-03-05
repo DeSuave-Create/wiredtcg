@@ -25,6 +25,7 @@ const Simulation = lazy(() => import("./pages/Simulation"));
 const SimulationLog = lazy(() => import("./pages/SimulationLog"));
 const AdminProducts = lazy(() => import("./pages/AdminProducts"));
 const AdminArtwork = lazy(() => import("./pages/AdminArtwork"));
+const CardReference = lazy(() => import("./pages/CardReference"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const App = () => (
               <Route path="/simulation-log" element={<SimulationLog />} />
               <Route path="/admin/products" element={<AdminProducts />} />
               <Route path="/admin/artwork" element={<AdminArtwork />} />
+              <Route path="/card-reference" element={<CardReference />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
