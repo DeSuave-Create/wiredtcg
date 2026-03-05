@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Zap } from 'lucide-react';
+import { Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Logo from './Logo';
 
@@ -43,13 +43,6 @@ const HeroSection = () => {
         Build your network, connect to the switch, and start mining bitcoin! Race against other players through strategic network building, cyber attacks, and cunning deals. Will you dominate through superior infrastructure or be sabotaged by your opponents?
       </p>
       <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 px-2 sm:px-0">
-        <Button 
-          onClick={handleShopNow}
-          className="bg-primary text-white hover:bg-primary/90 neon-glow px-6 sm:px-6 py-3 text-base sm:text-base w-full sm:w-auto min-h-[44px] touch-manipulation"
-        >
-          <ShoppingCart className="h-5 w-5 mr-2" />
-          Shop Now
-        </Button>
         <Button 
           onClick={handleLearnToPlay}
           variant="outline" 

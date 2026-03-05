@@ -20,7 +20,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
   const containerRef = useRef<HTMLDivElement>(null);
   const isVisibleRef = useRef(false);
 
-  // Build the complete deck with actual card quantities (144 cards total)
+  // Build the complete deck with actual card quantities (145 cards total)
   const buildDeck = (): Card[] => {
     const deck: Card[] = [];
     
