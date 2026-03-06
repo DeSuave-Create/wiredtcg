@@ -3,6 +3,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
 import ElectricProgressBar from '@/components/ElectricProgressBar';
+import CardInteractionTutorial from '@/components/card-tutorial/CardInteractionTutorial';
 import { Printer, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,8 +16,8 @@ interface CardInfo {
 const cardData = {
   equipment: {
     label: 'Equipment',
-    color: 'border-green-500',
-    textColor: 'text-green-500',
+    color: 'border-primary',
+    textColor: 'text-primary',
     cards: [
       { name: 'Computer', image: '/lovable-uploads/equipment-computer-new.png', quantity: 32 },
       { name: 'Cabling (2x)', image: '/lovable-uploads/equipment-2cable.png', quantity: 16 },
@@ -27,7 +28,7 @@ const cardData = {
   classification: {
     label: 'Classification',
     color: 'border-blue-500',
-    textColor: 'text-blue-500',
+    textColor: 'text-blue-400',
     cards: [
       { name: 'Facilities', image: '/lovable-uploads/classification-facilities-new.png', quantity: 2 },
       { name: 'Field Tech', image: '/lovable-uploads/classification-fieldtech-new.png', quantity: 2 },
@@ -39,8 +40,8 @@ const cardData = {
   },
   attack: {
     label: 'Attack',
-    color: 'border-red-500',
-    textColor: 'text-red-500',
+    color: 'border-destructive',
+    textColor: 'text-destructive',
     cards: [
       { name: 'Audit', image: '/lovable-uploads/attack-audit-v2.png', quantity: 4 },
       { name: 'Hacked', image: '/lovable-uploads/attack-hacked-v2.png', quantity: 9 },
@@ -51,7 +52,7 @@ const cardData = {
   resolution: {
     label: 'Resolution',
     color: 'border-purple-500',
-    textColor: 'text-purple-500',
+    textColor: 'text-purple-400',
     cards: [
       { name: 'Helpdesk', image: '/lovable-uploads/resolution-helpdesk-v2.png', quantity: 4 },
       { name: 'Trained', image: '/lovable-uploads/resolution-trained-v2.png', quantity: 7 },
@@ -79,7 +80,7 @@ const CardReference = () => {
 
       <main className="container mx-auto px-4 py-8 flex justify-center flex-grow">
         <div className="w-full max-w-6xl" ref={printRef}>
-          {/* Back button - hide on print */}
+          {/* Back button */}
           <div className="print:hidden mb-4">
             <button
               onClick={() => navigate('/extras')}
@@ -90,7 +91,23 @@ const CardReference = () => {
             </button>
           </div>
 
-          <ContentSection title="Card Reference" glowEffect>
+          {/* PRIMARY: Interactive Tutorial Section */}
+          <div className="print:hidden">
+            <ContentSection title="How Cards Work" glowEffect>
+              <div className="space-y-4">
+                <p className="text-muted-foreground text-center max-w-2xl mx-auto text-sm sm:text-base">
+                  Learn how every card in WIRED interacts through visual gameplay examples.
+                  Watch the tutorial auto-play or navigate manually.
+                </p>
+                <CardInteractionTutorial />
+              </div>
+            </ContentSection>
+
+            <ElectricProgressBar />
+          </div>
+
+          {/* SECONDARY: Static Card Reference */}
+          <ContentSection title="Card Reference">
             <div className="text-center space-y-4">
               <p className="text-muted-foreground max-w-2xl mx-auto">
                 All 145 unique cards in the WIRED base game (Internet mode), organized by type.
@@ -98,7 +115,7 @@ const CardReference = () => {
               <div className="print:hidden">
                 <button
                   onClick={handlePrint}
-                  className="bg-gray-50 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg border-2 border-primary inline-flex items-center"
+                  className="bg-muted/30 rounded-3xl text-primary hover:bg-muted/50 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg border-2 border-primary inline-flex items-center"
                 >
                   <Printer className="h-4 w-4 mr-2" />
                   Print / Save as PDF
@@ -118,7 +135,7 @@ const CardReference = () => {
                   {category.cards.map((card) => (
                     <div
                       key={card.name}
-                      className={`bg-gray-50 dark:bg-gray-800/90 rounded-xl border-2 ${category.color} p-3 flex flex-col items-center space-y-2 shadow-lg print:shadow-none print:break-inside-avoid`}
+                      className={`bg-muted/20 rounded-xl border-2 ${category.color} p-3 flex flex-col items-center space-y-2 shadow-lg print:shadow-none print:break-inside-avoid`}
                     >
                       <div className="w-full aspect-[5/7] flex items-center justify-center overflow-hidden rounded-lg">
                         <img
