@@ -238,7 +238,7 @@ export const tutorialCards: Record<string, TutorialCard> = {
     tags: ['classification', 'passive', 'auto-resolve', 'defense'],
     resolves: ['new-hire'],
     counters: ['new-hire', 'head-hunter'],
-    relatedCards: ['security-specialist', 'facilities', 'field-tech', 'trained'],
+    relatedCards: ['computer', 'cable-2', 'cable-3', 'switch', 'trained'],
     enabled: true,
   },
   'field-tech': {
