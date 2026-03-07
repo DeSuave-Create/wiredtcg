@@ -184,7 +184,7 @@ export const tutorialCards: Record<string, TutorialCard> = {
     rulesExplanation: 'Play Trained on any Equipment card that has been targeted by New Hire. The New Hire card is removed and the equipment resumes normal operation.',
     tags: ['resolution', 'restore', 'counter-new-hire'],
     resolves: ['new-hire'],
-    relatedCards: ['supervisor', 'facilities', 'field-tech', 'security-specialist'],
+    relatedCards: ['supervisor', 'computer', 'cable-2', 'cable-3', 'switch'],
     enabled: true,
   },
   'helpdesk': {
