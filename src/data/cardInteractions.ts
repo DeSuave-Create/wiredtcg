@@ -144,7 +144,7 @@ export const tutorialCards: Record<string, TutorialCard> = {
     rulesExplanation: 'Play Audit to target an opponent. They must return Computers from their network. A back-and-forth battle begins: the defender plays Hacked to block, the attacker plays Secured to counter, and so on until one side runs out.',
     tags: ['attack', 'removal', 'battle', 'chain'],
     targets: ['computer'],
-    counters: ['secured'],
+    counters: ['hacked'],
     relatedCards: ['hacked', 'security-specialist'],
     interactionNotes: 'Triggers a unique Audit Battle phase. Computers returned go to the audited pile and can be replayed.',
     enabled: true,
