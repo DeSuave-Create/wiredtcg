@@ -293,23 +293,23 @@ export const cardInteractions: CardInteraction[] = [
     steps: [
       {
         label: 'Step 1: Place a Switch',
-        description: 'Start by playing a Switch. This is the foundation of your network — all other equipment connects through it.',
+        description: 'Start by playing a Switch. This is the top of your network hierarchy — all other equipment connects below it.',
         cardIds: ['switch'],
         stackOrder: ['switch'],
         highlight: 'switch',
       },
       {
         label: 'Step 2: Connect a Cable',
-        description: 'Attach a Cable to the Switch. Cables bridge the gap between Switches and Computers.',
+        description: 'Attach a Cable below the Switch. Cables connect Switches to Computers.',
         cardIds: ['switch', 'cable-3'],
-        stackOrder: ['switch', 'cable-3'],
+        stackOrder: ['cable-3', 'switch'],
         highlight: 'cable-3',
       },
       {
         label: 'Step 3: Connect Computers',
-        description: 'Plug Computers into the Cable. Each active Computer mines 1 Bitcoin per turn. A 3-port Cable can hold up to 3 Computers.',
+        description: 'Plug Computers into the Cable at the bottom. Each active Computer mines 1 Bitcoin per turn. A 3-port Cable can hold up to 3 Computers.',
         cardIds: ['switch', 'cable-3', 'computer'],
-        stackOrder: ['switch', 'cable-3', 'computer'],
+        stackOrder: ['computer', 'cable-3', 'switch'],
         highlight: 'computer',
         effectLabel: 'MINING',
       },
