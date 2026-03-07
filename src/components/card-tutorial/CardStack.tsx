@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useMemo } from 'react';
 import { tutorialCards, getCategoryBorderClass } from '@/data/cardInteractions';
 import { cn } from '@/lib/utils';
 
@@ -7,14 +7,7 @@ interface CardStackProps {
   highlight?: string;
   effectLabel?: string;
   fadeOut?: string[];
-  animateIn?: boolean;
 }
-
-const rotations: Record<number, string> = {
-  0: 'rotate-0',
-  1: '-rotate-3',
-  2: 'rotate-3',
-};
 
 const offsets: Record<number, { x: number; y: number }> = {
   0: { x: 0, y: 0 },
@@ -22,59 +15,62 @@ const offsets: Record<number, { x: number; y: number }> = {
   2: { x: -14, y: -56 },
 };
 
-const CardStack = ({ stackOrder, highlight, effectLabel, fadeOut = [], animateIn }: CardStackProps) => {
-  const [visibleCards, setVisibleCards] = useState<string[]>([]);
+const rotations: Record<number, number> = {
+  0: 0,
+  1: -3,
+  2: 3,
+};
 
-  useEffect(() => {
-    if (animateIn) {
-      setVisibleCards([]);
-      stackOrder.forEach((id, idx) => {
-        setTimeout(() => {
-          setVisibleCards(prev => [...prev, id]);
-        }, idx * 400);
-      });
-    } else {
-      setVisibleCards(stackOrder);
-    }
-  }, [stackOrder, animateIn]);
+const effectLabelClass: Record<string, string> = {
+  DISABLED: 'border-destructive text-destructive',
+  ACTIVE: 'border-primary text-primary',
+  MINING: 'border-primary text-primary',
+  RESTORED: 'border-primary text-primary',
+  RESOLVING: 'border-purple-500 text-purple-400',
+  'AUTO-RESOLVE': 'border-purple-500 text-purple-400',
+  BLOCKED: 'border-blue-500 text-blue-400',
+  COUNTERED: 'border-destructive text-destructive',
+  STOLEN: 'border-destructive text-destructive',
+  LOCKED: 'border-primary text-primary',
+  VULNERABLE: 'border-yellow-500 text-yellow-400',
+  'STEAL ATTEMPT': 'border-destructive text-destructive',
+  'AUDIT INITIATED': 'border-destructive text-destructive',
+  'COMPUTERS RETURNED': 'border-destructive text-destructive',
+  '+1 EQUIPMENT MOVE': 'border-primary text-primary',
+  'BONUS PLAY': 'border-primary text-primary',
+};
+
+const CardStack = memo(({ stackOrder, highlight, effectLabel, fadeOut = [] }: CardStackProps) => {
+  const fadeOutSet = useMemo(() => new Set(fadeOut), [fadeOut]);
 
   return (
-    <div className="relative flex items-center justify-center min-h-[280px] sm:min-h-[340px]">
-      {/* Ambient glow */}
-      <div className="absolute w-48 h-48 rounded-full bg-primary/5 blur-3xl" />
-
+    <div className="relative flex items-center justify-center min-h-[260px] sm:min-h-[300px]">
       <div className="relative" style={{ width: '180px', height: '260px' }}>
         {stackOrder.map((cardId, idx) => {
           const card = tutorialCards[cardId];
           if (!card) return null;
 
-          const isFadingOut = fadeOut.includes(cardId);
+          const isFadingOut = fadeOutSet.has(cardId);
           const isHighlighted = highlight === cardId;
-          const isVisible = visibleCards.includes(cardId);
           const offset = offsets[idx] || { x: idx * 14, y: idx * -28 };
-          const rotation = rotations[idx] || 'rotate-0';
-          const borderClass = getCategoryBorderClass(card.type);
+          const rot = rotations[idx] ?? 0;
 
           return (
             <div
               key={`${cardId}-${idx}`}
-              className={cn(
-                'absolute inset-0 transition-all duration-700 ease-out',
-                rotation,
-                isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90 translate-y-8',
-                isFadingOut && 'opacity-20 scale-90 blur-sm',
-                isHighlighted && 'z-30 scale-105',
-              )}
+              className="absolute inset-0 will-change-[transform,opacity]"
               style={{
-                transform: `translate(${offset.x}px, ${offset.y}px)`,
+                transform: `translate(${offset.x}px, ${offset.y}px) rotate(${rot}deg) scale(${isFadingOut ? 0.9 : isHighlighted ? 1.05 : 1})`,
+                opacity: isFadingOut ? 0.2 : 1,
                 zIndex: idx + 1,
+                transition: 'transform 0.5s ease-out, opacity 0.5s ease-out',
               }}
             >
               <div
                 className={cn(
-                  'w-[160px] sm:w-[180px] rounded-xl overflow-hidden border-2 shadow-2xl transition-shadow duration-500',
-                  borderClass,
-                  isHighlighted && 'shadow-[0_0_30px_rgba(var(--primary),0.3)] ring-2 ring-primary/30',
+                  'w-[160px] sm:w-[180px] rounded-xl overflow-hidden border-2 shadow-lg',
+                  getCategoryBorderClass(card.type),
+                  isHighlighted && 'ring-2 ring-primary/30',
                 )}
               >
                 <img
@@ -82,30 +78,14 @@ const CardStack = ({ stackOrder, highlight, effectLabel, fadeOut = [], animateIn
                   alt={card.name}
                   className="w-full h-auto object-contain"
                   loading="lazy"
+                  decoding="async"
                 />
               </div>
 
-              {/* Effect label badge */}
               {isHighlighted && effectLabel && (
                 <div className={cn(
-                  'absolute -bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold font-orbitron tracking-wider whitespace-nowrap z-40',
-                  'bg-background/90 backdrop-blur-sm border',
-                  effectLabel === 'DISABLED' && 'border-destructive text-destructive',
-                  effectLabel === 'ACTIVE' && 'border-primary text-primary',
-                  effectLabel === 'MINING' && 'border-primary text-primary',
-                  effectLabel === 'RESTORED' && 'border-primary text-primary',
-                  effectLabel === 'RESOLVING' && 'border-purple-500 text-purple-400',
-                  effectLabel === 'AUTO-RESOLVE' && 'border-purple-500 text-purple-400',
-                  effectLabel === 'BLOCKED' && 'border-blue-500 text-blue-400',
-                  effectLabel === 'COUNTERED' && 'border-destructive text-destructive',
-                  effectLabel === 'STOLEN' && 'border-destructive text-destructive',
-                  effectLabel === 'LOCKED' && 'border-primary text-primary',
-                  effectLabel === 'VULNERABLE' && 'border-yellow-500 text-yellow-400',
-                  effectLabel === 'STEAL ATTEMPT' && 'border-destructive text-destructive',
-                  effectLabel === 'AUDIT INITIATED' && 'border-destructive text-destructive',
-                  effectLabel === 'COMPUTERS RETURNED' && 'border-destructive text-destructive',
-                  effectLabel === '+1 EQUIPMENT MOVE' && 'border-primary text-primary',
-                  effectLabel === 'BONUS PLAY' && 'border-primary text-primary',
+                  'absolute -bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold font-orbitron tracking-wider whitespace-nowrap z-40 bg-background/90 border',
+                  effectLabelClass[effectLabel] || 'border-primary text-primary',
                 )}>
                   {effectLabel}
                 </div>
@@ -116,6 +96,8 @@ const CardStack = ({ stackOrder, highlight, effectLabel, fadeOut = [], animateIn
       </div>
     </div>
   );
-};
+});
+
+CardStack.displayName = 'CardStack';
 
 export default CardStack;

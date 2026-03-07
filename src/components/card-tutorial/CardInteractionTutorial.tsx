@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, memo, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Pause, Play, Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -7,7 +7,6 @@ import {
   getCategoryTextClass,
   getCategoryBgClass,
   getCategoryBorderClass,
-  type CardInteraction,
   type CardCategory,
 } from '@/data/cardInteractions';
 import CardStack from './CardStack';
@@ -22,25 +21,33 @@ const categoryFilters: { label: string; value: CardCategory | 'all' }[] = [
   { label: 'Classification', value: 'classification' },
 ];
 
-const CardInteractionTutorial = () => {
+const complexityBadge: Record<string, string> = {
+  simple: 'bg-primary/20 text-primary',
+  medium: 'bg-yellow-500/20 text-yellow-400',
+  complex: 'bg-destructive/20 text-destructive',
+};
+
+const CardInteractionTutorial = memo(() => {
   const [activeFilter, setActiveFilter] = useState<CardCategory | 'all'>('all');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
-  const [stepAnimKey, setStepAnimKey] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const progressRef = useRef<HTMLDivElement>(null);
 
-  const allInteractions = getEnabledInteractions();
-  const interactions = activeFilter === 'all'
-    ? allInteractions
-    : allInteractions.filter(i => tutorialCards[i.featuredCardId]?.type === activeFilter);
+  const allInteractions = useMemo(() => getEnabledInteractions(), []);
+  const interactions = useMemo(
+    () => activeFilter === 'all'
+      ? allInteractions
+      : allInteractions.filter(i => tutorialCards[i.featuredCardId]?.type === activeFilter),
+    [allInteractions, activeFilter],
+  );
 
   const interaction = interactions[currentIndex];
   const featuredCard = interaction ? tutorialCards[interaction.featuredCardId] : null;
   const step = interaction?.steps[currentStep];
 
-  // Reset index when filter changes
   useEffect(() => {
     setCurrentIndex(0);
     setCurrentStep(0);
@@ -50,16 +57,13 @@ const CardInteractionTutorial = () => {
     if (!interaction) return;
     if (currentStep < interaction.steps.length - 1) {
       setCurrentStep(s => s + 1);
-      setStepAnimKey(k => k + 1);
     } else {
-      // Move to next interaction
       setCurrentIndex(i => (i + 1) % interactions.length);
       setCurrentStep(0);
-      setStepAnimKey(k => k + 1);
     }
   }, [interaction, currentStep, interactions.length]);
 
-  // Autoplay timer
+  // Autoplay
   useEffect(() => {
     if (isPlaying && !isHovered && interaction) {
       timerRef.current = setTimeout(advanceStep, AUTOPLAY_INTERVAL);
@@ -67,13 +71,22 @@ const CardInteractionTutorial = () => {
     return () => clearTimeout(timerRef.current);
   }, [isPlaying, isHovered, advanceStep, interaction, currentStep]);
 
-  const goToInteraction = (idx: number) => {
+  // Restart progress bar animation
+  useEffect(() => {
+    const el = progressRef.current;
+    if (!el) return;
+    el.style.animation = 'none';
+    // Force reflow
+    void el.offsetWidth;
+    el.style.animation = `progress-fill ${AUTOPLAY_INTERVAL}ms linear`;
+  }, [currentStep, currentIndex, isPlaying, isHovered]);
+
+  const goToInteraction = useCallback((idx: number) => {
     setCurrentIndex(idx);
     setCurrentStep(0);
-    setStepAnimKey(k => k + 1);
-  };
+  }, []);
 
-  const goPrev = () => {
+  const goPrev = useCallback(() => {
     if (currentStep > 0) {
       setCurrentStep(s => s - 1);
     } else {
@@ -81,12 +94,19 @@ const CardInteractionTutorial = () => {
       setCurrentIndex(prevIdx);
       setCurrentStep(interactions[prevIdx]?.steps.length - 1 || 0);
     }
-    setStepAnimKey(k => k + 1);
-  };
+  }, [currentStep, currentIndex, interactions]);
 
-  const goNext = () => {
-    advanceStep();
-  };
+  const onMouseEnter = useCallback(() => setIsHovered(true), []);
+  const onMouseLeave = useCallback(() => setIsHovered(false), []);
+  const togglePlay = useCallback(() => setIsPlaying(p => !p), []);
+
+  const relatedCards = useMemo(() => {
+    if (!featuredCard) return [];
+    return (featuredCard.relatedCards || [])
+      .map(id => tutorialCards[id])
+      .filter(Boolean)
+      .slice(0, 6);
+  }, [featuredCard]);
 
   if (!interaction || !featuredCard || !step) {
     return (
@@ -96,25 +116,8 @@ const CardInteractionTutorial = () => {
     );
   }
 
-  const complexityBadge = {
-    simple: 'bg-primary/20 text-primary',
-    medium: 'bg-yellow-500/20 text-yellow-400',
-    complex: 'bg-destructive/20 text-destructive',
-  };
-
-  // Related cards for the current interaction's featured card
-  const relatedCardIds = featuredCard.relatedCards || [];
-  const relatedCards = relatedCardIds
-    .map(id => tutorialCards[id])
-    .filter(Boolean)
-    .slice(0, 6);
-
   return (
-    <div
-      className="w-full"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className="w-full" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       {/* Filter bar */}
       <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
         <Filter className="h-4 w-4 text-muted-foreground mr-1" />
@@ -123,9 +126,9 @@ const CardInteractionTutorial = () => {
             key={f.value}
             onClick={() => setActiveFilter(f.value)}
             className={cn(
-              'px-3 py-1.5 rounded-full text-xs font-medium font-orbitron tracking-wide transition-all duration-300 border',
+              'px-3 py-1.5 rounded-full text-xs font-medium font-orbitron tracking-wide border transition-colors duration-200',
               activeFilter === f.value
-                ? 'bg-primary/20 border-primary text-primary shadow-[0_0_12px_rgba(var(--primary),0.2)]'
+                ? 'bg-primary/20 border-primary text-primary'
                 : 'border-muted bg-muted/30 text-muted-foreground hover:border-primary/50 hover:text-foreground',
             )}
           >
@@ -135,22 +138,22 @@ const CardInteractionTutorial = () => {
       </div>
 
       {/* Main tutorial card */}
-      <div className="relative rounded-2xl border border-muted/50 bg-background/60 backdrop-blur-md overflow-hidden">
+      <div className="relative rounded-2xl border border-muted/50 bg-background/80 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-muted/30 bg-muted/10">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <span className={cn(
-              'px-2 py-0.5 rounded text-[10px] font-orbitron font-bold uppercase tracking-widest',
+              'px-2 py-0.5 rounded text-[10px] font-orbitron font-bold uppercase tracking-widest flex-shrink-0',
               getCategoryBgClass(featuredCard.type),
               getCategoryTextClass(featuredCard.type),
             )}>
               {featuredCard.type}
             </span>
-            <h3 className="text-sm sm:text-base font-bold font-orbitron text-foreground">
+            <h3 className="text-sm sm:text-base font-bold font-orbitron text-foreground truncate">
               {interaction.title}
             </h3>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             <span className={cn(
               'px-2 py-0.5 rounded text-[10px] font-medium',
               complexityBadge[interaction.complexity],
@@ -158,7 +161,7 @@ const CardInteractionTutorial = () => {
               {interaction.complexity}
             </span>
             <button
-              onClick={() => setIsPlaying(!isPlaying)}
+              onClick={togglePlay}
               className="p-1.5 rounded-full hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors"
               aria-label={isPlaying ? 'Pause' : 'Play'}
             >
@@ -167,25 +170,23 @@ const CardInteractionTutorial = () => {
           </div>
         </div>
 
-        {/* Content area — adaptive layout */}
+        {/* Content area */}
         <div className={cn(
           'p-4 sm:p-6',
           interaction.complexity === 'simple'
             ? 'flex flex-col md:flex-row items-center gap-6'
             : 'flex flex-col lg:flex-row gap-6',
         )}>
-          {/* Card Stack Visualization */}
+          {/* Card Stack */}
           <div className={cn(
             'flex-shrink-0 flex items-center justify-center',
             interaction.complexity === 'simple' ? 'md:w-1/3' : 'lg:w-2/5',
           )}>
             <CardStack
-              key={`${interaction.id}-${currentStep}-${stepAnimKey}`}
               stackOrder={step.stackOrder}
               highlight={step.highlight}
               effectLabel={step.effectLabel}
               fadeOut={step.fadeOut}
-              animateIn
             />
           </div>
 
@@ -199,11 +200,11 @@ const CardInteractionTutorial = () => {
               {interaction.steps.map((_, sIdx) => (
                 <button
                   key={sIdx}
-                  onClick={() => { setCurrentStep(sIdx); setStepAnimKey(k => k + 1); }}
+                  onClick={() => setCurrentStep(sIdx)}
                   className={cn(
-                    'h-1.5 rounded-full transition-all duration-300',
+                    'h-1.5 rounded-full transition-[width,background-color] duration-300',
                     sIdx === currentStep
-                      ? 'w-8 bg-primary shadow-[0_0_8px_rgba(var(--primary),0.4)]'
+                      ? 'w-8 bg-primary'
                       : sIdx < currentStep
                         ? 'w-4 bg-primary/40'
                         : 'w-4 bg-muted/50',
@@ -215,20 +216,17 @@ const CardInteractionTutorial = () => {
               </span>
             </div>
 
-            {/* Step label */}
-            <h4 className="text-base sm:text-lg font-bold font-orbitron text-primary mb-2 animate-fade-in">
+            <h4 className="text-base sm:text-lg font-bold font-orbitron text-primary mb-2">
               {step.label}
             </h4>
 
-            {/* Step description */}
-            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-4 animate-fade-in">
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-4">
               {step.description}
             </p>
 
-            {/* Card rules explanation (show on first step) */}
             {currentStep === 0 && (
               <div className={cn(
-                'rounded-xl border p-3 sm:p-4 mb-4 animate-fade-in',
+                'rounded-xl border p-3 sm:p-4 mb-4',
                 getCategoryBorderClass(featuredCard.type),
                 'bg-muted/10',
               )}>
@@ -243,9 +241,8 @@ const CardInteractionTutorial = () => {
               </div>
             )}
 
-            {/* Related cards (show on last step) */}
             {currentStep === interaction.steps.length - 1 && relatedCards.length > 0 && (
-              <div className="animate-fade-in">
+              <div>
                 <p className="text-[10px] font-orbitron text-muted-foreground uppercase tracking-widest mb-2">
                   Related Cards
                 </p>
@@ -259,7 +256,7 @@ const CardInteractionTutorial = () => {
                         'bg-muted/20',
                       )}
                     >
-                      <img src={rc.image} alt={rc.name} className="w-6 h-8 object-contain rounded" />
+                      <img src={rc.image} alt={rc.name} className="w-6 h-8 object-contain rounded" loading="lazy" decoding="async" />
                       <span className={cn('font-medium', getCategoryTextClass(rc.type))}>
                         {rc.name}
                       </span>
@@ -275,34 +272,30 @@ const CardInteractionTutorial = () => {
         <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-t border-muted/30 bg-muted/5">
           <button
             onClick={goPrev}
-            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors font-medium min-h-[44px]"
           >
             <ChevronLeft className="h-4 w-4" /> Previous
           </button>
 
-          {/* Interaction dots */}
           <div className="flex items-center gap-1.5 overflow-x-auto max-w-[60%] py-1">
-            {interactions.map((inter, idx) => {
-              const fc = tutorialCards[inter.featuredCardId];
-              return (
-                <button
-                  key={inter.id}
-                  onClick={() => goToInteraction(idx)}
-                  className={cn(
-                    'w-2 h-2 rounded-full transition-all duration-300 flex-shrink-0',
-                    idx === currentIndex
-                      ? 'w-3 h-3 bg-primary shadow-[0_0_8px_rgba(var(--primary),0.4)]'
-                      : 'bg-muted/50 hover:bg-muted',
-                  )}
-                  title={inter.title}
-                />
-              );
-            })}
+            {interactions.map((inter, idx) => (
+              <button
+                key={inter.id}
+                onClick={() => goToInteraction(idx)}
+                className={cn(
+                  'rounded-full flex-shrink-0 transition-[width,height,background-color] duration-200',
+                  idx === currentIndex
+                    ? 'w-3 h-3 bg-primary'
+                    : 'w-2 h-2 bg-muted/50 hover:bg-muted',
+                )}
+                title={inter.title}
+              />
+            ))}
           </div>
 
           <button
-            onClick={goNext}
-            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
+            onClick={advanceStep}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors font-medium min-h-[44px]"
           >
             Next <ChevronRight className="h-4 w-4" />
           </button>
@@ -312,17 +305,14 @@ const CardInteractionTutorial = () => {
         {isPlaying && !isHovered && (
           <div className="h-0.5 bg-muted/20">
             <div
-              className="h-full bg-primary/60 transition-none"
-              style={{
-                animation: `progress-fill ${AUTOPLAY_INTERVAL}ms linear`,
-                width: '100%',
-              }}
+              ref={progressRef}
+              className="h-full bg-primary/60"
+              style={{ width: '100%' }}
             />
           </div>
         )}
       </div>
 
-      {/* CSS for progress animation */}
       <style>{`
         @keyframes progress-fill {
           from { width: 0%; }
@@ -331,6 +321,8 @@ const CardInteractionTutorial = () => {
       `}</style>
     </div>
   );
-};
+});
+
+CardInteractionTutorial.displayName = 'CardInteractionTutorial';
 
 export default CardInteractionTutorial;
