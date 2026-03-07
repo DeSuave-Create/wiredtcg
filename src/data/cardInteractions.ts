@@ -141,7 +141,7 @@ export const tutorialCards: Record<string, TutorialCard> = {
     image: '/lovable-uploads/attack-audit-v2.png',
     type: 'attack',
     description: 'Audit forces an opponent to return Computers from their network. The defender can counter with Secured cards, and the attacker can counter back with Hacked cards.',
-    rulesExplanation: 'Play Audit to target an opponent. They must return Computers from their network equal to the number of Audit cards played. A back-and-forth battle begins: the defender plays Secured to block, the attacker plays Hacked to counter, and so on until one side runs out.',
+    rulesExplanation: 'Play Audit to target an opponent. They must return Computers from their network. A back-and-forth battle begins: the defender plays Hacked to block, the attacker plays Secured to counter, and so on until one side runs out.',
     tags: ['attack', 'removal', 'battle', 'chain'],
     targets: ['computer'],
     counters: ['secured'],
