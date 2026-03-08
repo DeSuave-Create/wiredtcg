@@ -89,8 +89,10 @@ const CardStack = memo(({ stackOrder, highlight, effectLabel, fadeOut = [] }: Ca
                 <img
                   src={card.image}
                   alt={card.name}
+                  width={180}
+                  height={252}
                   className="w-full h-auto object-contain"
-                  loading="lazy"
+                  loading="eager"
                   decoding="async"
                 />
               </div>
