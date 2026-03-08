@@ -170,7 +170,7 @@ export const tutorialCards: Record<string, TutorialCard> = {
   'secured': {
     id: 'secured',
     name: 'Secured',
-    image: '/lovable-uploads/resolution-secured-v2.png',
+    image: '/lovable-uploads/resolution-secured-v3.png',
     type: 'resolution',
     description: 'Secured resolves a Hacked attack on a Computer, restoring it to active status.',
     rulesExplanation: 'Play Secured on a Computer that has been Hacked. The Hacked card is removed and the Computer resumes mining Bitcoin. Also used by the attacker to counter Hacked blocks during Audit Battles.',
