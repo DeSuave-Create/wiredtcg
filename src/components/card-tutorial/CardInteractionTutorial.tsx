@@ -172,17 +172,9 @@ const CardInteractionTutorial = memo(() => {
         </div>
 
         {/* Content area */}
-        <div className={cn(
-          'p-4 sm:p-6',
-          interaction.complexity === 'simple'
-            ? 'flex flex-col md:flex-row items-center gap-6'
-            : 'flex flex-col lg:flex-row gap-6',
-        )}>
-          {/* Card Stack */}
-          <div className={cn(
-            'flex-shrink-0 flex items-center justify-center',
-            interaction.complexity === 'simple' ? 'md:w-1/3' : 'lg:w-2/5',
-          )}>
+        <div className="p-4 sm:p-6 flex flex-col lg:flex-row gap-6 min-h-[480px] sm:min-h-[540px]">
+          {/* Card Stack / Network Diagram */}
+          <div className="flex-shrink-0 flex items-center justify-center lg:w-2/5">
             {step.layout === 'network' ? (
               <NetworkDiagram
                 cardIds={step.stackOrder}
@@ -201,10 +193,7 @@ const CardInteractionTutorial = memo(() => {
           </div>
 
           {/* Explanation panel */}
-          <div className={cn(
-            'flex-1 flex flex-col justify-center min-w-0',
-            interaction.complexity === 'simple' ? 'md:w-2/3' : 'lg:w-3/5',
-          )}>
+          <div className="flex-1 flex flex-col justify-center min-w-0 lg:w-3/5">
             {/* Step indicator */}
             <div className="flex items-center gap-2 mb-3">
               {interaction.steps.map((_, sIdx) => (
