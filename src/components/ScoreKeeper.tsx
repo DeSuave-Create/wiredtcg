@@ -24,10 +24,17 @@ const characters = [
   { id: 'analyst', name: 'Analyst', icon: '📊', image: '/lovable-uploads/artwork-analyst.png', artwork: '/lovable-uploads/artwork-analyst.png', defaultScale: 1.0 },
 ];
 
-const defaultPlayers: Player[] = [
-  { id: '1', name: 'Player 1', score: 0, character: 'security-specialist' },
-  { id: '2', name: 'Player 2', score: 0, character: 'facilities' }
-];
+const getRandomCharacters = (count: number) => {
+  const shuffled = [...characters].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count).map((c, i) => ({
+    id: Date.now().toString() + i,
+    name: `Player ${i + 1}`,
+    score: 0,
+    character: c.id
+  }));
+};
+
+const defaultPlayers: Player[] = getRandomCharacters(2);
 
 // Cookie helper functions
 const setCookie = (name: string, value: string, days: number = 30) => {
