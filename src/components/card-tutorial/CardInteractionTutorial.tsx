@@ -227,7 +227,7 @@ const CardInteractionTutorial = memo(() => {
             </div>
 
             <h4 className="text-base sm:text-lg font-bold font-orbitron text-primary mb-2">
-              {step.label}
+              {highlightBitcoin(step.label)}
             </h4>
 
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-4">
