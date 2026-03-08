@@ -308,7 +308,8 @@ const Extras = () => {
             <ContentSection title="Downloads & Resources">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                 {/* Score Sheets */}
-                <div className="bg-muted/10 border-2 border-primary rounded-3xl p-6 text-center space-y-4 shadow-lg flex flex-col">
+                <div className="border-2 border-primary rounded-3xl p-6 text-center space-y-4 shadow-lg flex flex-col overflow-hidden relative" style={{ backgroundImage: "url('/images/card-back-light.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                  <div className="absolute inset-0 bg-background/80 dark:bg-background/85" />
                   <FileText className="h-12 w-12 text-primary mx-auto" />
                   <h3 className="text-lg font-semibold font-orbitron text-primary">Score Sheets</h3>
                   <p className="text-sm text-muted-foreground flex-grow">Printable score tracking sheets matching our digital Score Keeper design</p>
