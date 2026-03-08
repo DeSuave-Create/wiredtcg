@@ -44,6 +44,18 @@ export interface CardInteraction {
 // ─── CARD DEFINITIONS ────────────────────────────────────────
 
 export const tutorialCards: Record<string, TutorialCard> = {
+  // Internet (not a playable card, but part of the network)
+  'internet': {
+    id: 'internet',
+    name: 'Internet',
+    image: '/lovable-uploads/internet-logo.png',
+    type: 'equipment',
+    description: 'The Internet is the starting point of every player\'s network. All equipment connects below it.',
+    rulesExplanation: 'Every player starts with an Internet card already on the board. Switches connect directly to it. The Internet itself cannot be attacked or removed.',
+    tags: ['equipment', 'foundation', 'permanent'],
+    relatedCards: ['switch'],
+    enabled: true,
+  },
   // Equipment
   'computer': {
     id: 'computer',
