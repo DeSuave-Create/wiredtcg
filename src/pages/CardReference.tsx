@@ -53,8 +53,8 @@ const cardData = {
   },
   resolution: {
     label: 'Resolution',
-    color: 'border-purple-500',
-    textColor: 'text-purple-400',
+    color: 'border-yellow-500',
+    textColor: 'text-yellow-400',
     cards: [
       { name: 'Helpdesk', image: '/lovable-uploads/resolution-helpdesk-v2.png', quantity: 4 },
       { name: 'Trained', image: '/lovable-uploads/resolution-trained-v2.png', quantity: 7 },

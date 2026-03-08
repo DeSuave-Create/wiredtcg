@@ -22,7 +22,7 @@ export function PlayerHand({
     switch (type) {
       case 'equipment': return 'border-green-500 bg-green-500/10';
       case 'attack': return 'border-red-500 bg-red-500/10';
-      case 'resolution': return 'border-purple-500 bg-purple-500/10';
+      case 'resolution': return 'border-yellow-500 bg-yellow-500/10';
       case 'classification': return 'border-blue-500 bg-blue-500/10';
       default: return 'border-gray-500 bg-gray-500/10';
     }
