@@ -122,6 +122,29 @@ const Extras = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
+
+      {/* Secondary Section Nav */}
+      <div className="sticky top-0 z-40 border-b border-muted/30 bg-background/90 backdrop-blur-sm">
+        <div className="container mx-auto px-4">
+          <nav className="flex items-center justify-center gap-1 sm:gap-2 py-2 overflow-x-auto">
+            {sections.map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                onClick={() => scrollToSection(id)}
+                className={cn(
+                  'flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium font-orbitron tracking-wide transition-colors duration-200 whitespace-nowrap min-h-[36px]',
+                  activeSection === id
+                    ? 'bg-primary/20 text-primary border border-primary/50'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/30 border border-transparent',
+                )}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                {label}
+              </button>
+            ))}
+          </nav>
+        </div>
+      </div>
       
       <main className="container mx-auto px-4 py-8 flex justify-center flex-grow">
         <div className="w-full max-w-6xl">
@@ -137,8 +160,8 @@ const Extras = () => {
           <ElectricProgressBar />
 
           {/* Video Carousel Section */}
-          <ContentSection title="Video Tutorials">
-            <VideoCarousel videos={tutorialVideos} />
+          <div ref={assignRef('videos')} data-section="videos">
+            <ContentSection title="Video Tutorials">
           </ContentSection>
           
           <ElectricProgressBar />
