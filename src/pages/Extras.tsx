@@ -147,7 +147,7 @@ const Extras = () => {
       </div>
       
       <main className="container mx-auto px-4 py-8 flex justify-center flex-grow">
-        <div className="w-full max-w-6xl [&_[data-section]]:scroll-mt-16">
+        <div className="w-full max-w-6xl [&_[data-section]]:scroll-mt-28">
           {/* Page Header */}
           <ContentSection title="Game Extras & Resources" glowEffect>
             <div className="text-center">
