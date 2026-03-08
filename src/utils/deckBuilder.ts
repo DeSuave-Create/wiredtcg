@@ -10,15 +10,15 @@ const cardDefinitions: Record<string, { type: CardType; subtype: string; name: s
   
   // Attacks
   'audit': { type: 'attack', subtype: 'audit', name: 'Audit', image: '/lovable-uploads/attack-audit-v2.png', description: 'Target returns half their computers (rounded up) to hand. Can be countered with Hacked.' },
-  'hacked': { type: 'attack', subtype: 'hacked', name: 'Hacked', image: '/lovable-uploads/attack-hacked-v2.png', description: 'Disable target equipment card. Resolved by Secured or Helpdesk.' },
-  'new-hire': { type: 'attack', subtype: 'new-hire', name: 'New Hire', image: '/lovable-uploads/attack-newhire-v2.png', description: 'Disable target equipment card. Resolved by Trained or Helpdesk.' },
-  'power-outage': { type: 'attack', subtype: 'power-outage', name: 'Power Outage', image: '/lovable-uploads/attack-poweroutage-v2.png', description: 'Disable target equipment card. Resolved by Powered or Helpdesk.' },
+  'hacked': { type: 'attack', subtype: 'hacked', name: 'Hacked', image: '/lovable-uploads/attack-hacked-v3.png', description: 'Disable target equipment card. Resolved by Secured or Helpdesk.' },
+  'new-hire': { type: 'attack', subtype: 'new-hire', name: 'New Hire', image: '/lovable-uploads/attack-newhire-v3.png', description: 'Disable target equipment card. Resolved by Trained or Helpdesk.' },
+  'power-outage': { type: 'attack', subtype: 'power-outage', name: 'Power Outage', image: '/lovable-uploads/attack-poweroutage-v3.png', description: 'Disable target equipment card. Resolved by Powered or Helpdesk.' },
   
   // Resolutions
   'helpdesk': { type: 'resolution', subtype: 'helpdesk', name: 'Helpdesk', image: '/lovable-uploads/resolution-helpdesk-v2.png', description: 'Resolve ALL issues on target equipment card.' },
-  'trained': { type: 'resolution', subtype: 'trained', name: 'Trained', image: '/lovable-uploads/resolution-trained-v2.png', description: 'Resolve a single New Hire on target equipment.' },
-  'powered': { type: 'resolution', subtype: 'powered', name: 'Powered', image: '/lovable-uploads/resolution-powered-v2.png', description: 'Resolve a single Power Outage on target equipment.' },
-  'secured': { type: 'resolution', subtype: 'secured', name: 'Secured', image: '/lovable-uploads/resolution-secured-v2.png', description: 'Resolve a single Hacked on target equipment.' },
+  'trained': { type: 'resolution', subtype: 'trained', name: 'Trained', image: '/lovable-uploads/resolution-trained-v3.png', description: 'Resolve a single New Hire on target equipment.' },
+  'powered': { type: 'resolution', subtype: 'powered', name: 'Powered', image: '/lovable-uploads/resolution-powered-v3.png', description: 'Resolve a single Power Outage on target equipment.' },
+  'secured': { type: 'resolution', subtype: 'secured', name: 'Secured', image: '/lovable-uploads/resolution-secured-v3.png', description: 'Resolve a single Hacked on target equipment.' },
   
   // Classifications
   'facilities': { type: 'classification', subtype: 'facilities', name: 'Facilities', image: '/lovable-uploads/classification-facilities-new.png', description: 'Resolves all Power Outage cards. Blocks new Power Outage attacks.' },

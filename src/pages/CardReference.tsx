@@ -46,9 +46,9 @@ const cardData = {
     textColor: 'text-destructive',
     cards: [
       { name: 'Audit', image: '/lovable-uploads/attack-audit-v2.png', quantity: 4 },
-      { name: 'Hacked', image: '/lovable-uploads/attack-hacked-v2.png', quantity: 9 },
-      { name: 'New Hire', image: '/lovable-uploads/attack-newhire-v2.png', quantity: 7 },
-      { name: 'Power Outage', image: '/lovable-uploads/attack-poweroutage-v2.png', quantity: 7 },
+      { name: 'Hacked', image: '/lovable-uploads/attack-hacked-v3.png', quantity: 9 },
+      { name: 'New Hire', image: '/lovable-uploads/attack-newhire-v3.png', quantity: 7 },
+      { name: 'Power Outage', image: '/lovable-uploads/attack-poweroutage-v3.png', quantity: 7 },
     ] as CardInfo[],
   },
   resolution: {
@@ -57,9 +57,9 @@ const cardData = {
     textColor: 'text-yellow-400',
     cards: [
       { name: 'Helpdesk', image: '/lovable-uploads/resolution-helpdesk-v2.png', quantity: 4 },
-      { name: 'Trained', image: '/lovable-uploads/resolution-trained-v2.png', quantity: 7 },
-      { name: 'Powered', image: '/lovable-uploads/resolution-powered-v2.png', quantity: 7 },
-      { name: 'Secured', image: '/lovable-uploads/resolution-secured-v2.png', quantity: 9 },
+      { name: 'Trained', image: '/lovable-uploads/resolution-trained-v3.png', quantity: 7 },
+      { name: 'Powered', image: '/lovable-uploads/resolution-powered-v3.png', quantity: 7 },
+      { name: 'Secured', image: '/lovable-uploads/resolution-secured-v3.png', quantity: 9 },
     ] as CardInfo[],
   },
 };

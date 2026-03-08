@@ -112,7 +112,7 @@ export const tutorialCards: Record<string, TutorialCard> = {
   'hacked': {
     id: 'hacked',
     name: 'Hacked',
-    image: '/lovable-uploads/attack-hacked-v2.png',
+    image: '/lovable-uploads/attack-hacked-v3.png',
     type: 'attack',
     description: 'Hacked disables any Equipment card. All connected equipment downstream is also disabled (cascade). Resolve with Secured.',
     rulesExplanation: 'Play Hacked on any opponent\'s Equipment (Computer, Cable, or Switch). That equipment is disabled and stops producing Bitcoin. If placed on a Switch or Cable, all downstream equipment is also disabled. Equipment can have multiple attack cards stacked on it. Resolved by a Secured card or the Security Specialist classification.',
@@ -126,7 +126,7 @@ export const tutorialCards: Record<string, TutorialCard> = {
   'power-outage': {
     id: 'power-outage',
     name: 'Power Outage',
-    image: '/lovable-uploads/attack-poweroutage-v2.png',
+    image: '/lovable-uploads/attack-poweroutage-v3.png',
     type: 'attack',
     description: 'Power Outage disables any Equipment card. All connected equipment downstream is also disabled (cascade). Resolve with Powered.',
     rulesExplanation: 'Play Power Outage on any opponent\'s Equipment (Computer, Cable, or Switch). That equipment and all downstream equipment is disabled. Equipment can have multiple attack cards stacked on it. Resolved by a Powered card or the Facilities classification.',
@@ -140,7 +140,7 @@ export const tutorialCards: Record<string, TutorialCard> = {
   'new-hire': {
     id: 'new-hire',
     name: 'New Hire',
-    image: '/lovable-uploads/attack-newhire-v2.png',
+    image: '/lovable-uploads/attack-newhire-v3.png',
     type: 'attack',
     description: 'New Hire disables any Equipment card. All connected equipment downstream is also disabled (cascade). Resolve with Trained.',
     rulesExplanation: 'Play New Hire on any opponent\'s Equipment (Computer, Cable, or Switch). That equipment and all downstream equipment is disabled. Equipment can have multiple attack cards stacked on it. Resolved by a Trained card or the Supervisor classification.',
@@ -170,7 +170,7 @@ export const tutorialCards: Record<string, TutorialCard> = {
   'secured': {
     id: 'secured',
     name: 'Secured',
-    image: '/lovable-uploads/resolution-secured-v2.png',
+    image: '/lovable-uploads/resolution-secured-v3.png',
     type: 'resolution',
     description: 'Secured resolves a Hacked attack on a Computer, restoring it to active status.',
     rulesExplanation: 'Play Secured on a Computer that has been Hacked. The Hacked card is removed and the Computer resumes mining Bitcoin. Also used by the attacker to counter Hacked blocks during Audit Battles.',
@@ -182,7 +182,7 @@ export const tutorialCards: Record<string, TutorialCard> = {
   'powered': {
     id: 'powered',
     name: 'Powered',
-    image: '/lovable-uploads/resolution-powered-v2.png',
+    image: '/lovable-uploads/resolution-powered-v3.png',
     type: 'resolution',
     description: 'Powered resolves a Power Outage attack, restoring equipment to active status.',
     rulesExplanation: 'Play Powered on any equipment affected by a Power Outage. The Power Outage card is removed and the equipment (and all connected downstream equipment) resumes normal operation.',
@@ -194,7 +194,7 @@ export const tutorialCards: Record<string, TutorialCard> = {
   'trained': {
     id: 'trained',
     name: 'Trained',
-    image: '/lovable-uploads/resolution-trained-v2.png',
+    image: '/lovable-uploads/resolution-trained-v3.png',
     type: 'resolution',
     description: 'Trained resolves a New Hire attack on Equipment, restoring it to active status.',
     rulesExplanation: 'Play Trained on any Equipment card that has been targeted by New Hire. The New Hire card is removed and the equipment resumes normal operation.',
