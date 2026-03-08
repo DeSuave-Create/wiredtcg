@@ -333,6 +333,7 @@ const Extras = () => {
               </div>
             </div>
           </ContentSection>
+          </div>
         </div>
       </main>
 
