@@ -126,7 +126,7 @@ export const tutorialCards: Record<string, TutorialCard> = {
   'power-outage': {
     id: 'power-outage',
     name: 'Power Outage',
-    image: '/lovable-uploads/attack-poweroutage-v2.png',
+    image: '/lovable-uploads/attack-poweroutage-v3.png',
     type: 'attack',
     description: 'Power Outage disables any Equipment card. All connected equipment downstream is also disabled (cascade). Resolve with Powered.',
     rulesExplanation: 'Play Power Outage on any opponent\'s Equipment (Computer, Cable, or Switch). That equipment and all downstream equipment is disabled. Equipment can have multiple attack cards stacked on it. Resolved by a Powered card or the Facilities classification.',
