@@ -112,7 +112,7 @@ export const tutorialCards: Record<string, TutorialCard> = {
   'hacked': {
     id: 'hacked',
     name: 'Hacked',
-    image: '/lovable-uploads/attack-hacked-v2.png',
+    image: '/lovable-uploads/attack-hacked-v3.png',
     type: 'attack',
     description: 'Hacked disables any Equipment card. All connected equipment downstream is also disabled (cascade). Resolve with Secured.',
     rulesExplanation: 'Play Hacked on any opponent\'s Equipment (Computer, Cable, or Switch). That equipment is disabled and stops producing Bitcoin. If placed on a Switch or Cable, all downstream equipment is also disabled. Equipment can have multiple attack cards stacked on it. Resolved by a Secured card or the Security Specialist classification.',
