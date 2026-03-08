@@ -357,7 +357,7 @@ const Extras = () => {
                   <p className="text-sm text-muted-foreground flex-grow relative z-10">Learn how every card interacts through visual gameplay examples</p>
                   <button 
                     onClick={() => navigate('/card-reference')}
-                    className="bg-muted/20 rounded-3xl text-primary hover:bg-muted/40 neon-glow px-6 py-2 font-medium shadow-lg w-full border-2 border-primary mt-auto flex items-center justify-center transition-colors"
+                    className="bg-muted/20 rounded-3xl text-primary hover:bg-muted/40 neon-glow px-6 py-2 font-medium shadow-lg w-full border-2 border-primary mt-auto flex items-center justify-center transition-colors relative z-10"
                   >
                     <BookOpen className="h-4 w-4 mr-2" />
                     Launch Tutorial
