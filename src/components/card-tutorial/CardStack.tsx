@@ -11,8 +11,8 @@ interface CardStackProps {
 
 const offsets: Record<number, { x: number; y: number }> = {
   0: { x: 0, y: 0 },
-  1: { x: 18, y: -28 },
-  2: { x: -14, y: -56 },
+  1: { x: 18, y: -20 },
+  2: { x: -14, y: -40 },
 };
 
 const rotations: Record<number, number> = {
