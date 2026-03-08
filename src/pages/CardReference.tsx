@@ -67,6 +67,7 @@ const cardData = {
 const CardReference = () => {
   const navigate = useNavigate();
   const printRef = useRef<HTMLDivElement>(null);
+  const [activeTab, setActiveTab] = useState<'tutorials' | 'all-cards'>('tutorials');
 
   useEffect(() => {
     if (window.location.hash) {
