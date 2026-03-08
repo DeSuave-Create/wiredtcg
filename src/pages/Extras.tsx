@@ -283,10 +283,12 @@ const Extras = () => {
               </div>
             </div>
           </ContentSection>
+          </div>
           
           <ElectricProgressBar />
 
           {/* Downloads Section */}
+          <div ref={assignRef('downloads')} data-section="downloads">
           <ContentSection title="Downloads & Resources">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
               {/* Score Sheets */}
