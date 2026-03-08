@@ -11,8 +11,8 @@ interface CardStackProps {
 
 const offsets: Record<number, { x: number; y: number }> = {
   0: { x: 0, y: 0 },
-  1: { x: 18, y: -28 },
-  2: { x: -14, y: -56 },
+  1: { x: 18, y: -20 },
+  2: { x: -14, y: -40 },
 };
 
 const rotations: Record<number, number> = {
@@ -38,7 +38,7 @@ const CardStack = memo(({ stackOrder, highlight, fadeOut = [] }: CardStackProps)
   useEffect(() => { preloadAllImages(); }, []);
 
   return (
-    <div className="relative flex items-center justify-center min-h-[260px] sm:min-h-[300px]">
+    <div className="relative flex items-center justify-center min-h-[260px] sm:min-h-[300px] pt-12">
       <div className="relative" style={{ width: '180px', height: '260px' }}>
         {stackOrder.map((cardId, idx) => {
           const card = tutorialCards[cardId];
