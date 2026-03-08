@@ -11,14 +11,14 @@ interface CardStackProps {
 
 const offsets: Record<number, { x: number; y: number }> = {
   0: { x: 0, y: 0 },
-  1: { x: 18, y: -20 },
-  2: { x: -14, y: -40 },
+  1: { x: 24, y: -30 },
+  2: { x: -18, y: -60 },
 };
 
 const rotations: Record<number, number> = {
   0: 0,
-  1: -3,
-  2: 3,
+  1: -4,
+  2: 4,
 };
 
 // Preload all tutorial card images once on first mount
@@ -38,15 +38,15 @@ const CardStack = memo(({ stackOrder, highlight, fadeOut = [] }: CardStackProps)
   useEffect(() => { preloadAllImages(); }, []);
 
   return (
-    <div className="relative flex items-center justify-center min-h-[260px] sm:min-h-[300px] pt-12">
-      <div className="relative" style={{ width: '180px', height: '260px' }}>
+    <div className="relative flex items-center justify-center min-h-[420px] sm:min-h-[480px] pt-16">
+      <div className="relative" style={{ width: '220px', height: '310px' }}>
         {stackOrder.map((cardId, idx) => {
           const card = tutorialCards[cardId];
           if (!card) return null;
 
           const isFadingOut = fadeOutSet.has(cardId);
           const isHighlighted = highlight === cardId;
-          const offset = offsets[idx] || { x: idx * 14, y: idx * -28 };
+          const offset = offsets[idx] || { x: idx * 18, y: idx * -35 };
           const rot = rotations[idx] ?? 0;
 
           return (
@@ -61,13 +61,13 @@ const CardStack = memo(({ stackOrder, highlight, fadeOut = [] }: CardStackProps)
               }}
             >
               <div
-                className="w-[160px] sm:w-[180px] rounded-xl overflow-hidden"
+                className="w-[200px] sm:w-[220px] rounded-xl overflow-hidden"
               >
                 <img
                   src={card.image}
                   alt={card.name}
-                  width={180}
-                  height={252}
+                  width={220}
+                  height={308}
                   className="w-full h-auto object-contain"
                   loading="eager"
                   decoding="async"

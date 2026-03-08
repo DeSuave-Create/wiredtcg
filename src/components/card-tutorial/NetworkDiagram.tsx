@@ -65,7 +65,7 @@ const NetworkDiagram = memo(({ cardIds, highlight, effectLabel, fadeOut = [] }: 
   const branchLineClass = 'border-t border-primary/40';
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[260px] sm:min-h-[300px] py-4 gap-1">
+    <div className="flex flex-col items-center justify-center min-h-[420px] sm:min-h-[480px] py-6 gap-1">
       {/* Internet */}
       {internet && (
         <>
@@ -123,10 +123,10 @@ const NetworkDiagram = memo(({ cardIds, highlight, effectLabel, fadeOut = [] }: 
       {/* Effect label */}
       {effectLabel && (
         <div className={cn(
-          'mt-2 px-3 py-1 rounded-full text-[10px] font-orbitron font-bold tracking-widest',
-          effectLabel.includes('MINING') || effectLabel.includes('SCORE') || effectLabel.includes('BITCOIN')
+          'mt-3 px-4 py-1.5 rounded-full text-[10px] sm:text-[11px] font-orbitron font-bold tracking-widest',
+          effectLabel.includes('MINING') || effectLabel.includes('SCORE') || effectLabel.includes('BITCOIN') || effectLabel.includes('RACE')
             ? 'bg-primary/20 text-primary'
-            : effectLabel.includes('DISABLED')
+            : effectLabel.includes('HACKED') || effectLabel.includes('POWER') || effectLabel.includes('NEW HIRE') || effectLabel.includes('DISABLED')
               ? 'bg-destructive/20 text-destructive'
               : 'bg-muted/20 text-muted-foreground',
         )}>
