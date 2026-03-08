@@ -1,11 +1,13 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
 import ElectricProgressBar from '@/components/ElectricProgressBar';
 import CardInteractionTutorial from '@/components/card-tutorial/CardInteractionTutorial';
+import AllCardsView from '@/components/card-tutorial/AllCardsView';
 import { Printer, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 interface CardInfo {
   name: string;
