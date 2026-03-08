@@ -92,7 +92,7 @@ const CardReference = () => {
           </div>
 
           {/* PRIMARY: Interactive Tutorial Section */}
-          <div className="print:hidden">
+          <div className="print:hidden" id="how-cards-work">
             <ContentSection title="How Cards Work" glowEffect>
               <div className="space-y-4">
                 <p className="text-muted-foreground text-center max-w-2xl mx-auto text-sm sm:text-base">
