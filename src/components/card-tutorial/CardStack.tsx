@@ -40,8 +40,21 @@ const effectLabelClass: Record<string, string> = {
   'BONUS PLAY': 'border-primary text-primary',
 };
 
+// Preload all tutorial card images once on first mount
+let preloaded = false;
+function preloadAllImages() {
+  if (preloaded) return;
+  preloaded = true;
+  Object.values(tutorialCards).forEach(card => {
+    const img = new Image();
+    img.src = card.image;
+  });
+}
+
 const CardStack = memo(({ stackOrder, highlight, effectLabel, fadeOut = [] }: CardStackProps) => {
   const fadeOutSet = useMemo(() => new Set(fadeOut), [fadeOut]);
+
+  useEffect(() => { preloadAllImages(); }, []);
 
   return (
     <div className="relative flex items-center justify-center min-h-[260px] sm:min-h-[300px]">
