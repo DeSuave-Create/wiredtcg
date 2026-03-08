@@ -35,14 +35,15 @@ const NetworkDiagram = memo(({ cardIds, highlight, effectLabel, fadeOut = [], at
         key={key}
         className={cn(
           'flex flex-col items-center transition-all duration-500 relative',
-          isFading && 'opacity-20 scale-90',
+          isFading && !hasAttack && 'opacity-20 scale-90',
           isHighlighted && !hasAttack && 'scale-105',
         )}
       >
         <div className={cn(
-          'rounded-lg overflow-hidden relative',
+          'rounded-lg overflow-hidden relative transition-all duration-500',
           w,
           isHighlighted && !hasAttack && 'ring-2 ring-primary/50 shadow-lg shadow-primary/20',
+          isFading && hasAttack && 'opacity-20 scale-90',
         )}>
           <img
             src={imgSrc}
