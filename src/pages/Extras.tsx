@@ -162,12 +162,14 @@ const Extras = () => {
           {/* Video Carousel Section */}
           <div ref={assignRef('videos')} data-section="videos">
             <ContentSection title="Video Tutorials">
-          </ContentSection>
+              <VideoCarousel videos={tutorialVideos} />
+            </ContentSection>
+          </div>
           
           <ElectricProgressBar />
 
           {/* Rule Book Section */}
-          <ContentSection title="Official Rulebook">
+          <div ref={assignRef('rulebook')} data-section="rulebook">
             <div className="space-y-8">
               <div className="text-center space-y-4">
                 <h3 className="text-2xl font-bold font-orbitron text-primary">Complete Game Manual</h3>
