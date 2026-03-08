@@ -17,9 +17,16 @@ const Footer = () => {
                 <span className="text-[9px] font-orbitron text-primary/70 tracking-wide leading-tight animate-neon-flicker">The Card Game</span>
               </div>
             </div>
-            <p className="text-primary text-sm">
-              The ultimate IT-themed card game. Connect, compete, and conquer the digital grid.
-            </p>
+            <div className="flex items-center gap-3">
+              <p className="text-primary text-sm">
+                The ultimate IT-themed card game. Connect, compete, and conquer the digital grid.
+              </p>
+              <img
+                src="/images/mascot-seal.png"
+                alt="Seal mascot"
+                className="w-10 h-10 animate-mascot-bounce hover:scale-125 transition-transform cursor-pointer"
+              />
+            </div>
           </div>
 
           {/* Quick Links */}

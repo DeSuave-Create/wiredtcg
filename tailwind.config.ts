@@ -306,7 +306,8 @@ export default {
 				'game-icon-bitcoin': 'game-icon-bitcoin 3s ease-in-out forwards',
 				'flyToBoard': 'flyToBoard 0.7s ease-out forwards',
 				'flyFromDeck': 'flyFromDeck 0.5s ease-out forwards',
-				'scale-in': 'scale-in 0.3s ease-out forwards'
+				'scale-in': 'scale-in 0.3s ease-out forwards',
+				'mascot-bounce': 'mascot-bounce 2.5s ease-in-out infinite'
 			},
 			fontFamily: {
 				'orbitron': ['Orbitron', 'sans-serif'],
