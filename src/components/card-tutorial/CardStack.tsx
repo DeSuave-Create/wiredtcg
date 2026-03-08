@@ -11,14 +11,14 @@ interface CardStackProps {
 
 const offsets: Record<number, { x: number; y: number }> = {
   0: { x: 0, y: 0 },
-  1: { x: 18, y: -20 },
-  2: { x: -14, y: -40 },
+  1: { x: 24, y: -30 },
+  2: { x: -18, y: -60 },
 };
 
 const rotations: Record<number, number> = {
   0: 0,
-  1: -3,
-  2: 3,
+  1: -4,
+  2: 4,
 };
 
 // Preload all tutorial card images once on first mount
