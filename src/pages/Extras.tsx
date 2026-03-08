@@ -161,7 +161,7 @@ const Extras = () => {
 
           {/* Video Carousel Section */}
           <div ref={assignRef('videos')} data-section="videos">
-            <ContentSection title={`"Wired: The Card Game": Videos`}>
+            <ContentSection title="Wired: The Card Game - Videos">
               <VideoCarousel videos={tutorialVideos} />
             </ContentSection>
           </div>
