@@ -29,6 +29,7 @@ export interface InteractionStep {
   effectLabel?: string;     // e.g. "DISABLED", "RESOLVED"
   fadeOut?: string[];       // Card IDs that fade away
   layout?: 'stack' | 'network'; // Visual layout mode
+  showRelatedCards?: string[]; // Card IDs to show as related cards for this specific step
 }
 
 export interface CardInteraction {
