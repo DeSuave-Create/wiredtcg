@@ -14,6 +14,42 @@ const Extras = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [gameModeIndex, setGameModeIndex] = useState(0);
+  const [activeSection, setActiveSection] = useState('videos');
+
+  const sections = [
+    { id: 'videos', label: 'Videos', icon: Video },
+    { id: 'rulebook', label: 'Rulebook', icon: BookOpen },
+    { id: 'downloads', label: 'Downloads', icon: FolderDown },
+  ] as const;
+
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  const assignRef = useCallback((id: string) => (el: HTMLDivElement | null) => {
+    sectionRefs.current[id] = el;
+  }, []);
+
+  useEffect(() => {
+    const els = Object.entries(sectionRefs.current).filter(([, el]) => el) as [string, HTMLDivElement][];
+    if (!els.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter(e => e.isIntersecting);
+        if (visible.length > 0) {
+          visible.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+          setActiveSection(visible[0].target.getAttribute('data-section') || 'videos');
+        }
+      },
+      { rootMargin: '-40% 0px -40% 0px', threshold: 0 }
+    );
+
+    els.forEach(([, el]) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  const scrollToSection = (id: string) => {
+    sectionRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const tutorialVideos = [
     {
