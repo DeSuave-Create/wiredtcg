@@ -297,11 +297,7 @@ const CardInteractionTutorial = memo(() => {
                       key={rc.id}
                       className="flex flex-col items-center gap-1.5"
                     >
-                      <div className={cn(
-                        'w-[80px] sm:w-[100px] rounded-lg overflow-hidden border-2',
-                        getCategoryBorderClass(rc.type),
-                        'bg-muted/10',
-                      )}>
+                      <div className="w-[80px] sm:w-[100px] rounded-lg overflow-hidden">
                         <img src={rc.image} alt={rc.name} className="w-full h-auto object-contain" loading="lazy" decoding="async" />
                       </div>
                       <span className={cn('text-[10px] sm:text-xs font-medium font-orbitron', getCategoryTextClass(rc.type))}>
