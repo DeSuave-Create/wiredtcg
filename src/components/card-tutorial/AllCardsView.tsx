@@ -93,16 +93,16 @@ const AllCardsView = memo(() => {
                 </span>
               </div>
 
-              <p className="text-base text-foreground/90 leading-relaxed mb-3">
+              <p className="text-sm sm:text-base text-foreground/90 leading-relaxed mb-3">
                 {card.description}
               </p>
 
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                 {card.rulesExplanation}
               </p>
 
               {card.interactionNotes && (
-                <p className="mt-2 text-sm text-muted-foreground/80 italic">
+                <p className="mt-2 text-xs sm:text-sm text-muted-foreground/80 italic">
                   💡 {card.interactionNotes}
                 </p>
               )}
