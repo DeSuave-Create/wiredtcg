@@ -61,7 +61,7 @@ const CardStack = memo(({ stackOrder, highlight, fadeOut = [] }: CardStackProps)
               }}
             >
               <div
-                className="w-[160px] sm:w-[180px] rounded-xl overflow-hidden"
+                className="w-[200px] sm:w-[220px] rounded-xl overflow-hidden"
               >
                 <img
                   src={card.image}
