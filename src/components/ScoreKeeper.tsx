@@ -63,7 +63,7 @@ const ScoreKeeper = () => {
     return defaultPlayers;
   });
 
-  const maxPlayers = 6;
+  const maxPlayers = 8;
   const minPlayers = 2;
 
   // Save to cookie whenever players state changes
