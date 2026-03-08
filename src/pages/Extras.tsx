@@ -290,33 +290,35 @@ const Extras = () => {
           
           <ElectricProgressBar />
 
-          {/* Downloads Section */}
-          <div ref={assignRef('downloads')} data-section="downloads">
-          <ContentSection title="Downloads & Resources">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-              {/* Score Sheets */}
-              <div className="bg-gray-50 dark:bg-gray-800/90 border-primary border-2 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
-                <FileText className="h-12 w-12 text-primary mx-auto" />
-                <h3 className="text-lg font-semibold font-orbitron text-primary">Score Sheets</h3>
-                <p className="text-sm text-muted-foreground flex-grow">Printable score tracking sheets matching our digital Score Keeper design (PDF)</p>
+          {/* Score Sheets Section */}
+          <div ref={assignRef('scores')} data-section="scores">
+            <ContentSection title="Score Sheets">
+              <div className="max-w-md mx-auto bg-muted/10 border-2 border-primary rounded-3xl p-6 text-center space-y-4 shadow-lg flex flex-col items-center">
+                <FileText className="h-12 w-12 text-primary" />
+                <p className="text-sm text-muted-foreground">Printable score tracking sheets matching our digital Score Keeper design (PDF)</p>
                 <button 
                   onClick={() => handleDownload('Score Sheets')}
-                  className="bg-gray-50 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-primary mt-auto flex items-center justify-center"
+                  className="bg-muted/20 rounded-3xl text-primary hover:bg-muted/40 neon-glow px-6 py-2 font-medium shadow-lg w-full border-2 border-primary flex items-center justify-center transition-colors"
                 >
                   <Download className="h-4 w-4 mr-2" />
                   Download
                 </button>
               </div>
+            </ContentSection>
+          </div>
 
-              {/* Card Reference */}
-              <div className="bg-gray-50 dark:bg-gray-800/90 border-primary border-2 rounded-3xl p-6 text-center space-y-4 shadow-2xl drop-shadow-lg flex flex-col">
-                <FileText className="h-12 w-12 text-primary mx-auto" />
-                <h3 className="text-lg font-semibold font-orbitron text-primary">Card Reference</h3>
-                <p className="text-sm text-muted-foreground flex-grow">All unique cards organized by type: Classification, Attack, Resolution, and Equipment</p>
-                <div className="flex flex-col sm:flex-row gap-2 mt-auto">
+          <ElectricProgressBar />
+
+          {/* Card Reference Section */}
+          <div ref={assignRef('cards')} data-section="cards">
+            <ContentSection title="Card Reference">
+              <div className="max-w-md mx-auto bg-muted/10 border-2 border-primary rounded-3xl p-6 text-center space-y-4 shadow-lg flex flex-col items-center">
+                <Layers className="h-12 w-12 text-primary" />
+                <p className="text-sm text-muted-foreground">All 145 unique cards organized by type: Classification, Attack, Resolution, and Equipment</p>
+                <div className="flex flex-col sm:flex-row gap-2 w-full">
                   <button 
                     onClick={() => navigate('/card-reference')}
-                    className="bg-gray-50 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-primary flex items-center justify-center"
+                    className="bg-muted/20 rounded-3xl text-primary hover:bg-muted/40 neon-glow px-6 py-2 font-medium shadow-lg w-full border-2 border-primary flex items-center justify-center transition-colors"
                   >
                     <BookOpen className="h-4 w-4 mr-2" />
                     View
@@ -326,15 +328,33 @@ const Extras = () => {
                       navigate('/card-reference');
                       setTimeout(() => window.print(), 1000);
                     }}
-                    className="bg-gray-50 dark:bg-gray-800/90 rounded-3xl text-primary hover:bg-gray-200 dark:hover:bg-gray-700/90 neon-glow px-6 py-2 font-medium shadow-2xl drop-shadow-lg w-full border-2 border-primary flex items-center justify-center"
+                    className="bg-muted/20 rounded-3xl text-primary hover:bg-muted/40 neon-glow px-6 py-2 font-medium shadow-lg w-full border-2 border-primary flex items-center justify-center transition-colors"
                   >
                     <Download className="h-4 w-4 mr-2" />
                     Print
                   </button>
                 </div>
               </div>
-            </div>
-          </ContentSection>
+            </ContentSection>
+          </div>
+
+          <ElectricProgressBar />
+
+          {/* Interactive Guide Section */}
+          <div ref={assignRef('tutorial')} data-section="tutorial">
+            <ContentSection title="Interactive Guide">
+              <div className="max-w-md mx-auto bg-muted/10 border-2 border-primary rounded-3xl p-6 text-center space-y-4 shadow-lg flex flex-col items-center">
+                <Gamepad2 className="h-12 w-12 text-primary" />
+                <p className="text-sm text-muted-foreground">Learn how every card interacts through visual, step-by-step gameplay examples</p>
+                <button 
+                  onClick={() => navigate('/card-reference')}
+                  className="bg-muted/20 rounded-3xl text-primary hover:bg-muted/40 neon-glow px-6 py-2 font-medium shadow-lg w-full border-2 border-primary flex items-center justify-center transition-colors"
+                >
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  Launch Tutorial
+                </button>
+              </div>
+            </ContentSection>
           </div>
         </div>
       </main>
