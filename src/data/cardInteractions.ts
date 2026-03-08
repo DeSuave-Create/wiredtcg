@@ -593,6 +593,117 @@ export const cardInteractions: CardInteraction[] = [
     ],
   },
 
+  // ── SECURED resolution ──
+  {
+    id: 'secured-interaction',
+    title: 'Secured Resolution',
+    subtitle: 'Counter a Hacked attack',
+    featuredCardId: 'secured',
+    complexity: 'simple',
+    steps: [
+      {
+        label: 'Step 1: Computer Gets Hacked',
+        description: 'An opponent plays Hacked on one of your Computers. That Computer is disabled and stops mining Bitcoin.',
+        cardIds: ['computer', 'hacked'],
+        stackOrder: ['computer', 'hacked'],
+        highlight: 'hacked',
+        effectLabel: 'DISABLED',
+      },
+      {
+        label: 'Step 2: Play Secured',
+        description: 'Play a Secured card on the Hacked Computer. Secured specifically counters Hacked — one Secured removes one Hacked.',
+        cardIds: ['computer', 'hacked', 'secured'],
+        stackOrder: ['computer', 'hacked', 'secured'],
+        highlight: 'secured',
+        effectLabel: 'RESOLVING',
+      },
+      {
+        label: 'Step 3: Computer Restored',
+        description: 'The Hacked card is removed and the Computer resumes mining Bitcoin. There are 9 Secured cards in the deck — matching the 9 Hacked cards.',
+        cardIds: ['computer'],
+        stackOrder: ['computer'],
+        highlight: 'computer',
+        fadeOut: ['hacked', 'secured'],
+        effectLabel: 'RESTORED',
+        showRelatedCards: ['hacked', 'security-specialist'],
+      },
+    ],
+  },
+
+  // ── POWERED resolution ──
+  {
+    id: 'powered-interaction',
+    title: 'Powered Resolution',
+    subtitle: 'Counter a Power Outage',
+    featuredCardId: 'powered',
+    complexity: 'simple',
+    steps: [
+      {
+        label: 'Step 1: Switch Hit by Power Outage',
+        description: 'An opponent plays Power Outage on your Switch. The Switch and all downstream equipment (Cables and Computers) stop mining.',
+        cardIds: ['switch', 'power-outage'],
+        stackOrder: ['switch', 'power-outage'],
+        highlight: 'power-outage',
+        effectLabel: 'DISABLED',
+      },
+      {
+        label: 'Step 2: Play Powered',
+        description: 'Play a Powered card on the affected equipment. Powered specifically counters Power Outage — one Powered removes one Power Outage.',
+        cardIds: ['switch', 'power-outage', 'powered'],
+        stackOrder: ['switch', 'power-outage', 'powered'],
+        highlight: 'powered',
+        effectLabel: 'RESOLVING',
+      },
+      {
+        label: 'Step 3: Equipment Restored',
+        description: 'The Power Outage is removed and the Switch (and all downstream connections) resume mining. There are 7 Powered cards matching the 7 Power Outage cards.',
+        cardIds: ['switch'],
+        stackOrder: ['switch'],
+        highlight: 'switch',
+        fadeOut: ['power-outage', 'powered'],
+        effectLabel: 'RESTORED',
+        showRelatedCards: ['power-outage', 'facilities'],
+      },
+    ],
+  },
+
+  // ── TRAINED resolution ──
+  {
+    id: 'trained-interaction',
+    title: 'Trained Resolution',
+    subtitle: 'Counter a New Hire',
+    featuredCardId: 'trained',
+    complexity: 'simple',
+    steps: [
+      {
+        label: 'Step 1: Cable Hit by New Hire',
+        description: 'An opponent plays New Hire on one of your Cables. That Cable and all Computers connected to it stop mining.',
+        cardIds: ['cable-3', 'new-hire'],
+        stackOrder: ['cable-3', 'new-hire'],
+        highlight: 'new-hire',
+        effectLabel: 'DISABLED',
+      },
+      {
+        label: 'Step 2: Play Trained',
+        description: 'Play a Trained card on the affected equipment. Trained specifically counters New Hire — one Trained removes one New Hire.',
+        cardIds: ['cable-3', 'new-hire', 'trained'],
+        stackOrder: ['cable-3', 'new-hire', 'trained'],
+        highlight: 'trained',
+        effectLabel: 'RESOLVING',
+      },
+      {
+        label: 'Step 3: Equipment Restored',
+        description: 'The New Hire is removed and the Cable (and all downstream Computers) resume mining. There are 7 Trained cards matching the 7 New Hire cards.',
+        cardIds: ['cable-3'],
+        stackOrder: ['cable-3'],
+        highlight: 'cable-3',
+        fadeOut: ['new-hire', 'trained'],
+        effectLabel: 'RESTORED',
+        showRelatedCards: ['new-hire', 'supervisor'],
+      },
+    ],
+  },
+
   // ── AUDIT battle ──
   {
     id: 'audit-interaction',

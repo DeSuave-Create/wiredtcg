@@ -1,11 +1,13 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
 import ElectricProgressBar from '@/components/ElectricProgressBar';
 import CardInteractionTutorial from '@/components/card-tutorial/CardInteractionTutorial';
+import AllCardsView from '@/components/card-tutorial/AllCardsView';
 import { Printer, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 interface CardInfo {
   name: string;
@@ -65,6 +67,7 @@ const cardData = {
 const CardReference = () => {
   const navigate = useNavigate();
   const printRef = useRef<HTMLDivElement>(null);
+  const [activeTab, setActiveTab] = useState<'tutorials' | 'all-cards'>('tutorials');
 
   useEffect(() => {
     if (window.location.hash) {
@@ -106,9 +109,47 @@ const CardReference = () => {
               <div className="space-y-4">
                 <p className="text-muted-foreground text-center max-w-2xl mx-auto text-sm sm:text-base">
                   Learn how every card in WIRED interacts through visual gameplay examples.
-                  Watch the tutorial auto-play or navigate manually.
                 </p>
-                <CardInteractionTutorial />
+
+                {/* Tab switcher */}
+                <div className="flex items-center justify-center gap-2">
+                  <button
+                    onClick={() => setActiveTab('tutorials')}
+                    className={cn(
+                      'px-4 py-2 rounded-full text-xs font-medium font-orbitron tracking-wide border transition-all duration-300',
+                      activeTab === 'tutorials'
+                        ? 'bg-primary/20 border-primary text-primary'
+                        : 'border-muted bg-muted/30 text-muted-foreground hover:border-primary/50 hover:text-foreground',
+                    )}
+                  >
+                    Tutorials
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('all-cards')}
+                    className={cn(
+                      'px-4 py-2 rounded-full text-xs font-medium font-orbitron tracking-wide border transition-all duration-300',
+                      activeTab === 'all-cards'
+                        ? 'bg-primary/20 border-primary text-primary'
+                        : 'border-muted bg-muted/30 text-muted-foreground hover:border-primary/50 hover:text-foreground',
+                    )}
+                  >
+                    All Cards
+                  </button>
+                </div>
+
+                {/* Tab content */}
+                <div
+                  style={{
+                    opacity: 1,
+                    transition: 'opacity 0.3s ease-out',
+                  }}
+                >
+                  {activeTab === 'tutorials' ? (
+                    <CardInteractionTutorial />
+                  ) : (
+                    <AllCardsView />
+                  )}
+                </div>
               </div>
             </ContentSection>
 
