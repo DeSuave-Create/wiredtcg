@@ -46,7 +46,7 @@ const CardStack = memo(({ stackOrder, highlight, fadeOut = [] }: CardStackProps)
 
           const isFadingOut = fadeOutSet.has(cardId);
           const isHighlighted = highlight === cardId;
-          const offset = offsets[idx] || { x: idx * 14, y: idx * -28 };
+          const offset = offsets[idx] || { x: idx * 18, y: idx * -35 };
           const rot = rotations[idx] ?? 0;
 
           return (
