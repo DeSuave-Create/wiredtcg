@@ -170,6 +170,7 @@ const Extras = () => {
 
           {/* Rule Book Section */}
           <div ref={assignRef('rulebook')} data-section="rulebook">
+          <ContentSection title="Official Rulebook">
             <div className="space-y-8">
               <div className="text-center space-y-4">
                 <h3 className="text-2xl font-bold font-orbitron text-primary">Complete Game Manual</h3>
