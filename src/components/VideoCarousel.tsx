@@ -104,9 +104,9 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
   ];
 
   const attackCards = [
-    { name: 'Hacked', bg: 'bg-red-50', image: '/lovable-uploads/attack-hacked-v2.png' },
-    { name: 'New Hire', bg: 'bg-red-50', image: '/lovable-uploads/attack-newhire-v2.png' },
-    { name: 'Power Outage', bg: 'bg-red-50', image: '/lovable-uploads/attack-poweroutage-v2.png' },
+    { name: 'Hacked', bg: 'bg-red-50', image: '/lovable-uploads/attack-hacked-v3.png' },
+    { name: 'New Hire', bg: 'bg-red-50', image: '/lovable-uploads/attack-newhire-v3.png' },
+    { name: 'Power Outage', bg: 'bg-red-50', image: '/lovable-uploads/attack-poweroutage-v3.png' },
     { name: 'Audit', bg: 'bg-red-50', image: '/lovable-uploads/attack-audit-v2.png' }
   ];
 
