@@ -268,7 +268,7 @@ export default {
 						transform: 'scale(1) rotate(0deg)'
 					}
 				},
-				'scale-in': {
+			'scale-in': {
 					'0%': {
 						opacity: '0',
 						transform: 'scale(0.8)'
@@ -276,6 +276,17 @@ export default {
 					'100%': {
 						opacity: '1',
 						transform: 'scale(1)'
+					}
+				},
+				'mascot-bounce': {
+					'0%, 100%': {
+						transform: 'translateY(0) rotate(0deg)'
+					},
+					'25%': {
+						transform: 'translateY(-6px) rotate(2deg)'
+					},
+					'75%': {
+						transform: 'translateY(-3px) rotate(-2deg)'
 					}
 				}
 			},
