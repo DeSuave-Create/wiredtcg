@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -6,8 +6,9 @@ import ContentSection from '@/components/ContentSection';
 import VideoCarousel from '@/components/VideoCarousel';
 import ElectricProgressBar from '@/components/ElectricProgressBar';
 import { Button } from '@/components/ui/button';
-import { Download, BookOpen, FileText } from 'lucide-react';
+import { Download, BookOpen, FileText, Video, Gamepad2, FolderDown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 const Extras = () => {
   const { toast } = useToast();
