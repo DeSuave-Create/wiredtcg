@@ -30,6 +30,7 @@ export interface InteractionStep {
   fadeOut?: string[];       // Card IDs that fade away
   layout?: 'stack' | 'network'; // Visual layout mode
   showRelatedCards?: string[]; // Card IDs to show as related cards for this specific step
+  attackOverlay?: { attackCardId: string; targetEquipment: string }; // Show attack card on equipment
 }
 
 export interface CardInteraction {
