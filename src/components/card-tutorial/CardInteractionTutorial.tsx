@@ -251,7 +251,36 @@ const CardInteractionTutorial = memo(() => {
               </div>
             )}
 
-            {currentStep === interaction.steps.length - 1 && relatedCards.length > 0 && (
+            {/* Step-specific related cards */}
+            {step.showRelatedCards && step.showRelatedCards.length > 0 && (() => {
+              const stepRelated = step.showRelatedCards!.map(id => tutorialCards[id]).filter(Boolean);
+              return stepRelated.length > 0 ? (
+                <div className="mb-4">
+                  <p className="text-[10px] font-orbitron text-muted-foreground uppercase tracking-widest mb-3">
+                    Related Cards
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    {stepRelated.map(rc => (
+                      <div key={rc.id} className="flex flex-col items-center gap-1.5">
+                        <div className={cn(
+                          'w-[80px] sm:w-[100px] rounded-lg overflow-hidden border-2',
+                          getCategoryBorderClass(rc.type),
+                          'bg-muted/10',
+                        )}>
+                          <img src={rc.image} alt={rc.name} className="w-full h-auto object-contain" loading="lazy" decoding="async" />
+                        </div>
+                        <span className={cn('text-[10px] sm:text-xs font-medium font-orbitron', getCategoryTextClass(rc.type))}>
+                          {rc.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null;
+            })()}
+
+            {/* Last-step related cards from featured card */}
+            {currentStep === interaction.steps.length - 1 && !step.showRelatedCards && relatedCards.length > 0 && (
               <div>
                 <p className="text-[10px] font-orbitron text-muted-foreground uppercase tracking-widest mb-3">
                   Related Cards
