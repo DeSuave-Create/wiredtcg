@@ -356,7 +356,7 @@ const Extras = () => {
                   <h3 className="text-lg font-semibold font-orbitron text-primary relative z-10">Interactive Guide</h3>
                   <p className="text-sm text-muted-foreground flex-grow relative z-10">Learn how every card interacts through visual gameplay examples</p>
                   <button 
-                    onClick={() => navigate('/card-reference')}
+                    onClick={() => navigate('/card-reference#how-cards-work')}
                     className="bg-muted/20 rounded-3xl text-primary hover:bg-muted/40 neon-glow px-6 py-2 font-medium shadow-lg w-full border-2 border-primary mt-auto flex items-center justify-center transition-colors relative z-10"
                   >
                     <BookOpen className="h-4 w-4 mr-2" />

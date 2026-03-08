@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
@@ -66,6 +66,15 @@ const CardReference = () => {
   const navigate = useNavigate();
   const printRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (window.location.hash) {
+      const el = document.querySelector(window.location.hash);
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 300);
+      }
+    }
+  }, []);
+
   const handlePrint = () => {
     window.print();
   };
@@ -92,7 +101,7 @@ const CardReference = () => {
           </div>
 
           {/* PRIMARY: Interactive Tutorial Section */}
-          <div className="print:hidden">
+          <div className="print:hidden" id="how-cards-work">
             <ContentSection title="How Cards Work" glowEffect>
               <div className="space-y-4">
                 <p className="text-muted-foreground text-center max-w-2xl mx-auto text-sm sm:text-base">
