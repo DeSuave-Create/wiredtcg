@@ -19,9 +19,7 @@ const Extras = () => {
   const sections = [
     { id: 'videos', label: 'Videos', icon: Video },
     { id: 'rulebook', label: 'Rulebook', icon: BookOpen },
-    { id: 'scores', label: 'Score Sheets', icon: FileText },
-    { id: 'cards', label: 'Card Reference', icon: Layers },
-    { id: 'tutorial', label: 'Interactive Guide', icon: Gamepad2 },
+    { id: 'downloads', label: 'Downloads', icon: FolderDown },
   ] as const;
 
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -290,69 +288,63 @@ const Extras = () => {
           
           <ElectricProgressBar />
 
-          {/* Score Sheets Section */}
-          <div ref={assignRef('scores')} data-section="scores">
-            <ContentSection title="Score Sheets">
-              <div className="max-w-md mx-auto bg-muted/10 border-2 border-primary rounded-3xl p-6 text-center space-y-4 shadow-lg flex flex-col items-center">
-                <FileText className="h-12 w-12 text-primary" />
-                <p className="text-sm text-muted-foreground">Printable score tracking sheets matching our digital Score Keeper design (PDF)</p>
-                <button 
-                  onClick={() => handleDownload('Score Sheets')}
-                  className="bg-muted/20 rounded-3xl text-primary hover:bg-muted/40 neon-glow px-6 py-2 font-medium shadow-lg w-full border-2 border-primary flex items-center justify-center transition-colors"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Download
-                </button>
-              </div>
-            </ContentSection>
-          </div>
-
-          <ElectricProgressBar />
-
-          {/* Card Reference Section */}
-          <div ref={assignRef('cards')} data-section="cards">
-            <ContentSection title="Card Reference">
-              <div className="max-w-md mx-auto bg-muted/10 border-2 border-primary rounded-3xl p-6 text-center space-y-4 shadow-lg flex flex-col items-center">
-                <Layers className="h-12 w-12 text-primary" />
-                <p className="text-sm text-muted-foreground">All 145 unique cards organized by type: Classification, Attack, Resolution, and Equipment</p>
-                <div className="flex flex-col sm:flex-row gap-2 w-full">
+          {/* Downloads & Resources Section */}
+          <div ref={assignRef('downloads')} data-section="downloads">
+            <ContentSection title="Downloads & Resources">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                {/* Score Sheets */}
+                <div className="bg-muted/10 border-2 border-primary rounded-3xl p-6 text-center space-y-4 shadow-lg flex flex-col">
+                  <FileText className="h-12 w-12 text-primary mx-auto" />
+                  <h3 className="text-lg font-semibold font-orbitron text-primary">Score Sheets</h3>
+                  <p className="text-sm text-muted-foreground flex-grow">Printable score tracking sheets matching our digital Score Keeper design</p>
                   <button 
-                    onClick={() => navigate('/card-reference')}
-                    className="bg-muted/20 rounded-3xl text-primary hover:bg-muted/40 neon-glow px-6 py-2 font-medium shadow-lg w-full border-2 border-primary flex items-center justify-center transition-colors"
-                  >
-                    <BookOpen className="h-4 w-4 mr-2" />
-                    View
-                  </button>
-                  <button 
-                    onClick={() => {
-                      navigate('/card-reference');
-                      setTimeout(() => window.print(), 1000);
-                    }}
-                    className="bg-muted/20 rounded-3xl text-primary hover:bg-muted/40 neon-glow px-6 py-2 font-medium shadow-lg w-full border-2 border-primary flex items-center justify-center transition-colors"
+                    onClick={() => handleDownload('Score Sheets')}
+                    className="bg-muted/20 rounded-3xl text-primary hover:bg-muted/40 neon-glow px-6 py-2 font-medium shadow-lg w-full border-2 border-primary mt-auto flex items-center justify-center transition-colors"
                   >
                     <Download className="h-4 w-4 mr-2" />
-                    Print
+                    Download
                   </button>
                 </div>
-              </div>
-            </ContentSection>
-          </div>
 
-          <ElectricProgressBar />
+                {/* Card Reference */}
+                <div className="bg-muted/10 border-2 border-primary rounded-3xl p-6 text-center space-y-4 shadow-lg flex flex-col">
+                  <Layers className="h-12 w-12 text-primary mx-auto" />
+                  <h3 className="text-lg font-semibold font-orbitron text-primary">Card Reference</h3>
+                  <p className="text-sm text-muted-foreground flex-grow">All 145 unique cards organized by type</p>
+                  <div className="flex flex-col sm:flex-row gap-2 mt-auto">
+                    <button 
+                      onClick={() => navigate('/card-reference')}
+                      className="bg-muted/20 rounded-3xl text-primary hover:bg-muted/40 neon-glow px-4 py-2 font-medium shadow-lg w-full border-2 border-primary flex items-center justify-center transition-colors"
+                    >
+                      <BookOpen className="h-4 w-4 mr-2" />
+                      View
+                    </button>
+                    <button 
+                      onClick={() => {
+                        navigate('/card-reference');
+                        setTimeout(() => window.print(), 1000);
+                      }}
+                      className="bg-muted/20 rounded-3xl text-primary hover:bg-muted/40 neon-glow px-4 py-2 font-medium shadow-lg w-full border-2 border-primary flex items-center justify-center transition-colors"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Print
+                    </button>
+                  </div>
+                </div>
 
-          {/* Interactive Guide Section */}
-          <div ref={assignRef('tutorial')} data-section="tutorial">
-            <ContentSection title="Interactive Guide">
-              <div className="max-w-md mx-auto bg-muted/10 border-2 border-primary rounded-3xl p-6 text-center space-y-4 shadow-lg flex flex-col items-center">
-                <Gamepad2 className="h-12 w-12 text-primary" />
-                <p className="text-sm text-muted-foreground">Learn how every card interacts through visual, step-by-step gameplay examples</p>
-                <button 
-                  onClick={() => navigate('/card-reference')}
-                  className="bg-muted/20 rounded-3xl text-primary hover:bg-muted/40 neon-glow px-6 py-2 font-medium shadow-lg w-full border-2 border-primary flex items-center justify-center transition-colors"
-                >
-                  <BookOpen className="h-4 w-4 mr-2" />
-                  Launch Tutorial
-                </button>
+                {/* Interactive Guide */}
+                <div className="bg-muted/10 border-2 border-primary rounded-3xl p-6 text-center space-y-4 shadow-lg flex flex-col">
+                  <Gamepad2 className="h-12 w-12 text-primary mx-auto" />
+                  <h3 className="text-lg font-semibold font-orbitron text-primary">Interactive Guide</h3>
+                  <p className="text-sm text-muted-foreground flex-grow">Learn how every card interacts through visual gameplay examples</p>
+                  <button 
+                    onClick={() => navigate('/card-reference')}
+                    className="bg-muted/20 rounded-3xl text-primary hover:bg-muted/40 neon-glow px-6 py-2 font-medium shadow-lg w-full border-2 border-primary mt-auto flex items-center justify-center transition-colors"
+                  >
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    Launch Tutorial
+                  </button>
+                </div>
               </div>
             </ContentSection>
           </div>
