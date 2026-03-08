@@ -45,10 +45,10 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
     deck.push({ name: 'Seal the Deal', bg: 'bg-blue-50', image: '/lovable-uploads/classification-sealthedeal.png', borderColor: 'border-blue-500', type: 'classification' });
     
     // Resolution cards (27 total)
-    for (let i = 0; i < 4; i++) deck.push({ name: 'Helpdesk', bg: 'bg-purple-50', image: '/lovable-uploads/resolution-helpdesk-v2.png', borderColor: 'border-purple-500', type: 'classification' });
-    for (let i = 0; i < 7; i++) deck.push({ name: 'Trained', bg: 'bg-purple-50', image: '/lovable-uploads/resolution-trained-v2.png', borderColor: 'border-purple-500', type: 'classification' });
-    for (let i = 0; i < 7; i++) deck.push({ name: 'Powered', bg: 'bg-purple-50', image: '/lovable-uploads/resolution-powered-v2.png', borderColor: 'border-purple-500', type: 'classification' });
-    for (let i = 0; i < 9; i++) deck.push({ name: 'Secured', bg: 'bg-purple-50', image: '/lovable-uploads/resolution-secured-v2.png', borderColor: 'border-purple-500', type: 'classification' });
+    for (let i = 0; i < 4; i++) deck.push({ name: 'Helpdesk', bg: 'bg-yellow-50', image: '/lovable-uploads/resolution-helpdesk-v2.png', borderColor: 'border-yellow-500', type: 'classification' });
+    for (let i = 0; i < 7; i++) deck.push({ name: 'Trained', bg: 'bg-yellow-50', image: '/lovable-uploads/resolution-trained-v2.png', borderColor: 'border-yellow-500', type: 'classification' });
+    for (let i = 0; i < 7; i++) deck.push({ name: 'Powered', bg: 'bg-yellow-50', image: '/lovable-uploads/resolution-powered-v2.png', borderColor: 'border-yellow-500', type: 'classification' });
+    for (let i = 0; i < 9; i++) deck.push({ name: 'Secured', bg: 'bg-yellow-50', image: '/lovable-uploads/resolution-secured-v2.png', borderColor: 'border-yellow-500', type: 'classification' });
     
     return deck;
   };
