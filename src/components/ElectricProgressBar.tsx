@@ -11,7 +11,7 @@ interface Step {
 
 const STEPS: Step[] = [
   { label: 'Wired', icon: 'logo', hue: 185, sat: 80 },
-  { label: 'Connect', icon: <Cable className="w-5 h-5 sm:w-6 sm:h-6" />, hue: 140, sat: 70 },
+  { label: 'Connect', icon: <Cable className="w-5 h-5 sm:w-6 sm:h-6" />, hue: 96, sat: 48 },
   { label: 'Plan', icon: <Monitor className="w-5 h-5 sm:w-6 sm:h-6" />, hue: 0, sat: 70 },
   { label: 'Mine', icon: <Bitcoin className="w-5 h-5 sm:w-6 sm:h-6" />, hue: 45, sat: 85 },
 ];
