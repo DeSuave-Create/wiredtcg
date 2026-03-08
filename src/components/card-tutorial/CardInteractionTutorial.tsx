@@ -207,6 +207,7 @@ const CardInteractionTutorial = memo(() => {
                 highlight={step.highlight}
                 effectLabel={step.effectLabel}
                 fadeOut={step.fadeOut}
+                attackOverlay={step.attackOverlay}
               />
             ) : (
               <CardStack
