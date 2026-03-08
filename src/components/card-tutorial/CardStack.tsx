@@ -21,25 +21,6 @@ const rotations: Record<number, number> = {
   2: 3,
 };
 
-const effectLabelClass: Record<string, string> = {
-  DISABLED: 'border-destructive text-destructive',
-  ACTIVE: 'border-primary text-primary',
-  MINING: 'border-primary text-primary',
-  RESTORED: 'border-primary text-primary',
-  RESOLVING: 'border-purple-500 text-purple-400',
-  'AUTO-RESOLVE': 'border-purple-500 text-purple-400',
-  BLOCKED: 'border-blue-500 text-blue-400',
-  COUNTERED: 'border-destructive text-destructive',
-  STOLEN: 'border-destructive text-destructive',
-  LOCKED: 'border-primary text-primary',
-  VULNERABLE: 'border-yellow-500 text-yellow-400',
-  'STEAL ATTEMPT': 'border-destructive text-destructive',
-  'AUDIT INITIATED': 'border-destructive text-destructive',
-  'COMPUTERS RETURNED': 'border-destructive text-destructive',
-  '+1 EQUIPMENT MOVE': 'border-primary text-primary',
-  'BONUS PLAY': 'border-primary text-primary',
-};
-
 // Preload all tutorial card images once on first mount
 let preloaded = false;
 function preloadAllImages() {
@@ -51,7 +32,7 @@ function preloadAllImages() {
   });
 }
 
-const CardStack = memo(({ stackOrder, highlight, effectLabel, fadeOut = [] }: CardStackProps) => {
+const CardStack = memo(({ stackOrder, highlight, fadeOut = [] }: CardStackProps) => {
   const fadeOutSet = useMemo(() => new Set(fadeOut), [fadeOut]);
 
   useEffect(() => { preloadAllImages(); }, []);
@@ -96,18 +77,6 @@ const CardStack = memo(({ stackOrder, highlight, effectLabel, fadeOut = [] }: Ca
                   decoding="async"
                 />
               </div>
-
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-});
-
-CardStack.displayName = 'CardStack';
-
-export default CardStack;
             </div>
           );
         })}
