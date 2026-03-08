@@ -124,7 +124,7 @@ const Extras = () => {
       <Header />
 
       {/* Secondary Section Nav - always visible */}
-      <div className="sticky top-0 z-40 border-b border-muted/30 bg-background/95 backdrop-blur-md shadow-sm">
+      <div className="sticky top-16 z-40 border-b border-muted/30 bg-background/95 backdrop-blur-md shadow-sm">
         <div className="container mx-auto px-4">
           <nav className="flex items-center justify-center gap-1 sm:gap-2 py-2 overflow-x-auto scrollbar-hide">
             {sections.map(({ id, label, icon: Icon }) => (
