@@ -751,7 +751,7 @@ export const getCategoryBorderClass = (type: CardCategory): string => {
   switch (type) {
     case 'equipment': return 'border-primary';
     case 'attack': return 'border-destructive';
-    case 'resolution': return 'border-purple-500';
+    case 'resolution': return 'border-primary';
     case 'classification': return 'border-blue-500';
   }
 };
