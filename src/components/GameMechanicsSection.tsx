@@ -32,9 +32,9 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
     
     // Attack cards (27 total)
     for (let i = 0; i < 4; i++) deck.push({ name: 'Audit', bg: 'bg-red-50', image: '/lovable-uploads/attack-audit-v2.png', borderColor: 'border-red-500', type: 'attack' });
-    for (let i = 0; i < 9; i++) deck.push({ name: 'Hacked', bg: 'bg-red-50', image: '/lovable-uploads/attack-hacked-v2.png', borderColor: 'border-red-500', type: 'attack' });
-    for (let i = 0; i < 7; i++) deck.push({ name: 'New Hire', bg: 'bg-red-50', image: '/lovable-uploads/attack-newhire-v2.png', borderColor: 'border-red-500', type: 'attack' });
-    for (let i = 0; i < 7; i++) deck.push({ name: 'Power Outage', bg: 'bg-red-50', image: '/lovable-uploads/attack-poweroutage-v2.png', borderColor: 'border-red-500', type: 'attack' });
+    for (let i = 0; i < 9; i++) deck.push({ name: 'Hacked', bg: 'bg-red-50', image: '/lovable-uploads/attack-hacked-v3.png', borderColor: 'border-red-500', type: 'attack' });
+    for (let i = 0; i < 7; i++) deck.push({ name: 'New Hire', bg: 'bg-red-50', image: '/lovable-uploads/attack-newhire-v3.png', borderColor: 'border-red-500', type: 'attack' });
+    for (let i = 0; i < 7; i++) deck.push({ name: 'Power Outage', bg: 'bg-red-50', image: '/lovable-uploads/attack-poweroutage-v3.png', borderColor: 'border-red-500', type: 'attack' });
     
     // Classification cards (15 total)
     for (let i = 0; i < 2; i++) deck.push({ name: 'Facilities', bg: 'bg-blue-50', image: '/lovable-uploads/classification-facilities-new.png', borderColor: 'border-blue-500', type: 'classification' });
