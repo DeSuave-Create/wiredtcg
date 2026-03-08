@@ -3,26 +3,23 @@ import { tutorialCards } from '@/data/cardInteractions';
 import { cn } from '@/lib/utils';
 
 interface NetworkDiagramProps {
-  /** Cards to show in network hierarchy: [internet, switch, cable, computer] order expected */
   cardIds: string[];
   highlight?: string;
   effectLabel?: string;
   fadeOut?: string[];
+  attackOverlay?: { attackCardId: string; targetEquipment: string };
 }
 
-const NetworkDiagram = memo(({ cardIds, highlight, effectLabel, fadeOut = [] }: NetworkDiagramProps) => {
+const NetworkDiagram = memo(({ cardIds, highlight, effectLabel, fadeOut = [], attackOverlay }: NetworkDiagramProps) => {
   const fadeOutSet = new Set(fadeOut);
 
-  // Categorize cards by type for layout
   const internet = cardIds.find(id => id === 'internet');
   const switches = cardIds.filter(id => tutorialCards[id]?.type === 'equipment' && id === 'switch');
   const cables = cardIds.filter(id => tutorialCards[id]?.type === 'equipment' && (id === 'cable-2' || id === 'cable-3'));
   const computers = cardIds.filter(id => id === 'computer');
-
-  // For scoring demo, show multiple computers
   const computerCount = cardIds.filter(id => id === 'computer').length || 1;
 
-  const renderCard = (cardId: string, key: string, size: 'sm' | 'md' = 'md', label?: string) => {
+  const renderCard = (cardId: string, key: string, size: 'sm' | 'md' = 'md') => {
     const card = tutorialCards[cardId];
     if (!card && cardId !== 'internet') return null;
 
@@ -31,20 +28,21 @@ const NetworkDiagram = memo(({ cardIds, highlight, effectLabel, fadeOut = [] }: 
     const imgSrc = cardId === 'internet' ? '/lovable-uploads/internet-logo.png' : card?.image;
     const name = cardId === 'internet' ? 'Internet' : card?.name;
     const w = size === 'sm' ? 'w-[60px] sm:w-[72px]' : 'w-[72px] sm:w-[88px]';
+    const hasAttack = attackOverlay && attackOverlay.targetEquipment === cardId;
 
     return (
       <div
         key={key}
         className={cn(
-          'flex flex-col items-center transition-all duration-500',
+          'flex flex-col items-center transition-all duration-500 relative',
           isFading && 'opacity-20 scale-90',
-          isHighlighted && 'scale-105',
+          isHighlighted && !hasAttack && 'scale-105',
         )}
       >
         <div className={cn(
-          'rounded-lg overflow-hidden',
+          'rounded-lg overflow-hidden relative',
           w,
-          isHighlighted && 'ring-2 ring-primary/50 shadow-lg shadow-primary/20',
+          isHighlighted && !hasAttack && 'ring-2 ring-primary/50 shadow-lg shadow-primary/20',
         )}>
           <img
             src={imgSrc}
@@ -54,19 +52,33 @@ const NetworkDiagram = memo(({ cardIds, highlight, effectLabel, fadeOut = [] }: 
             decoding="async"
           />
         </div>
-        {label && (
-          <span className="text-[9px] sm:text-[10px] font-orbitron text-muted-foreground mt-1">{label}</span>
-        )}
+
+        {/* Attack card overlay */}
+        {hasAttack && (() => {
+          const attackCard = tutorialCards[attackOverlay!.attackCardId];
+          if (!attackCard) return null;
+          return (
+            <div className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 z-10 animate-in fade-in slide-in-from-top-2 duration-500">
+              <div className="w-[40px] sm:w-[48px] rounded-md overflow-hidden shadow-lg shadow-destructive/30 ring-2 ring-destructive/60 rotate-6">
+                <img
+                  src={attackCard.image}
+                  alt={attackCard.name}
+                  className="w-full h-auto object-contain"
+                  loading="eager"
+                  decoding="async"
+                />
+              </div>
+            </div>
+          );
+        })()}
       </div>
     );
   };
 
   const lineClass = 'w-px h-4 sm:h-6 bg-primary/40';
-  const branchLineClass = 'border-t border-primary/40';
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[420px] sm:min-h-[480px] py-6 gap-1">
-      {/* Internet */}
       {internet && (
         <>
           {renderCard('internet', 'internet', 'md')}
@@ -74,7 +86,6 @@ const NetworkDiagram = memo(({ cardIds, highlight, effectLabel, fadeOut = [] }: 
         </>
       )}
 
-      {/* Switch */}
       {switches.length > 0 && (
         <>
           {renderCard('switch', 'switch', 'md')}
@@ -82,23 +93,19 @@ const NetworkDiagram = memo(({ cardIds, highlight, effectLabel, fadeOut = [] }: 
         </>
       )}
 
-      {/* Label: cables */}
       {cables.length > 0 && (
         <span className="text-[9px] font-orbitron text-muted-foreground/60 tracking-widest uppercase mb-1">cables</span>
       )}
 
-      {/* Cables row with branching lines */}
       {cables.length > 0 && (
         <>
           <div className="flex items-start gap-3 sm:gap-5 relative">
-            {/* Horizontal branch line */}
             {cables.length > 1 && (
               <div className="absolute top-0 left-1/2 -translate-x-1/2 h-px bg-primary/30" style={{ width: `${(cables.length - 1) * 80}%` }} />
             )}
             {cables.map((cableId, i) => (
               <div key={`cable-${i}`} className="flex flex-col items-center">
                 {renderCard(cableId, `cable-${i}`, 'sm')}
-                {/* Ports label */}
                 <span className="text-[9px] font-orbitron text-primary/60 mt-0.5">
                   {cableId === 'cable-2' ? '2/2' : cableId === 'cable-3' ? `${Math.min(computerCount, 3)}/3` : ''}
                 </span>
@@ -109,18 +116,34 @@ const NetworkDiagram = memo(({ cardIds, highlight, effectLabel, fadeOut = [] }: 
         </>
       )}
 
-      {/* Computers row */}
       {computerCount > 0 && computers.length > 0 && (
         <div className="flex items-start gap-2 sm:gap-3">
           {Array.from({ length: Math.min(computerCount, 4) }).map((_, i) => (
             <div key={`comp-${i}`} className="flex flex-col items-center">
-              {renderCard('computer', `comp-${i}`, 'sm')}
+              {/* Only show attack on first computer for 'computer' target */}
+              {i === 0 && attackOverlay?.targetEquipment === 'computer'
+                ? renderCard('computer', `comp-${i}`, 'sm')
+                : (() => {
+                    // For non-first computers when target is computer, render without attack
+                    const card = tutorialCards['computer'];
+                    const isFading = fadeOutSet.has('computer');
+                    return (
+                      <div className={cn(
+                        'flex flex-col items-center transition-all duration-500',
+                        isFading && 'opacity-20 scale-90',
+                      )}>
+                        <div className="w-[60px] sm:w-[72px] rounded-lg overflow-hidden">
+                          <img src={card?.image} alt="Computer" className="w-full h-auto object-contain" loading="eager" decoding="async" />
+                        </div>
+                      </div>
+                    );
+                  })()
+              }
             </div>
           ))}
         </div>
       )}
 
-      {/* Effect label */}
       {effectLabel && (
         <div className={cn(
           'mt-3 px-4 py-1.5 rounded-full text-[10px] sm:text-[11px] font-orbitron font-bold tracking-widest',

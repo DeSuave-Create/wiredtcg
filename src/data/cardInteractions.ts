@@ -379,6 +379,7 @@ export const cardInteractions: CardInteraction[] = [
         effectLabel: 'HACKED',
         layout: 'network',
         showRelatedCards: ['hacked', 'secured', 'security-specialist'],
+        attackOverlay: { attackCardId: 'hacked', targetEquipment: 'computer' },
       },
       {
         label: 'Power Outage — Cascading Shutdown',
@@ -390,6 +391,7 @@ export const cardInteractions: CardInteraction[] = [
         effectLabel: 'POWER OUTAGE',
         layout: 'network',
         showRelatedCards: ['power-outage', 'powered', 'facilities'],
+        attackOverlay: { attackCardId: 'power-outage', targetEquipment: 'switch' },
       },
       {
         label: 'New Hire — Equipment Disabled',
@@ -401,6 +403,7 @@ export const cardInteractions: CardInteraction[] = [
         effectLabel: 'NEW HIRE',
         layout: 'network',
         showRelatedCards: ['new-hire', 'trained', 'supervisor'],
+        attackOverlay: { attackCardId: 'new-hire', targetEquipment: 'cable-3' },
       },
       {
         label: 'Race to 25 Bitcoin',
