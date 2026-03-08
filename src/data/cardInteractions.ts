@@ -369,7 +369,7 @@ export const cardInteractions: CardInteraction[] = [
         layout: 'network',
       },
       {
-        label: 'Hacked — Disables a Computer',
+        label: 'Hacked — Disables Equipment',
         description: 'An opponent plays Hacked on one of your Computers. That Computer stops mining until you resolve it with a Secured card.',
         cardIds: ['internet', 'switch', 'cable-3', 'computer', 'computer', 'computer'],
         stackOrder: ['internet', 'switch', 'cable-3', 'computer', 'computer', 'computer'],
@@ -377,6 +377,7 @@ export const cardInteractions: CardInteraction[] = [
         fadeOut: ['computer'],
         effectLabel: 'HACKED',
         layout: 'network',
+        showRelatedCards: ['hacked', 'secured', 'security-specialist'],
       },
       {
         label: 'Power Outage — Cascading Shutdown',
@@ -387,6 +388,7 @@ export const cardInteractions: CardInteraction[] = [
         fadeOut: ['switch', 'cable-3', 'computer'],
         effectLabel: 'POWER OUTAGE',
         layout: 'network',
+        showRelatedCards: ['power-outage', 'powered', 'facilities'],
       },
       {
         label: 'New Hire — Equipment Disabled',
@@ -397,6 +399,7 @@ export const cardInteractions: CardInteraction[] = [
         fadeOut: ['cable-3', 'computer'],
         effectLabel: 'NEW HIRE',
         layout: 'network',
+        showRelatedCards: ['new-hire', 'trained', 'supervisor'],
       },
       {
         label: 'Race to 25 Bitcoin',
