@@ -352,9 +352,9 @@ const Extras = () => {
                 {/* Interactive Guide */}
                 <div className="border-2 border-primary rounded-3xl p-6 text-center space-y-4 shadow-lg flex flex-col overflow-hidden relative" style={{ backgroundImage: "url('/images/card-back-light.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
                   <div className="absolute inset-0 bg-background/80 dark:bg-background/85" />
-                  <Gamepad2 className="h-12 w-12 text-primary mx-auto" />
-                  <h3 className="text-lg font-semibold font-orbitron text-primary">Interactive Guide</h3>
-                  <p className="text-sm text-muted-foreground flex-grow">Learn how every card interacts through visual gameplay examples</p>
+                  <Gamepad2 className="h-12 w-12 text-primary mx-auto relative z-10" />
+                  <h3 className="text-lg font-semibold font-orbitron text-primary relative z-10">Interactive Guide</h3>
+                  <p className="text-sm text-muted-foreground flex-grow relative z-10">Learn how every card interacts through visual gameplay examples</p>
                   <button 
                     onClick={() => navigate('/card-reference')}
                     className="bg-muted/20 rounded-3xl text-primary hover:bg-muted/40 neon-glow px-6 py-2 font-medium shadow-lg w-full border-2 border-primary mt-auto flex items-center justify-center transition-colors"
