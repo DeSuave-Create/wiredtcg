@@ -2,3 +2,6 @@ project_id = "ptygikixnrdpleyntwrj"
 
 [functions.generate-toc-art]
 verify_jwt = false
+
+[functions.admin-products]
+verify_jwt = false
