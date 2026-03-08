@@ -164,12 +164,13 @@ const Extras = () => {
             <ContentSection>
               <div className="flex items-center justify-center gap-3 mb-4 sm:mb-6">
                 <img src="/wire-logo-official.png" alt="WIRED" className="h-8 sm:h-10 w-auto" />
-                <div className="flex flex-col items-center">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl sm:text-[32px] font-bold font-orbitron text-primary tracking-wider animate-neon-flicker leading-tight">WIRED</span>
-                    <span className="text-lg sm:text-2xl font-bold font-orbitron text-primary/70 tracking-wide">- VIDEOS</span>
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl sm:text-[32px] font-bold font-orbitron text-primary tracking-wider animate-neon-flicker leading-none">WIRED</span>
+                    <span className="text-muted-foreground font-orbitron leading-none">-</span>
+                    <span className="text-2xl sm:text-[32px] font-bold font-orbitron text-muted-foreground tracking-wide leading-none">VIDEOS</span>
                   </div>
-                  <span className="text-[10px] sm:text-xs font-orbitron text-primary/70 tracking-widest">The Card Game</span>
+                  <span className="text-[10px] sm:text-xs font-orbitron text-primary/70 tracking-widest text-center" style={{ maxWidth: 'fit-content', paddingRight: '45%' }}>The Card Game</span>
                 </div>
               </div>
               <VideoCarousel videos={tutorialVideos} />
