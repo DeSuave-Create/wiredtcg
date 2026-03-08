@@ -97,14 +97,17 @@ const CardStack = memo(({ stackOrder, highlight, effectLabel, fadeOut = [] }: Ca
                 />
               </div>
 
-              {isHighlighted && effectLabel && (
-                <div className={cn(
-                  'absolute -bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold font-orbitron tracking-wider whitespace-nowrap z-40 bg-background/90 border',
-                  effectLabelClass[effectLabel] || 'border-primary text-primary',
-                )}>
-                  {effectLabel}
-                </div>
-              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+});
+
+CardStack.displayName = 'CardStack';
+
+export default CardStack;
             </div>
           );
         })}
