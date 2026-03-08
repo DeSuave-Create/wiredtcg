@@ -145,20 +145,31 @@ const CardInteractionTutorial = memo(() => {
       {/* Filter bar */}
       <div className="flex flex-wrap items-center justify-center gap-2 mb-6">
         <Filter className="h-4 w-4 text-muted-foreground mr-1" />
-        {categoryFilters.map(f => (
-          <button
-            key={f.value}
-            onClick={() => setActiveFilter(f.value)}
-            className={cn(
-              'px-3 py-1.5 rounded-full text-xs font-medium font-orbitron tracking-wide border transition-colors duration-200',
-              activeFilter === f.value
-                ? 'bg-primary/20 border-primary text-primary'
-                : 'border-muted bg-muted/30 text-muted-foreground hover:border-primary/50 hover:text-foreground',
-            )}
-          >
-            {f.label}
-          </button>
-        ))}
+        {categoryFilters.map(f => {
+          const activeClasses = f.value === 'all'
+            ? 'bg-primary/20 border-primary text-primary'
+            : f.value === 'equipment'
+              ? 'bg-primary/20 border-primary text-primary'
+              : f.value === 'attack'
+                ? 'bg-destructive/20 border-destructive text-destructive'
+                : f.value === 'resolution'
+                  ? 'bg-yellow-500/20 border-yellow-500 text-yellow-400'
+                  : 'bg-blue-500/20 border-blue-500 text-blue-400';
+          return (
+            <button
+              key={f.value}
+              onClick={() => setActiveFilter(f.value)}
+              className={cn(
+                'px-3 py-1.5 rounded-full text-xs font-medium font-orbitron tracking-wide border transition-colors duration-200',
+                activeFilter === f.value
+                  ? activeClasses
+                  : 'border-muted bg-muted/30 text-muted-foreground hover:border-primary/50 hover:text-foreground',
+              )}
+            >
+              {f.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Main tutorial card */}
