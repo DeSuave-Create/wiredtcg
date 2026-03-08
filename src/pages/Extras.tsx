@@ -125,10 +125,10 @@ const Extras = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      {/* Secondary Section Nav */}
-      <div className="sticky top-0 z-40 border-b border-muted/30 bg-background/90 backdrop-blur-sm">
+      {/* Secondary Section Nav - always visible */}
+      <div className="sticky top-0 z-40 border-b border-muted/30 bg-background/95 backdrop-blur-md shadow-sm">
         <div className="container mx-auto px-4">
-          <nav className="flex items-center justify-center gap-1 sm:gap-2 py-2 overflow-x-auto">
+          <nav className="flex items-center justify-center gap-1 sm:gap-2 py-2 overflow-x-auto scrollbar-hide">
             {sections.map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
@@ -149,7 +149,7 @@ const Extras = () => {
       </div>
       
       <main className="container mx-auto px-4 py-8 flex justify-center flex-grow">
-        <div className="w-full max-w-6xl">
+        <div className="w-full max-w-6xl [&_[data-section]]:scroll-mt-16">
           {/* Page Header */}
           <ContentSection title="Game Extras & Resources" glowEffect>
             <div className="text-center">
