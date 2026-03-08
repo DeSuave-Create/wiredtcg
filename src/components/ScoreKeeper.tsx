@@ -73,11 +73,13 @@ const ScoreKeeper = () => {
   const addPlayer = () => {
     console.log('Adding player, current count:', players.length);
     if (players.length < maxPlayers) {
+      const usedCharacters = new Set(players.map(p => p.character));
+      const availableCharacter = characters.find(c => !usedCharacters.has(c.id))?.id || characters[0].id;
       const newPlayer: Player = {
         id: Date.now().toString(),
         name: `Player ${players.length + 1}`,
         score: 0,
-        character: 'security-specialist'
+        character: availableCharacter
       };
       setPlayers(prevPlayers => {
         const updatedPlayers = [...prevPlayers, newPlayer];
