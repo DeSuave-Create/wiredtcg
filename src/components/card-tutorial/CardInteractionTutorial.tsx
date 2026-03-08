@@ -14,16 +14,28 @@ import NetworkDiagram from './NetworkDiagram';
 
 const AUTOPLAY_INTERVAL = 7000;
 
-/** Highlight "Bitcoin" in text with the bitcoin accent color */
-function highlightBitcoin(text: string) {
-  const parts = text.split(/(Bitcoin)/gi);
+/** Highlight game terms in text with appropriate colors */
+function highlightTerms(text: string) {
+  // Order matters: longer phrases first to avoid partial matches
+  const pattern = /(Bitcoin|Power Outage|New Hire|Hacked|Secured|Powered|Trained|Helpdesk|Security Specialist|Facilities|Supervisor|Field Tech|Head Hunter|Seal the Deal|Audit)/gi;
+  const parts = text.split(pattern);
   if (parts.length === 1) return text;
-  return parts.map((part, i) =>
-    /^bitcoin$/i.test(part)
-      ? <span key={i} className="text-accent-bitcoin font-semibold">{part}</span>
-      : part
-  );
+  
+  const attackTerms = /^(hacked|power outage|new hire|audit)$/i;
+  const resolutionTerms = /^(secured|powered|trained|helpdesk)$/i;
+  const classificationTerms = /^(security specialist|facilities|supervisor|field tech|head hunter|seal the deal)$/i;
+  
+  return parts.map((part, i) => {
+    if (/^bitcoin$/i.test(part)) return <span key={i} className="text-accent-bitcoin font-semibold">{part}</span>;
+    if (attackTerms.test(part)) return <span key={i} className="text-destructive font-semibold">{part}</span>;
+    if (resolutionTerms.test(part)) return <span key={i} className="text-yellow-400 font-semibold">{part}</span>;
+    if (classificationTerms.test(part)) return <span key={i} className="text-blue-400 font-semibold">{part}</span>;
+    return part;
+  });
 }
+
+// Keep backward compat alias
+const highlightBitcoin = highlightTerms;
 
 const categoryFilters: { label: string; value: CardCategory | 'all' }[] = [
   { label: 'All', value: 'all' },
@@ -260,11 +272,7 @@ const CardInteractionTutorial = memo(() => {
                   <div className="flex flex-wrap gap-3">
                     {stepRelated.map(rc => (
                       <div key={rc.id} className="flex flex-col items-center gap-1.5">
-                        <div className={cn(
-                          'w-[80px] sm:w-[100px] rounded-lg overflow-hidden border-2',
-                          getCategoryBorderClass(rc.type),
-                          'bg-muted/10',
-                        )}>
+                        <div className="w-[80px] sm:w-[100px] rounded-lg overflow-hidden">
                           <img src={rc.image} alt={rc.name} className="w-full h-auto object-contain" loading="lazy" decoding="async" />
                         </div>
                         <span className={cn('text-[10px] sm:text-xs font-medium font-orbitron', getCategoryTextClass(rc.type))}>
@@ -289,11 +297,7 @@ const CardInteractionTutorial = memo(() => {
                       key={rc.id}
                       className="flex flex-col items-center gap-1.5"
                     >
-                      <div className={cn(
-                        'w-[80px] sm:w-[100px] rounded-lg overflow-hidden border-2',
-                        getCategoryBorderClass(rc.type),
-                        'bg-muted/10',
-                      )}>
+                      <div className="w-[80px] sm:w-[100px] rounded-lg overflow-hidden">
                         <img src={rc.image} alt={rc.name} className="w-full h-auto object-contain" loading="lazy" decoding="async" />
                       </div>
                       <span className={cn('text-[10px] sm:text-xs font-medium font-orbitron', getCategoryTextClass(rc.type))}>
