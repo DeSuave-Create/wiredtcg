@@ -14,6 +14,17 @@ import NetworkDiagram from './NetworkDiagram';
 
 const AUTOPLAY_INTERVAL = 7000;
 
+/** Highlight "Bitcoin" in text with the bitcoin accent color */
+function highlightBitcoin(text: string) {
+  const parts = text.split(/(Bitcoin)/gi);
+  if (parts.length === 1) return text;
+  return parts.map((part, i) =>
+    /^bitcoin$/i.test(part)
+      ? <span key={i} className="text-accent-bitcoin font-semibold">{part}</span>
+      : part
+  );
+}
+
 const categoryFilters: { label: string; value: CardCategory | 'all' }[] = [
   { label: 'All', value: 'all' },
   { label: 'Equipment', value: 'equipment' },
