@@ -19,9 +19,7 @@ const Extras = () => {
   const sections = [
     { id: 'videos', label: 'Videos', icon: Video },
     { id: 'rulebook', label: 'Rulebook', icon: BookOpen },
-    { id: 'scores', label: 'Score Sheets', icon: FileText },
-    { id: 'cards', label: 'Card Reference', icon: Layers },
-    { id: 'tutorial', label: 'Interactive Guide', icon: Gamepad2 },
+    { id: 'downloads', label: 'Downloads', icon: FolderDown },
   ] as const;
 
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
