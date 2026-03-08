@@ -173,12 +173,6 @@ const CardInteractionTutorial = memo(() => {
             )}>
               {featuredCard.type}
             </span>
-            <span className={cn(
-              'px-2 py-0.5 rounded text-[10px] font-medium',
-              complexityBadge[interaction.complexity],
-            )}>
-              {interaction.complexity}
-            </span>
             <button
               onClick={togglePlay}
               className="p-1.5 rounded-full hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors"
