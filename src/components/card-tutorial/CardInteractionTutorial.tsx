@@ -152,20 +152,15 @@ const CardInteractionTutorial = memo(() => {
       {/* Main tutorial card */}
       <div className="relative rounded-2xl border border-muted/50 bg-background/80 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-muted/30 bg-muted/10">
-          <div className="flex items-center gap-3 min-w-0">
+        <div className="flex flex-col items-center gap-2 px-4 sm:px-6 py-4 sm:py-5 border-b border-muted/30 bg-muted/10">
+          <div className="flex items-center gap-3">
             <span className={cn(
-              'px-2 py-0.5 rounded text-[10px] font-orbitron font-bold uppercase tracking-widest flex-shrink-0',
+              'px-2.5 py-0.5 rounded text-[10px] font-orbitron font-bold uppercase tracking-widest',
               getCategoryBgClass(featuredCard.type),
               getCategoryTextClass(featuredCard.type),
             )}>
               {featuredCard.type}
             </span>
-            <h3 className="text-sm sm:text-base font-bold font-orbitron text-foreground truncate">
-              {interaction.title}
-            </h3>
-          </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
             <span className={cn(
               'px-2 py-0.5 rounded text-[10px] font-medium',
               complexityBadge[interaction.complexity],
@@ -180,6 +175,9 @@ const CardInteractionTutorial = memo(() => {
               {isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
             </button>
           </div>
+          <h3 className="text-lg sm:text-2xl font-bold font-orbitron text-foreground text-center">
+            {highlightBitcoin(interaction.title)}
+          </h3>
         </div>
 
         {/* Content area */}
