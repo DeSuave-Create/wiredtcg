@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useEffect } from 'react';
 import { tutorialCards, getCategoryBorderClass } from '@/data/cardInteractions';
 import { cn } from '@/lib/utils';
 
