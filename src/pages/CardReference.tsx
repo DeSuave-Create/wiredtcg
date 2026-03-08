@@ -116,7 +116,7 @@ const CardReference = () => {
                   <button
                     onClick={() => setActiveTab('tutorials')}
                     className={cn(
-                      'px-4 py-2 rounded-full text-xs font-medium font-orbitron tracking-wide border transition-all duration-300',
+                      'px-4 py-2.5 rounded-full text-xs font-medium font-orbitron tracking-wide border transition-all duration-300 min-h-[44px]',
                       activeTab === 'tutorials'
                         ? 'bg-primary/20 border-primary text-primary'
                         : 'border-muted bg-muted/30 text-muted-foreground hover:border-primary/50 hover:text-foreground',
@@ -127,7 +127,7 @@ const CardReference = () => {
                   <button
                     onClick={() => setActiveTab('all-cards')}
                     className={cn(
-                      'px-4 py-2 rounded-full text-xs font-medium font-orbitron tracking-wide border transition-all duration-300',
+                      'px-4 py-2.5 rounded-full text-xs font-medium font-orbitron tracking-wide border transition-all duration-300 min-h-[44px]',
                       activeTab === 'all-cards'
                         ? 'bg-primary/20 border-primary text-primary'
                         : 'border-muted bg-muted/30 text-muted-foreground hover:border-primary/50 hover:text-foreground',
