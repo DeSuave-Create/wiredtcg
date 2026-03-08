@@ -172,17 +172,9 @@ const CardInteractionTutorial = memo(() => {
         </div>
 
         {/* Content area */}
-        <div className={cn(
-          'p-4 sm:p-6',
-          interaction.complexity === 'simple'
-            ? 'flex flex-col md:flex-row items-center gap-6'
-            : 'flex flex-col lg:flex-row gap-6',
-        )}>
-          {/* Card Stack */}
-          <div className={cn(
-            'flex-shrink-0 flex items-center justify-center',
-            interaction.complexity === 'simple' ? 'md:w-1/3' : 'lg:w-2/5',
-          )}>
+        <div className="p-4 sm:p-6 flex flex-col lg:flex-row gap-6 min-h-[480px] sm:min-h-[540px]">
+          {/* Card Stack / Network Diagram */}
+          <div className="flex-shrink-0 flex items-center justify-center lg:w-2/5">
             {step.layout === 'network' ? (
               <NetworkDiagram
                 cardIds={step.stackOrder}
@@ -201,10 +193,7 @@ const CardInteractionTutorial = memo(() => {
           </div>
 
           {/* Explanation panel */}
-          <div className={cn(
-            'flex-1 flex flex-col justify-center min-w-0',
-            interaction.complexity === 'simple' ? 'md:w-2/3' : 'lg:w-3/5',
-          )}>
+          <div className="flex-1 flex flex-col justify-center min-w-0 lg:w-3/5">
             {/* Step indicator */}
             <div className="flex items-center gap-2 mb-3">
               {interaction.steps.map((_, sIdx) => (
@@ -253,21 +242,23 @@ const CardInteractionTutorial = memo(() => {
 
             {currentStep === interaction.steps.length - 1 && relatedCards.length > 0 && (
               <div>
-                <p className="text-[10px] font-orbitron text-muted-foreground uppercase tracking-widest mb-2">
+                <p className="text-[10px] font-orbitron text-muted-foreground uppercase tracking-widest mb-3">
                   Related Cards
                 </p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
                   {relatedCards.map(rc => (
                     <div
                       key={rc.id}
-                      className={cn(
-                        'flex items-center gap-1.5 px-2 py-1 rounded-lg border text-xs',
-                        getCategoryBorderClass(rc.type),
-                        'bg-muted/20',
-                      )}
+                      className="flex flex-col items-center gap-1.5"
                     >
-                      <img src={rc.image} alt={rc.name} className="w-6 h-8 object-contain rounded" loading="lazy" decoding="async" />
-                      <span className={cn('font-medium', getCategoryTextClass(rc.type))}>
+                      <div className={cn(
+                        'w-[80px] sm:w-[100px] rounded-lg overflow-hidden border-2',
+                        getCategoryBorderClass(rc.type),
+                        'bg-muted/10',
+                      )}>
+                        <img src={rc.image} alt={rc.name} className="w-full h-auto object-contain" loading="lazy" decoding="async" />
+                      </div>
+                      <span className={cn('text-[10px] sm:text-xs font-medium font-orbitron', getCategoryTextClass(rc.type))}>
                         {rc.name}
                       </span>
                     </div>
