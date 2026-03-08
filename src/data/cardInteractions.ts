@@ -760,7 +760,7 @@ export const getCategoryTextClass = (type: CardCategory): string => {
   switch (type) {
     case 'equipment': return 'text-primary';
     case 'attack': return 'text-destructive';
-    case 'resolution': return 'text-purple-400';
+    case 'resolution': return 'text-primary';
     case 'classification': return 'text-blue-400';
   }
 };
