@@ -124,8 +124,10 @@ const NetworkDiagram = memo(({ cardIds, highlight, effectLabel, fadeOut = [] }: 
       {effectLabel && (
         <div className={cn(
           'mt-3 px-4 py-1.5 rounded-full text-[10px] sm:text-[11px] font-orbitron font-bold tracking-widest',
-          effectLabel.includes('MINING') || effectLabel.includes('SCORE') || effectLabel.includes('BITCOIN') || effectLabel.includes('RACE')
+          effectLabel.includes('MINING') || effectLabel.includes('SCORE') || effectLabel.includes('RACE')
             ? 'bg-primary/20 text-primary'
+            : effectLabel.includes('BITCOIN')
+            ? 'bg-accent-bitcoin/20 text-accent-bitcoin'
             : effectLabel.includes('HACKED') || effectLabel.includes('POWER') || effectLabel.includes('NEW HIRE') || effectLabel.includes('DISABLED')
               ? 'bg-destructive/20 text-destructive'
               : 'bg-muted/20 text-muted-foreground',
