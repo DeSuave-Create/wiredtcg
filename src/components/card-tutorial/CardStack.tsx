@@ -62,8 +62,7 @@ const CardStack = memo(({ stackOrder, highlight, fadeOut = [] }: CardStackProps)
             >
               <div
                 className={cn(
-                  'w-[160px] sm:w-[180px] rounded-xl overflow-hidden border-2 shadow-lg',
-                  getCategoryBorderClass(card.type),
+                  'w-[160px] sm:w-[180px] rounded-xl overflow-hidden shadow-lg',
                   isHighlighted && 'ring-2 ring-primary/30',
                 )}
               >
