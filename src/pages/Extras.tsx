@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -6,13 +6,50 @@ import ContentSection from '@/components/ContentSection';
 import VideoCarousel from '@/components/VideoCarousel';
 import ElectricProgressBar from '@/components/ElectricProgressBar';
 import { Button } from '@/components/ui/button';
-import { Download, BookOpen, FileText } from 'lucide-react';
+import { Download, BookOpen, FileText, Video, Gamepad2, FolderDown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 const Extras = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [gameModeIndex, setGameModeIndex] = useState(0);
+  const [activeSection, setActiveSection] = useState('videos');
+
+  const sections = [
+    { id: 'videos', label: 'Videos', icon: Video },
+    { id: 'rulebook', label: 'Rulebook', icon: BookOpen },
+    { id: 'downloads', label: 'Downloads', icon: FolderDown },
+  ] as const;
+
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  const assignRef = useCallback((id: string) => (el: HTMLDivElement | null) => {
+    sectionRefs.current[id] = el;
+  }, []);
+
+  useEffect(() => {
+    const els = Object.entries(sectionRefs.current).filter(([, el]) => el) as [string, HTMLDivElement][];
+    if (!els.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter(e => e.isIntersecting);
+        if (visible.length > 0) {
+          visible.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+          setActiveSection(visible[0].target.getAttribute('data-section') || 'videos');
+        }
+      },
+      { rootMargin: '-40% 0px -40% 0px', threshold: 0 }
+    );
+
+    els.forEach(([, el]) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  const scrollToSection = (id: string) => {
+    sectionRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const tutorialVideos = [
     {
@@ -85,6 +122,29 @@ const Extras = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
+
+      {/* Secondary Section Nav */}
+      <div className="sticky top-0 z-40 border-b border-muted/30 bg-background/90 backdrop-blur-sm">
+        <div className="container mx-auto px-4">
+          <nav className="flex items-center justify-center gap-1 sm:gap-2 py-2 overflow-x-auto">
+            {sections.map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                onClick={() => scrollToSection(id)}
+                className={cn(
+                  'flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium font-orbitron tracking-wide transition-colors duration-200 whitespace-nowrap min-h-[36px]',
+                  activeSection === id
+                    ? 'bg-primary/20 text-primary border border-primary/50'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/30 border border-transparent',
+                )}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                {label}
+              </button>
+            ))}
+          </nav>
+        </div>
+      </div>
       
       <main className="container mx-auto px-4 py-8 flex justify-center flex-grow">
         <div className="w-full max-w-6xl">
@@ -100,13 +160,16 @@ const Extras = () => {
           <ElectricProgressBar />
 
           {/* Video Carousel Section */}
-          <ContentSection title="Video Tutorials">
-            <VideoCarousel videos={tutorialVideos} />
-          </ContentSection>
+          <div ref={assignRef('videos')} data-section="videos">
+            <ContentSection title="Video Tutorials">
+              <VideoCarousel videos={tutorialVideos} />
+            </ContentSection>
+          </div>
           
           <ElectricProgressBar />
 
           {/* Rule Book Section */}
+          <div ref={assignRef('rulebook')} data-section="rulebook">
           <ContentSection title="Official Rulebook">
             <div className="space-y-8">
               <div className="text-center space-y-4">
@@ -221,10 +284,12 @@ const Extras = () => {
               </div>
             </div>
           </ContentSection>
+          </div>
           
           <ElectricProgressBar />
 
           {/* Downloads Section */}
+          <div ref={assignRef('downloads')} data-section="downloads">
           <ContentSection title="Downloads & Resources">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
               {/* Score Sheets */}
@@ -268,6 +333,7 @@ const Extras = () => {
               </div>
             </div>
           </ContentSection>
+          </div>
         </div>
       </main>
 
