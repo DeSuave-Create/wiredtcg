@@ -66,6 +66,15 @@ const CardReference = () => {
   const navigate = useNavigate();
   const printRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (window.location.hash) {
+      const el = document.querySelector(window.location.hash);
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 300);
+      }
+    }
+  }, []);
+
   const handlePrint = () => {
     window.print();
   };
