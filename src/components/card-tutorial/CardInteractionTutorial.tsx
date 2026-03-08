@@ -241,11 +241,11 @@ const CardInteractionTutorial = memo(() => {
                 'bg-muted/10',
               )}>
                 <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed">
-                  {featuredCard.rulesExplanation}
+                  {highlightBitcoin(featuredCard.rulesExplanation)}
                 </p>
                 {featuredCard.interactionNotes && (
                   <p className="mt-2 text-xs text-muted-foreground italic">
-                    💡 {featuredCard.interactionNotes}
+                    💡 {highlightBitcoin(featuredCard.interactionNotes)}
                   </p>
                 )}
               </div>
