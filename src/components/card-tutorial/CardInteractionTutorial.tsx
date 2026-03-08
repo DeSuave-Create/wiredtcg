@@ -16,7 +16,6 @@ const AUTOPLAY_INTERVAL = 7000;
 
 /** Highlight game terms in text with appropriate colors */
 function highlightTerms(text: string) {
-  // Order matters: longer phrases first to avoid partial matches
   const pattern = /(Bitcoin|Power Outage|New Hire|Hacked|Secured|Powered|Trained|Helpdesk|Security Specialist|Facilities|Supervisor|Field Tech|Head Hunter|Seal the Deal|Audit)/gi;
   const parts = text.split(pattern);
   if (parts.length === 1) return text;
@@ -34,7 +33,6 @@ function highlightTerms(text: string) {
   });
 }
 
-// Keep backward compat alias
 const highlightBitcoin = highlightTerms;
 
 const categoryFilters: { label: string; value: CardCategory | 'all' }[] = [
@@ -45,20 +43,16 @@ const categoryFilters: { label: string; value: CardCategory | 'all' }[] = [
   { label: 'Classification', value: 'classification' },
 ];
 
-const complexityBadge: Record<string, string> = {
-  simple: 'bg-primary/20 text-primary',
-  medium: 'bg-yellow-500/20 text-yellow-400',
-  complex: 'bg-destructive/20 text-destructive',
-};
-
 const CardInteractionTutorial = memo(() => {
   const [activeFilter, setActiveFilter] = useState<CardCategory | 'all'>('all');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
+  const [textVisible, setTextVisible] = useState(true);
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
   const progressRef = useRef<HTMLDivElement>(null);
+  const prevStepKeyRef = useRef('0-0');
 
   const allInteractions = useMemo(() => getEnabledInteractions(), []);
   const interactions = useMemo(
@@ -76,6 +70,19 @@ const CardInteractionTutorial = memo(() => {
     setCurrentIndex(0);
     setCurrentStep(0);
   }, [activeFilter]);
+
+  // Smooth text panel transition on step/index change
+  useEffect(() => {
+    const newKey = `${currentIndex}-${currentStep}`;
+    if (newKey !== prevStepKeyRef.current) {
+      setTextVisible(false);
+      const timer = setTimeout(() => {
+        prevStepKeyRef.current = newKey;
+        setTextVisible(true);
+      }, 200);
+      return () => clearTimeout(timer);
+    }
+  }, [currentIndex, currentStep]);
 
   const advanceStep = useCallback(() => {
     if (!interaction) return;
@@ -100,7 +107,6 @@ const CardInteractionTutorial = memo(() => {
     const el = progressRef.current;
     if (!el) return;
     el.style.animation = 'none';
-    // Force reflow
     void el.offsetWidth;
     el.style.animation = `progress-fill ${AUTOPLAY_INTERVAL}ms linear`;
   }, [currentStep, currentIndex, isPlaying, isHovered]);
@@ -178,7 +184,7 @@ const CardInteractionTutorial = memo(() => {
         <div className="flex flex-col items-center gap-2 px-4 sm:px-6 py-4 sm:py-5 border-b border-muted/30 bg-muted/10">
           <div className="flex items-center gap-3">
             <span className={cn(
-              'px-2.5 py-0.5 rounded text-[10px] font-orbitron font-bold uppercase tracking-widest',
+              'px-2.5 py-0.5 rounded text-[10px] font-orbitron font-bold uppercase tracking-widest transition-all duration-500',
               getCategoryBgClass(featuredCard.type),
               getCategoryTextClass(featuredCard.type),
             )}>
@@ -192,7 +198,7 @@ const CardInteractionTutorial = memo(() => {
               {isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
             </button>
           </div>
-          <h3 className="text-lg sm:text-2xl font-bold font-orbitron text-foreground text-center">
+          <h3 className="text-lg sm:text-2xl font-bold font-orbitron text-foreground text-center transition-opacity duration-500">
             {highlightBitcoin(interaction.title)}
           </h3>
         </div>
@@ -219,8 +225,15 @@ const CardInteractionTutorial = memo(() => {
             )}
           </div>
 
-          {/* Explanation panel */}
-          <div className="flex-1 flex flex-col justify-center min-w-0 lg:w-3/5">
+          {/* Explanation panel with smooth fade */}
+          <div
+            className="flex-1 flex flex-col justify-center min-w-0 lg:w-3/5"
+            style={{
+              opacity: textVisible ? 1 : 0,
+              transform: textVisible ? 'translateY(0)' : 'translateY(8px)',
+              transition: 'opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+            }}
+          >
             {/* Step indicator */}
             <div className="flex items-center gap-2 mb-3">
               {interaction.steps.map((_, sIdx) => (
