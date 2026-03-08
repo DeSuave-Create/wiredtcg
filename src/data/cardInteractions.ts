@@ -329,6 +329,53 @@ export const cardInteractions: CardInteraction[] = [
     ],
   },
 
+  // ── HOW COMPUTERS SCORE ──
+  {
+    id: 'how-computers-score',
+    title: 'How Computers Score',
+    subtitle: 'The full network connection',
+    featuredCardId: 'computer',
+    complexity: 'medium',
+    steps: [
+      {
+        label: 'The Full Network',
+        description: 'To mine Bitcoin, a Computer must be fully connected: Internet → Switch → Cable → Computer. Every player starts with an Internet card on the board.',
+        cardIds: ['internet', 'switch', 'cable-3', 'computer', 'computer', 'computer'],
+        stackOrder: ['internet', 'switch', 'cable-3', 'computer', 'computer', 'computer'],
+        highlight: 'internet',
+        layout: 'network',
+      },
+      {
+        label: 'Each Computer = 1 Bitcoin',
+        description: 'At the end of your turn, each active, fully connected Computer earns you 1 Bitcoin. 3 connected Computers = 3 Bitcoin per turn.',
+        cardIds: ['internet', 'switch', 'cable-3', 'computer', 'computer', 'computer'],
+        stackOrder: ['internet', 'switch', 'cable-3', 'computer', 'computer', 'computer'],
+        highlight: 'computer',
+        effectLabel: '+3 BITCOIN',
+        layout: 'network',
+      },
+      {
+        label: 'Disabled = No Mining',
+        description: 'If any part of the chain is disabled (e.g. a Switch hit by Power Outage), all Computers below it stop mining until it\'s resolved.',
+        cardIds: ['internet', 'switch', 'cable-3', 'computer', 'computer', 'computer'],
+        stackOrder: ['internet', 'switch', 'cable-3', 'computer', 'computer', 'computer'],
+        highlight: 'switch',
+        fadeOut: ['cable-3', 'computer'],
+        effectLabel: 'DISABLED CHAIN',
+        layout: 'network',
+      },
+      {
+        label: 'Race to 25 Bitcoin',
+        description: 'The first player to reach 25 Bitcoin wins! Build more branches with multiple Switches and Cables to maximize your mining output.',
+        cardIds: ['internet', 'switch', 'cable-2', 'cable-3', 'computer', 'computer', 'computer'],
+        stackOrder: ['internet', 'switch', 'cable-2', 'cable-3', 'computer', 'computer', 'computer'],
+        highlight: 'computer',
+        effectLabel: 'RACE TO 25',
+        layout: 'network',
+      },
+    ],
+  },
+
   // ── HACKED interaction ──
   {
     id: 'hacked-interaction',
