@@ -10,6 +10,7 @@ import {
   type CardCategory,
 } from '@/data/cardInteractions';
 import CardStack from './CardStack';
+import NetworkDiagram from './NetworkDiagram';
 
 const AUTOPLAY_INTERVAL = 7000;
 
