@@ -45,7 +45,8 @@ export default {
 					foreground: 'hsl(var(--accent-foreground))',
 					blue: 'hsl(var(--accent-blue))',
 					green: 'hsl(var(--accent-green))',
-					red: 'hsl(var(--accent-red))'
+					red: 'hsl(var(--accent-red))',
+					bitcoin: 'hsl(var(--accent-bitcoin))'
 				},
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',
