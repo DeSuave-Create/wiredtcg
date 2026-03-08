@@ -10,6 +10,7 @@ import {
   type CardCategory,
 } from '@/data/cardInteractions';
 import CardStack from './CardStack';
+import NetworkDiagram from './NetworkDiagram';
 
 const AUTOPLAY_INTERVAL = 7000;
 
@@ -182,12 +183,21 @@ const CardInteractionTutorial = memo(() => {
             'flex-shrink-0 flex items-center justify-center',
             interaction.complexity === 'simple' ? 'md:w-1/3' : 'lg:w-2/5',
           )}>
-            <CardStack
-              stackOrder={step.stackOrder}
-              highlight={step.highlight}
-              effectLabel={step.effectLabel}
-              fadeOut={step.fadeOut}
-            />
+            {step.layout === 'network' ? (
+              <NetworkDiagram
+                cardIds={step.stackOrder}
+                highlight={step.highlight}
+                effectLabel={step.effectLabel}
+                fadeOut={step.fadeOut}
+              />
+            ) : (
+              <CardStack
+                stackOrder={step.stackOrder}
+                highlight={step.highlight}
+                effectLabel={step.effectLabel}
+                fadeOut={step.fadeOut}
+              />
+            )}
           </div>
 
           {/* Explanation panel */}

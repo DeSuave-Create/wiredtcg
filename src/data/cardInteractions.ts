@@ -28,6 +28,7 @@ export interface InteractionStep {
   highlight?: string;       // Card ID to highlight
   effectLabel?: string;     // e.g. "DISABLED", "RESOLVED"
   fadeOut?: string[];       // Card IDs that fade away
+  layout?: 'stack' | 'network'; // Visual layout mode
 }
 
 export interface CardInteraction {
@@ -43,6 +44,18 @@ export interface CardInteraction {
 // ─── CARD DEFINITIONS ────────────────────────────────────────
 
 export const tutorialCards: Record<string, TutorialCard> = {
+  // Internet (not a playable card, but part of the network)
+  'internet': {
+    id: 'internet',
+    name: 'Internet',
+    image: '/lovable-uploads/internet-logo.png',
+    type: 'equipment',
+    description: 'The Internet is the starting point of every player\'s network. All equipment connects below it.',
+    rulesExplanation: 'Every player starts with an Internet card already on the board. Switches connect directly to it. The Internet itself cannot be attacked or removed.',
+    tags: ['equipment', 'foundation', 'permanent'],
+    relatedCards: ['switch'],
+    enabled: true,
+  },
   // Equipment
   'computer': {
     id: 'computer',
@@ -312,6 +325,53 @@ export const cardInteractions: CardInteraction[] = [
         stackOrder: ['computer', 'cable-3', 'switch'],
         highlight: 'computer',
         effectLabel: 'MINING',
+      },
+    ],
+  },
+
+  // ── HOW COMPUTERS SCORE ──
+  {
+    id: 'how-computers-score',
+    title: 'How Computers Score',
+    subtitle: 'The full network connection',
+    featuredCardId: 'computer',
+    complexity: 'medium',
+    steps: [
+      {
+        label: 'The Full Network',
+        description: 'To mine Bitcoin, a Computer must be fully connected: Internet → Switch → Cable → Computer. Every player starts with an Internet card on the board.',
+        cardIds: ['internet', 'switch', 'cable-3', 'computer', 'computer', 'computer'],
+        stackOrder: ['internet', 'switch', 'cable-3', 'computer', 'computer', 'computer'],
+        highlight: 'internet',
+        layout: 'network',
+      },
+      {
+        label: 'Each Computer = 1 Bitcoin',
+        description: 'At the end of your turn, each active, fully connected Computer earns you 1 Bitcoin. 3 connected Computers = 3 Bitcoin per turn.',
+        cardIds: ['internet', 'switch', 'cable-3', 'computer', 'computer', 'computer'],
+        stackOrder: ['internet', 'switch', 'cable-3', 'computer', 'computer', 'computer'],
+        highlight: 'computer',
+        effectLabel: '+3 BITCOIN',
+        layout: 'network',
+      },
+      {
+        label: 'Disabled = No Mining',
+        description: 'If any part of the chain is disabled (e.g. a Switch hit by Power Outage), all Computers below it stop mining until it\'s resolved.',
+        cardIds: ['internet', 'switch', 'cable-3', 'computer', 'computer', 'computer'],
+        stackOrder: ['internet', 'switch', 'cable-3', 'computer', 'computer', 'computer'],
+        highlight: 'switch',
+        fadeOut: ['cable-3', 'computer'],
+        effectLabel: 'DISABLED CHAIN',
+        layout: 'network',
+      },
+      {
+        label: 'Race to 25 Bitcoin',
+        description: 'The first player to reach 25 Bitcoin wins! Build more branches with multiple Switches and Cables to maximize your mining output.',
+        cardIds: ['internet', 'switch', 'cable-2', 'cable-3', 'computer', 'computer', 'computer'],
+        stackOrder: ['internet', 'switch', 'cable-2', 'cable-3', 'computer', 'computer', 'computer'],
+        highlight: 'computer',
+        effectLabel: 'RACE TO 25',
+        layout: 'network',
       },
     ],
   },
