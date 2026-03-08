@@ -14,6 +14,17 @@ import NetworkDiagram from './NetworkDiagram';
 
 const AUTOPLAY_INTERVAL = 7000;
 
+/** Highlight "Bitcoin" in text with the bitcoin accent color */
+function highlightBitcoin(text: string) {
+  const parts = text.split(/(Bitcoin)/gi);
+  if (parts.length === 1) return text;
+  return parts.map((part, i) =>
+    /^bitcoin$/i.test(part)
+      ? <span key={i} className="text-accent-bitcoin font-semibold">{part}</span>
+      : part
+  );
+}
+
 const categoryFilters: { label: string; value: CardCategory | 'all' }[] = [
   { label: 'All', value: 'all' },
   { label: 'Equipment', value: 'equipment' },
@@ -220,7 +231,7 @@ const CardInteractionTutorial = memo(() => {
             </h4>
 
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-4">
-              {step.description}
+              {highlightBitcoin(step.description)}
             </p>
 
             {currentStep === 0 && (
@@ -230,11 +241,11 @@ const CardInteractionTutorial = memo(() => {
                 'bg-muted/10',
               )}>
                 <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed">
-                  {featuredCard.rulesExplanation}
+                  {highlightBitcoin(featuredCard.rulesExplanation)}
                 </p>
                 {featuredCard.interactionNotes && (
                   <p className="mt-2 text-xs text-muted-foreground italic">
-                    💡 {featuredCard.interactionNotes}
+                    💡 {highlightBitcoin(featuredCard.interactionNotes)}
                   </p>
                 )}
               </div>
