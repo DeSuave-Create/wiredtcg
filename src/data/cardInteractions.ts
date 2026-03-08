@@ -147,7 +147,7 @@ export const tutorialCards: Record<string, TutorialCard> = {
     tags: ['attack', 'disable', 'equipment-target', 'cascade'],
     targets: ['computer', 'cable-2', 'cable-3', 'switch'],
     counters: ['trained', 'helpdesk'],
-    relatedCards: ['supervisor'],
+    relatedCards: ['trained', 'supervisor'],
     interactionNotes: 'Multiple attacks can stack on one equipment.',
     enabled: true,
   },
