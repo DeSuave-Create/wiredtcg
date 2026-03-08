@@ -161,7 +161,7 @@ export const tutorialCards: Record<string, TutorialCard> = {
     tags: ['attack', 'removal', 'battle', 'chain'],
     targets: ['computer'],
     counters: ['hacked'],
-    relatedCards: ['hacked', 'security-specialist'],
+    relatedCards: ['hacked', 'secured'],
     interactionNotes: 'Triggers a unique Audit Battle phase. Computers returned go to the audited pile and can be replayed.',
     enabled: true,
   },
