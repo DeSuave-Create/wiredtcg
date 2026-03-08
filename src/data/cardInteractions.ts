@@ -751,7 +751,7 @@ export const getCategoryBorderClass = (type: CardCategory): string => {
   switch (type) {
     case 'equipment': return 'border-primary';
     case 'attack': return 'border-destructive';
-    case 'resolution': return 'border-purple-500';
+    case 'resolution': return 'border-primary';
     case 'classification': return 'border-blue-500';
   }
 };
@@ -760,7 +760,7 @@ export const getCategoryTextClass = (type: CardCategory): string => {
   switch (type) {
     case 'equipment': return 'text-primary';
     case 'attack': return 'text-destructive';
-    case 'resolution': return 'text-purple-400';
+    case 'resolution': return 'text-primary';
     case 'classification': return 'text-blue-400';
   }
 };
@@ -769,7 +769,7 @@ export const getCategoryBgClass = (type: CardCategory): string => {
   switch (type) {
     case 'equipment': return 'bg-primary/10';
     case 'attack': return 'bg-destructive/10';
-    case 'resolution': return 'bg-purple-500/10';
+    case 'resolution': return 'bg-primary/10';
     case 'classification': return 'bg-blue-500/10';
   }
 };
