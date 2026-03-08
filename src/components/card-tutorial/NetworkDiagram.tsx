@@ -118,29 +118,25 @@ const NetworkDiagram = memo(({ cardIds, highlight, effectLabel, fadeOut = [], at
 
       {computerCount > 0 && computers.length > 0 && (
         <div className="flex items-start gap-2 sm:gap-3">
-          {Array.from({ length: Math.min(computerCount, 4) }).map((_, i) => (
-            <div key={`comp-${i}`} className="flex flex-col items-center">
-              {/* Only show attack on first computer for 'computer' target */}
-              {i === 0 && attackOverlay?.targetEquipment === 'computer'
-                ? renderCard('computer', `comp-${i}`, 'sm')
-                : (() => {
-                    // For non-first computers when target is computer, render without attack
-                    const card = tutorialCards['computer'];
-                    const isFading = fadeOutSet.has('computer');
-                    return (
-                      <div className={cn(
-                        'flex flex-col items-center transition-all duration-500',
-                        isFading && 'opacity-20 scale-90',
-                      )}>
-                        <div className="w-[60px] sm:w-[72px] rounded-lg overflow-hidden">
-                          <img src={card?.image} alt="Computer" className="w-full h-auto object-contain" loading="eager" decoding="async" />
-                        </div>
+          {Array.from({ length: Math.min(computerCount, 4) }).map((_, i) => {
+            const isAttackTarget = i === 0 && attackOverlay?.targetEquipment === 'computer';
+            const shouldFade = isAttackTarget && fadeOutSet.has('computer');
+            const card = tutorialCards['computer'];
+            return (
+              <div key={`comp-${i}`} className="flex flex-col items-center">
+                {isAttackTarget
+                  ? renderCard('computer', `comp-${i}`, 'sm')
+                  : (
+                    <div className="flex flex-col items-center transition-all duration-500">
+                      <div className="w-[60px] sm:w-[72px] rounded-lg overflow-hidden">
+                        <img src={card?.image} alt="Computer" className="w-full h-auto object-contain" loading="eager" decoding="async" />
                       </div>
-                    );
-                  })()
-              }
-            </div>
-          ))}
+                    </div>
+                  )
+                }
+              </div>
+            );
+          })}
         </div>
       )}
 
