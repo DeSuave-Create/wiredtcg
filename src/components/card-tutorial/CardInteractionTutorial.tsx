@@ -231,7 +231,7 @@ const CardInteractionTutorial = memo(() => {
             </h4>
 
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-4">
-              {step.description}
+              {highlightBitcoin(step.description)}
             </p>
 
             {currentStep === 0 && (
