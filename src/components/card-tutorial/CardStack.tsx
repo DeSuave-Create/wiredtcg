@@ -38,7 +38,7 @@ const CardStack = memo(({ stackOrder, highlight, fadeOut = [] }: CardStackProps)
   useEffect(() => { preloadAllImages(); }, []);
 
   return (
-    <div className="relative flex items-center justify-center min-h-[260px] sm:min-h-[300px]">
+    <div className="relative flex items-center justify-center min-h-[260px] sm:min-h-[300px] pt-12">
       <div className="relative" style={{ width: '180px', height: '260px' }}>
         {stackOrder.map((cardId, idx) => {
           const card = tutorialCards[cardId];
