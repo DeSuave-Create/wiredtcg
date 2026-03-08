@@ -194,7 +194,7 @@ export const tutorialCards: Record<string, TutorialCard> = {
   'trained': {
     id: 'trained',
     name: 'Trained',
-    image: '/lovable-uploads/resolution-trained-v2.png',
+    image: '/lovable-uploads/resolution-trained-v3.png',
     type: 'resolution',
     description: 'Trained resolves a New Hire attack on Equipment, restoring it to active status.',
     rulesExplanation: 'Play Trained on any Equipment card that has been targeted by New Hire. The New Hire card is removed and the equipment resumes normal operation.',
