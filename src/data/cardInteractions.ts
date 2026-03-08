@@ -182,7 +182,7 @@ export const tutorialCards: Record<string, TutorialCard> = {
   'powered': {
     id: 'powered',
     name: 'Powered',
-    image: '/lovable-uploads/resolution-powered-v2.png',
+    image: '/lovable-uploads/resolution-powered-v3.png',
     type: 'resolution',
     description: 'Powered resolves a Power Outage attack, restoring equipment to active status.',
     rulesExplanation: 'Play Powered on any equipment affected by a Power Outage. The Power Outage card is removed and the equipment (and all connected downstream equipment) resumes normal operation.',
