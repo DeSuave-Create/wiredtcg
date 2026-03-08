@@ -19,7 +19,8 @@ const characters = [
   { id: 'supervisor', name: 'Supervisor', icon: '👔', image: '/lovable-uploads/classification-supervisor.png', artwork: '/lovable-uploads/artwork-supervisor.png', defaultScale: 0.9 },
   { id: 'field-tech', name: 'Field Tech', icon: '🔧', image: '/lovable-uploads/classification-fieldtech-new.png', artwork: '/lovable-uploads/artwork-fieldtech.png', defaultScale: 0.9 },
   { id: 'headhunter', name: 'Headhunter', icon: '🎯', image: '/lovable-uploads/classification-headhunter.png', artwork: '/lovable-uploads/artwork-headhunter.png', defaultScale: 0.9 },
-  { id: 'auditor', name: 'Auditor', icon: '📋', image: '/lovable-uploads/artwork-auditor.png', artwork: '/lovable-uploads/artwork-auditor.png', defaultScale: 0.9 },
+  { id: 'auditor', name: 'Analyst', icon: '📊', image: '/lovable-uploads/artwork-analyst.png', artwork: '/lovable-uploads/artwork-analyst.png', defaultScale: 0.9 },
+  { id: 'vendor', name: 'Vendor', icon: '🎩', image: '/lovable-uploads/artwork-vendor.png', artwork: '/lovable-uploads/artwork-vendor.png', defaultScale: 0.9 },
 ];
 
 const defaultPlayers: Player[] = [
