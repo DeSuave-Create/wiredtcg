@@ -883,7 +883,7 @@ export const getCategoryBgClass = (type: CardCategory): string => {
   switch (type) {
     case 'equipment': return 'bg-primary/10';
     case 'attack': return 'bg-destructive/10';
-    case 'resolution': return 'bg-yellow-500/10';
+    case 'resolution': return 'bg-purple-500/10';
     case 'classification': return 'bg-blue-500/10';
   }
 };
