@@ -157,6 +157,7 @@ const NetworkDiagram = memo(({ cardIds, highlight, effectLabel, fadeOut = [], at
           <div className="flex items-start gap-2 sm:gap-3">
             {Array.from({ length: Math.min(computerCount, 4) }).map((_, i) => {
               const isAttackTarget = i === 0 && attackOverlay?.targetEquipment === 'computer';
+              const isFading = fadeOutSet.has('computer');
               const card = tutorialCards['computer'];
               return (
                 <div key={`comp-${i}`} className="flex flex-col items-center">
@@ -164,7 +165,7 @@ const NetworkDiagram = memo(({ cardIds, highlight, effectLabel, fadeOut = [], at
                     ? renderCard('computer', `comp-${i}`, 'sm')
                     : (
                       <div
-                        className="flex flex-col items-center"
+                        className={cn('flex flex-col items-center', isFading && 'opacity-20 scale-90')}
                         style={{
                           transition: 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
                         }}
