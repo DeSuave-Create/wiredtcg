@@ -328,7 +328,7 @@ const Extras = () => {
                   <Layers className="h-12 w-12 text-primary mx-auto relative z-10" />
                   <h3 className="text-lg font-semibold font-orbitron text-primary relative z-10">Card Reference</h3>
                   <p className="text-sm text-muted-foreground flex-grow relative z-10">All 145 unique cards organized by type</p>
-                  <div className="flex flex-col sm:flex-row gap-2 mt-auto">
+                  <div className="flex flex-col sm:flex-row gap-2 mt-auto relative z-10">
                     <button 
                       onClick={() => navigate('/card-reference')}
                       className="bg-muted/20 rounded-3xl text-primary hover:bg-muted/40 neon-glow px-4 py-2 font-medium shadow-lg w-full border-2 border-primary flex items-center justify-center transition-colors"
