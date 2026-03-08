@@ -140,7 +140,7 @@ export const tutorialCards: Record<string, TutorialCard> = {
   'new-hire': {
     id: 'new-hire',
     name: 'New Hire',
-    image: '/lovable-uploads/attack-newhire-v2.png',
+    image: '/lovable-uploads/attack-newhire-v3.png',
     type: 'attack',
     description: 'New Hire disables any Equipment card. All connected equipment downstream is also disabled (cascade). Resolve with Trained.',
     rulesExplanation: 'Play New Hire on any opponent\'s Equipment (Computer, Cable, or Switch). That equipment and all downstream equipment is disabled. Equipment can have multiple attack cards stacked on it. Resolved by a Trained card or the Supervisor classification.',
