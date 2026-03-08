@@ -121,10 +121,10 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
             '/lovable-uploads/classification-security.png',
             '/lovable-uploads/classification-headhunter.png',
             '/lovable-uploads/classification-sealthedeal.png',
-            '/lovable-uploads/resolution-trained-v2.png',
+            '/lovable-uploads/resolution-trained-v3.png',
             '/lovable-uploads/resolution-helpdesk-v2.png',
-            '/lovable-uploads/resolution-powered-v2.png',
-            '/lovable-uploads/resolution-secured-v2.png',
+            '/lovable-uploads/resolution-powered-v3.png',
+            '/lovable-uploads/resolution-secured-v3.png',
             '/lovable-uploads/card-back.png',
             '/wire-logo-official.png'
           ];

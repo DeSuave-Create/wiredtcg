@@ -111,10 +111,10 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
   ];
 
   const resolutionCards = [
-    { name: 'Trained', bg: 'bg-red-50', image: '/lovable-uploads/resolution-trained-v2.png' },
+    { name: 'Trained', bg: 'bg-red-50', image: '/lovable-uploads/resolution-trained-v3.png' },
     { name: 'Helpdesk', bg: 'bg-red-50', image: '/lovable-uploads/resolution-helpdesk-v2.png' },
-    { name: 'Powered', bg: 'bg-red-50', image: '/lovable-uploads/resolution-powered-v2.png' },
-    { name: 'Secured', bg: 'bg-red-50', image: '/lovable-uploads/resolution-secured-v2.png' }
+    { name: 'Powered', bg: 'bg-red-50', image: '/lovable-uploads/resolution-powered-v3.png' },
+    { name: 'Secured', bg: 'bg-red-50', image: '/lovable-uploads/resolution-secured-v3.png' }
   ];
 
   const handlePrevious = () => {

@@ -57,9 +57,9 @@ const cardData = {
     textColor: 'text-yellow-400',
     cards: [
       { name: 'Helpdesk', image: '/lovable-uploads/resolution-helpdesk-v2.png', quantity: 4 },
-      { name: 'Trained', image: '/lovable-uploads/resolution-trained-v2.png', quantity: 7 },
-      { name: 'Powered', image: '/lovable-uploads/resolution-powered-v2.png', quantity: 7 },
-      { name: 'Secured', image: '/lovable-uploads/resolution-secured-v2.png', quantity: 9 },
+      { name: 'Trained', image: '/lovable-uploads/resolution-trained-v3.png', quantity: 7 },
+      { name: 'Powered', image: '/lovable-uploads/resolution-powered-v3.png', quantity: 7 },
+      { name: 'Secured', image: '/lovable-uploads/resolution-secured-v3.png', quantity: 9 },
     ] as CardInfo[],
   },
 };
