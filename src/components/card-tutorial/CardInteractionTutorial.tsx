@@ -339,7 +339,11 @@ const CardInteractionTutorial = memo(() => {
             <ChevronLeft className="h-4 w-4" /> Previous
           </button>
 
-          <div className="flex items-center gap-1.5 overflow-x-auto max-w-[60%] py-1">
+          <span className="text-[10px] text-muted-foreground font-orbitron sm:hidden">
+            {currentIndex + 1}/{interactions.length}
+          </span>
+
+          <div className="hidden sm:flex items-center gap-1.5 max-w-[60%] py-1">
             {interactions.map((inter, idx) => (
               <button
                 key={inter.id}
