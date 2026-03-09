@@ -155,10 +155,11 @@ const NetworkDiagram = memo(({ cardIds, highlight, effectLabel, fadeOut = [], at
 
         {computerCount > 0 && computers.length > 0 && (
           <div className="flex items-start gap-2 sm:gap-3">
-            {Array.from({ length: Math.min(computerCount, 4) }).map((_, i) => {
-              const isAttackTarget = i === 0 && attackOverlay?.targetEquipment === 'computer';
-              const isFading = fadeOutSet.has('computer');
-              const card = tutorialCards['computer'];
+              {Array.from({ length: Math.min(computerCount, 4) }).map((_, i) => {
+                const isAttackTarget = i === 0 && attackOverlay?.targetEquipment === 'computer';
+                // Only fade the attacked computer (index 0), not all computers
+                const isFading = isAttackTarget ? fadeOutSet.has('computer') : (fadeOutSet.has('computer') && !attackOverlay?.targetEquipment);
+                const card = tutorialCards['computer'];
               return (
                 <div key={`comp-${i}`} className="flex flex-col items-center">
                   {isAttackTarget
