@@ -48,7 +48,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-primary/20 mt-8 pt-8 text-center text-sm text-primary">
-          <p>&copy; 2024 <span className="font-orbitron animate-neon-flicker">WIRED: The Card Game</span>. All rights reserved. | Powered by the Grid.</p>
+          <p>&copy; 2024-{new Date().getFullYear()} <span className="font-orbitron animate-neon-flicker">WIRED: The Card Game</span>. All rights reserved. | Powered by the Grid.</p>
         </div>
       </div>
     </footer>
