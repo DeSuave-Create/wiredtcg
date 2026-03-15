@@ -27,7 +27,7 @@ const GameMechanicsSection = ({ cardBackgroundImage }: GameMechanicsSectionProps
     // Equipment cards (75 total)
     for (let i = 0; i < 32; i++) deck.push({ name: 'Computer', bg: 'bg-green-50', image: '/lovable-uploads/equipment-computer-new.png', borderColor: 'border-green-500', type: 'equipment' });
     for (let i = 0; i < 16; i++) deck.push({ name: 'Cabling (2x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-2cable.png', borderColor: 'border-green-500', type: 'equipment' });
-    for (let i = 0; i < 9; i++) deck.push({ name: 'Cabling (3x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-3cable.png', borderColor: 'border-green-500', type: 'equipment' });
+    for (let i = 0; i < 8; i++) deck.push({ name: 'Cabling (3x)', bg: 'bg-green-50', image: '/lovable-uploads/equipment-3cable.png', borderColor: 'border-green-500', type: 'equipment' });
     for (let i = 0; i < 18; i++) deck.push({ name: 'Switch', bg: 'bg-green-50', image: '/lovable-uploads/equipment-switch.png', borderColor: 'border-green-500', type: 'equipment' });
     
     // Attack cards (27 total)

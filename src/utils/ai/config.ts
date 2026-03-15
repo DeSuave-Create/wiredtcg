@@ -138,4 +138,4 @@ export const DECK_COMPOSITION: Record<string, number> = {
   'seal-the-deal': 1,
 };
 
-export const TOTAL_DECK_SIZE = 144;
+export const TOTAL_DECK_SIZE = 143;

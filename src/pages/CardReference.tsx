@@ -160,7 +160,7 @@ const CardReference = () => {
           <ContentSection title="Card Reference">
             <div className="text-center space-y-4">
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                All 145 unique cards in the WIRED base game (Internet mode), organized by type.
+                All 143 unique cards in the WIRED base game (Internet mode), organized by type.
               </p>
               <div className="print:hidden">
                 <button

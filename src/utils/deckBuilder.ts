@@ -34,7 +34,7 @@ const deckComposition: Record<string, number> = {
   // Equipment (75 total)
   'computer': 32,
   'cable-2': 16,
-  'cable-3': 9,
+  'cable-3': 8,
   'switch': 18,
   
   // Attacks (27 total)

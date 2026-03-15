@@ -29,7 +29,7 @@ const FAQs = () => {
     },
     {
       question: "What comes in the base game box?",
-      answer: "The base game includes 145 cards plus one informational card, giving you everything you need to start playing."
+      answer: "The base game includes 143 cards plus one informational card, giving you everything you need to start playing."
     },
     {
       question: "Are there expansion packs available?",

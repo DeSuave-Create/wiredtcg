@@ -15,7 +15,7 @@ const STARTING_HAND_SIZE = 6;
 const MAX_HAND_SIZE = 6;
 const BASE_MOVES_PER_TURN = 3;
 const WINNING_SCORE = 25;
-const DECK_RESHUFFLE_THRESHOLD = 18; // 1/8 of 144-card deck
+const DECK_RESHUFFLE_THRESHOLD = 18; // 1/8 of 143-card deck
 const SAVE_KEY = 'wired-game-save';
 
 // Helper: Calculate base moves per turn (not including Field Tech equipment bonus)
