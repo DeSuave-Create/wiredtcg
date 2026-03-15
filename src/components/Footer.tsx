@@ -43,6 +43,14 @@ const Footer = () => {
               >
                 <Mail className="h-5 w-5" />
               </a>
+              <a 
+                href="https://youtube.com/@wiredtcg?si=ZuVhTcg7DKZWKSWQ"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:text-primary/80 transition-colors"
+              >
+                <Youtube className="h-5 w-5" />
+              </a>
             </div>
           </div>
         </div>
