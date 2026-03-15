@@ -23,7 +23,7 @@ const cardData = {
     cards: [
       { name: 'Computer', image: '/lovable-uploads/equipment-computer-new.png', quantity: 32 },
       { name: 'Cabling (2x)', image: '/lovable-uploads/equipment-2cable.png', quantity: 16 },
-      { name: 'Cabling (3x)', image: '/lovable-uploads/equipment-3cable.png', quantity: 9 },
+      { name: 'Cabling (3x)', image: '/lovable-uploads/equipment-3cable.png', quantity: 8 },
       { name: 'Switch', image: '/lovable-uploads/equipment-switch.png', quantity: 18 },
     ] as CardInfo[],
   },
