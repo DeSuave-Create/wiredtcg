@@ -1,5 +1,5 @@
 import { Cable, Monitor, Bitcoin } from 'lucide-react';
-import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import './ElectricProgressBar.css';
 
 interface Step {
@@ -32,6 +32,123 @@ function generateLightningPath(x1: number, x2: number, segments = 7): string {
   return points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p[0]},${p[1]}`).join(' ');
 }
 
+// ── Global Step Controller (singleton) ──────────────────────────────
+type Listener = (state: StepState) => void;
+
+interface StepState {
+  activeStep: number;
+  completedSteps: Set<number>;
+  transitioning: boolean;
+  boltIndex: number;
+  chargingNode: number;
+  completedBolts: Set<number>;
+  boltPaths: string[];
+}
+
+const nodePositions = STEPS.map((_, i) => (i / (STEPS.length - 1)) * 100);
+
+const StepController = (() => {
+  let listeners = new Set<Listener>();
+  let visibleCount = 0;
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  let state: StepState = freshState();
+
+  function freshState(): StepState {
+    return {
+      activeStep: 0,
+      completedSteps: new Set([0]),
+      transitioning: false,
+      boltIndex: -1,
+      chargingNode: -1,
+      completedBolts: new Set(),
+      boltPaths: [],
+    };
+  }
+
+  function broadcast() {
+    listeners.forEach(fn => fn({ ...state }));
+  }
+
+  function scheduleNext() {
+    if (timer) clearTimeout(timer);
+    if (visibleCount <= 0) return;
+    timer = setTimeout(advance, STEP_DURATION);
+  }
+
+  function advance() {
+    const next = state.activeStep + 1;
+
+    if (next >= STEPS.length) {
+      state = {
+        ...state,
+        completedBolts: new Set(state.completedBolts).add(state.activeStep),
+        boltIndex: -1,
+      };
+      broadcast();
+      timer = setTimeout(() => {
+        state = freshState();
+        broadcast();
+        scheduleNext();
+      }, 1000);
+      return;
+    }
+
+    // Start bolt
+    const fromX = nodePositions[state.activeStep] * 10;
+    const toX = nodePositions[next] * 10;
+    const newPaths = [...state.boltPaths];
+    newPaths[state.activeStep] = generateLightningPath(fromX, toX);
+
+    state = { ...state, transitioning: true, boltIndex: state.activeStep, boltPaths: newPaths };
+    broadcast();
+
+    setTimeout(() => {
+      state = { ...state, chargingNode: next };
+      broadcast();
+    }, BOLT_DURATION * 0.6);
+
+    setTimeout(() => {
+      const completed = new Set(state.completedSteps).add(next);
+      const completedBolts = new Set(state.completedBolts).add(state.activeStep);
+      state = {
+        ...state,
+        activeStep: next,
+        completedSteps: completed,
+        completedBolts,
+        transitioning: false,
+        boltIndex: -1,
+        chargingNode: -1,
+      };
+      broadcast();
+      scheduleNext();
+    }, BOLT_DURATION);
+  }
+
+  return {
+    subscribe(fn: Listener) {
+      listeners.add(fn);
+      fn({ ...state });
+      return () => { listeners.delete(fn); };
+    },
+    markVisible() {
+      visibleCount++;
+      if (visibleCount === 1) {
+        state = freshState();
+        broadcast();
+        scheduleNext();
+      }
+    },
+    markHidden() {
+      visibleCount--;
+      if (visibleCount <= 0) {
+        visibleCount = 0;
+        if (timer) { clearTimeout(timer); timer = null; }
+      }
+    },
+  };
+})();
+
+// ── Spark Particles ─────────────────────────────────────────────────
 const SparkParticles = ({ active, hue, sat }: { active: boolean; hue: number; sat: number }) => {
   const sparks = useMemo(() => {
     return Array.from({ length: SPARK_COUNT }, (_, i) => {
@@ -68,73 +185,25 @@ const SparkParticles = ({ active, hue, sat }: { active: boolean; hue: number; sa
   );
 };
 
+// ── Component ───────────────────────────────────────────────────────
 const ElectricProgressBar = () => {
-  const [activeStep, setActiveStep] = useState(0);
-  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set([0]));
-  const [transitioning, setTransitioning] = useState(false);
-  const [boltIndex, setBoltIndex] = useState(-1);
-  const [chargingNode, setChargingNode] = useState(-1);
-  const [boltPaths, setBoltPaths] = useState<string[]>([]);
-  const [completedBolts, setCompletedBolts] = useState<Set<number>>(new Set());
-  const [running, setRunning] = useState(false);
+  const [stepState, setStepState] = useState<StepState>({
+    activeStep: 0,
+    completedSteps: new Set([0]),
+    transitioning: false,
+    boltIndex: -1,
+    chargingNode: -1,
+    completedBolts: new Set(),
+    boltPaths: [],
+  });
   const containerRef = useRef<HTMLDivElement>(null);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const nodePositions = useMemo(() => {
-    return STEPS.map((_, i) => (i / (STEPS.length - 1)) * 100);
+  // Subscribe to global controller
+  useEffect(() => {
+    return StepController.subscribe(setStepState);
   }, []);
 
-  const advanceStep = useCallback(() => {
-    const next = activeStep + 1;
-
-    if (next >= STEPS.length) {
-      // Add final bolt to completed, then hold 1s before reset
-      setCompletedBolts(prev => new Set(prev).add(activeStep));
-      setBoltIndex(-1);
-      timerRef.current = setTimeout(() => {
-        setActiveStep(0);
-        setCompletedSteps(new Set([0]));
-        setTransitioning(false);
-        setBoltIndex(-1);
-        setChargingNode(-1);
-        setCompletedBolts(new Set());
-        setBoltPaths([]);
-      }, 1000);
-      return;
-    }
-
-    setTransitioning(true);
-    setBoltIndex(activeStep);
-    const fromX = nodePositions[activeStep] * 10;
-    const toX = nodePositions[next] * 10;
-    setBoltPaths(prev => {
-      const newPaths = [...prev];
-      newPaths[activeStep] = generateLightningPath(fromX, toX);
-      return newPaths;
-    });
-
-    setTimeout(() => {
-      setChargingNode(next);
-    }, BOLT_DURATION * 0.6);
-
-    setTimeout(() => {
-      setCompletedBolts(prev => new Set(prev).add(activeStep));
-      setActiveStep(next);
-      setCompletedSteps(prev => new Set(prev).add(next));
-      setTransitioning(false);
-      setBoltIndex(-1);
-      setChargingNode(-1);
-    }, BOLT_DURATION);
-  }, [activeStep, nodePositions]);
-
-  useEffect(() => {
-    if (!running) return;
-    timerRef.current = setTimeout(advanceStep, STEP_DURATION);
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [activeStep, running, advanceStep]);
-
+  // Intersection observer for visibility tracking
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -142,16 +211,9 @@ const ElectricProgressBar = () => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setActiveStep(0);
-          setCompletedSteps(new Set([0]));
-          setTransitioning(false);
-          setBoltIndex(-1);
-          setChargingNode(-1);
-          setRunning(true);
+          StepController.markVisible();
         } else {
-          setRunning(false);
-          setCompletedBolts(new Set());
-          if (timerRef.current) clearTimeout(timerRef.current);
+          StepController.markHidden();
         }
       },
       { threshold: 0.1 }
@@ -160,15 +222,15 @@ const ElectricProgressBar = () => {
     observer.observe(el);
     return () => {
       observer.disconnect();
-      if (timerRef.current) clearTimeout(timerRef.current);
+      StepController.markHidden();
     };
   }, []);
+
+  const { activeStep, completedSteps, boltIndex, chargingNode, completedBolts, boltPaths } = stepState;
 
   return (
     <div ref={containerRef} className="stepper-container">
       <div className="stepper-track">
-        
-
         <svg className="lightning-svg" viewBox="0 -15 1000 30" preserveAspectRatio="none">
           <defs>
             <filter id="bolt-glow">
@@ -183,7 +245,6 @@ const ElectricProgressBar = () => {
             const path = boltPaths[i] || generateLightningPath(fromX, toX);
             const pathLength = 1200;
             const destStep = STEPS[i + 1];
-
             const isCompleted = completedBolts.has(i);
             const isVisible = isActive || isCompleted;
 
@@ -234,7 +295,6 @@ const ElectricProgressBar = () => {
               } as React.CSSProperties}
             >
               {(isActive || isCharging) && <div className="node-bloom" />}
-
               <div className="node-ring">
                 <div className="node-icon">
                   {step.icon === 'logo' ? (
@@ -248,9 +308,7 @@ const ElectricProgressBar = () => {
                   )}
                 </div>
               </div>
-
               <SparkParticles active={isCharging} hue={step.hue} sat={step.sat} />
-
               <span className="node-label">{step.label}</span>
             </div>
           );
