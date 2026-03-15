@@ -120,7 +120,7 @@ export function getUtilityWeights(
 export const DECK_COMPOSITION: Record<string, number> = {
   computer: 32,
   'cable-2': 16,
-  'cable-3': 9,
+  'cable-3': 8,
   switch: 18,
   audit: 4,
   hacked: 9,
@@ -138,4 +138,4 @@ export const DECK_COMPOSITION: Record<string, number> = {
   'seal-the-deal': 1,
 };
 
-export const TOTAL_DECK_SIZE = 144;
+export const TOTAL_DECK_SIZE = 143;

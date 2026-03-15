@@ -327,7 +327,7 @@ const Extras = () => {
                   <div className="absolute inset-0 bg-background/80 dark:bg-background/85" />
                   <Layers className="h-12 w-12 text-primary mx-auto relative z-10" />
                   <h3 className="text-lg font-semibold font-orbitron text-primary relative z-10">Card Reference</h3>
-                  <p className="text-sm text-muted-foreground flex-grow relative z-10">All 145 unique cards organized by type</p>
+                  <p className="text-sm text-muted-foreground flex-grow relative z-10"><p className="text-sm text-muted-foreground flex-grow relative z-10">All 143 unique cards organized by type</p></p>
                   <div className="flex flex-col sm:flex-row gap-2 mt-auto relative z-10">
                     <button 
                       onClick={() => navigate('/card-reference')}

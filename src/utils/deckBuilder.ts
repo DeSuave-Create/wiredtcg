@@ -29,12 +29,12 @@ const cardDefinitions: Record<string, { type: CardType; subtype: string; name: s
   'seal-the-deal': { type: 'classification', subtype: 'seal-the-deal', name: 'Seal the Deal', image: '/lovable-uploads/classification-sealthedeal.png', description: 'Steal an opponent\'s classification card. Cannot be blocked.' },
 };
 
-// Actual deck composition (144 cards total)
+// Actual deck composition (143 cards total)
 const deckComposition: Record<string, number> = {
   // Equipment (75 total)
   'computer': 32,
   'cable-2': 16,
-  'cable-3': 9,
+  'cable-3': 8,
   'switch': 18,
   
   // Attacks (27 total)
