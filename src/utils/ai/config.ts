@@ -120,7 +120,7 @@ export function getUtilityWeights(
 export const DECK_COMPOSITION: Record<string, number> = {
   computer: 32,
   'cable-2': 16,
-  'cable-3': 9,
+  'cable-3': 8,
   switch: 18,
   audit: 4,
   hacked: 9,
