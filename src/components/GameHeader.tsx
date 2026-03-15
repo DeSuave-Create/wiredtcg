@@ -20,7 +20,7 @@ const GameHeader = ({ playerCount, maxPlayers, onAddPlayer, onReset }: GameHeade
         <Button
           onClick={onReset}
           variant="outline"
-          size="sm"
+          
           className="bg-gray-100 rounded-3xl text-secondary hover:bg-gray-200 w-full sm:w-auto shadow-2xl drop-shadow-lg"
           type="button"
         >
