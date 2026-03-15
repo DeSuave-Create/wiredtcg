@@ -108,7 +108,7 @@ const PlayerCard = ({
 
           {/* Card image thumbnail */}
           <div className="flex-shrink-0">
-            <img src={character.image} alt={character.name} className="h-12 w-auto object-contain rounded" />
+            <img src={character.artwork || character.image} alt={character.name} className="h-12 w-auto object-contain rounded" />
           </div>
 
           {/* Name + Class dropdown */}
