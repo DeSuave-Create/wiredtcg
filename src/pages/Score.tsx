@@ -17,7 +17,6 @@ const Score = () => {
       </main>
 
       <Footer />
-      <MusicPlayer />
     </div>
   );
 };
