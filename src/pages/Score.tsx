@@ -3,6 +3,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
 import ScoreKeeper from '@/components/ScoreKeeper';
+import MusicPlayer from '@/components/MusicPlayer';
 
 const Score = () => {
   return (
@@ -16,6 +17,7 @@ const Score = () => {
       </main>
 
       <Footer />
+      <MusicPlayer />
     </div>
   );
 };
