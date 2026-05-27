@@ -270,8 +270,11 @@ const FounderTrophyRow = ({ tier, mounted, index }: { tier: FounderTier; mounted
         <div className="absolute inset-0 flex flex-col items-center justify-between pointer-events-none py-6 sm:py-8 px-6 sm:px-8">
           {/* Tier title at top of arch */}
           <span
-            className="text-[7px] sm:text-[8px] font-bold font-orbitron tracking-[0.15em] uppercase mt-2 sm:mt-4 text-white/90"
-            style={{ color: `rgba(${rgb}, 0.95)` }}
+            className="text-[8px] sm:text-[9px] font-bold font-orbitron tracking-[0.18em] uppercase mt-2 sm:mt-4"
+            style={{
+              color: '#ffffff',
+              textShadow: `0 0 8px rgba(${rgb}, 0.9), 0 1px 2px rgba(0,0,0,0.9)`,
+            }}
           >
             {title}
           </span>
@@ -297,12 +300,13 @@ const FounderTrophyRow = ({ tier, mounted, index }: { tier: FounderTier; mounted
 
           {/* Title plate at base */}
           <div
-            className="px-2 py-1 rounded text-[7px] sm:text-[8px] font-orbitron tracking-wide uppercase text-center mb-1 sm:mb-2 leading-tight max-w-[90%]"
+            className="px-2 py-1 rounded text-[8px] sm:text-[9px] font-bold font-orbitron tracking-wide uppercase text-center mb-1 sm:mb-2 leading-tight max-w-[90%]"
             style={{
-              border: `1px solid rgba(${rgb}, 0.35)`,
-              color: `rgba(${rgb}, 0.95)`,
-              background: 'rgba(0,0,0,0.5)',
-              boxShadow: `inset 0 1px 0 rgba(255,255,255,0.08), 0 0 8px rgba(${rgb}, 0.08)`,
+              border: `1px solid rgba(${rgb}, 0.55)`,
+              color: '#ffffff',
+              background: 'rgba(0,0,0,0.7)',
+              textShadow: `0 0 6px rgba(${rgb}, 0.8), 0 1px 2px rgba(0,0,0,0.9)`,
+              boxShadow: `inset 0 1px 0 rgba(255,255,255,0.08), 0 0 8px rgba(${rgb}, 0.15)`,
             }}
           >
             {label}
@@ -388,8 +392,11 @@ const FounderTrophyRow = ({ tier, mounted, index }: { tier: FounderTier; mounted
                 style={{ background: `rgba(${rgb}, 0.5)` }}
               />
               <span
-                className="text-[10px] font-orbitron tracking-widest uppercase text-white/80"
-                style={{ color: `rgba(${rgb}, 0.8)` }}
+                className="text-[10px] font-bold font-orbitron tracking-widest uppercase"
+                style={{
+                  color: '#ffffff',
+                  textShadow: `0 0 6px rgba(${rgb}, 0.9), 0 1px 2px rgba(0,0,0,0.9)`,
+                }}
               >
                 Founders
               </span>
