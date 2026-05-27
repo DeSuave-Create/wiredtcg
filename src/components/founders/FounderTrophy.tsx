@@ -388,8 +388,8 @@ const FounderTrophyRow = ({ tier, mounted, index }: { tier: FounderTier; mounted
                 style={{ background: `rgba(${rgb}, 0.5)` }}
               />
               <span
-                className="text-[10px] font-orbitron tracking-widest uppercase"
-                style={{ color: `rgba(${rgb}, 0.6)` }}
+                className="text-[10px] font-orbitron tracking-widest uppercase text-white/80"
+                style={{ color: `rgba(${rgb}, 0.8)` }}
               >
                 Founders
               </span>
@@ -400,14 +400,14 @@ const FounderTrophyRow = ({ tier, mounted, index }: { tier: FounderTier; mounted
                 {members.map((name) => (
                   <span
                     key={name}
-                    className="text-sm font-medium text-muted-foreground"
+                    className="text-sm font-medium text-white/90"
                   >
                     {name}
                   </span>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground/60 italic">
+              <p className="text-sm text-white/70 italic">
                 Founders will be listed here soon
               </p>
             )}
