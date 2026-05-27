@@ -92,6 +92,15 @@ const Extras = () => {
         title: "Downloading Rulebook",
         description: "Your download has started!",
       });
+    } else if (item === 'Score Sheets') {
+      const link = document.createElement('a');
+      link.href = '/downloads/WIRED_Score_Sheet.pdf';
+      link.download = 'WIRED_Score_Sheet.pdf';
+      link.click();
+      toast({
+        title: "Downloading Score Sheet",
+        description: "Your download has started!",
+      });
     } else {
       toast({
         title: `Downloading ${item}`,
