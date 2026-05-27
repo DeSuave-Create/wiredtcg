@@ -48,7 +48,7 @@ const Founders = () => {
                 Honoring the visionaries who helped bring WIRED to life.
               </p>
               <p className="text-sm text-muted-foreground mt-2">
-                This page will be updated as our Kickstarter campaign progresses.
+                This page will be updated as our campaign progresses.
               </p>
             </div>
 
