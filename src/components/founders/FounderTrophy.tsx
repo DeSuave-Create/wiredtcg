@@ -392,8 +392,11 @@ const FounderTrophyRow = ({ tier, mounted, index }: { tier: FounderTier; mounted
                 style={{ background: `rgba(${rgb}, 0.5)` }}
               />
               <span
-                className="text-[10px] font-orbitron tracking-widest uppercase text-white/80"
-                style={{ color: `rgba(${rgb}, 0.8)` }}
+                className="text-[10px] font-bold font-orbitron tracking-widest uppercase"
+                style={{
+                  color: '#ffffff',
+                  textShadow: `0 0 6px rgba(${rgb}, 0.9), 0 1px 2px rgba(0,0,0,0.9)`,
+                }}
               >
                 Founders
               </span>
