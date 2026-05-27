@@ -57,7 +57,7 @@ const HeroSection = () => {
 
       {/* Kickstarter CTA */}
       <div className="pt-6 mt-2 border-t border-primary/15 max-w-md mx-auto px-2 sm:px-0">
-        <div className="rounded-xl bg-primary/5 backdrop-blur-sm border border-primary/20 p-5 sm:p-6 space-y-3">
+        <div className="rounded-xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent backdrop-blur-md border border-primary/30 shadow-[0_0_40px_-10px_hsl(var(--primary)/0.4)] p-5 sm:p-6 space-y-3">
           <h2 className="font-orbitron text-lg sm:text-xl tracking-wider text-primary">
             Back Us on Kickstarter
           </h2>
