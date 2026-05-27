@@ -270,8 +270,8 @@ const FounderTrophyRow = ({ tier, mounted, index }: { tier: FounderTier; mounted
         <div className="absolute inset-0 flex flex-col items-center justify-between pointer-events-none py-6 sm:py-8 px-6 sm:px-8">
           {/* Tier title at top of arch */}
           <span
-            className="text-[9px] sm:text-[10px] font-bold font-orbitron tracking-[0.2em] uppercase mt-2 sm:mt-4"
-            style={{ color: `rgba(${rgb}, 0.9)` }}
+            className="text-[7px] sm:text-[8px] font-bold font-orbitron tracking-[0.15em] uppercase mt-2 sm:mt-4 text-white/90"
+            style={{ color: `rgba(${rgb}, 0.95)` }}
           >
             {title}
           </span>
@@ -297,10 +297,10 @@ const FounderTrophyRow = ({ tier, mounted, index }: { tier: FounderTier; mounted
 
           {/* Title plate at base */}
           <div
-            className="px-3 py-1 rounded text-[8px] sm:text-[9px] font-orbitron tracking-wider uppercase text-center mb-1 sm:mb-2"
+            className="px-2 py-1 rounded text-[7px] sm:text-[8px] font-orbitron tracking-wide uppercase text-center mb-1 sm:mb-2 leading-tight max-w-[90%]"
             style={{
               border: `1px solid rgba(${rgb}, 0.35)`,
-              color: `rgba(${rgb}, 0.8)`,
+              color: `rgba(${rgb}, 0.95)`,
               background: 'rgba(0,0,0,0.5)',
               boxShadow: `inset 0 1px 0 rgba(255,255,255,0.08), 0 0 8px rgba(${rgb}, 0.08)`,
             }}
