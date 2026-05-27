@@ -30,7 +30,7 @@ const KickstarterAnnouncementBar = () => {
       />
       <style>{`@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
 
-      <div className="relative container mx-auto px-4 flex items-center justify-center min-h-[36px] sm:min-h-[40px]">
+      <div className="relative container mx-auto px-4 flex items-center justify-center min-h-[48px] sm:min-h-[54px]">
         <button
           onClick={handleClick}
           aria-label="Back WIRED on Kickstarter — Coming Soon"
