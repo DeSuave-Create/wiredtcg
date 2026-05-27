@@ -57,7 +57,7 @@ const Founders = () => {
             <div className="text-center mt-8 p-6 neon-border rounded-xl bg-primary/10">
               <h3 className="text-xl font-bold font-orbitron text-primary mb-2">Want to become a Founder?</h3>
               <p className="text-muted-foreground">
-                Stay tuned for our upcoming Kickstarter campaign where you can support WIRED and earn your place among our founding supporters.
+                Back our Kickstarter campaign to support WIRED and earn your place among our founding supporters.
               </p>
             </div>
           </ContentSection>
