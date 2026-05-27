@@ -13,7 +13,7 @@ interface FounderTier {
 const tiers: FounderTier[] = [
   {
     title: 'LEGENDARY',
-    label: 'Legendary Founder',
+    label: 'Ctrl-Alt-Deluxe Backers',
     rgb: '168, 85, 247',
     rgbDark: '88, 28, 135',
     members: [],
@@ -22,7 +22,7 @@ const tiers: FounderTier[] = [
   },
   {
     title: 'GOLD',
-    label: 'Gold Founder',
+    label: 'Starter Pack Backers',
     rgb: '234, 179, 8',
     rgbDark: '133, 100, 0',
     members: [],
@@ -31,7 +31,7 @@ const tiers: FounderTier[] = [
   },
   {
     title: 'VANGUARD',
-    label: 'Vanguard Founder',
+    label: 'Expansion Pack Backers',
     rgb: '239, 68, 68',
     rgbDark: '127, 29, 29',
     members: [],
@@ -40,7 +40,7 @@ const tiers: FounderTier[] = [
   },
   {
     title: 'BETA',
-    label: 'Beta Founder',
+    label: 'Boxset Backers',
     rgb: '59, 130, 246',
     rgbDark: '29, 58, 138',
     members: [],
@@ -49,7 +49,7 @@ const tiers: FounderTier[] = [
   },
   {
     title: 'ALPHA',
-    label: 'Alpha Founder',
+    label: 'Those who have supported Wired from the start',
     rgb: '34, 197, 94',
     rgbDark: '15, 90, 45',
     members: [],
