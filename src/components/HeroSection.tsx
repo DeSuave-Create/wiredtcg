@@ -26,7 +26,7 @@ const HeroSection = () => {
     setKsRevealed(true);
     toast({
       title: "Kickstarter — Coming Soon!",
-      description: "Our campaign is approved and launching soon. Stay tuned!",
+      description: "Our campaign is launching soon. Stay tuned!",
     });
     setTimeout(() => setKsRevealed(false), 2000);
   };
@@ -62,7 +62,7 @@ const HeroSection = () => {
             Back Us on Kickstarter
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground/80 leading-relaxed">
-            Our campaign is approved and launching soon. Be the first to grab founders-edition rewards.
+            Our campaign is launching soon.
           </p>
           <Button
             onClick={handleKickstarter}
