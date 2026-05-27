@@ -57,20 +57,32 @@ const HeroSection = () => {
 
       {/* Kickstarter CTA */}
       <div className="pt-6 mt-2 border-t border-primary/15 max-w-md mx-auto px-2 sm:px-0">
-        <div className="rounded-xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent backdrop-blur-md border border-primary/30 shadow-[0_0_40px_-10px_hsl(var(--primary)/0.4)] p-5 sm:p-6 space-y-3">
-          <h2 className="font-orbitron text-lg sm:text-xl tracking-wider text-primary">
-            Back Us on Kickstarter
-          </h2>
-          <p className="text-xs sm:text-sm text-muted-foreground/80 leading-relaxed">
-            Our campaign is launching soon.
-          </p>
-          <Button
-            onClick={handleKickstarter}
-            className={`w-full sm:w-auto min-h-[44px] px-6 py-3 text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-all touch-manipulation ${ksRevealed ? 'animate-pulse scale-105' : ''}`}
-          >
-            <Rocket className="h-5 w-5 mr-2" />
-            {ksRevealed ? 'Coming Soon!' : 'Visit Our Kickstarter'}
-          </Button>
+        <div className="relative rounded-xl bg-gradient-to-r from-primary via-accent to-primary border border-primary/40 shadow-lg overflow-hidden p-5 sm:p-6 space-y-3">
+          <div
+            className="absolute inset-0 pointer-events-none opacity-30"
+            style={{
+              background:
+                'linear-gradient(110deg, transparent 30%, hsl(var(--primary-foreground) / 0.35) 50%, transparent 70%)',
+              backgroundSize: '200% 100%',
+              animation: 'shimmer 3.5s linear infinite',
+            }}
+          />
+          <style>{`@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
+          <div className="relative space-y-3">
+            <h2 className="font-orbitron text-lg sm:text-xl tracking-wider text-primary-foreground drop-shadow">
+              Back Us on Kickstarter
+            </h2>
+            <p className="text-xs sm:text-sm text-primary-foreground/90 leading-relaxed">
+              Our campaign is launching soon.
+            </p>
+            <Button
+              onClick={handleKickstarter}
+              className={`w-full sm:w-auto min-h-[44px] px-6 py-3 text-base font-semibold bg-background text-primary hover:bg-background/90 transition-all touch-manipulation ${ksRevealed ? 'animate-pulse scale-105' : ''}`}
+            >
+              <Rocket className="h-5 w-5 mr-2" />
+              {ksRevealed ? 'Coming Soon!' : 'Visit Our Kickstarter'}
+            </Button>
+          </div>
         </div>
       </div>
     </div>
