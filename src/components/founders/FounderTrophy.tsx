@@ -13,7 +13,7 @@ interface FounderTier {
 const tiers: FounderTier[] = [
   {
     title: 'LEGENDARY',
-    label: 'Legendary Founder',
+    label: 'Ctrl-Alt-Deluxe Backers',
     rgb: '168, 85, 247',
     rgbDark: '88, 28, 135',
     members: [],
@@ -22,7 +22,7 @@ const tiers: FounderTier[] = [
   },
   {
     title: 'GOLD',
-    label: 'Gold Founder',
+    label: 'Starter Pack Backers',
     rgb: '234, 179, 8',
     rgbDark: '133, 100, 0',
     members: [],
@@ -31,7 +31,7 @@ const tiers: FounderTier[] = [
   },
   {
     title: 'VANGUARD',
-    label: 'Vanguard Founder',
+    label: 'Expansion Pack Backers',
     rgb: '239, 68, 68',
     rgbDark: '127, 29, 29',
     members: [],
@@ -40,7 +40,7 @@ const tiers: FounderTier[] = [
   },
   {
     title: 'BETA',
-    label: 'Beta Founder',
+    label: 'Boxset Backers',
     rgb: '59, 130, 246',
     rgbDark: '29, 58, 138',
     members: [],
@@ -49,7 +49,7 @@ const tiers: FounderTier[] = [
   },
   {
     title: 'ALPHA',
-    label: 'Alpha Founder',
+    label: 'Those who have supported Wired from the start',
     rgb: '34, 197, 94',
     rgbDark: '15, 90, 45',
     members: [],
@@ -270,8 +270,8 @@ const FounderTrophyRow = ({ tier, mounted, index }: { tier: FounderTier; mounted
         <div className="absolute inset-0 flex flex-col items-center justify-between pointer-events-none py-6 sm:py-8 px-6 sm:px-8">
           {/* Tier title at top of arch */}
           <span
-            className="text-[9px] sm:text-[10px] font-bold font-orbitron tracking-[0.2em] uppercase mt-2 sm:mt-4"
-            style={{ color: `rgba(${rgb}, 0.9)` }}
+            className="text-[7px] sm:text-[8px] font-bold font-orbitron tracking-[0.15em] uppercase mt-2 sm:mt-4 text-white/90"
+            style={{ color: `rgba(${rgb}, 0.95)` }}
           >
             {title}
           </span>
@@ -297,10 +297,10 @@ const FounderTrophyRow = ({ tier, mounted, index }: { tier: FounderTier; mounted
 
           {/* Title plate at base */}
           <div
-            className="px-3 py-1 rounded text-[8px] sm:text-[9px] font-orbitron tracking-wider uppercase text-center mb-1 sm:mb-2"
+            className="px-2 py-1 rounded text-[7px] sm:text-[8px] font-orbitron tracking-wide uppercase text-center mb-1 sm:mb-2 leading-tight max-w-[90%]"
             style={{
               border: `1px solid rgba(${rgb}, 0.35)`,
-              color: `rgba(${rgb}, 0.8)`,
+              color: `rgba(${rgb}, 0.95)`,
               background: 'rgba(0,0,0,0.5)',
               boxShadow: `inset 0 1px 0 rgba(255,255,255,0.08), 0 0 8px rgba(${rgb}, 0.08)`,
             }}
@@ -388,8 +388,8 @@ const FounderTrophyRow = ({ tier, mounted, index }: { tier: FounderTier; mounted
                 style={{ background: `rgba(${rgb}, 0.5)` }}
               />
               <span
-                className="text-[10px] font-orbitron tracking-widest uppercase"
-                style={{ color: `rgba(${rgb}, 0.6)` }}
+                className="text-[10px] font-orbitron tracking-widest uppercase text-white/80"
+                style={{ color: `rgba(${rgb}, 0.8)` }}
               >
                 Founders
               </span>
@@ -400,14 +400,14 @@ const FounderTrophyRow = ({ tier, mounted, index }: { tier: FounderTier; mounted
                 {members.map((name) => (
                   <span
                     key={name}
-                    className="text-sm font-medium text-muted-foreground"
+                    className="text-sm font-medium text-white/90"
                   >
                     {name}
                   </span>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground/60 italic">
+              <p className="text-sm text-white/70 italic">
                 Founders will be listed here soon
               </p>
             )}
