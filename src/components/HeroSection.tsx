@@ -69,19 +69,20 @@ const HeroSection = () => {
           />
           <style>{`@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
           <div className="relative space-y-3">
-          <h2 className="font-orbitron text-lg sm:text-xl tracking-wider text-primary">
-            Back Us on Kickstarter
-          </h2>
-          <p className="text-xs sm:text-sm text-muted-foreground/80 leading-relaxed">
-            Our campaign is launching soon.
-          </p>
-          <Button
-            onClick={handleKickstarter}
-            className={`w-full sm:w-auto min-h-[44px] px-6 py-3 text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-all touch-manipulation ${ksRevealed ? 'animate-pulse scale-105' : ''}`}
-          >
-            <Rocket className="h-5 w-5 mr-2" />
-            {ksRevealed ? 'Coming Soon!' : 'Visit Our Kickstarter'}
-          </Button>
+            <h2 className="font-orbitron text-lg sm:text-xl tracking-wider text-primary-foreground drop-shadow">
+              Back Us on Kickstarter
+            </h2>
+            <p className="text-xs sm:text-sm text-primary-foreground/90 leading-relaxed">
+              Our campaign is launching soon.
+            </p>
+            <Button
+              onClick={handleKickstarter}
+              className={`w-full sm:w-auto min-h-[44px] px-6 py-3 text-base font-semibold bg-background text-primary hover:bg-background/90 transition-all touch-manipulation ${ksRevealed ? 'animate-pulse scale-105' : ''}`}
+            >
+              <Rocket className="h-5 w-5 mr-2" />
+              {ksRevealed ? 'Coming Soon!' : 'Visit Our Kickstarter'}
+            </Button>
+          </div>
         </div>
       </div>
     </div>
