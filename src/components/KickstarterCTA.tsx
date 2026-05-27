@@ -4,11 +4,11 @@ import { useCountdown, pad2 } from '@/hooks/useCountdown';
 const KICKSTARTER_URL = 'https://www.kickstarter.com/projects/wiredtcg/wired-the-card-game';
 
 const TimeCell = ({ value, label }: { value: number; label: string }) => (
-  <div className="flex flex-col items-center justify-center rounded-lg bg-background/20 backdrop-blur-sm border border-primary-foreground/20 px-2 py-2 min-w-[56px]">
-    <span className="font-orbitron font-bold text-xl sm:text-2xl text-primary-foreground tabular-nums leading-none">
+  <div className="flex flex-col items-center justify-center rounded-lg bg-black/30 backdrop-blur-sm border border-white/20 px-2 py-2 min-w-[56px]">
+    <span className="font-orbitron font-bold text-xl sm:text-2xl text-white tabular-nums leading-none" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>
       {pad2(value)}
     </span>
-    <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-primary-foreground/80 mt-1">
+    <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-white/90 mt-1" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>
       {label}
     </span>
   </div>

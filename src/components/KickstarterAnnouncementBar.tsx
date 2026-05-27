@@ -8,10 +8,21 @@ const KickstarterAnnouncementBar = () => {
 
   const timerLong = isLive
     ? 'NOW LIVE!'
-    : `LAUNCHES IN ${pad2(days)}D ${pad2(hours)}H ${pad2(minutes)}M ${pad2(seconds)}S`;
+    : (
+      <>
+        {'LAUNCHES IN '}
+        <span className="text-white font-extrabold" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
+          {pad2(days)}D {pad2(hours)}H {pad2(minutes)}M {pad2(seconds)}S
+        </span>
+      </>
+    );
   const timerShort = isLive
     ? 'NOW LIVE!'
-    : `${pad2(days)}D ${pad2(hours)}H ${pad2(minutes)}M ${pad2(seconds)}S`;
+    : (
+      <span className="text-white font-extrabold" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
+        {pad2(days)}D {pad2(hours)}H {pad2(minutes)}M {pad2(seconds)}S
+      </span>
+    );
 
   return (
     <a
@@ -34,8 +45,8 @@ const KickstarterAnnouncementBar = () => {
       <div className="relative container mx-auto px-4 flex items-center justify-center min-h-[48px] sm:min-h-[54px]">
         <span className="flex items-center gap-2 text-primary-foreground font-orbitron font-bold text-xs sm:text-sm tracking-wide hover:scale-[1.03] transition-transform duration-200 cursor-pointer tabular-nums">
           <Zap className="h-4 w-4 animate-pulse" />
-          <span className="hidden sm:inline">BACK WIRED ON KICKSTARTER — {timerLong}</span>
-          <span className="sm:hidden">KICKSTARTER — {timerShort}</span>
+          <span className="hidden sm:inline flex items-center gap-1">BACK WIRED ON KICKSTARTER — {timerLong}</span>
+          <span className="sm:hidden flex items-center gap-1">KICKSTARTER — {timerShort}</span>
           <ExternalLink className="h-3 w-3 opacity-70" />
           <Zap className="h-4 w-4 animate-pulse" />
         </span>
