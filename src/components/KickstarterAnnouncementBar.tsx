@@ -24,8 +24,8 @@ const KickstarterAnnouncementBar = () => {
       <div className="relative container mx-auto px-4 flex items-center justify-center min-h-[48px] sm:min-h-[54px]">
         <span className="flex items-center gap-2 text-primary-foreground font-orbitron font-bold text-xs sm:text-sm tracking-wide hover:scale-[1.03] transition-transform duration-200 cursor-pointer">
           <Zap className="h-4 w-4 animate-pulse" />
-          <span className="hidden sm:inline">BACK WIRED ON KICKSTARTER — NOW LIVE</span>
-          <span className="sm:hidden">KICKSTARTER — NOW LIVE</span>
+          <span className="hidden sm:inline">BACK WIRED ON KICKSTARTER — LAUNCHING SOON</span>
+          <span className="sm:hidden">KICKSTARTER — LAUNCHING SOON</span>
           <ExternalLink className="h-3 w-3 opacity-70" />
           <Zap className="h-4 w-4 animate-pulse" />
         </span>
