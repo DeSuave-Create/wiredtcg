@@ -23,7 +23,7 @@ const KickstarterCTA = () => {
             Back Us on Kickstarter
           </h2>
           <p className="text-xs sm:text-sm text-primary-foreground/90 leading-relaxed">
-            Our campaign is now live! Get your copy and exclusive rewards.
+            Our campaign is now <span className="font-bold text-primary-foreground animate-pulse">live!</span> Get your copy and exclusive rewards.
           </p>
           <a
             href={KICKSTARTER_URL}
