@@ -1,25 +1,16 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Zap } from 'lucide-react';
+import { Zap, Rocket } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Logo from './Logo';
+
+const KICKSTARTER_URL = 'https://www.kickstarter.com/projects/wiredtcg/wired-the-card-game';
 
 const HeroSection = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  // Debug: Log when component mounts
-  console.log('HeroSection mounted with WIRED animation');
-
-  const handleShopNow = () => {
-    toast({
-      title: "Welcome to the Shop!",
-      description: "Browse our complete collection of WIRED products below.",
-    });
-    // Scroll to products section
-    const productsSection = document.querySelector('[data-products]');
-    productsSection?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const [ksRevealed, setKsRevealed] = useState(false);
 
   const handleLearnToPlay = () => {
     navigate('/extras');
@@ -27,6 +18,17 @@ const HeroSection = () => {
       title: "Learn to Play",
       description: "Master the art of network building and bitcoin mining!",
     });
+  };
+
+  const handleKickstarter = () => {
+    // TODO: when live, replace with: window.open(KICKSTARTER_URL, '_blank');
+    void KICKSTARTER_URL;
+    setKsRevealed(true);
+    toast({
+      title: "Kickstarter — Coming Soon!",
+      description: "Our campaign is approved and launching soon. Stay tuned!",
+    });
+    setTimeout(() => setKsRevealed(false), 2000);
   };
 
   return (
@@ -43,14 +45,33 @@ const HeroSection = () => {
         Build your network, connect to the switch, and start mining bitcoin! Race against other players through strategic network building, cyber attacks, and cunning deals. Will you dominate through superior infrastructure or be sabotaged by your opponents?
       </p>
       <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 px-2 sm:px-0">
-        <Button 
+        <Button
           onClick={handleLearnToPlay}
-          variant="outline" 
+          variant="outline"
           className="neon-border text-primary hover:text-primary px-6 sm:px-6 py-3 text-base sm:text-base w-full sm:w-auto min-h-[44px] touch-manipulation"
         >
           <Zap className="h-5 w-5 mr-2" />
           Learn to Play
         </Button>
+      </div>
+
+      {/* Kickstarter CTA */}
+      <div className="pt-6 mt-2 border-t border-primary/15 max-w-md mx-auto px-2 sm:px-0">
+        <div className="rounded-xl bg-primary/5 backdrop-blur-sm border border-primary/20 p-5 sm:p-6 space-y-3">
+          <h2 className="font-orbitron text-lg sm:text-xl tracking-wider text-primary">
+            Back Us on Kickstarter
+          </h2>
+          <p className="text-xs sm:text-sm text-muted-foreground/80 leading-relaxed">
+            Our campaign is approved and launching soon. Be the first to grab founders-edition rewards.
+          </p>
+          <Button
+            onClick={handleKickstarter}
+            className={`w-full sm:w-auto min-h-[44px] px-6 py-3 text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-all touch-manipulation ${ksRevealed ? 'animate-pulse scale-105' : ''}`}
+          >
+            <Rocket className="h-5 w-5 mr-2" />
+            {ksRevealed ? 'Coming Soon!' : 'Visit Our Kickstarter'}
+          </Button>
+        </div>
       </div>
     </div>
   );
