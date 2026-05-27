@@ -1,25 +1,10 @@
-import { useState } from 'react';
+import { ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Rocket } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
 
 const KICKSTARTER_URL = 'https://www.kickstarter.com/projects/wiredtcg/wired-the-card-game';
 
 const KickstarterCTA = () => {
-  const { toast } = useToast();
-  const [ksRevealed, setKsRevealed] = useState(false);
-
-  const handleKickstarter = () => {
-    // TODO: when live, replace with: window.open(KICKSTARTER_URL, '_blank');
-    void KICKSTARTER_URL;
-    setKsRevealed(true);
-    toast({
-      title: 'Kickstarter — Coming Soon!',
-      description: 'Our campaign is launching soon. Stay tuned!',
-    });
-    setTimeout(() => setKsRevealed(false), 2000);
-  };
-
   return (
     <div className="max-w-md mx-auto px-2 sm:px-0">
       <div className="relative rounded-xl bg-gradient-to-r from-primary via-accent to-primary border border-primary/40 shadow-lg overflow-hidden p-5 sm:p-6 text-center">
@@ -38,15 +23,18 @@ const KickstarterCTA = () => {
             Back Us on Kickstarter
           </h2>
           <p className="text-xs sm:text-sm text-primary-foreground/90 leading-relaxed">
-            Our campaign is launching soon.
+            Our campaign is now live! Get your copy and exclusive rewards.
           </p>
-          <Button
-            onClick={handleKickstarter}
-            className={`w-full sm:w-auto min-h-[44px] px-6 py-3 text-base font-semibold bg-background text-primary hover:bg-background/90 transition-all touch-manipulation ${ksRevealed ? 'animate-pulse scale-105' : ''}`}
+          <a
+            href={KICKSTARTER_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center w-full sm:w-auto min-h-[44px] px-6 py-3 text-base font-semibold rounded-md bg-background text-primary hover:bg-background/90 transition-all touch-manipulation"
           >
             <Rocket className="h-5 w-5 mr-2" />
-            {ksRevealed ? 'Coming Soon!' : 'Visit Our Kickstarter'}
-          </Button>
+            Visit Our Kickstarter
+            <ExternalLink className="h-4 w-4 ml-2 opacity-70" />
+          </a>
         </div>
       </div>
     </div>
