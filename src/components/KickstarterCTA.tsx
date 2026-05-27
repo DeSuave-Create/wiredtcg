@@ -9,10 +9,10 @@ const KickstarterCTA = () => {
     <div className="max-w-md mx-auto px-2 sm:px-0">
       <div className="relative rounded-xl bg-gradient-to-r from-primary via-accent to-primary border border-primary/40 shadow-lg overflow-hidden p-5 sm:p-6 text-center">
         <div
-          className="absolute inset-0 pointer-events-none opacity-30"
+          className="absolute inset-0 pointer-events-none opacity-40"
           style={{
             background:
-              'linear-gradient(110deg, transparent 30%, hsl(var(--primary-foreground) / 0.35) 50%, transparent 70%)',
+              'linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.55) 50%, transparent 70%)',
             backgroundSize: '200% 100%',
             animation: 'shimmer 3.5s linear infinite',
           }}
