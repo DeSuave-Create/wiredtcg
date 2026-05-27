@@ -57,7 +57,18 @@ const HeroSection = () => {
 
       {/* Kickstarter CTA */}
       <div className="pt-6 mt-2 border-t border-primary/15 max-w-md mx-auto px-2 sm:px-0">
-        <div className="rounded-xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent backdrop-blur-md border border-primary/30 shadow-[0_0_40px_-10px_hsl(var(--primary)/0.4)] p-5 sm:p-6 space-y-3">
+        <div className="relative rounded-xl bg-gradient-to-r from-primary via-accent to-primary border border-primary/40 shadow-lg overflow-hidden p-5 sm:p-6 space-y-3">
+          <div
+            className="absolute inset-0 pointer-events-none opacity-30"
+            style={{
+              background:
+                'linear-gradient(110deg, transparent 30%, hsl(var(--primary-foreground) / 0.35) 50%, transparent 70%)',
+              backgroundSize: '200% 100%',
+              animation: 'shimmer 3.5s linear infinite',
+            }}
+          />
+          <style>{`@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
+          <div className="relative space-y-3">
           <h2 className="font-orbitron text-lg sm:text-xl tracking-wider text-primary">
             Back Us on Kickstarter
           </h2>
