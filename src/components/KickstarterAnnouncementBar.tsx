@@ -1,20 +1,12 @@
-import { useEffect, useState } from 'react';
-import { X, Zap, Rocket } from 'lucide-react';
+import { useState } from 'react';
+import { Zap, Rocket } from 'lucide-react';
 import { toast } from 'sonner';
 
 // TODO: enable when live — swap the <button> for an <a href={KICKSTARTER_URL} target="_blank" rel="noopener noreferrer">
 const KICKSTARTER_URL = 'https://www.kickstarter.com/projects/wiredtcg/wired-the-card-game';
-const STORAGE_KEY = 'ks-bar-dismissed';
 
 const KickstarterAnnouncementBar = () => {
-  const [visible, setVisible] = useState(true);
   const [revealed, setRevealed] = useState(false);
-
-  useEffect(() => {
-    if (sessionStorage.getItem(STORAGE_KEY) === 'true') {
-      setVisible(false);
-    }
-  }, []);
 
   const handleClick = () => {
     if (revealed) return;
@@ -25,17 +17,8 @@ const KickstarterAnnouncementBar = () => {
     setTimeout(() => setRevealed(false), 2800);
   };
 
-  const handleDismiss = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    sessionStorage.setItem(STORAGE_KEY, 'true');
-    setVisible(false);
-  };
-
-  if (!visible) return null;
-
   return (
     <div className="sticky top-0 z-[60] w-full bg-gradient-to-r from-primary via-accent to-primary border-b border-primary/40 shadow-lg overflow-hidden">
-      {/* shimmer overlay */}
       <div
         className="absolute inset-0 pointer-events-none opacity-30"
         style={{
@@ -69,14 +52,6 @@ const KickstarterAnnouncementBar = () => {
               <Zap className="h-4 w-4 animate-pulse" />
             </span>
           )}
-        </button>
-
-        <button
-          onClick={handleDismiss}
-          aria-label="Dismiss announcement"
-          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10 rounded p-1 transition-colors"
-        >
-          <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         </button>
       </div>
     </div>
