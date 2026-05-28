@@ -555,7 +555,12 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
         </div>
 
         {/* Desktop Center Video Player */}
-        <div className="lg:col-span-8 relative bg-black border-green-600 border-2 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg aspect-video">
+        <div className="lg:col-span-8 flex items-center justify-center">
+          <div
+            className={`relative bg-black border-green-600 border-2 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg ${
+              isPortrait ? 'aspect-[9/16] max-h-[70vh] w-auto h-[70vh]' : 'aspect-video w-full'
+            }`}
+          >
           {/* Navigation Buttons */}
           <button
             onClick={handlePrevious}
@@ -577,7 +582,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
           {isDesktopView && (
             currentVideo.isYouTube && !isPlaying ? (
               <div 
-                className="relative w-full h-64 md:h-96 bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+                className="relative w-full h-full bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
                 onClick={handlePlay}
               >
                 <div className="text-center space-y-4">
@@ -592,7 +597,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
               <iframe
                 key={`yt-desktop-${currentIndex}`}
                 src={`${currentVideo.src}?autoplay=1&enablejsapi=1`}
-                className="w-full h-64 md:h-96"
+                className="w-full h-full"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
@@ -619,7 +624,9 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold neon-glow">
             {currentIndex + 1} / {videos.length}
           </div>
+          </div>
         </div>
+
 
         {/* Right Card Stacks */}
         <div className="lg:col-span-2 flex flex-col justify-between gap-4 py-4 items-end">
