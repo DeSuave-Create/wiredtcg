@@ -1,34 +1,43 @@
 ## Goal
 
-Add a live countdown timer targeting **June 1, 2026** to the Kickstarter promotional elements. Once the target date passes, the countdown is replaced with a celebratory "Now Live!" message.
+Prepare the site's video system to handle vertical 9:16 videos mixed alongside the existing 16:9 videos in the same `VideoCarousel`, supporting both self-hosted MP4 files and YouTube Shorts, with thumbnails that match each video's orientation.
 
-## Implementation
+## What changes
 
-### 1. New shared hook: `src/hooks/useCountdown.ts`
-- Computes `{ days, hours, minutes, seconds, isLive }` from a target Date.
-- Ticks once per second via `setInterval`, cleared on unmount.
-- `isLive` flips true when `now >= target`.
+### 1. Video data model (`VideoCarousel.tsx` + `Extras.tsx`)
+Add an optional `orientation` field to the `Video` interface:
+- `orientation?: 'landscape' | 'portrait'` (defaults to `'landscape'` so existing videos are unaffected).
+- Authors just add `orientation: 'portrait'` to any 9:16 entry in the `tutorialVideos` array in `Extras.tsx`.
 
-Target: `new Date('2026-06-01T00:00:00Z')` (UTC, exported as a shared constant alongside the hook so both components stay in sync).
+### 2. Adaptive player frame
+The player frame is currently hard-locked to `aspect-video` (16:9) in three render blocks (desktop center, mobile, and the YouTube placeholder/iframe heights `h-64 md:h-96`).
+- Switch the player container aspect ratio based on the current video's orientation:
+  - Landscape → `aspect-video` (16:9), as today.
+  - Portrait → a centered `9/16` frame with a constrained max-width/height so a tall video doesn't dominate the page (capped height, e.g. `max-h-[70vh]`, centered on a black backdrop).
+- Replace the fixed `h-64 md:h-96` placeholder/iframe heights with `w-full h-full` inside the orientation-aware container so both YouTube and MP4 fill correctly.
+- The `<video>` element keeps `object-contain` so nothing is cropped; portrait videos sit in a portrait frame instead of being letterboxed inside a wide one.
 
-### 2. `src/components/KickstarterAnnouncementBar.tsx`
-- Replace the "LAUNCHING SOON" text with a compact countdown.
-- Desktop: `BACK WIRED ON KICKSTARTER — LAUNCHES IN 04D 12H 33M 21S`
-- Mobile: `KICKSTARTER — 04D 12H 33M 21S`
-- When `isLive`: show `BACK WIRED ON KICKSTARTER — NOW LIVE!` with pulsing accent.
+### 3. YouTube Shorts support
+- YouTube Shorts use the same `/embed/<id>` URL form, so existing `isYouTube` handling works — the only change needed is the orientation-aware frame (so a Short fills a 9:16 box instead of a 16:9 box). No new parsing required as long as authors provide the `/embed/<id>` URL.
 
-### 3. `src/components/KickstarterCTA.tsx`
-- Above the existing description, add a 4-cell countdown display (Days / Hours / Minutes / Seconds) using semantic tokens (`bg-background/20`, `text-primary-foreground`, `font-orbitron`).
-- Each cell: large bold number + small label below.
-- Update body copy to "Our campaign launches in:" before the timer and keep CTA button unchanged.
-- When `isLive`: hide the timer, show a "🚀 Campaign is now LIVE!" headline and current copy reverts to "Back the campaign now and claim your exclusive rewards."
+### 4. Portrait thumbnails
+- `VideoThumbnailButton` is fixed at `120px × 80px` (landscape). Make it orientation-aware:
+  - Landscape thumb → `120 × 80` (unchanged).
+  - Portrait thumb → portrait dimensions (e.g. `68 × 120`) so the strip visually signals a vertical video.
+- The auto-thumbnail generator (`useVideoThumbnail`) already captures a frame from the MP4 and works regardless of orientation, with `object-cover` filling the button. Custom `thumbnail` images continue to work.
 
-### Styling
-- Reuse existing gradient/shimmer treatment — no new colors.
-- Numbers use `font-orbitron`, monospaced tabular-nums to prevent layout shift.
-- All text remains readable in light & dark mode (uses `text-primary-foreground` over the gradient).
+## Technical notes
 
-### Files touched
-- `src/hooks/useCountdown.ts` (new)
-- `src/components/KickstarterAnnouncementBar.tsx`
-- `src/components/KickstarterCTA.tsx`
+- All changes are presentation-only inside `VideoCarousel.tsx` and the data array in `Extras.tsx`; no backend or game logic touched.
+- Aspect handling done via Tailwind classes (`aspect-video` vs `aspect-[9/16]`) plus a max-height cap for portrait so tall videos stay reasonable on desktop.
+- Existing pause-on-switch, navigation arrows, and counter behavior are unchanged.
+
+```text
+Carousel frame logic
+ landscape: [ aspect-video, full width ]
+ portrait : [ aspect-[9/16], centered, max-h-[70vh] ]
+```
+
+## Out of scope
+- No changes to `VideoSection.tsx` unless you also want vertical support there (it's used for single embeds). Can be added on request.
+- No new upload/admin tooling — authors add entries to the `tutorialVideos` array as today.
