@@ -11,6 +11,7 @@ const VideoThumbnailButton = ({ video, index, isActive, onClick }: {
 }) => {
   const generatedThumb = useVideoThumbnail(!video.isYouTube && !video.thumbnail ? video.src : '', 1);
   const thumbSrc = video.thumbnail || generatedThumb;
+  const isPortrait = video.orientation === 'portrait';
 
   return (
     <button
@@ -20,7 +21,7 @@ const VideoThumbnailButton = ({ video, index, isActive, onClick }: {
           ? 'border-4 border-green-600 neon-glow scale-105'
           : 'border-2 border-gray-300 hover:border-green-600 opacity-70 hover:opacity-100'
       }`}
-      style={{ width: '120px', height: '80px' }}
+      style={isPortrait ? { width: '68px', height: '120px' } : { width: '120px', height: '80px' }}
     >
       <div className="w-full h-full flex items-center justify-center bg-black">
         {thumbSrc ? (
@@ -43,7 +44,9 @@ interface Video {
   description: string;
   isYouTube?: boolean;
   thumbnail?: string;
+  orientation?: 'landscape' | 'portrait';
 }
+
 
 interface VideoCarouselProps {
   videos: Video[];
