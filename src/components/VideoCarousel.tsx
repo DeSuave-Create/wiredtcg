@@ -151,6 +151,8 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
   };
 
   const currentVideo = videos[currentIndex];
+  const isPortrait = currentVideo.orientation === 'portrait';
+
 
   return (
     <div className={`space-y-6 ${className} relative`}>
