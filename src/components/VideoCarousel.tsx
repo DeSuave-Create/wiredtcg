@@ -707,7 +707,12 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
       </div>
 
       {/* Mobile: Video Player */}
-      <div className="lg:hidden relative bg-black border-green-600 border-2 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg z-10 aspect-video">
+      <div className="lg:hidden flex items-center justify-center z-10">
+        <div
+          className={`relative bg-black border-green-600 border-2 rounded-3xl overflow-hidden shadow-2xl drop-shadow-lg ${
+            isPortrait ? 'aspect-[9/16] max-h-[75vh] w-auto h-[75vh]' : 'aspect-video w-full'
+          }`}
+        >
         {/* Navigation Buttons */}
         <button
           onClick={handlePrevious}
@@ -729,7 +734,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
         {!isDesktopView && (
           currentVideo.isYouTube && !isPlaying ? (
             <div 
-              className="relative w-full h-64 md:h-96 bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+              className="relative w-full h-full bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
               onClick={handlePlay}
             >
               <div className="text-center space-y-4">
@@ -744,7 +749,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
             <iframe
               key={`yt-mobile-${currentIndex}`}
               src={`${currentVideo.src}?autoplay=1&enablejsapi=1`}
-              className="w-full h-64 md:h-96"
+              className="w-full h-full"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -771,7 +776,9 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold neon-glow">
           {currentIndex + 1} / {videos.length}
         </div>
+        </div>
       </div>
+
 
       {/* Thumbnail Navigation */}
       <div className="flex gap-3 overflow-x-auto pb-2 justify-center relative z-10">
