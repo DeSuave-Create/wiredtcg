@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export const KICKSTARTER_LAUNCH_DATE = new Date('2026-06-01T00:00:00Z');
+export const KICKSTARTER_LAUNCH_DATE = new Date('2026-06-01T00:00:00-07:00');
 
 interface CountdownState {
   days: number;
