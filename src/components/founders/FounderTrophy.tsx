@@ -1,11 +1,16 @@
 import { useEffect, useState, useId } from 'react';
 
+interface FounderMember {
+  name: string;
+  note?: string;
+}
+
 interface FounderTier {
   title: string;
   label: string;
   rgb: string;
   rgbDark: string;
-  members: string[];
+  members: FounderMember[];
   scale: number;
   animation: 'pulse' | 'shimmer' | 'steady' | 'cool' | 'matte';
 }
@@ -52,7 +57,16 @@ const tiers: FounderTier[] = [
     label: 'Those who have supported Wired from the start',
     rgb: '34, 197, 94',
     rgbDark: '15, 90, 45',
-    members: [],
+    members: [
+      { name: 'Mason', note: 'Supporting and testing from the very beginning. Always thinking outside the box.' },
+      { name: 'Addy', note: 'On point with the artwork and social media.' },
+      { name: 'Ella', note: 'Social media diva.' },
+      { name: 'Amanda', note: 'For entertaining my dreams.' },
+      { name: 'Nora & Lyla', note: "WIRED's biggest fans in Ohio." },
+      { name: 'Sadie', note: 'For playing WIRED with me at 30,000 ft for hours.' },
+      { name: 'Joey & Eli', note: 'Leading our Wired contingent in N.C. with creative card design.' },
+      { name: 'Yolo Lunch Crew — Mahroona, Martin & Xandrix', note: 'For the many laughs, alliances and revenge at lunch.' },
+    ],
     scale: 0.86,
     animation: 'matte',
   },
@@ -403,16 +417,36 @@ const FounderTrophyRow = ({ tier, mounted, index }: { tier: FounderTier; mounted
             </div>
 
             {members.length > 0 ? (
-              <div className="flex flex-wrap gap-x-4 gap-y-1">
-                {members.map((name) => (
-                  <span
-                    key={name}
-                    className="text-sm font-medium text-white/90"
+              <ul className="flex flex-col gap-2.5">
+                {members.map((m) => (
+                  <li
+                    key={m.name}
+                    className="group relative pl-3 transition-transform duration-300 hover:translate-x-0.5"
                   >
-                    {name}
-                  </span>
+                    <span
+                      className="absolute left-0 top-[0.55rem] h-1.5 w-1.5 rounded-full"
+                      style={{
+                        background: `rgb(${rgb})`,
+                        boxShadow: `0 0 8px rgba(${rgb}, 0.9), 0 0 14px rgba(${rgb}, 0.5)`,
+                      }}
+                    />
+                    <div
+                      className="text-sm sm:text-base font-bold font-orbitron tracking-wide leading-tight"
+                      style={{
+                        color: '#ffffff',
+                        textShadow: `0 0 8px rgba(${rgb}, 0.55), 0 1px 2px rgba(0,0,0,0.9)`,
+                      }}
+                    >
+                      {m.name}
+                    </div>
+                    {m.note && (
+                      <p className="text-xs sm:text-[13px] text-white/75 italic leading-snug mt-0.5">
+                        {m.note}
+                      </p>
+                    )}
+                  </li>
                 ))}
-              </div>
+              </ul>
             ) : (
               <p className="text-sm text-white/70 italic">
                 Founders will be listed here soon
