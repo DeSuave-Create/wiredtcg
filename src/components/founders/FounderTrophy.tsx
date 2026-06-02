@@ -1,11 +1,16 @@
 import { useEffect, useState, useId } from 'react';
 
+interface FounderMember {
+  name: string;
+  note?: string;
+}
+
 interface FounderTier {
   title: string;
   label: string;
   rgb: string;
   rgbDark: string;
-  members: string[];
+  members: FounderMember[];
   scale: number;
   animation: 'pulse' | 'shimmer' | 'steady' | 'cool' | 'matte';
 }
