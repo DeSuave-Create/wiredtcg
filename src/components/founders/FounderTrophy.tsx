@@ -417,16 +417,36 @@ const FounderTrophyRow = ({ tier, mounted, index }: { tier: FounderTier; mounted
             </div>
 
             {members.length > 0 ? (
-              <div className="flex flex-wrap gap-x-4 gap-y-1">
-                {members.map((name) => (
-                  <span
-                    key={name}
-                    className="text-sm font-medium text-white/90"
+              <ul className="flex flex-col gap-2.5">
+                {members.map((m) => (
+                  <li
+                    key={m.name}
+                    className="group relative pl-3 transition-transform duration-300 hover:translate-x-0.5"
                   >
-                    {name}
-                  </span>
+                    <span
+                      className="absolute left-0 top-[0.55rem] h-1.5 w-1.5 rounded-full"
+                      style={{
+                        background: `rgb(${rgb})`,
+                        boxShadow: `0 0 8px rgba(${rgb}, 0.9), 0 0 14px rgba(${rgb}, 0.5)`,
+                      }}
+                    />
+                    <div
+                      className="text-sm sm:text-base font-bold font-orbitron tracking-wide leading-tight"
+                      style={{
+                        color: '#ffffff',
+                        textShadow: `0 0 8px rgba(${rgb}, 0.55), 0 1px 2px rgba(0,0,0,0.9)`,
+                      }}
+                    >
+                      {m.name}
+                    </div>
+                    {m.note && (
+                      <p className="text-xs sm:text-[13px] text-white/75 italic leading-snug mt-0.5">
+                        {m.note}
+                      </p>
+                    )}
+                  </li>
                 ))}
-              </div>
+              </ul>
             ) : (
               <p className="text-sm text-white/70 italic">
                 Founders will be listed here soon
