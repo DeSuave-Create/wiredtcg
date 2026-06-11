@@ -102,49 +102,64 @@ const PlayerCard = ({
           </Button>
         )}
 
-        {/* Row 1: Identity — full width so role + name always show */}
-        <div className="flex flex-col gap-1.5 pr-7">
-          <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-            <SelectTrigger
-              className={`w-full h-auto min-h-7 py-1 px-2 rounded-xl bg-gray-800/80 border-gray-600 text-center justify-center font-bold text-sm leading-tight whitespace-normal uppercase tracking-wide ${colors.text} focus:ring-0 [&>span]:whitespace-normal [&>span]:text-center [&>span]:w-full`}
-            >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-gray-800 border-gray-600">
-              {characters.map((char) =>
-                <SelectItem key={char.id} value={char.id} className="hover:bg-blue-900/40 text-xs text-gray-200">
-                  {char.name}
-                </SelectItem>
-              )}
-            </SelectContent>
-          </Select>
+        {/* Top: image | name+role | score */}
+        <div className="flex items-center gap-2 pr-7">
+          {/* Left: artwork */}
+          <div className="flex-shrink-0">
+            <img src={character.artwork || character.image} alt={character.name} className="h-14 w-14 object-contain rounded" />
+          </div>
 
-          <Input
-            value={player.name}
-            onChange={(e) => onUpdateName(player.id, e.target.value)}
-            className="w-full text-sm font-semibold border-gray-600 h-8 px-2 text-center bg-gray-800 text-white rounded-xl focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-blue-500" />
+          {/* Middle: name + role stacked, full width */}
+          <div className="flex-1 min-w-0 flex flex-col gap-1">
+            <Input
+              value={player.name}
+              onChange={(e) => onUpdateName(player.id, e.target.value)}
+              className="w-full text-sm font-semibold border-gray-600 h-8 px-2 text-center bg-gray-800 text-white rounded-xl focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-blue-500" />
+
+            <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
+              <SelectTrigger
+                className={`w-full h-auto min-h-7 py-1 px-2 rounded-xl bg-gray-800/80 border-gray-600 text-center justify-center font-bold text-xs leading-tight whitespace-normal uppercase tracking-wide ${colors.text} focus:ring-0 [&>span]:whitespace-normal [&>span]:text-center [&>span]:w-full`}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-gray-800 border-gray-600">
+                {characters.map((char) =>
+                  <SelectItem key={char.id} value={char.id} className="hover:bg-blue-900/40 text-xs text-gray-200">
+                    {char.name}
+                  </SelectItem>
+                )}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Right: score */}
+          <div className="flex-shrink-0 flex flex-col items-center justify-center min-w-[52px]">
+            <Bitcoin className="h-4 w-4 text-yellow-400" />
+            <div className={`text-lg font-bold leading-none ${isLeader ? 'text-yellow-500' : 'text-red-500'}`}>{player.score}</div>
+          </div>
         </div>
 
-        {/* Row 2: Artwork + score controls */}
-        <div className="flex items-center gap-2 mt-2">
-          <div className="flex-shrink-0">
-            <img src={character.artwork || character.image} alt={character.name} className="h-12 w-auto object-contain rounded" />
-          </div>
-
-          <div className="ml-auto flex items-center gap-1">
-            <Button onClick={() => onUpdateScore(player.id, -1)} variant="ghost" size="sm" className="text-red-400 hover:bg-gray-700 h-8 w-8 p-0" type="button">
-              <Minus className="h-4 w-4" />
-            </Button>
-            <div className="flex flex-col items-center min-w-[40px]">
-              <Bitcoin className="h-3 w-3 text-yellow-400" />
-              <div className="text-base font-bold text-red-500 leading-none">{player.score}</div>
-            </div>
-            <Button onClick={() => onUpdateScore(player.id, 1)} variant="ghost" size="sm" className="text-blue-400 hover:bg-gray-700 h-8 w-8 p-0" type="button">
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
+        {/* Bottom: − / + buttons spanning the card */}
+        <div className="flex justify-between gap-2 mt-2">
+          <Button
+            onClick={() => onUpdateScore(player.id, -1)}
+            variant="outline"
+            size="sm"
+            className="flex-1 border-gray-600 text-red-400 hover:bg-gray-700 rounded-xl bg-gray-800 h-8"
+            type="button">
+            <Minus className="h-4 w-4" />
+          </Button>
+          <Button
+            onClick={() => onUpdateScore(player.id, 1)}
+            variant="outline"
+            size="sm"
+            className="flex-1 border-gray-600 text-blue-400 hover:bg-gray-700 rounded-xl bg-gray-800 h-8"
+            type="button">
+            <Plus className="h-4 w-4" />
+          </Button>
         </div>
       </div>
+
 
 
       {/* ====== DESKTOP LAYOUT ====== */}

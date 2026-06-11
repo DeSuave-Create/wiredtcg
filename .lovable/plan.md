@@ -1,37 +1,33 @@
-# Fix Score Keeper: Always show full role + name
+# Mobile PlayerCard — match sketch layout
 
-## Problem
-On the mobile card layout (the only layout that changes with player count on small screens), the middle column squeezes when players add longer names or pick a longer role (e.g. "Security Specialist", "Headhunter"). The role dropdown uses `whitespace-nowrap` + `truncate`, and the name `<Input>` has a small fixed height with center alignment, so long values get cut off — most visible when players 6, 7, 8 fill in real names.
+Restructure the mobile layout in `src/components/PlayerCard.tsx` (lines 91–147) into the structure shown in your sketch.
 
-## Fix (mobile `PlayerCard` only)
-
-Re-flow each card into two rows so the name and role get the full card width and can never be squeezed by the score controls.
+## Layout
 
 ```text
-┌─────────────────────────────────────────────┐
-│ [🗑]  [Role dropdown — full width, wraps]   │ row 1
-│       [Name input — full width            ] │
-├─────────────────────────────────────────────┤
-│ [img]            [-]  ₿ 12  [+]             │ row 2
-└─────────────────────────────────────────────┘
+┌────────────────────────────────────────────────┐
+│                                          [🗑]  │
+│  ┌─────┐  ┌────────────────────┐  ┌─────────┐  │
+│  │     │  │  Name input        │  │         │  │
+│  │ img │  ├────────────────────┤  │  ₿ 12   │  │
+│  │     │  │  Role dropdown ↓   │  │         │  │
+│  └─────┘  └────────────────────┘  └─────────┘  │
+│  ┌──────────────┐          ┌──────────────┐    │
+│  │      −       │          │      +       │    │
+│  └──────────────┘          └──────────────┘    │
+└────────────────────────────────────────────────┘
 ```
 
-Specific changes in `src/components/PlayerCard.tsx` (mobile block, lines 92–149):
+## Changes
 
-1. Wrap content in a vertical stack (`flex flex-col gap-2 p-2`).
-2. **Row 1 — identity (full width):**
-   - Role `Select` trigger: remove width constraints, allow wrap (`whitespace-normal text-center leading-tight min-h-6 h-auto py-1`), keep role color class from `roleColors` so it's visually obvious.
-   - Name `Input`: full width, larger (`h-8 text-sm`), still centered.
-   - Trash button floats top-right absolutely so it doesn't steal horizontal space.
-3. **Row 2 — score row:**
-   - Character thumbnail on the left (same 48px).
-   - Score controls right-aligned (`ml-auto`), same `-` / ₿ / `+` group.
+1. **Top section** — single `flex items-center gap-2` row:
+   - **Left:** character artwork, fixed `~56px` square (`flex-shrink-0`).
+   - **Middle:** vertical stack (`flex-1 min-w-0 flex flex-col gap-1`) containing the name `Input` on top and the role `Select` below it, both `w-full`. Role keeps wrap behavior (`whitespace-normal h-auto min-h-7`) and role color class.
+   - **Right:** score block, fixed width (`~56px`, `flex-shrink-0`), centered Bitcoin icon + score number, larger font (`text-lg font-bold text-red-500` / yellow when leader).
+2. **Bottom row** — `−` and `+` buttons in a `flex justify-between gap-2 mt-2`, each `flex-1` so they span the card width like in the sketch.
+3. **Trash** stays absolutely positioned top-right (`z-20`) so it doesn't shift columns.
+4. Outer wrapper stays `p-2`. Desktop layout untouched.
 
-This guarantees role names like "Security Specialist" and player names up to ~16 characters always render in full, regardless of how many players are on screen.
+## Why this fixes 6–8 players
 
-## Out of scope
-- Desktop layout (3-column grid; cards keep fixed width so no truncation issue there). I will leave it untouched unless you also want it tweaked.
-- No data, persistence, or scoring logic changes.
-
-## Files
-- `src/components/PlayerCard.tsx` — mobile layout block only.
+Name and role each get the full middle column width (no longer competing horizontally with image + score + buttons), so long names and roles like "Security Specialist" always render in full regardless of player count.
