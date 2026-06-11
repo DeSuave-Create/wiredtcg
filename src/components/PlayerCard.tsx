@@ -135,8 +135,8 @@ const PlayerCard = ({
               <div className="h-6" />
             )}
             <div className="flex flex-col items-center leading-none">
-              <Bitcoin className="h-3 w-3 text-yellow-400" />
-              <div className={`text-base font-bold leading-none ${isLeader ? 'text-yellow-500' : 'text-red-500'}`}>{player.score}</div>
+              <Bitcoin className="h-5 w-5 text-yellow-400" />
+              <div className={`text-2xl font-bold leading-none ${isLeader ? 'text-yellow-500' : 'text-red-500'}`}>{player.score}</div>
             </div>
           </div>
         </div>
