@@ -63,11 +63,11 @@ const PlayerCard = ({
 
   const cardBorderStyle: React.CSSProperties = isLeader
     ? {
-        border: '5px solid rgba(200, 180, 255, 0.9)',
+        border: '2px solid rgba(200, 180, 255, 0.9)',
         boxShadow: `0 0 20px rgba(160,120,255,0.35), 0 0 50px rgba(255,255,255,0.10), inset 0 0 1px rgba(255,255,255,0.40)`,
       }
     : {
-        border: `5px solid rgba(${rgb}, 0.85)`,
+        border: `2px solid rgba(${rgb}, 0.85)`,
         boxShadow: `0 0 20px rgba(${rgb}, 0.35), 0 0 50px rgba(255,255,255,0.10), inset 0 0 1px rgba(255,255,255,0.40)`,
       };
 
