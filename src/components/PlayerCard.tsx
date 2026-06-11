@@ -89,64 +89,63 @@ const PlayerCard = ({
 
 
       {/* ====== MOBILE LAYOUT ====== */}
-      <div className="md:hidden relative z-10">
-        <div className="flex items-center gap-2 p-2">
-          {/* Left: Trash */}
-          <div className="flex-shrink-0">
-            {canRemove ?
-            <Button
-              onClick={() => onRemove(player.id)}
-              variant="ghost"
-              size="sm"
-              className="text-red-400 hover:bg-red-900/30 h-7 w-7 p-0"
-              type="button">
+      <div className="md:hidden relative z-10 p-2">
+        {/* Trash floats so it never steals horizontal space */}
+        {canRemove && (
+          <Button
+            onClick={() => onRemove(player.id)}
+            variant="ghost"
+            size="sm"
+            className="absolute top-1 right-1 text-red-400 hover:bg-red-900/30 h-6 w-6 p-0 z-20"
+            type="button">
+            <Trash2 className="h-3 w-3" />
+          </Button>
+        )}
 
-                <Trash2 className="h-3 w-3" />
-              </Button> :
-            <div className="h-7 w-7" />}
-          </div>
+        {/* Row 1: Identity — full width so role + name always show */}
+        <div className="flex flex-col gap-1.5 pr-7">
+          <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
+            <SelectTrigger
+              className={`w-full h-auto min-h-7 py-1 px-2 rounded-xl bg-gray-800/80 border-gray-600 text-center justify-center font-bold text-sm leading-tight whitespace-normal uppercase tracking-wide ${colors.text} focus:ring-0 [&>span]:whitespace-normal [&>span]:text-center [&>span]:w-full`}
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-gray-800 border-gray-600">
+              {characters.map((char) =>
+                <SelectItem key={char.id} value={char.id} className="hover:bg-blue-900/40 text-xs text-gray-200">
+                  {char.name}
+                </SelectItem>
+              )}
+            </SelectContent>
+          </Select>
 
-          {/* Card image thumbnail */}
+          <Input
+            value={player.name}
+            onChange={(e) => onUpdateName(player.id, e.target.value)}
+            className="w-full text-sm font-semibold border-gray-600 h-8 px-2 text-center bg-gray-800 text-white rounded-xl focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-blue-500" />
+        </div>
+
+        {/* Row 2: Artwork + score controls */}
+        <div className="flex items-center gap-2 mt-2">
           <div className="flex-shrink-0">
             <img src={character.artwork || character.image} alt={character.name} className="h-12 w-auto object-contain rounded" />
           </div>
 
-          {/* Name + Class dropdown */}
-          <div className="flex-1 min-w-0 space-y-1">
-            <Input
-              value={player.name}
-              onChange={(e) => onUpdateName(player.id, e.target.value)}
-              className="text-xs font-semibold border-gray-600 h-6 px-2 text-center bg-gray-800 text-white rounded-xl focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-blue-500" />
-
-            <Select value={player.character} onValueChange={(value) => onUpdateCharacter(player.id, value)}>
-              <SelectTrigger className="border-gray-600 bg-gray-800 text-gray-200 text-xs h-5 px-2 rounded-xl focus:ring-0 text-center justify-center">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-gray-800 border-gray-600">
-                {characters.map((char) =>
-                <SelectItem key={char.id} value={char.id} className="hover:bg-blue-900/40 text-xs text-gray-200">
-                    {char.name}
-                  </SelectItem>
-                )}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Score controls */}
-          <div className="flex-shrink-0 flex items-center gap-1">
-            <Button onClick={() => onUpdateScore(player.id, -1)} variant="ghost" size="sm" className="text-red-400 hover:bg-gray-700 h-7 w-7 p-0" type="button">
-              <Minus className="h-3 w-3" />
+          <div className="ml-auto flex items-center gap-1">
+            <Button onClick={() => onUpdateScore(player.id, -1)} variant="ghost" size="sm" className="text-red-400 hover:bg-gray-700 h-8 w-8 p-0" type="button">
+              <Minus className="h-4 w-4" />
             </Button>
-            <div className="flex flex-col items-center min-w-[35px]">
+            <div className="flex flex-col items-center min-w-[40px]">
               <Bitcoin className="h-3 w-3 text-yellow-400" />
-              <div className={`text-sm font-bold text-red-500 leading-none`}>{player.score}</div>
+              <div className="text-base font-bold text-red-500 leading-none">{player.score}</div>
             </div>
-            <Button onClick={() => onUpdateScore(player.id, 1)} variant="ghost" size="sm" className="text-blue-400 hover:bg-gray-700 h-7 w-7 p-0" type="button">
-              <Plus className="h-3 w-3" />
+            <Button onClick={() => onUpdateScore(player.id, 1)} variant="ghost" size="sm" className="text-blue-400 hover:bg-gray-700 h-8 w-8 p-0" type="button">
+              <Plus className="h-4 w-4" />
             </Button>
           </div>
         </div>
       </div>
+
 
       {/* ====== DESKTOP LAYOUT ====== */}
       <div className="hidden md:flex flex-col items-center relative z-10 px-5 py-6 space-y-3 aspect-[5/7]">
