@@ -90,27 +90,15 @@ const PlayerCard = ({
 
       {/* ====== MOBILE LAYOUT ====== */}
       <div className="md:hidden relative z-10 p-2">
-        {/* Trash floats so it never steals horizontal space */}
-        {canRemove && (
-          <Button
-            onClick={() => onRemove(player.id)}
-            variant="ghost"
-            size="sm"
-            className="absolute top-1 right-1 text-red-400 hover:bg-red-900/30 h-6 w-6 p-0 z-20"
-            type="button">
-            <Trash2 className="h-3 w-3" />
-          </Button>
-        )}
-
-        {/* Top: image | name+role | score */}
-        <div className="flex items-center gap-2 pr-7">
+        {/* Top: image | name+role (2/3) | trash+score (narrow) */}
+        <div className="flex items-stretch gap-2">
           {/* Left: artwork */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 flex items-center">
             <img src={character.artwork || character.image} alt={character.name} className="h-14 w-14 object-contain rounded" />
           </div>
 
-          {/* Middle: name + role stacked, full width */}
-          <div className="flex-1 min-w-0 flex flex-col gap-1">
+          {/* Middle: name + role stacked, ~2/3 of row */}
+          <div className="flex-[2] min-w-0 flex flex-col gap-1">
             <Input
               value={player.name}
               onChange={(e) => onUpdateName(player.id, e.target.value)}
@@ -132,10 +120,24 @@ const PlayerCard = ({
             </Select>
           </div>
 
-          {/* Right: score */}
-          <div className="flex-shrink-0 flex flex-col items-center justify-center min-w-[52px]">
-            <Bitcoin className="h-4 w-4 text-yellow-400" />
-            <div className={`text-lg font-bold leading-none ${isLeader ? 'text-yellow-500' : 'text-red-500'}`}>{player.score}</div>
+          {/* Right: trash on top, score below — narrow column */}
+          <div className="flex-shrink-0 w-10 flex flex-col items-center justify-between">
+            {canRemove ? (
+              <Button
+                onClick={() => onRemove(player.id)}
+                variant="ghost"
+                size="sm"
+                className="text-red-400 hover:bg-red-900/30 h-6 w-6 p-0"
+                type="button">
+                <Trash2 className="h-3 w-3" />
+              </Button>
+            ) : (
+              <div className="h-6" />
+            )}
+            <div className="flex flex-col items-center leading-none">
+              <Bitcoin className="h-3 w-3 text-yellow-400" />
+              <div className={`text-base font-bold leading-none ${isLeader ? 'text-yellow-500' : 'text-red-500'}`}>{player.score}</div>
+            </div>
           </div>
         </div>
 
@@ -159,6 +161,7 @@ const PlayerCard = ({
           </Button>
         </div>
       </div>
+
 
 
 
