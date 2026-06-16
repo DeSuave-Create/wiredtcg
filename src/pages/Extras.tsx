@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Download, BookOpen, FileText, Video, Gamepad2, FolderDown, Layers } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { countdownVideos } from '@/assets/countdown-videos';
+
 
 const Extras = () => {
   const { toast } = useToast();
@@ -52,6 +54,13 @@ const Extras = () => {
   };
 
   const tutorialVideos = [
+    ...countdownVideos.map((asset, i) => ({
+      id: `countdown-${i}`,
+      src: asset.url,
+      title: `Countdown: Day ${i}`,
+      description: `Kickstarter countdown video - Day ${i}.`,
+      isYouTube: false
+    })),
     {
       id: '1',
       src: 'https://www.youtube.com/embed/n5XvPndCsQ0',
