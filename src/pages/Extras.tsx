@@ -54,6 +54,13 @@ const Extras = () => {
   };
 
   const tutorialVideos = [
+    ...countdownVideos.map((asset, i) => ({
+      id: `countdown-${i}`,
+      src: asset.url,
+      title: `Countdown: Day ${i}`,
+      description: `Kickstarter countdown video - Day ${i}.`,
+      isYouTube: false
+    })),
     {
       id: '1',
       src: 'https://www.youtube.com/embed/n5XvPndCsQ0',
