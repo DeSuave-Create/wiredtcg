@@ -781,7 +781,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
 
 
       {/* Thumbnail Navigation */}
-      <div className="flex gap-3 overflow-x-auto pb-2 justify-center relative z-10">
+      <div className="flex gap-3 overflow-x-auto pb-2 relative z-10 justify-start lg:justify-center [&>*]:flex-shrink-0">
         {videos.map((video, index) => (
           <VideoThumbnailButton
             key={video.id}
