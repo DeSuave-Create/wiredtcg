@@ -54,13 +54,6 @@ const Extras = () => {
   };
 
   const tutorialVideos = [
-    ...countdownVideos.map((asset, i) => ({
-      id: `countdown-${i}`,
-      src: asset.url,
-      title: `Countdown: Day ${i}`,
-      description: `Kickstarter countdown video - Day ${i}.`,
-      isYouTube: false
-    })),
     {
       id: '1',
       src: 'https://www.youtube.com/embed/n5XvPndCsQ0',
@@ -88,7 +81,14 @@ const Extras = () => {
       title: 'WIRED Intro',
       description: 'Watch a full game in action and see how strategies unfold in real-time.',
       isYouTube: false
-    }
+    },
+    ...countdownVideos.map((asset, i) => ({
+      id: `countdown-${10 - i}`,
+      src: asset.url,
+      title: `Countdown: Day ${10 - i}`,
+      description: `Kickstarter countdown video - Day ${10 - i}.`,
+      isYouTube: false
+    }))
   ];
 
   const handleDownload = (item: string) => {
