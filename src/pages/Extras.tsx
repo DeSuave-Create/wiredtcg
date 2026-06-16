@@ -82,11 +82,11 @@ const Extras = () => {
       description: 'Watch a full game in action and see how strategies unfold in real-time.',
       isYouTube: false
     },
-    ...countdownVideos.map((asset, i) => ({
-      id: `countdown-${i}`,
+    ...[...countdownVideos].reverse().map((asset, i) => ({
+      id: `countdown-${10 - i}`,
       src: asset.url,
-      title: `Countdown: Day ${i}`,
-      description: `Kickstarter countdown video - Day ${i}.`,
+      title: `Countdown: Day ${10 - i}`,
+      description: `Kickstarter countdown video - Day ${10 - i}.`,
       isYouTube: false
     }))
   ];
