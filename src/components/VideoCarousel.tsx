@@ -609,7 +609,6 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
                 ref={videoRef}
                 controls 
                 playsInline
-                crossOrigin="anonymous"
                 className="w-full h-full object-contain"
                 preload="metadata"
                 onError={(e) => {
@@ -764,7 +763,6 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
               ref={videoRef}
               controls 
               playsInline
-              crossOrigin="anonymous"
               className="w-full h-full object-contain"
               preload="metadata"
               onError={(e) => {
