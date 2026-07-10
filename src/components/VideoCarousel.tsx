@@ -608,6 +608,8 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
                 key={currentVideo.src}
                 ref={videoRef}
                 controls 
+                playsInline
+                crossOrigin="anonymous"
                 className="w-full h-full object-contain"
                 preload="metadata"
                 onError={(e) => {
@@ -617,6 +619,7 @@ const VideoCarousel = ({ videos, className = "" }: VideoCarouselProps) => {
                 <source src={currentVideo.src} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
+
             )
           )}
 
