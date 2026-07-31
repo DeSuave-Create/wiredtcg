@@ -3,7 +3,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContentSection from '@/components/ContentSection';
 import HeroSection from '@/components/HeroSection';
-import KickstarterCTA from '@/components/KickstarterCTA';
+
 import GameMechanicsSection from '@/components/GameMechanicsSection';
 import StrategySection from '@/components/StrategySection';
 import ElectricProgressBar from '@/components/ElectricProgressBar';
