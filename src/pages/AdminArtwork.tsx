@@ -129,7 +129,7 @@ const AdminArtwork = () => {
           <ContentSection title="WIRED TOC Artwork Generator" glowEffect>
             <div className="text-center space-y-4">
               <p className="text-muted-foreground">
-                Generate a cyberpunk-themed Table of Contents image for the WIRED Kickstarter campaign.
+                Generate a cyberpunk-themed Table of Contents image for WIRED.
               </p>
               <div className="flex justify-center gap-3">
                 <Button

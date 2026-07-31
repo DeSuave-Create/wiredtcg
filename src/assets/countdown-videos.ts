@@ -1,4 +1,4 @@
-// Countdown video assets for the Kickstarter campaign
+// Countdown video assets
 // Generated from lovable-assets CLI
 
 import countdown0Asset from "./videos/countdown-0.mp4.asset.json";

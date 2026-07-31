@@ -86,7 +86,7 @@ const Extras = () => {
       id: `countdown-${10 - i}`,
       src: asset.url,
       title: `Countdown: Day ${10 - i}`,
-      description: `Kickstarter countdown video - Day ${10 - i}.`,
+      description: `Countdown video - Day ${10 - i}.`,
       isYouTube: false
     }))
   ];
