@@ -61,10 +61,7 @@ const Index = () => {
             <HeroSection />
           </ContentSection>
 
-          {/* Kickstarter CTA */}
-          <div className="my-6 sm:my-8">
-            <KickstarterCTA />
-          </div>
+
 
           {/* Electric Progress Bar */}
           <ElectricProgressBar />
