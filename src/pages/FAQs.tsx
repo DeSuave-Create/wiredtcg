@@ -60,7 +60,7 @@ const FAQs = () => {
             <div className="text-center space-y-4">
               <HelpCircle className="h-16 w-16 text-primary mx-auto animate-pulse" />
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Find answers to common questions about WIRED, from gameplay mechanics to Kickstarter information.
+                Find answers to common questions about WIRED, from gameplay mechanics to game components.
               </p>
             </div>
           </ContentSection>
