@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.admin-products]
 verify_jwt = false
+
+[functions.offline-sim-download]
+verify_jwt = false

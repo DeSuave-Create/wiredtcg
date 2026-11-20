@@ -11,6 +11,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 // Lazy-load all pages
 const Index = lazy(() => import("./pages/Index"));
 const Extras = lazy(() => import("./pages/Extras"));
+const OfflineSim = lazy(() => import("./pages/OfflineSim"));
 const FAQs = lazy(() => import("./pages/FAQs"));
 const Cart = lazy(() => import("./pages/Cart"));
 const ShoppingCart = lazy(() => import("./pages/ShoppingCart"));
@@ -41,6 +42,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/extras" element={<Extras />} />
+              <Route path="/extras/offlinesim" element={<OfflineSim />} />
               <Route path="/faqs" element={<FAQs />} />
               <Route path="/shop" element={<Cart />} />
               <Route path="/shopping-cart" element={<ShoppingCart />} />
