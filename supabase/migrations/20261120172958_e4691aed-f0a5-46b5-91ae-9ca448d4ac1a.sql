@@ -1,0 +1,1 @@
+CREATE POLICY "Download service manages attempt records" ON public.offline_download_attempts FOR ALL TO service_role USING (true) WITH CHECK (true);
