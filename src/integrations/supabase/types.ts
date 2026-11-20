@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      offline_download_attempts: {
+        Row: {
+          attempts: number
+          client_key: string
+          window_start: string
+        }
+        Insert: {
+          attempts?: number
+          client_key: string
+          window_start?: string
+        }
+        Update: {
+          attempts?: number
+          client_key?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           active: boolean
@@ -58,7 +76,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_offline_download_rate: {
+        Args: { p_client_key: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
